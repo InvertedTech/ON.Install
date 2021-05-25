@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="protos\NodeF\Fragment\Authentication\Service.proto" />
+    <None Remove="protos\NodeF\Fragment\Authentication\UserRecord.proto" />
+    <None Remove="protos\NodeF\Fragment\Authorization\Service.proto" />
+    <None Remove="protos\NodeF\Fragment\Content\ContentRecord.proto" />
+    <None Remove="protos\NodeF\Fragment\Content\Service.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="protos\NodeF\Fragment\Authentication\Service.proto" />
+    <Protobuf Include="protos\NodeF\Fragment\Authentication\UserRecord.proto" GrpcServices="None" />
+    <Protobuf Include="protos\NodeF\Fragment\Authorization\Service.proto" />
+    <Protobuf Include="protos\NodeF\Fragment\Content\ContentRecord.proto" GrpcServices="None" />
+    <Protobuf Include="protos\NodeF\Fragment\Content\Service.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.17.1" />
+    <PackageReference Include="Grpc.Core" Version="2.38.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.38.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

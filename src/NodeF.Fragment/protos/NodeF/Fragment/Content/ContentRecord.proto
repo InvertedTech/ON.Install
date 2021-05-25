@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package NodeF.Fragments.Content;
+
+import "google/protobuf/timestamp.proto";
+
+// Content record data
+message ContentRecord {
+  message PublicData {
+    bytes ContentID = 1;                 // Guid for the content record
+    google.protobuf.Timestamp CreatedOnUTC = 2; // UTC timestamp when content was created
+    google.protobuf.Timestamp ModifiedOnUTC = 3;  // UTC timestamp when content record was last modified
+    google.protobuf.Timestamp PublishedOnUTC = 4;  // UTC timestamp when content was published
+    string Title = 5;
+    string Author = 6;
+    string URL = 7;
+    string Body = 8;
+    map<string, bytes> Assets = 9;
+  }
+  message PrivateData {
+  }
+
+  PublicData Public = 1;
+  PrivateData Private = 2;
+}

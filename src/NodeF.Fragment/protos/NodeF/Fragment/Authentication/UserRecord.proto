@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package NodeF.Fragments.Authentcation;
+
+import "google/protobuf/timestamp.proto";
+
+// User authentication data
+message UserRecord {
+  message PublicData {
+    bytes UserID = 1;                    // Guid for the user
+    google.protobuf.Timestamp CreatedOnUTC = 2; // UTC timestamp when user was created
+    google.protobuf.Timestamp ModifiedOnUTC = 3;  // UTC timestamp when user record was last modified
+    google.protobuf.Timestamp DisabledOnUTC = 4;  // UTC timestamp when user was disabled, null = not disabled
+    string DisplayName = 5;              // Public display name of the user
+    repeated string Identities = 6;               // Public identities associated with the user ex: user@domain.com
+  }
+  message PrivateData {
+    string LoginName = 1;    // Private login name of the user
+    bytes PasswordHash = 2;  // Password hash bytes
+    bytes PasswordSalt = 3;  // Password salt bytes
+    repeated string Emails = 4;       // Private email(s) used for password resets
+  }
+
+  PublicData Public = 1;
+  PrivateData Private = 2;
+}
