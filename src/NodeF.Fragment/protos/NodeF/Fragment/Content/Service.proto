@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package NodeF.Fragments.Content;
 
-import "protos/Nodef/Fragment/Content/ContentRecord.proto";
+import "Protos/Nodef/Fragment/Content/ContentRecord.proto";
 
 // Service for Content provider fragments
-service AuthenticationProvider {
+service ContentProvider {
   // Export a list of all data.
   rpc BackupAllData (BackupAllDataRequest) returns (stream BackupAllDataResponse) {}
 

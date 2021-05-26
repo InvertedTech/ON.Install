@@ -5,19 +5,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="protos\NodeF\Fragment\Authentication\Service.proto" />
-    <None Remove="protos\NodeF\Fragment\Authentication\UserRecord.proto" />
-    <None Remove="protos\NodeF\Fragment\Authorization\Service.proto" />
-    <None Remove="protos\NodeF\Fragment\Content\ContentRecord.proto" />
-    <None Remove="protos\NodeF\Fragment\Content\Service.proto" />
+    <None Remove="Protos\NodeF\Fragment\Authentication\Service.proto" />
+    <None Remove="Protos\NodeF\Fragment\Authentication\UserRecord.proto" />
+    <None Remove="Protos\NodeF\Fragment\Authorization\Service.proto" />
+    <None Remove="Protos\NodeF\Fragment\Content\ContentRecord.proto" />
+    <None Remove="Protos\NodeF\Fragment\Content\Service.proto" />
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="protos\NodeF\Fragment\Authentication\Service.proto" />
-    <Protobuf Include="protos\NodeF\Fragment\Authentication\UserRecord.proto" GrpcServices="None" />
-    <Protobuf Include="protos\NodeF\Fragment\Authorization\Service.proto" />
-    <Protobuf Include="protos\NodeF\Fragment\Content\ContentRecord.proto" GrpcServices="None" />
-    <Protobuf Include="protos\NodeF\Fragment\Content\Service.proto" />
+    <Protobuf Include="Protos\NodeF\Fragment\Authentication\Service.proto" />
+    <Protobuf Include="Protos\NodeF\Fragment\Authentication\UserRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\NodeF\Fragment\Authorization\Service.proto" />
+    <Protobuf Include="Protos\NodeF\Fragment\Content\ContentRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\NodeF\Fragment\Content\Service.proto" />
   </ItemGroup>
 
   <ItemGroup>
