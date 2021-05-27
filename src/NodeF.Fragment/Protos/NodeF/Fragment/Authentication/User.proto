@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package NodeF.Fragments.Authentcation;
+
+import "Protos/Nodef/Fragment/Authentication/UserRecord.proto";
+
+// Service for Authentcation user fragment interface
+service UserInterface {
+  // Authenticate a user with a login and password, return a bearer token if successful
+  rpc AuthenticatUser (AuthenticatUserRequest) returns (AuthenticatUserResponse) {}
+
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
+
+  rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
+
+  rpc ModifyUser (ModifyUserRequest) returns (ModifyUserResponse) {}
+}
+  
+message AuthenticatUserRequest {
+  string LoginName = 1;
+  string Password = 2;
+}
+  
+message AuthenticatUserResponse {
+  string BearerToken = 1;
+}
+  
+message CreateUserRequest {
+  UserRecord Record = 1;
+}
+  
+message CreateUserResponse {
+  string BearerToken = 1;
+}
+
+message GetUserRequest {
+}
+  
+message GetUserResponse {
+  UserRecord Record = 1;
+}
+
+message ModifyUserRequest {
+    string DisplayName = 1;           // Public display name of the user
+    repeated string Emails = 2;       // Private email(s) used for password resets
+    repeated string Identities = 3;   // Public identities associated with the user ex: user@domain.com
+}
+  
+message ModifyUserResponse {
+  string Error = 1;
+}

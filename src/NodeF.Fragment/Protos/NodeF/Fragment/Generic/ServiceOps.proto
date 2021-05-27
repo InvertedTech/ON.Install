@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package NodeF.Fragments.Generic;
+
+// Service for Authorization fragment interface
+service ServiceOpsInterface {
+  // Get the status of the service
+  rpc ServiceStatus (ServiceStatusRequest) returns (ServiceStatusResponse) {}
+
+  // Bring the service offline, online, restart the service, etc...
+  rpc ServiceOperation (ServiceOperationRequest) returns (ServiceStatusResponse) {}
+}
+  
+message ServiceOperationRequest {
+  enum ServiceOperation {
+    Offline = 0;  // Bring service offline and post maintenance page
+    Online = 1;   // Bring service online
+    Restart = 2;  // Request service to restart
+  }
+
+  ServiceOperation Operation = 1;
+}
+
+message ServiceStatusRequest {}
+
+message ServiceStatusResponse {
+  enum OnlineStatus {
+    Offline = 0;
+    Online = 1;
+    Starting = 2;
+    Stopping = 3;
+    Faulted = 4;
+  }
+
+  OnlineStatus Status = 1;
+  string Message = 2;
+}

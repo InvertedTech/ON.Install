@@ -4,8 +4,8 @@ package NodeF.Fragments.Content;
 
 import "Protos/Nodef/Fragment/Content/ContentRecord.proto";
 
-// Service for Content provider fragments
-service ContentProvider {
+// Service for Content backup fragment interface
+service BackupInterface {
   // Export a list of all data.
   rpc BackupAllData (BackupAllDataRequest) returns (stream BackupAllDataResponse) {}
 
@@ -14,12 +14,6 @@ service ContentProvider {
 
   // Restore a list of all data.
   rpc RestoreAllData (RestoreAllDataRequest) returns (RestoreAllDataResponse) {}
-
-  // Get the status of the service
-  rpc ServiceStatus (ServiceStatusRequest) returns (ServiceStatusResponse) {}
-
-  // Bring the service offline, online, restart the service, etc...
-  rpc ServiceOperation (ServiceOperationRequest) returns (ServiceStatusResponse) {}
 }
   
 message BackupAllDataRequest {}
@@ -55,29 +49,4 @@ message RestoreAllDataResponse {
   int32 NumRecordsSkipped = 2;
   int32 NumRecordsOverwriten = 3;
   int32 NumRecordsWiped = 4;
-}
-
-message ServiceOperationRequest {
-  enum ServiceOperation {
-    Offline = 0;  // Bring service offline and post maintenance page
-    Online = 1;   // Bring service online
-    Restart = 2;  // Request service to restart
-  }
-
-  ServiceOperation Operation = 1;
-}
-
-message ServiceStatusRequest {}
-
-message ServiceStatusResponse {
-  enum OnlineStatus {
-    Offline = 0;
-    Online = 1;
-    Starting = 2;
-    Stopping = 3;
-    Faulted = 4;
-  }
-
-  OnlineStatus Status = 1;
-  string Message = 2;
 }

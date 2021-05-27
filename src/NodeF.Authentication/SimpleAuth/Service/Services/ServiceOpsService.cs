@@ -1,19 +1,16 @@
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using NodeF.Fragments.Authentcation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using NodeF.Fragments.Generic;
 using System.Threading.Tasks;
 
-namespace NodeF.SimpleAuth
+namespace NodeF.Authentication.SimpleAuth.Service.Services
 {
-    public class AuthService : AuthenticationProvider.AuthenticationProviderBase
+    public class ServiceOpsService : ServiceOpsInterface.ServiceOpsInterfaceBase
     {
-        private readonly ILogger<AuthService> _logger;
-        public AuthService(ILogger<AuthService> logger)
+        private readonly ILogger<ServiceOpsService> logger;
+        public ServiceOpsService(ILogger<ServiceOpsService> logger)
         {
-            _logger = logger;
+            this.logger = logger;
         }
 
         public override Task<ServiceStatusResponse> ServiceStatus(ServiceStatusRequest request, ServerCallContext context)
