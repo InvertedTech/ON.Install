@@ -15,6 +15,9 @@ namespace NodeF.Authentication
         public string DisplayName { get; set; } = "";
         public const string DisplayNameType = "Display";
 
+        public List<string> Idents { get; private set; } = new List<string>();
+        public const string IdentsType = "Idents";
+
         public List<Claim> ExtraClaims { get; private set; } = new List<Claim>();
 
 
@@ -25,6 +28,9 @@ namespace NodeF.Authentication
 
             if (!string.IsNullOrWhiteSpace(DisplayName))
                 yield return new Claim(DisplayNameType, DisplayName);
+
+            if (Idents.Count != 0)
+                yield return new Claim(IdentsType, string.Join(';', Idents));
 
             foreach (var c in ExtraClaims)
                 yield return c;
@@ -60,6 +66,9 @@ namespace NodeF.Authentication
                     return;
                 case DisplayNameType:
                     DisplayName = claim.Value;
+                    return;
+                case IdentsType:
+                    Idents.AddRange(claim.Value.Split(';'));
                     return;
                 default:
                     ExtraClaims.Add(claim);

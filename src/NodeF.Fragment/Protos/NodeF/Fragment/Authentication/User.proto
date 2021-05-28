@@ -27,10 +27,18 @@ message AuthenticatUserResponse {
   
 message CreateUserRequest {
   UserRecord Record = 1;
+  string Password = 2;
 }
   
 message CreateUserResponse {
   string BearerToken = 1;
+  ErrorType Error = 2;
+
+  enum ErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    LoginTaken = 1;
+  }
 }
 
 message GetUserRequest {

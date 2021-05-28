@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeF.Authentication.Simple
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeF.Authentication.Shared", "..\Shared\NodeF.Authentication.Shared.csproj", "{EB798306-B406-425D-9C75-7FE75925E7A1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeF.Authentication.SimpleAuth.Web", "Web\NodeF.Authentication.SimpleAuth.Web.csproj", "{816CB623-A787-4360-9515-376FAD45E5A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{EB798306-B406-425D-9C75-7FE75925E7A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB798306-B406-425D-9C75-7FE75925E7A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB798306-B406-425D-9C75-7FE75925E7A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{816CB623-A787-4360-9515-376FAD45E5A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{816CB623-A787-4360-9515-376FAD45E5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{816CB623-A787-4360-9515-376FAD45E5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{816CB623-A787-4360-9515-376FAD45E5A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
