@@ -1,8 +1,15 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model LoginViewModel
+@{
+	ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+ <form method="post">
+  <h2>
+   <label asp-for="ErrorMessage" />
+  </h2>
+  <input asp-for="LoginName" />
+  <input asp-for="Password" />
+  <input type="submit" />
+ </form>
 </div>

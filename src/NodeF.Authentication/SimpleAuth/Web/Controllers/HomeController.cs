@@ -6,24 +6,39 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NodeF.Authentication.SimpleAuth.Web.Models;
+using NodeF.Authentication.SimpleAuth.Web.Services;
 
 namespace NodeF.Authentication.SimpleAuth.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<HomeController> logger;
+        private readonly UserService userService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, UserService userService)
         {
-            _logger = logger;
+            this.logger = logger;
+            this.userService = userService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(LoginViewModel vm)
         {
-            return View();
+            vm.ErrorMessage = "";
+
+            if (string.IsNullOrWhiteSpace(vm.LoginName) || string.IsNullOrWhiteSpace(vm.Password))
+                return View();
+
+            var token = await userService.AuthenticateUser(vm.LoginName, vm.Password);
+            if (string.IsNullOrEmpty(token))
+            {
+                vm.ErrorMessage = "Your login/password is not correct.";
+                return View(vm);
+            }
+
+            return RedirectToAction(nameof(Success));
         }
 
-        public IActionResult Privacy()
+        public IActionResult Success()
         {
             return View();
         }

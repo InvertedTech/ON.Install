@@ -33,12 +33,13 @@ namespace NodeF.Authentication.SimpleAuth.Service
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<ServiceOpsService>();
+                endpoints.MapGrpcService<UserService>();
             });
         }
     }
