@@ -38,6 +38,23 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
             return RedirectToAction(nameof(Success));
         }
 
+        public async Task<IActionResult> Register(RegisterViewModel vm)
+        {
+            vm.ErrorMessage = "";
+
+            if (string.IsNullOrWhiteSpace(vm.LoginName) || string.IsNullOrWhiteSpace(vm.Password))
+                return View();
+
+            var token = await userService.AuthenticateUser(vm.LoginName, vm.Password);
+            if (string.IsNullOrEmpty(token))
+            {
+                vm.ErrorMessage = "Your login/password is not correct.";
+                return View(vm);
+            }
+
+            return RedirectToAction(nameof(Success));
+        }
+
         public IActionResult Success()
         {
             return View();
