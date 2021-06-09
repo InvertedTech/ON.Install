@@ -3,11 +3,16 @@
 	ViewData["Title"] = "Home Page";
 }
 
-<form asp-action="Register" method="POST" class="needs-validation" novalidate>
+<form asp-action="Register" method="post" class="needs-validation" novalidate>
   <div class="form-group">
-    <label asp-for="LoginName"></label>
-    <input class="form-control" asp-for="LoginName" />
-    <span asp-validation-for="LoginName"></span>
+    <label asp-for="UserName"></label>
+    <input class="form-control" asp-for="UserName" />
+    <span asp-validation-for="UserName"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="DisplayName"></label>
+    <input class="form-control" asp-for="DisplayName" />
+    <span asp-validation-for="DisplayName"></span>
   </div>
   <div class="form-group">
     <label asp-for="Email"></label>

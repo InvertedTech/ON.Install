@@ -7,6 +7,6 @@ namespace NodeF.Authentication.SimpleAuth.Service.Models
 {
     public class AppSettings
     {
-        public string DataStore { get; set; } = "./data";
+        public string DataStore { get; set; } = "./Debug/data";
     }
 }

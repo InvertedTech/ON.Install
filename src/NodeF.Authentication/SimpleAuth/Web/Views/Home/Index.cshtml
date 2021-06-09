@@ -1,15 +1,25 @@
 ﻿@model LoginViewModel
 @{
-	ViewData["Title"] = "Home Page";
+	ViewData["Title"] = "Login";
 }
 
-<div class="text-center">
- <form method="post">
-  <h2>
-   <label asp-for="ErrorMessage" />
-  </h2>
-  <input asp-for="LoginName" />
-  <input asp-for="Password" />
-  <input type="submit" />
- </form>
-</div>
+<form asp-action="Index" method="post" class="needs-validation" novalidate>
+ <h2 style="color:red;">@Model?.ErrorMessage</h2>
+ <div class="form-group">
+  <label asp-for="LoginName"></label>
+  <input class="form-control" asp-for="LoginName" />
+  <span asp-validation-for="LoginName"></span>
+ </div>
+ <div class="form-group">
+  <label asp-for="Password"></label>
+  <input class="form-control" asp-for="Password" />
+  <span asp-validation-for="Password"></span>
+ </div>
+
+ <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@section scripts
+{
+<partial name="_ValidationScriptsPartial" />
+}

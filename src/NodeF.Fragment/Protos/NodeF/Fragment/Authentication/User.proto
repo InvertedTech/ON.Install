@@ -17,7 +17,7 @@ service UserInterface {
 }
   
 message AuthenticatUserRequest {
-  string LoginName = 1;
+  string UserName = 1;
   string Password = 2;
 }
   
@@ -37,7 +37,7 @@ message CreateUserResponse {
   enum ErrorType {
     NoError = 0;
     UnknownError = -1;
-    LoginTaken = 1;
+    UserNameTaken = 1;
   }
 }
 

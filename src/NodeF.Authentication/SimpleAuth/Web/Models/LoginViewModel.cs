@@ -15,9 +15,8 @@ namespace NodeF.Authentication.SimpleAuth.Web.Models
         public string LoginName { get; set; }
 
         [Required]
-        [StringLength(30, ErrorMessage = "{0} length must be less than {1}.")]
+        [StringLength(32, ErrorMessage = "{0} length must be less than {1}.")]
         [Display(Name = "Password")]
-        [RegularExpression(@"^[a-zA-Z0-9]+$")]
         public string Password { get; set; }
 
         public string ErrorMessage { get; set; }

@@ -46,7 +46,7 @@ namespace NodeF.Authentication.SimpleAuth.Web
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseMiddleware<JwtValidatorMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

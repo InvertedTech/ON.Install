@@ -27,7 +27,7 @@ namespace NodeF.Authentication.SimpleAuth.Service.Data
         {
             var id = new Guid(user.Public.UserID.Span);
             var fd = GetDataFilePath(id);
-            var fi = GetIndexFilePath(user.Private.LoginName);
+            var fi = GetIndexFilePath(user.Public.UserName);
 
             if (fi.Exists || fd.Exists)
                 return false;

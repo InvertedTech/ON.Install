@@ -12,6 +12,7 @@ namespace NodeF.Authentication
     {
         public const string JWT_PRIVATE_KEY_ENVIRONMENT_NAME = "JWT_PRIV_KEY";
         public const string JWT_PUBLIC_KEY_ENVIRONMENT_NAME = "JWT_PUB_KEY";
+        public const string JWT_COOKIE_NAME = "token";
 
         private readonly RequestDelegate next;
         private readonly JwtSecurityTokenHandler tokenHandler;
@@ -35,12 +36,21 @@ namespace NodeF.Authentication
 
         public async Task Invoke(HttpContext context)
         {
-            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            string token = GetTokenFromHeaderOrCookie(context);
 
             if (token != null)
                 attachUserToContext(context, token);
 
             await next(context);
+        }
+
+        private string GetTokenFromHeaderOrCookie(HttpContext context)
+        {
+            var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ")?.Last();
+            if (token != null)
+                return token;
+
+            return context.Request.Cookies[JWT_COOKIE_NAME];
         }
 
         public static JsonWebKey GetPrivateKey()

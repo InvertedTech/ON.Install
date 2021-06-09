@@ -5,6 +5,7 @@ using NodeF.Authentication.SimpleAuth.Service.Data;
 using NodeF.Fragments.Authentcation;
 using NodeF.Fragments.Generic;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
@@ -31,10 +32,10 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
 
         public override async Task<AuthenticatUserResponse> AuthenticatUser(AuthenticatUserRequest request, ServerCallContext context)
         {
-            if (string.IsNullOrWhiteSpace(request.LoginName) || string.IsNullOrWhiteSpace(request.Password))
+            if (string.IsNullOrWhiteSpace(request.UserName) || string.IsNullOrWhiteSpace(request.Password))
                 return new AuthenticatUserResponse();
 
-            var user = await dataProvider.GetByLogin(request.LoginName);
+            var user = await dataProvider.GetByLogin(request.UserName);
             if (user == null)
                 return new AuthenticatUserResponse();
 
@@ -69,10 +70,10 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
                     Error = CreateUserResponse.Types.ErrorType.UnknownError
                 };
 
-            if (await dataProvider.Exists(request.Record.Private.LoginName))
+            if (await dataProvider.Exists(request.Record.Public.UserName))
                 return new CreateUserResponse()
                 {
-                    Error = CreateUserResponse.Types.ErrorType.LoginTaken
+                    Error = CreateUserResponse.Types.ErrorType.UserNameTaken
                 };
 
             var res = await dataProvider.Create(user);
@@ -112,15 +113,15 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
             if (user.Public.DisplayName.Length < 4 || user.Public.DisplayName.Length > 20)
                 return false;
 
-            user.Private.LoginName = user.Private.LoginName?.Trim() ?? "";
-            if (string.IsNullOrWhiteSpace(user.Private.LoginName))
+            user.Public.UserName = user.Public.UserName?.Trim() ?? "";
+            if (string.IsNullOrWhiteSpace(user.Public.UserName))
                 return false;
 
-            if (user.Private.LoginName.Length < 4 || user.Private.LoginName.Length > 20)
+            if (user.Public.UserName.Length < 4 || user.Public.UserName.Length > 20)
                 return false;
 
             var regex = new Regex(@"^[a-zA-Z0-9]+$");
-            if (!regex.IsMatch(user.Private.LoginName))
+            if (!regex.IsMatch(user.Public.UserName))
                 return false;
 
             return true;
@@ -155,14 +156,15 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
 
         private string GenerateToken(NodeUser user)
         {
-            user.ToClaims();
-
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = creds
             };
+
+            tokenDescriptor.Claims = new Dictionary<string, object>();
+
             foreach (var c in user.ToClaims())
                 tokenDescriptor.Claims.Add(c.Type, c.Value);
 
