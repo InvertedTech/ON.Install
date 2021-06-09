@@ -27,6 +27,7 @@ namespace NodeF.Authentication.SimpleAuth.Web
             services.AddHttpContextAccessor();
             services.AddControllersWithViews();
 
+            services.AddScoped<UserHelper>();
             services.AddScoped<UserService>();
             services.AddSingleton<ServiceNameHelper>();
         }

@@ -9,11 +9,17 @@ service UserInterface {
   // Authenticate a user with a login and password, return a bearer token if successful
   rpc AuthenticatUser (AuthenticatUserRequest) returns (AuthenticatUserResponse) {}
 
+  // Change user's own password.  Requires user to know their current password.
+  rpc ChangeOwnPassword (ChangeOwnPasswordRequest) returns (ChangeOwnPasswordResponse) {}
+
+  // Create account for a user
   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
 
-  rpc GetUser (GetUserRequest) returns (GetUserResponse) {}
+  // Get User record
+  rpc GetOwnUser (GetOwnUserRequest) returns (GetOwnUserResponse) {}
 
-  rpc ModifyUser (ModifyUserRequest) returns (ModifyUserResponse) {}
+  // Modify User record
+  rpc ModifyOwnUser (ModifyOwnUserRequest) returns (ModifyOwnUserResponse) {}
 }
   
 message AuthenticatUserRequest {
@@ -25,6 +31,22 @@ message AuthenticatUserResponse {
   string BearerToken = 1;
 }
   
+message ChangeOwnPasswordRequest {
+  string OldPassword = 1;
+  string NewPassword = 2;
+}
+  
+message ChangeOwnPasswordResponse {
+  ErrorType Error = 1;
+
+  enum ErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    BadOldPassword = 1;
+    BadNewPassword = 2;
+  }
+}
+
 message CreateUserRequest {
   UserRecord Record = 1;
   string Password = 2;
@@ -41,19 +63,19 @@ message CreateUserResponse {
   }
 }
 
-message GetUserRequest {
+message GetOwnUserRequest {
 }
   
-message GetUserResponse {
+message GetOwnUserResponse {
   UserRecord Record = 1;
 }
 
-message ModifyUserRequest {
+message ModifyOwnUserRequest {
     string DisplayName = 1;           // Public display name of the user
     repeated string Emails = 2;       // Private email(s) used for password resets
     repeated string Identities = 3;   // Public identities associated with the user ex: user@domain.com
 }
   
-message ModifyUserResponse {
+message ModifyOwnUserResponse {
   string Error = 1;
 }

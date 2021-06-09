@@ -3,7 +3,7 @@
 	ViewData["Title"] = "Login";
 }
 
-<form asp-action="Index" method="post" class="needs-validation" novalidate>
+<form asp-controller="Login" asp-action="" method="post" class="needs-validation" novalidate>
  <h2 style="color:red;">@Model?.ErrorMessage</h2>
  <div class="form-group">
   <label asp-for="LoginName"></label>
@@ -16,8 +16,15 @@
   <span asp-validation-for="Password"></span>
  </div>
 
- <button type="submit" class="btn btn-primary">Submit</button>
+ <button type="submit" class="btn btn-primary">Login</button>
 </form>
+
+<br />
+
+<p>
+ <h4> -- or --</h4>
+ <a class="btn btn-primary" asp-area="" asp-controller="Register" asp-action="">Register</a>
+</p>
 
 @section scripts
 {

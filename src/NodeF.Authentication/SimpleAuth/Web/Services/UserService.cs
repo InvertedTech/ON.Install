@@ -12,14 +12,12 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
 {
     public class UserService
     {
-        private readonly HttpContext httpContext;
         private readonly ServiceNameHelper nameHelper;
-        private readonly NodeUser user;
+        public readonly NodeUser User;
 
-        public UserService(IHttpContextAccessor httpContextAccessor, ServiceNameHelper nameHelper)
+        public UserService(ServiceNameHelper nameHelper, UserHelper userHelper)
         {
-            httpContext = httpContextAccessor.HttpContext;
-            user = httpContextAccessor.HttpContext.User as NodeUser;
+            User = userHelper.MyUser;
 
             this.nameHelper = nameHelper;
         }
@@ -33,6 +31,19 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
             });
 
             return reply.BearerToken;
+        }
+
+        public async Task<ChangeOwnPasswordResponse.Types.ErrorType> ChangePasswordCurrentUser(ChangePasswordViewModel vm)
+        {
+            var req = new ChangeOwnPasswordRequest()
+            {
+                OldPassword = vm.OldPassword,
+                NewPassword = vm.NewPassword
+            };
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.ChangeOwnPasswordAsync(req, GetMetadata());
+            return reply.Error;
         }
 
         public async Task<CreateUserResponse> CreateUser(RegisterViewModel vm)
@@ -58,6 +69,34 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
             var reply = await client.CreateUserAsync(req);
 
             return reply;
+        }
+
+        public async Task<UserRecord> GetCurrentUser()
+        {
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.GetOwnUserAsync(new GetOwnUserRequest(), GetMetadata());
+            return reply.Record;
+        }
+
+        public async Task<string> ModifyCurrentUser(SettingsViewModel vm)
+        {
+            var req = new ModifyOwnUserRequest()
+            {
+                DisplayName = vm.DisplayName,
+            };
+            req.Emails.Add(vm.Email);
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.ModifyOwnUserAsync(req, GetMetadata());
+            return reply.Error;
+        }
+
+        private Metadata GetMetadata()
+        {
+            var data = new Metadata();
+            data.Add("Authorization", "Bearer " + User.JwtToken);
+
+            return data;
         }
     }
 }

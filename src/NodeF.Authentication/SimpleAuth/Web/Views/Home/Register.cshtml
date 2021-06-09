@@ -1,6 +1,14 @@
 ﻿@model RegisterViewModel
 @{
-	ViewData["Title"] = "Home Page";
+	ViewData["Title"] = "Registration";
+}
+
+<h1>Registration</h1>
+<br />
+
+@if(!string.IsNullOrEmpty(Model?.ErrorMessage))
+{
+    <h2 style="color: red;">@Model.ErrorMessage</h2>
 }
 
 <form asp-action="Register" method="post" class="needs-validation" novalidate>

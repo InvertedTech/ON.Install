@@ -20,6 +20,8 @@ namespace NodeF.Authentication
 
         public List<Claim> ExtraClaims { get; private set; } = new List<Claim>();
 
+        public string JwtToken { get; set; } = "";
+
 
         public IEnumerable<Claim> ToClaims()
         {
@@ -36,7 +38,7 @@ namespace NodeF.Authentication
                 yield return c;
         }
 
-        internal static ClaimsPrincipal Parse(IEnumerable<Claim> claims)
+        internal static NodeUser Parse(IEnumerable<Claim> claims)
         {
             if (claims == null)
                 return null;

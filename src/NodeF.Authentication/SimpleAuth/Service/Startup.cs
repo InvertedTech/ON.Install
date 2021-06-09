@@ -36,6 +36,8 @@ namespace NodeF.Authentication.SimpleAuth.Service
             //app.UseAuthentication();
             //app.UseAuthorization();
 
+            app.UseMiddleware<JwtValidatorMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<ServiceOpsService>();

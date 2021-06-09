@@ -82,7 +82,11 @@ namespace NodeF.Authentication
 
                 // attach user to context on successful jwt validation
                 if (jwtToken != null)
-                    context.User = NodeUser.Parse(jwtToken.Claims);
+                {
+                    var user = NodeUser.Parse(jwtToken.Claims);
+                    user.JwtToken = token;
+                    context.User = user;
+                }
             }
             catch
             {

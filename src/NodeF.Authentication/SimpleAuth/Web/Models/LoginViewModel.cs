@@ -16,7 +16,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Models
 
         [Required]
         [StringLength(32, ErrorMessage = "{0} length must be less than {1}.")]
-        [Display(Name = "Password")]
+        [Display(Name = "Password"), DataType(DataType.Password)]
         public string Password { get; set; }
 
         public string ErrorMessage { get; set; }
