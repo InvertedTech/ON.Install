@@ -8,6 +8,8 @@ COPY NodeF.Authentication/Shared NodeF.Authentication/Shared
 COPY NodeF.Authentication/SimpleAuth NodeF.Authentication/SimpleAuth
 COPY NodeF.Fragment NodeF.Fragment
 RUN dotnet restore "NodeF.Authentication/SimpleAuth/Service/NodeF.Authentication.SimpleAuth.Service.csproj"
+WORKDIR "/src/NodeF.Fragment"
+RUN dotnet build
 WORKDIR "/src/NodeF.Authentication/SimpleAuth/Service"
 RUN dotnet build "NodeF.Authentication.SimpleAuth.Service.csproj" -c Release -o /app/build
 
