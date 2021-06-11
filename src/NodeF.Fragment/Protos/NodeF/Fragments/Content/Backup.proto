@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package NodeF.Fragments.Content;
 
-import "Protos/NodeF/Fragment/Content/ContentRecord.proto";
+import "Protos/NodeF/Fragments/Content/ContentRecord.proto";
 
 // Service for Content backup fragment interface
 service BackupInterface {

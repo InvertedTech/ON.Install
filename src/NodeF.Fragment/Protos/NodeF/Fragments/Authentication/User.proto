@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package NodeF.Fragments.Authentcation;
 
-import "Protos/NodeF/Fragment/Authentication/UserRecord.proto";
+import "Protos/NodeF/Fragments/Authentication/UserRecord.proto";
 
 // Service for Authentcation user fragment interface
 service UserInterface {

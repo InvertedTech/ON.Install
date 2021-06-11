@@ -5,25 +5,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Protos\NodeF\Fragment\Authentication\Backup.proto" />
-    <None Remove="Protos\NodeF\Fragment\Authentication\User.proto" />
-    <None Remove="Protos\NodeF\Fragment\Authentication\UserRecord.proto" />
-    <None Remove="Protos\NodeF\Fragment\Authorization\Backup.proto" />
-    <None Remove="Protos\NodeF\Fragment\Authorization\Claims.proto" />
-    <None Remove="Protos\NodeF\Fragment\Content\Backup.proto" />
-    <None Remove="Protos\NodeF\Fragment\Content\ContentRecord.proto" />
-    <None Remove="Protos\NodeF\Fragment\Generic\ServiceOps.proto" />
+    <None Remove="Protos\NodeF\Fragments\Authentication\Backup.proto" />
+    <None Remove="Protos\NodeF\Fragments\Authentication\User.proto" />
+    <None Remove="Protos\NodeF\Fragments\Authentication\UserRecord.proto" />
+    <None Remove="Protos\NodeF\Fragments\Authorization\Backup.proto" />
+    <None Remove="Protos\NodeF\Fragments\Authorization\Claims.proto" />
+    <None Remove="Protos\NodeF\Fragments\Content\Backup.proto" />
+    <None Remove="Protos\NodeF\Fragments\Content\ContentRecord.proto" />
+    <None Remove="Protos\NodeF\Fragments\Generic\ServiceOps.proto" />
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\NodeF\Fragment\Authentication\User.proto" />
-    <Protobuf Include="Protos\NodeF\Fragment\Authentication\Backup.proto" />
-    <Protobuf Include="Protos\NodeF\Fragment\Authentication\UserRecord.proto" GrpcServices="None" />
-    <Protobuf Include="Protos\NodeF\Fragment\Authorization\Backup.proto" />
-    <Protobuf Include="Protos\NodeF\Fragment\Authorization\Claims.proto" />
-    <Protobuf Include="Protos\NodeF\Fragment\Content\ContentRecord.proto" GrpcServices="None" />
-    <Protobuf Include="Protos\NodeF\Fragment\Content\Backup.proto" />
-    <Protobuf Include="Protos\NodeF\Fragment\Generic\ServiceOps.proto" />
+    <Protobuf Include="Protos\NodeF\Fragments\Authentication\User.proto" />
+    <Protobuf Include="Protos\NodeF\Fragments\Authentication\Backup.proto" />
+    <Protobuf Include="Protos\NodeF\Fragments\Authentication\UserRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\NodeF\Fragments\Authorization\Backup.proto" />
+    <Protobuf Include="Protos\NodeF\Fragments\Authorization\Claims.proto" />
+    <Protobuf Include="Protos\NodeF\Fragments\Content\ContentRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\NodeF\Fragments\Content\Backup.proto" />
+    <Protobuf Include="Protos\NodeF\Fragments\Generic\ServiceOps.proto" />
   </ItemGroup>
 
   <ItemGroup>
