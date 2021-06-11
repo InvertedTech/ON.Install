@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim-arm32v7 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
+COPY NodeF.Authentication/Shared NodeF.Authentication/Shared
+COPY NodeF.Authentication/SimpleAuth NodeF.Authentication/SimpleAuth
+COPY NodeF.Fragment NodeF.Fragment
+RUN dotnet restore "NodeF.Authentication/SimpleAuth/Web/NodeF.Authentication.SimpleAuth.Web.csproj"
+WORKDIR "/src/NodeF.Authentication/SimpleAuth/Web"
+RUN dotnet build "NodeF.Authentication.SimpleAuth.Web.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "NodeF.Authentication.SimpleAuth.Web.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "NodeF.Authentication.SimpleAuth.Web.dll"]
