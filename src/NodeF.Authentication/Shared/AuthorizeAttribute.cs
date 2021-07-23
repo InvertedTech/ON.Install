@@ -13,7 +13,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
         if (user == null)
         {
             // not logged in
-            context.Result = new RedirectToActionResult("", "Login", null);
+            context.Result = new RedirectToActionResult("", "login", null);
         }
     }
 }

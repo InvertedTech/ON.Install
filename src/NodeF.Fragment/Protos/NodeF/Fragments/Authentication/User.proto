@@ -78,4 +78,5 @@ message ModifyOwnUserRequest {
   
 message ModifyOwnUserResponse {
   string Error = 1;
+  string BearerToken = 2;
 }

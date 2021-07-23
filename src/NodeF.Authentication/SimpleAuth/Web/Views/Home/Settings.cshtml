@@ -16,7 +16,7 @@
     <h2 style="color: green;">@Model.SuccessMessage</h2>
 }
 
-<form asp-controller="Settings" asp-action="Index" method="post" class="needs-validation" novalidate>
+<form asp-controller="settings" asp-action="Index" method="post" class="needs-validation" novalidate>
   <div class="form-group">
     <label asp-for="UserName"></label>
     <input class="form-control" asp-for="UserName" disabled="disabled" />
@@ -31,16 +31,6 @@
     <input class="form-control" asp-for="Email" />
     <span asp-validation-for="Email"></span>
   </div>
-  <div class="form-group">
-    <label asp-for="Password"></label>
-    <input class="form-control" asp-for="Password" />
-    <span asp-validation-for="Password"></span>
-  </div>
-  <div class="form-group">
-    <label asp-for="ConfirmPassword"></label>
-    <input class="form-control" asp-for="ConfirmPassword" />
-    <span asp-validation-for="ConfirmPassword"></span>
-  </div>
 
   <button type="submit" class="btn btn-primary">Update</button>
 </form>
@@ -49,7 +39,7 @@
 
 <p>
  <h4> -- or --</h4>
- <a class="btn btn-primary" asp-area="" asp-controller="ChangePassword" asp-action="">Change my password</a>
+ <a class="btn btn-primary" asp-area="" asp-controller="changepassword" asp-action="">Change my password</a>
 </p>
 
 @section scripts

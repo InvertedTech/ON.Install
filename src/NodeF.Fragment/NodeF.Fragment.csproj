@@ -10,7 +10,9 @@
     <None Remove="Protos\NodeF\Fragments\Authentication\UserRecord.proto" />
     <None Remove="Protos\NodeF\Fragments\Authorization\Backup.proto" />
     <None Remove="Protos\NodeF\Fragments\Authorization\Claims.proto" />
+    <None Remove="Protos\NodeF\Fragments\Content\AssetRecord.proto" />
     <None Remove="Protos\NodeF\Fragments\Content\Backup.proto" />
+    <None Remove="Protos\NodeF\Fragments\Content\Content.proto" />
     <None Remove="Protos\NodeF\Fragments\Content\ContentRecord.proto" />
     <None Remove="Protos\NodeF\Fragments\Generic\ServiceOps.proto" />
   </ItemGroup>
@@ -21,15 +23,17 @@
     <Protobuf Include="Protos\NodeF\Fragments\Authentication\UserRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\NodeF\Fragments\Authorization\Backup.proto" />
     <Protobuf Include="Protos\NodeF\Fragments\Authorization\Claims.proto" />
+    <Protobuf Include="Protos\NodeF\Fragments\Content\AssetRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\NodeF\Fragments\Content\ContentRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\NodeF\Fragments\Content\Backup.proto" />
+    <Protobuf Include="Protos\NodeF\Fragments\Content\Content.proto" />
     <Protobuf Include="Protos\NodeF\Fragments\Generic\ServiceOps.proto" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.17.1" />
-    <PackageReference Include="Grpc.Core" Version="2.38.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.38.0">
+    <PackageReference Include="Google.Protobuf" Version="3.17.3" />
+    <PackageReference Include="Grpc.Core" Version="2.38.1" />
+    <PackageReference Include="Grpc.Tools" Version="2.38.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

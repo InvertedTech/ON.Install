@@ -78,7 +78,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
             return reply.Record;
         }
 
-        public async Task<string> ModifyCurrentUser(SettingsViewModel vm)
+        public async Task<ModifyOwnUserResponse> ModifyCurrentUser(SettingsViewModel vm)
         {
             var req = new ModifyOwnUserRequest()
             {
@@ -88,7 +88,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.ModifyOwnUserAsync(req, GetMetadata());
-            return reply.Error;
+            return reply;
         }
 
         private Metadata GetMetadata()

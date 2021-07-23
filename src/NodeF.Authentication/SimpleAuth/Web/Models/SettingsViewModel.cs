@@ -32,16 +32,6 @@ namespace NodeF.Authentication.SimpleAuth.Web.Models
         [Required, DataType(DataType.EmailAddress), EmailAddress]
         public string Email { get; set; }
 
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
-        [StringLength(32, ErrorMessage = "{0} length must be between {2} and {1}.", MinimumLength = 8)]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", ErrorMessage = "Minimum eight characters, at least one letter and one number.")]
-        public string Password { get; set; }
-
-        [DataType(DataType.Password), Compare(nameof(ConfirmPassword))]
-        [Display(Name = "Confirm Password")]
-        public string ConfirmPassword { get; set; }
-
         public string ErrorMessage { get; set; }
         public string SuccessMessage { get; set; }
     }

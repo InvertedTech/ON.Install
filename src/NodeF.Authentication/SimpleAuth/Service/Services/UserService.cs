@@ -149,6 +149,11 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
                 if (!IsDisplayNameValid(request.DisplayName))
                     return new ModifyOwnUserResponse() { Error = "Display Name not valid" };
 
+                bool needNewToken = false;
+
+                if (record.Public.DisplayName != request.DisplayName)
+                    needNewToken = true;
+
                 record.Private.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.Public.DisplayName = request.DisplayName;
 
@@ -160,7 +165,14 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
 
                 await dataProvider.Save(record);
 
-                return new ModifyOwnUserResponse();
+                string token = "";
+                if (needNewToken)
+                    token = GenerateToken(record);
+
+                return new ModifyOwnUserResponse()
+                {
+                    BearerToken = token
+                };
             }
             catch
             {

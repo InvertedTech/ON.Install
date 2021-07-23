@@ -28,7 +28,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
         }
 
         [Authorize]
-        [HttpGet("/ChangePassword")]
+        [HttpGet("/changepassword")]
         public IActionResult ChangePasswordGet()
         {
             var vm = new ChangePasswordViewModel();
@@ -37,7 +37,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
         }
 
         [Authorize]
-        [HttpPost("/ChangePassword")]
+        [HttpPost("/changepassword")]
         public async Task<IActionResult> ChangePasswordPost(ChangePasswordViewModel vm)
         {
             vm.ErrorMessage = vm.SuccessMessage = "";
@@ -66,13 +66,13 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
             }
         }
 
-        [HttpGet("/Login")]
+        [HttpGet("/login")]
         public IActionResult LoginGet()
         {
             return View("Login");
         }
 
-        [HttpPost("/Login")]
+        [HttpPost("/login")]
         public async Task<IActionResult> LoginPost(LoginViewModel vm)
         {
             vm.ErrorMessage = "";
@@ -98,20 +98,20 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
         }
 
         [Authorize]
-        [HttpGet("/Logout")]
+        [HttpGet("/logout")]
         public IActionResult Logout()
         {
             Response.Cookies.Delete(JwtValidatorMiddleware.JWT_COOKIE_NAME);
             return RedirectToAction(nameof(LoginGet));
         }
 
-        [HttpGet("/Register")]
+        [HttpGet("/register")]
         public IActionResult RegisterGet()
         {
             return View("Register");
         }
 
-        [HttpPost("/Register")]
+        [HttpPost("/register")]
         public async Task<IActionResult> Register(RegisterViewModel vm)
         {
             if (!ModelState.IsValid)
@@ -142,7 +142,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
         }
 
         [Authorize]
-        [HttpGet("/Settings")]
+        [HttpGet("/settings")]
         public async Task<IActionResult> SettingsGet()
         {
             var user = await userService.GetCurrentUser();
@@ -155,7 +155,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
         }
 
         [Authorize]
-        [HttpPost("/Settings")]
+        [HttpPost("/settings")]
         public async Task<IActionResult> SettingsPost(SettingsViewModel vm)
         {
             vm.ErrorMessage = vm.SuccessMessage = "";
@@ -166,12 +166,22 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
                 return View("Settings", vm);
             }
 
-            var error = await userService.ModifyCurrentUser(vm);
-            if (!string.IsNullOrEmpty(error))
+            var res = await userService.ModifyCurrentUser(vm);
+            if (!string.IsNullOrEmpty(res.Error))
             {
-                vm.ErrorMessage = error;
+                vm.ErrorMessage = res.Error;
                 return View("Settings", vm);
             }
+
+            if (!string.IsNullOrEmpty(res.BearerToken))
+            {
+                Response.Cookies.Append(JwtValidatorMiddleware.JWT_COOKIE_NAME, res.BearerToken, new CookieOptions()
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.UtcNow.AddDays(21)
+                });
+            }
+
 
             var user = await userService.GetCurrentUser();
             if (user == null)

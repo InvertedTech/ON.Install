@@ -23,9 +23,8 @@ message BackupAllDataResponse {
 }
 
 message ContentBackupDataRecord {
-  bytes ContentId = 1;    // Guid for the content record
-  ContentRecord Data = 2; // Structured content data, including both private and public data
-  bytes ExtraData = 3; // Generic byte structure to save all application specific data for content record
+  ContentRecord Data = 1; // Structured content data, including both private and public data
+  bytes ExtraData = 2; // Generic byte structure to save all application specific data for content record
 }
 
 message ExportContentRequest {}
