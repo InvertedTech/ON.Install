@@ -17,11 +17,26 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
+    - name: Docker Login
+      env:
+        DOCKER_USER: ${{secrets.DOCKER_USER}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    
     - name: Build amd64
       run: docker build src/ --file src/NodeF.Authentication/SimpleAuth/Service/Dockerfile-amd64 --tag nodefederation/simpleauth-service:linux-amd64
+    
+    - name: Push amd64
+      run: docker push nodefederation/simpleauth-service:linux-amd64
     
     - name: Build arm64
       run: docker build src/ --file src/NodeF.Authentication/SimpleAuth/Service/Dockerfile-arm64 --tag nodefederation/simpleauth-service:linux-arm64
     
+    - name: Push arm64
+      run: docker push nodefederation/simpleauth-service:linux-arm64
+    
     - name: Build arm32
       run: docker build src/ --file src/NodeF.Authentication/SimpleAuth/Service/Dockerfile-arm32 --tag nodefederation/simpleauth-service:linux-arm32
+    
+    - name: Push arm32
+      run: docker push nodefederation/simpleauth-service:linux-arm32
