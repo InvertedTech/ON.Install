@@ -1,0 +1,16 @@
+name: SimpleAuth-Service-arm64
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build src/ --file src/NodeF.Authentication/SimpleAuth/Service/Dockerfile-arm64 --tag nodefederation/simpleauth-service:arm64
