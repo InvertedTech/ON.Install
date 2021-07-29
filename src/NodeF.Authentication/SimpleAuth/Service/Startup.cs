@@ -16,6 +16,8 @@ namespace NodeF.Authentication.SimpleAuth.Service
 {
     public class Startup
     {
+        private static byte[] PONG_RESPONSE = { (byte)'p', (byte)'o', (byte)'n', (byte)'g' };
+
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
@@ -32,6 +34,10 @@ namespace NodeF.Authentication.SimpleAuth.Service
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.Map("/ping", (app1) => app1.Run(async context => {
+                await context.Response.BodyWriter.WriteAsync(PONG_RESPONSE);
+            }));
+
             app.UseRouting();
             //app.UseAuthentication();
             //app.UseAuthorization();

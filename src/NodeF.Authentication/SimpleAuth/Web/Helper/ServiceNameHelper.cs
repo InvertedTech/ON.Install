@@ -14,7 +14,9 @@ namespace NodeF.Authentication.SimpleAuth.Web.Helper
         public ServiceNameHelper(IConfiguration configuration)
         {
             var uri = configuration.GetServiceUri("authservice");
-            UserServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+
+            if (uri != null)
+                UserServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
         }
     }
 }

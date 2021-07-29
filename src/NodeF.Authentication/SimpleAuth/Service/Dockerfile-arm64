@@ -1,6 +1,7 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-alpine-arm64v8 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.8-buster-slim-arm64v8 AS base
 WORKDIR /app
 EXPOSE 80
+EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
@@ -19,4 +20,9 @@ RUN dotnet publish "NodeF.Authentication.SimpleAuth.Service.csproj" -c Release -
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=publish /app/publish .
+COPY assets/nodef.localhost.pfx .
+ENV ASPNETCORE_URLS=https://+:443;http://+:80
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=nodef
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/app/nodef.localhost.pfx
 ENTRYPOINT ["dotnet", "NodeF.Authentication.SimpleAuth.Service.dll"]

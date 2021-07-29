@@ -73,6 +73,9 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
 
         public async Task<UserRecord> GetCurrentUser()
         {
+            if (nameHelper.UserServiceChannel == null)
+                return null;
+
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.GetOwnUserAsync(new GetOwnUserRequest(), GetMetadata());
             return reply.Record;
