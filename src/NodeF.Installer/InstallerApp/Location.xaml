@@ -8,7 +8,12 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Location">
 
-    <Grid>
-        
-    </Grid>
+    <StackPanel>
+        <Label>Server IP address</Label>
+        <TextBox Text="{Binding Path=IP, Mode=TwoWay}" />
+        <Label>Server user name</Label>
+        <TextBox Text="{Binding Path=User, Mode=TwoWay}" />
+        <Label>SSH Private Key</Label>
+        <TextBox Text="{Binding Path=SSHPrivateKey, Mode=TwoWay}" />
+    </StackPanel>
 </Page>

@@ -9,9 +9,11 @@
       Title="Page1">
 
     <StackPanel>
-        <Label>Name</Label>
+        <Label>Website Name</Label>
         <TextBox Text="{Binding Path=Name, Mode=TwoWay}" />
         <Label>Description</Label>
         <TextBox Text="{Binding Path=Description, Mode=TwoWay}" />
+        <Label>Keywords (separated by commas)</Label>
+        <TextBox Text="{Binding Path=KeywordsWithCommas, Mode=TwoWay}" />
     </StackPanel>
 </Page>

@@ -32,7 +32,7 @@
             </ToolBar>
         </ToolBarTray>
         <StackPanel Orientation="Horizontal">
-            <StackPanel Width="200">
+            <StackPanel Width="200" Margin="10px">
                 <TreeView x:Name="treeNav">
                     <TreeViewItem Name="btnPersonalization" Header="Personalization" Selected="btnPersonalization_Click" IsSelected="True" />
                     <TreeViewItem Name="btnDNS" Header="DNS" Selected="btnDNS_Click" />
@@ -43,12 +43,12 @@
                         <TreeViewItem Name="btnMicroblog" Header="Microblog" Selected="btnMicroblog_Selected" />
                         <TreeViewItem Name="btnCommunity" Header="Community" Selected="btnCommunity_Selected" />
                     </TreeViewItem>
-                    <TreeViewItem Name="btnLocation" Header="Location" Selected="btnLocation_Selected" />
+                    <TreeViewItem Name="btnLocation" Header="Server Location" Selected="btnLocation_Selected" />
                     <TreeViewItem Name="btnBackup" Header="Backup" Selected="btnBackup_Selected" />
                     <TreeViewItem Name="btnCredentials" Header="Credentials" Selected="btnCredentials_Selected" />
                 </TreeView>
             </StackPanel>
-            <Frame x:Name="frmMain" Source="Personalization.xaml" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" />
+            <Frame x:Name="frmMain" Source="Personalization.xaml" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" Margin="0px 10px 10px 10px" />
         </StackPanel>
     </StackPanel>
 </Window>

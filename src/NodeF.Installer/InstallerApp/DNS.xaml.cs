@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NodeF.Installer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,11 +19,17 @@ namespace InstallerApp
     /// <summary>
     /// Interaction logic for Page2.xaml
     /// </summary>
-    public partial class Page2 : Page
+    public partial class DNS : Page
     {
-        public Page2()
+        public DNSModel MyModel { get; set; }
+
+        public DNS()
         {
+            MyModel = MainWindow.MainModel.DNS;
+
             InitializeComponent();
+
+            DataContext = MyModel;
         }
     }
 }

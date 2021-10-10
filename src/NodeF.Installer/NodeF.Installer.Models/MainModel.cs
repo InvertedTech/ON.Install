@@ -2,19 +2,10 @@
 
 namespace NodeF.Installer.Models
 {
-    public class MainModel : IChangeTracking
+    public class MainModel
     {
-        public PersonalizationModel Personalization { get; set; }
-
-        public bool IsChanged
-        {
-            get;
-            private set;
-        }
-
-        public void AcceptChanges()
-        {
-            IsChanged = false;
-        }
+        public DNSModel DNS { get; set; } = new();
+        public PersonalizationModel Personalization { get; set; } = new();
+        public ServerModel Server { get; set; } = new();
     }
 }

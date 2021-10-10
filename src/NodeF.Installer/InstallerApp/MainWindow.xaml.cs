@@ -2,8 +2,11 @@
 using NodeF.Installer.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +26,7 @@ namespace InstallerApp
     public partial class MainWindow : Window
     {
         public static MainModel MainModel { get; set; }
+        public string CurrentFileName = null;
 
         const string FILE_FILTER = "Node Config File (*.ncfgx)|*.ncfgx";
 
@@ -30,23 +34,29 @@ namespace InstallerApp
 
         public MainWindow()
         {
-            LoadMainModel();
+            LoadMainModel(null);
 
             InitializeComponent();
 
             GetNavItems();
         }
 
-        private void LoadMainModel()
+        private void LoadMainModel(string fileName)
         {
-            MainModel = new MainModel()
+            if (File.Exists(fileName))
             {
-                Personalization = new PersonalizationModel()
+                try
                 {
-                    Name = "asdf",
-                    Description = "fdsa"
+                    var json = File.ReadAllText(fileName);
+                    MainModel = JsonSerializer.Deserialize<MainModel>(json);
+                    return;
                 }
-            };
+                catch
+                {
+                    MessageBox.Show("Unable to parse and load file!");
+                }
+            }
+            MainModel = new MainModel();
         }
 
         private void GetNavItems()
@@ -80,7 +90,8 @@ namespace InstallerApp
             saveFileDialog.Filter = FILE_FILTER;
             if (saveFileDialog.ShowDialog() == true)
             {
-                MessageBox.Show(saveFileDialog.FileName);
+                CurrentFileName = saveFileDialog.FileName;
+                LoadMainModel(null);
             }
         }
 
@@ -95,7 +106,9 @@ namespace InstallerApp
             openFileDialog.Filter = FILE_FILTER;
             if (openFileDialog.ShowDialog() == true)
             {
-                MessageBox.Show(openFileDialog.FileName);
+                CurrentFileName = openFileDialog.FileName;
+                LoadMainModel(CurrentFileName);
+                frmMain.Refresh();
             }
         }
 
@@ -106,7 +119,11 @@ namespace InstallerApp
 
         void SaveCmdExecuted(object target, ExecutedRoutedEventArgs e)
         {
-            MessageBox.Show("Save it!");
+            var json = JsonSerializer.Serialize(MainModel);
+
+            File.WriteAllText(CurrentFileName, json);
+
+            MessageBox.Show("File saved.");
         }
 
         void SaveCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)

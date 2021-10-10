@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NodeF.Installer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,15 @@ namespace InstallerApp
     /// </summary>
     public partial class Location : Page
     {
+        public ServerModel MyModel { get; set; }
+
         public Location()
         {
+            MyModel = MainWindow.MainModel.Server;
+
             InitializeComponent();
+
+            DataContext = MyModel;
         }
     }
 }

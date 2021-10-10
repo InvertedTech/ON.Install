@@ -8,5 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Payments">
 
-    <Grid></Grid>
+    <StackPanel>
+        <Label>To do</Label>
+    </StackPanel>
 </Page>
