@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using NodeF.Authentication.SimpleAuth.Web.Helper;
 using NodeF.Authentication.SimpleAuth.Web.Models;
 using NodeF.Fragments.Authentcation;
@@ -12,11 +13,14 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
 {
     public class UserService
     {
+        private readonly ILogger<UserService> logger;
         private readonly ServiceNameHelper nameHelper;
         public readonly NodeUser User;
 
-        public UserService(ServiceNameHelper nameHelper, UserHelper userHelper)
+        public UserService(ServiceNameHelper nameHelper, UserHelper userHelper, ILogger<UserService> logger)
         {
+            this.logger = logger;
+
             User = userHelper.MyUser;
 
             this.nameHelper = nameHelper;
@@ -75,6 +79,10 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
         {
             if (nameHelper.UserServiceChannel == null)
                 return null;
+
+            logger.LogWarning($"******Trying to connect to AuthService at:({nameHelper.UserServiceChannel.Target})******");
+            logger.LogWarning($"******Trying to connect to AuthService at:({nameHelper.UserServiceChannel.ResolvedTarget})******");
+
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.GetOwnUserAsync(new GetOwnUserRequest(), GetMetadata());

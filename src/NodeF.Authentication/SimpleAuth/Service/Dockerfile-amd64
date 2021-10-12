@@ -1,7 +1,6 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim-amd64 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.8-buster-slim-amd64 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
@@ -19,7 +18,8 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY assets/nodef.localhost.pfx .
-ENV ASPNETCORE_URLS=https://+:443;http://+:80
+RUN rm appsettings.Development.json
+ENV ASPNETCORE_URLS=http://+:80
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password=nodef
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/app/nodef.localhost.pfx
 ENTRYPOINT ["dotnet", "NodeF.Authentication.SimpleAuth.Service.dll"]
