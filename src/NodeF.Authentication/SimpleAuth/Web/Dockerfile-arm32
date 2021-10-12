@@ -17,5 +17,4 @@ RUN dotnet publish "NodeF.Authentication.SimpleAuth.Web.csproj" -c Release -o /a
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-RUN rm -f appsettings.Development.json
 ENTRYPOINT ["dotnet", "NodeF.Authentication.SimpleAuth.Web.dll"]

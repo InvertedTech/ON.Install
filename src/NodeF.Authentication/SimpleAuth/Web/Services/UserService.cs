@@ -80,8 +80,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
             if (nameHelper.UserServiceChannel == null)
                 return null;
 
-            logger.LogWarning($"******Trying to connect to AuthService at:({nameHelper.UserServiceChannel.Target})******");
-            logger.LogWarning($"******Trying to connect to AuthService at:({nameHelper.UserServiceChannel.ResolvedTarget})******");
+            logger.LogWarning($"******Trying to hopefully connect to AuthService at:({nameHelper.UserServiceChannel.Target})******");
 
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);

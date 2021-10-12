@@ -16,8 +16,6 @@ namespace NodeF.Authentication.SimpleAuth.Web.Helper
         {
             var uri = configuration.GetServiceUri("authservice");
 
-            logger.LogWarning($"******Trying to connect to AuthService at:({uri.ToString()})******");
-
             if (uri != null)
                 UserServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
         }
