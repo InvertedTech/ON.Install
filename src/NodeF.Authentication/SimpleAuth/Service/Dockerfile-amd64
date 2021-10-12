@@ -18,7 +18,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY assets/nodef.localhost.pfx .
-RUN rm appsettings.Development.json
+RUN rm appsettings.Development.json; exit 0
 ENV ASPNETCORE_URLS=http://+:80
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password=nodef
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/app/nodef.localhost.pfx
