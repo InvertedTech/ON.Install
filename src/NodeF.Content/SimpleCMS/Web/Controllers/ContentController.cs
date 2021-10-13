@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,6 +14,7 @@ using NodeF.Content.SimpleCMS.Web.Services;
 
 namespace NodeF.Content.SimpleCMS.Web.Controllers
 {
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class ContentController : Controller
     {
         private readonly ILogger<HomeController> logger;
@@ -26,6 +28,7 @@ namespace NodeF.Content.SimpleCMS.Web.Controllers
             this.userHelper = userHelper;
         }
 
+        [AllowAnonymous]
         [HttpGet("/content/{id}")]
         public async Task<IActionResult> Get(string id)
         {
@@ -144,6 +147,7 @@ namespace NodeF.Content.SimpleCMS.Web.Controllers
             return Redirect("/content/manage");
         }
 
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

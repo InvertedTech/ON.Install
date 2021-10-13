@@ -16,6 +16,12 @@ ingress:
     - path: /login
       service: authweb
       preservePath: true
+    - path: /logout
+      service: authweb
+      preservePath: true
+    - path: /register
+      service: authweb
+      preservePath: true
     - path: /settings
       service: authweb
       preservePath: true
