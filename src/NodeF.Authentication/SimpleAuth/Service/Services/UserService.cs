@@ -1,4 +1,5 @@
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NodeF.Authentication.SimpleAuth.Service.Data;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace NodeF.Authentication.SimpleAuth.Service.Services
 {
+    [Authorize]
     public class UserService : UserInterface.UserInterfaceBase
     {
         private readonly ILogger<ServiceOpsService> logger;
@@ -27,9 +29,10 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
             this.logger = logger;
             this.dataProvider = dataProvider;
 
-            creds = new SigningCredentials(JwtValidatorMiddleware.GetPrivateKey(), SecurityAlgorithms.EcdsaSha256);
+            creds = new SigningCredentials(JwtExtensions.GetPrivateKey(), SecurityAlgorithms.EcdsaSha256);
         }
 
+        [AllowAnonymous]
         public override async Task<AuthenticatUserResponse> AuthenticatUser(AuthenticatUserRequest request, ServerCallContext context)
         {
             if (string.IsNullOrWhiteSpace(request.UserName) || string.IsNullOrWhiteSpace(request.Password))
@@ -53,7 +56,7 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
         {
             try
             {
-                var userToken = context.GetHttpContext().User as NodeUser;
+                var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
                 if (userToken == null)
                     return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ErrorType.UnknownError };
 
@@ -82,6 +85,7 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
             }
         }
 
+        [AllowAnonymous]
         public override async Task<CreateUserResponse> CreateUser(CreateUserRequest request, ServerCallContext context)
         {
             var user = request.Record;
@@ -124,7 +128,7 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
 
         public override async Task<GetOwnUserResponse> GetOwnUser(GetOwnUserRequest request, ServerCallContext context)
         {
-            var userToken = context.GetHttpContext().User as NodeUser;
+            var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
                 return new GetOwnUserResponse();
 
@@ -138,7 +142,7 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
         {
             try
             {
-                var userToken = context.GetHttpContext().User as NodeUser;
+                var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
                 if (userToken == null)
                     return new ModifyOwnUserResponse() { Error = "No user token specified" };
 

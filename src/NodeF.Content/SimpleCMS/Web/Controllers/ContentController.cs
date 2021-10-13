@@ -19,9 +19,9 @@ namespace NodeF.Content.SimpleCMS.Web.Controllers
     {
         private readonly ILogger<HomeController> logger;
         private readonly ContentService contentService;
-        private readonly UserHelper userHelper;
+        private readonly NodeUserHelper userHelper;
 
-        public ContentController(ILogger<HomeController> logger, ContentService contentService, UserHelper userHelper)
+        public ContentController(ILogger<HomeController> logger, ContentService contentService, NodeUserHelper userHelper)
         {
             this.logger = logger;
             this.contentService = contentService;

@@ -5,6 +5,14 @@
 #    https://aka.ms/AA7q20u
 #
 name: SimplAuth
+ingress:
+- name: ingress
+  bindings:
+    - port: 8080
+  rules:
+    - path: /
+      service: authweb
+      preservePath: true
 services:
 - name: authweb
   project: Web/NodeF.Authentication.SimpleAuth.Web.csproj

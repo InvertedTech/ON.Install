@@ -30,6 +30,8 @@ namespace NodeF.Content.SimpleCMS.Service
             services.AddGrpc();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IContentDataProvider, FileSystemContentDataProvider>();
+
+            services.AddJwtAuthentication();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,7 +39,7 @@ namespace NodeF.Content.SimpleCMS.Service
         {
             app.UseRouting();
 
-            app.UseMiddleware<JwtValidatorMiddleware>();
+            app.UseJwtAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

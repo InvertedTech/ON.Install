@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,9 +31,11 @@ namespace NodeF.Authentication.SimpleAuth.Web
             services.AddHttpContextAccessor();
             services.AddControllersWithViews();
 
-            services.AddScoped<UserHelper>();
+            services.AddScoped<NodeUserHelper>();
             services.AddScoped<UserService>();
             services.AddSingleton<ServiceNameHelper>();
+
+            services.AddJwtAuthentication();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,7 +57,7 @@ namespace NodeF.Authentication.SimpleAuth.Web
 
             app.UseRouting();
 
-            app.UseMiddleware<JwtValidatorMiddleware>();
+            app.UseJwtAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using NodeF.Authentication.SimpleAuth.Web.Services;
 
 namespace NodeF.Authentication.SimpleAuth.Web.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> logger;
@@ -27,7 +29,6 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
             return RedirectToAction(nameof(SettingsGet));
         }
 
-        [Authorize]
         [HttpGet("/changepassword")]
         public IActionResult ChangePasswordGet()
         {
@@ -36,7 +37,6 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
             return View("ChangePassword", vm);
         }
 
-        [Authorize]
         [HttpPost("/changepassword")]
         public async Task<IActionResult> ChangePasswordPost(ChangePasswordViewModel vm)
         {
@@ -66,12 +66,14 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("/login")]
         public IActionResult LoginGet()
         {
             return View("Login");
         }
 
+        [AllowAnonymous]
         [HttpPost("/login")]
         public async Task<IActionResult> LoginPost(LoginViewModel vm)
         {
@@ -89,7 +91,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
                 return View("Login", vm);
             }
 
-            Response.Cookies.Append(JwtValidatorMiddleware.JWT_COOKIE_NAME, token, new CookieOptions()
+            Response.Cookies.Append(JwtExtensions.JWT_COOKIE_NAME, token, new CookieOptions()
             {
                 HttpOnly = true,
                 Expires = DateTimeOffset.UtcNow.AddDays(21)
@@ -97,20 +99,22 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
             return RedirectToAction(nameof(SettingsGet));
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpGet("/logout")]
         public IActionResult Logout()
         {
-            Response.Cookies.Delete(JwtValidatorMiddleware.JWT_COOKIE_NAME);
+            Response.Cookies.Delete(JwtExtensions.JWT_COOKIE_NAME);
             return RedirectToAction(nameof(LoginGet));
         }
 
+        [AllowAnonymous]
         [HttpGet("/register")]
         public IActionResult RegisterGet()
         {
             return View("Register");
         }
 
+        [AllowAnonymous]
         [HttpPost("/register")]
         public async Task<IActionResult> Register(RegisterViewModel vm)
         {
@@ -134,14 +138,13 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
                 return View(vm);
             }
 
-            Response.Cookies.Append(JwtValidatorMiddleware.JWT_COOKIE_NAME, res.BearerToken, new CookieOptions()
+            Response.Cookies.Append(JwtExtensions.JWT_COOKIE_NAME, res.BearerToken, new CookieOptions()
             {
                 HttpOnly = true
             });
             return RedirectToAction(nameof(SettingsGet));
         }
 
-        [Authorize]
         [HttpGet("/settings")]
         public async Task<IActionResult> SettingsGet()
         {
@@ -154,7 +157,6 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
             return View("Settings", vm);
         }
 
-        [Authorize]
         [HttpPost("/settings")]
         public async Task<IActionResult> SettingsPost(SettingsViewModel vm)
         {
@@ -175,7 +177,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
 
             if (!string.IsNullOrEmpty(res.BearerToken))
             {
-                Response.Cookies.Append(JwtValidatorMiddleware.JWT_COOKIE_NAME, res.BearerToken, new CookieOptions()
+                Response.Cookies.Append(JwtExtensions.JWT_COOKIE_NAME, res.BearerToken, new CookieOptions()
                 {
                     HttpOnly = true,
                     Expires = DateTimeOffset.UtcNow.AddDays(21)
@@ -195,6 +197,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
             return View("Settings", vm);
         }
 
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

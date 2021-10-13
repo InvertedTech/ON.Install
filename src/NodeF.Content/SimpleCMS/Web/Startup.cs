@@ -28,11 +28,11 @@ namespace NodeF.Content.SimpleCMS.Web
             services.AddHttpContextAccessor();
             services.AddControllersWithViews();
 
-            services.AddScoped<UserHelper>();
+            services.AddScoped<NodeUserHelper>();
             services.AddScoped<ContentService>();
             services.AddSingleton<ServiceNameHelper>();
 
-            services.UseTokenAuthentication();
+            services.AddJwtAuthentication();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,10 +50,7 @@ namespace NodeF.Content.SimpleCMS.Web
 
             app.UseRouting();
 
-            //app.UseMiddleware<JwtValidatorMiddleware>();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseJwtAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

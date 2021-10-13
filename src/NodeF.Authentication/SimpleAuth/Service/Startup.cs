@@ -30,6 +30,8 @@ namespace NodeF.Authentication.SimpleAuth.Service
             services.AddGrpc();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IUserDataProvider, FileSystemUserDataProvider>();
+
+            services.AddJwtAuthentication();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -42,7 +44,9 @@ namespace NodeF.Authentication.SimpleAuth.Service
             //app.UseAuthentication();
             //app.UseAuthorization();
 
-            app.UseMiddleware<JwtValidatorMiddleware>();
+            //app.UseMiddleware<JwtValidatorMiddleware>();
+
+            app.UseJwtAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

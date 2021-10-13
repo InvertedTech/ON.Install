@@ -18,7 +18,7 @@ namespace NodeF.Content.SimpleCMS.Web.Services
         private readonly ServiceNameHelper nameHelper;
         public readonly NodeUser User;
 
-        public ContentService(ServiceNameHelper nameHelper, UserHelper userHelper)
+        public ContentService(ServiceNameHelper nameHelper, NodeUserHelper userHelper)
         {
             User = userHelper.MyUser;
 

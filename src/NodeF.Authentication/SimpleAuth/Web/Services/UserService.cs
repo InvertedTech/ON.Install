@@ -17,7 +17,7 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
         private readonly ServiceNameHelper nameHelper;
         public readonly NodeUser User;
 
-        public UserService(ServiceNameHelper nameHelper, UserHelper userHelper, ILogger<UserService> logger)
+        public UserService(ServiceNameHelper nameHelper, NodeUserHelper userHelper, ILogger<UserService> logger)
         {
             this.logger = logger;
 
@@ -25,6 +25,8 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
 
             this.nameHelper = nameHelper;
         }
+
+        public bool IsLoggedIn { get => User != null; }
 
         public async Task<string> AuthenticateUser(string loginName, string password)
         {
@@ -77,6 +79,9 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
 
         public async Task<UserRecord> GetCurrentUser()
         {
+            if (!IsLoggedIn)
+                return null;
+
             if (nameHelper.UserServiceChannel == null)
                 return null;
 
@@ -90,6 +95,9 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
 
         public async Task<ModifyOwnUserResponse> ModifyCurrentUser(SettingsViewModel vm)
         {
+            if (!IsLoggedIn)
+                return null;
+
             var req = new ModifyOwnUserRequest()
             {
                 DisplayName = vm.DisplayName,

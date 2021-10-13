@@ -38,7 +38,7 @@ namespace NodeF.Authentication
                 yield return c;
         }
 
-        internal static NodeUser Parse(IEnumerable<Claim> claims)
+        public static NodeUser Parse(IEnumerable<Claim> claims)
         {
             if (claims == null)
                 return null;
