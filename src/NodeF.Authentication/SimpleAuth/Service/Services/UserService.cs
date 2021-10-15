@@ -8,6 +8,7 @@ using NodeF.Fragments.Generic;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -250,6 +251,8 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
                 DisplayName = user.Public.DisplayName,
             };
             node.Idents.AddRange(user.Public.Identities);
+
+            node.ExtraClaims.Add(new Claim(ClaimTypes.Role, "Admin"));
 
             return GenerateToken(node);
         }

@@ -46,6 +46,8 @@ namespace NodeF.Authentication
 
                 if (res.StatusCode == (int)HttpStatusCode.Unauthorized)
                     res.Redirect("/login");
+                if (res.StatusCode == (int)HttpStatusCode.Forbidden)
+                    res.Redirect("/login");
 
                 return Task.CompletedTask;
             });
