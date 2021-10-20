@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - NodeF.Content.SimpleCMS.Web</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
     <header>
@@ -18,8 +19,13 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="/">Home</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/content/manage">Manage Articles</a>
+                            @if (userHelper.IsLoggedIn)
+                            {
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/settings">User Profile</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/content/manage">Manage Articles</a>
+                            }
                         </div>
                     </li>
                 </ul>
@@ -33,18 +39,15 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (!userHelper.IsLoggedIn)
                         {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="login" asp-action="">Login</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="login" asp-action="">Login</a>
+                            </li>
                         }
                         else
                         {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="settings" asp-action="">Settings</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="logout" asp-action="">Logout</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="logout" asp-action="">Logout</a>
+                            </li>
                         }
                     </ul>
                 </div>
@@ -59,7 +62,8 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2021 - NodeF.Content.SimpleCMS.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2021 - Simple Web -
+            Made with love by <a href="https://opennetworkfoundation.org">Open Network Foundation</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

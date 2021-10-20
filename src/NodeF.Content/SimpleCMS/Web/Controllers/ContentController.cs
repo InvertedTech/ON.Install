@@ -116,7 +116,7 @@ namespace NodeF.Content.SimpleCMS.Web.Controllers
             rec.Public.Title = vm.Title;
             rec.Public.Subtitle = vm.Subtitle;
             rec.Public.Author = vm.Author;
-            rec.Public.Body = vm.Body;
+            rec.Public.Body = vm.Body ?? "";
 
             var res2 = await contentService.UpdateContent(rec);
 

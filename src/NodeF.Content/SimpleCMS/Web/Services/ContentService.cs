@@ -37,7 +37,7 @@ namespace NodeF.Content.SimpleCMS.Web.Services
                         Title = vm.Title,
                         Subtitle = vm.Subtitle,
                         Author = vm.Author,
-                        Body = vm.Body,
+                        Body = vm.Body ?? "",
                         CreatedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow),
                     },
                     Private = new ContentRecord.Types.PrivateData
