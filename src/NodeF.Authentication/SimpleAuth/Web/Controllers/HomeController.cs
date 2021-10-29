@@ -94,7 +94,8 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
             Response.Cookies.Append(JwtExtensions.JWT_COOKIE_NAME, token, new CookieOptions()
             {
                 HttpOnly = true,
-                Expires = DateTimeOffset.UtcNow.AddDays(21)
+                Expires = DateTimeOffset.UtcNow.AddDays(21),
+                IsEssential = true,
             });
             return RedirectToAction(nameof(SettingsGet));
         }

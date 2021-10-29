@@ -12,6 +12,9 @@ namespace NodeF.Authentication
         public Guid Id { get; set; } = Guid.Empty;
         public const string IdType = "Id";
 
+        public string UserName { get; set; } = "";
+        public const string UserNameType = "sub";
+
         public string DisplayName { get; set; } = "";
         public const string DisplayNameType = "Display";
 
@@ -27,6 +30,9 @@ namespace NodeF.Authentication
         {
             if (Id != Guid.Empty)
                 yield return new Claim(IdType, Id.ToString());
+
+            if (!string.IsNullOrWhiteSpace(UserName))
+                yield return new Claim(UserNameType, UserName);
 
             if (!string.IsNullOrWhiteSpace(DisplayName))
                 yield return new Claim(DisplayNameType, DisplayName);
@@ -65,6 +71,9 @@ namespace NodeF.Authentication
             {
                 case IdType:
                     Id = Guid.Parse(claim.Value);
+                    return;
+                case UserNameType:
+                    UserName = claim.Value;
                     return;
                 case DisplayNameType:
                     DisplayName = claim.Value;

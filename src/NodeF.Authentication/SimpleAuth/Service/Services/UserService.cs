@@ -248,10 +248,11 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
             var node = new NodeUser()
             {
                 Id = new Guid(user.Public.UserID.Span),
+                UserName = user.Public.UserName,
                 DisplayName = user.Public.DisplayName,
             };
-            node.Idents.AddRange(user.Public.Identities);
 
+            node.Idents.AddRange(user.Public.Identities);
             node.ExtraClaims.Add(new Claim(ClaimTypes.Role, "Admin"));
 
             return GenerateToken(node);
