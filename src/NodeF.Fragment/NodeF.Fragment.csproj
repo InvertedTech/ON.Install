@@ -10,6 +10,7 @@
     <None Remove="Protos\NodeF\Fragments\Authentication\UserRecord.proto" />
     <None Remove="Protos\NodeF\Fragments\Authorization\Backup.proto" />
     <None Remove="Protos\NodeF\Fragments\Authorization\Claims.proto" />
+    <None Remove="Protos\NodeF\Fragments\Authorization\Payments.proto" />
     <None Remove="Protos\NodeF\Fragments\Content\AssetRecord.proto" />
     <None Remove="Protos\NodeF\Fragments\Content\Backup.proto" />
     <None Remove="Protos\NodeF\Fragments\Content\Content.proto" />
@@ -22,6 +23,7 @@
     <Protobuf Include="Protos\NodeF\Fragments\Authentication\Backup.proto" />
     <Protobuf Include="Protos\NodeF\Fragments\Authentication\UserRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\NodeF\Fragments\Authorization\Backup.proto" />
+    <Protobuf Include="Protos\NodeF\Fragments\Authorization\Payments.proto" />
     <Protobuf Include="Protos\NodeF\Fragments\Authorization\Claims.proto" />
     <Protobuf Include="Protos\NodeF\Fragments\Content\AssetRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\NodeF\Fragments\Content\ContentRecord.proto" GrpcServices="None" />

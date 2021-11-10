@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package NodeF.Fragments.Authorization;
+
+import "google/protobuf/timestamp.proto";
+
+service PaymentsInterface {
+  rpc GetOwnPaymentRecord (GetOwnPaymentRecordRequest) returns (GetOwnPaymentRecordResponse) {}
+  rpc GetAllOwnPaymentRecords (GetOwnPaymentRecordRequest) returns (GetAllOwnPaymentRecordsResponse) {}
+  rpc ChangeOwnPaymentRecord (ChangeOwnPaymentRecordRequest) returns (ChangeOwnPaymentRecordResponse) {}
+}
+  
+// User claim's record
+message PaymentRecord {
+  bytes UserID = 1; // Guid for the user
+  float Level = 2;
+  google.protobuf.Timestamp ChangedOnUTC = 3;
+}
+
+message GetOwnPaymentRecordRequest {
+}
+  
+message GetOwnPaymentRecordResponse {
+  PaymentRecord Record = 1;
+}
+  
+message GetAllOwnPaymentRecordsResponse {
+  repeated PaymentRecord Records = 1;
+}
+  
+message ChangeOwnPaymentRecordRequest {
+  float Level = 1;
+}
+  
+message ChangeOwnPaymentRecordResponse {
+  PaymentRecord Record = 1;
+  string Error = 2;
+}
