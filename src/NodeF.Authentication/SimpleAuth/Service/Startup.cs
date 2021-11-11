@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodeF.Authentication.SimpleAuth.Service.Data;
+using NodeF.Authentication.SimpleAuth.Service.Helper;
 using NodeF.Authentication.SimpleAuth.Service.Models;
 using NodeF.Authentication.SimpleAuth.Service.Services;
 using System;
@@ -30,6 +31,8 @@ namespace NodeF.Authentication.SimpleAuth.Service
             services.AddGrpc();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IUserDataProvider, FileSystemUserDataProvider>();
+            services.AddScoped<ClaimsClient>();
+            services.AddSingleton<ServiceNameHelper>();
 
             services.AddJwtAuthentication();
         }
@@ -41,10 +44,6 @@ namespace NodeF.Authentication.SimpleAuth.Service
             }));
 
             app.UseRouting();
-            //app.UseAuthentication();
-            //app.UseAuthorization();
-
-            //app.UseMiddleware<JwtValidatorMiddleware>();
 
             app.UseJwtAuthentication();
 

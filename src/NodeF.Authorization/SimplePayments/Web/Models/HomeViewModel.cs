@@ -13,11 +13,11 @@ namespace NodeF.Authorization.SimplePayments.Web.Models
     {
         public HomeViewModel() { }
 
-        public HomeViewModel(IEnumerable<ContentRecord> records)
+        public HomeViewModel(NodeUser user)
         {
-            Records.AddRange(records);
+            SubscriptionLevelLabel = CurrencyLevel.GetLabelFromValue(user.SubscriptionLevel);
         }
 
-        public List<ContentRecord> Records { get; } = new List<ContentRecord>();
+        public string SubscriptionLevelLabel { get; set; } = "None";
     }
 }

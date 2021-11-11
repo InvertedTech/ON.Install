@@ -18,6 +18,9 @@ namespace NodeF.Authentication
 
         public static void AddJwtAuthentication(this IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+            services.AddScoped<NodeUserHelper>();
+
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

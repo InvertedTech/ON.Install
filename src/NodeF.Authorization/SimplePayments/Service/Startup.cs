@@ -30,7 +30,7 @@ namespace NodeF.Authorization.SimplePayments.Service
         {
             services.AddGrpc();
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddSingleton<IPaymentRecordProvider, FileSystemPaymentRecordProvider>();
+            services.AddSingleton<ISubscriptionRecordProvider, FileSystemSubscriptionRecordProvider>();
 
             services.AddJwtAuthentication();
         }
@@ -48,8 +48,9 @@ namespace NodeF.Authorization.SimplePayments.Service
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<ServiceOpsService>();
+                endpoints.MapGrpcService<ClaimsService>();
                 endpoints.MapGrpcService<PaymentsService>();
+                endpoints.MapGrpcService<ServiceOpsService>();
 
                 endpoints.MapGet("/", async context =>
                 {

@@ -16,9 +16,9 @@ namespace NodeF.Authorization.SimplePayments.Web.Models
         {
         }
 
-        public ChangeViewModel(decimal level)
+        public ChangeViewModel(int level)
         {
-            var l = CurrencyLevel.FromValue(level);
+            var l = CurrencyLevel.FromValue((uint)level);
             if (l != null)
             {
                 Level = level;
@@ -32,13 +32,13 @@ namespace NodeF.Authorization.SimplePayments.Web.Models
 
         [Display(Name = "Subscription Amount")]
         [DataType(DataType.Currency)]
-        public decimal Level { get; set; }
+        public int Level { get; set; }
 
         [Display(Name = "Other Amount")]
         [DataType(DataType.Currency)]
-        public decimal LevelOther { get; set; }
+        public int LevelOther { get; set; }
 
-        public decimal LevelCombined
+        public uint LevelCombined
         {
             get
             {
@@ -46,17 +46,17 @@ namespace NodeF.Authorization.SimplePayments.Web.Models
                 {
                     if (LevelOther < 1)
                         return 0;
-                    return LevelOther;
+                    return (uint)LevelOther;
                 }
 
                 if (Level < 1)
                     return 0;
 
-                var l = CurrencyLevel.FromValue(Level);
+                var l = CurrencyLevel.FromValue((uint)Level);
                 if (l == null)
                     return 0;
 
-                return l.Value;
+                return (uint)l.Value;
             }
         }
 
@@ -81,7 +81,7 @@ namespace NodeF.Authorization.SimplePayments.Web.Models
                 return false;
             }
 
-            var l = CurrencyLevel.FromValue(Level);
+            var l = CurrencyLevel.FromValue((uint)Level);
             if (l == null)
             {
                 ErrorMessage = "Subscription amount is not valid";

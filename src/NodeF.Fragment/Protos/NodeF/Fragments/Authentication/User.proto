@@ -20,6 +20,9 @@ service UserInterface {
 
   // Modify User record
   rpc ModifyOwnUser (ModifyOwnUserRequest) returns (ModifyOwnUserResponse) {}
+
+  // Renew the bearer token
+  rpc RenewToken (RenewTokenRequest) returns (RenewTokenResponse) {}
 }
   
 message AuthenticatUserRequest {
@@ -79,4 +82,11 @@ message ModifyOwnUserRequest {
 message ModifyOwnUserResponse {
   string Error = 1;
   string BearerToken = 2;
+}
+
+message RenewTokenRequest {
+}
+  
+message RenewTokenResponse {
+  string BearerToken = 1;
 }

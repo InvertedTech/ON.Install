@@ -16,24 +16,26 @@ namespace NodeF.Authorization.SimplePayments.Web.Controllers
     {
         private readonly ILogger<SubscriptionController> logger;
         private readonly PaymentsService paymentsService;
+        private readonly NodeUserHelper userHelper;
 
-        public SubscriptionController(ILogger<SubscriptionController> logger , PaymentsService paymentsService)
+        public SubscriptionController(ILogger<SubscriptionController> logger, PaymentsService paymentsService, NodeUserHelper userHelper)
         {
             this.logger = logger;
             this.paymentsService = paymentsService;
+            this.userHelper = userHelper;
         }
 
         [HttpGet()]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View("Home", new HomeViewModel());
+            return View("Home", new HomeViewModel(userHelper.MyUser));
         }
 
         [HttpGet("/subscription/change")]
         public async Task<IActionResult> ChangeGet()
         {
             var rec = await paymentsService.GetCurrentRecord();
-            return View("Change", new ChangeViewModel((decimal)(rec?.Level ?? 0)));
+            return View("Change", new ChangeViewModel((int)(rec?.Level ?? 0)));
         }
 
         [HttpPost("/subscription/change")]
@@ -42,9 +44,9 @@ namespace NodeF.Authorization.SimplePayments.Web.Controllers
             if (!vm.Validate())
                 return View("Change", vm);
 
-            await paymentsService.ChangeCurrentPaymentLevel(vm.LevelCombined);
+            await paymentsService.ChangeCurrentSubscriptionLevel(vm.LevelCombined);
 
-            return Redirect("/subscription/change");
+            return Redirect("/settings/refreshtoken?url=/subscription/");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

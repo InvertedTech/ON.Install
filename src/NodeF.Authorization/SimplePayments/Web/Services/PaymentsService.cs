@@ -27,7 +27,7 @@ namespace NodeF.Authorization.SimplePayments.Web.Services
 
         public bool IsLoggedIn { get => User != null; }
 
-        public async Task<PaymentRecord> GetCurrentRecord()
+        public async Task<SubscriptionRecord> GetCurrentRecord()
         {
             if (!IsLoggedIn)
                 return null;
@@ -39,11 +39,11 @@ namespace NodeF.Authorization.SimplePayments.Web.Services
 
 
             var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentsServiceChannel);
-            var reply = await client.GetOwnPaymentRecordAsync(new GetOwnPaymentRecordRequest(), GetMetadata());
+            var reply = await client.GetOwnSubscriptionRecordAsync(new GetOwnSubscriptionRecordRequest(), GetMetadata());
             return reply.Record;
         }
 
-        public async Task<IEnumerable<PaymentRecord>> GetAllCurrentRecord()
+        public async Task<IEnumerable<SubscriptionRecord>> GetAllCurrentRecord()
         {
             if (!IsLoggedIn)
                 return null;
@@ -55,22 +55,22 @@ namespace NodeF.Authorization.SimplePayments.Web.Services
 
 
             var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentsServiceChannel);
-            var reply = await client.GetAllOwnPaymentRecordsAsync(new GetOwnPaymentRecordRequest(), GetMetadata());
+            var reply = await client.GetAllOwnSubscriptionRecordsAsync(new GetOwnSubscriptionRecordRequest(), GetMetadata());
             return reply.Records;
         }
 
-        public async Task<ChangeOwnPaymentRecordResponse> ChangeCurrentPaymentLevel(decimal level)
+        public async Task<ChangeOwnSubscriptionRecordResponse> ChangeCurrentSubscriptionLevel(uint level)
         {
             if (!IsLoggedIn)
                 return null;
 
-            var req = new ChangeOwnPaymentRecordRequest()
+            var req = new ChangeOwnSubscriptionRecordRequest()
             {
-                Level = (float)level
+                Level = level
             };
 
             var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentsServiceChannel);
-            var reply = await client.ChangeOwnPaymentRecordAsync(req, GetMetadata());
+            var reply = await client.ChangeOwnSubscriptionRecordAsync(req, GetMetadata());
             return reply;
         }
 

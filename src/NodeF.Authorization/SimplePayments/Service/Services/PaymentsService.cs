@@ -12,66 +12,66 @@ namespace NodeF.Authorization.SimplePayments.Service
     public class PaymentsService : PaymentsInterface.PaymentsInterfaceBase
     {
         private readonly ILogger<PaymentsService> logger;
-        private readonly IPaymentRecordProvider paymentProvider;
+        private readonly ISubscriptionRecordProvider subscriptionProvider;
 
-        public PaymentsService(ILogger<PaymentsService> logger, IPaymentRecordProvider paymentProvider)
+        public PaymentsService(ILogger<PaymentsService> logger, ISubscriptionRecordProvider subscriptionProvider)
         {
             this.logger = logger;
-            this.paymentProvider = paymentProvider;
+            this.subscriptionProvider = subscriptionProvider;
         }
 
-        public override async Task<GetOwnPaymentRecordResponse> GetOwnPaymentRecord(GetOwnPaymentRecordRequest request, ServerCallContext context)
+        public override async Task<GetOwnSubscriptionRecordResponse> GetOwnSubscriptionRecord(GetOwnSubscriptionRecordRequest request, ServerCallContext context)
         {
             var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
-                return new GetOwnPaymentRecordResponse();
+                return new GetOwnSubscriptionRecordResponse();
 
-            return new GetOwnPaymentRecordResponse
+            return new GetOwnSubscriptionRecordResponse
             {
-                Record = await paymentProvider.GetById(userToken.Id)
+                Record = await subscriptionProvider.GetById(userToken.Id)
             };
         }
 
-        public override async Task<GetAllOwnPaymentRecordsResponse> GetAllOwnPaymentRecords(GetOwnPaymentRecordRequest request, ServerCallContext context)
+        public override async Task<GetAllOwnSubscriptionRecordsResponse> GetAllOwnSubscriptionRecords(GetOwnSubscriptionRecordRequest request, ServerCallContext context)
         {
             var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
-                return new GetAllOwnPaymentRecordsResponse();
+                return new GetAllOwnSubscriptionRecordsResponse();
 
-            var res = new GetAllOwnPaymentRecordsResponse();
-            res.Records.AddRange(await paymentProvider.GetAllById(userToken.Id));
+            var res = new GetAllOwnSubscriptionRecordsResponse();
+            res.Records.AddRange(await subscriptionProvider.GetAllById(userToken.Id));
 
             return res;
         }
 
-        public override async Task<ChangeOwnPaymentRecordResponse> ChangeOwnPaymentRecord(ChangeOwnPaymentRecordRequest request, ServerCallContext context)
+        public override async Task<ChangeOwnSubscriptionRecordResponse> ChangeOwnSubscriptionRecord(ChangeOwnSubscriptionRecordRequest request, ServerCallContext context)
         {
             try
             {
                 var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
                 if (userToken == null)
-                    return new ChangeOwnPaymentRecordResponse() { Error = "No user token specified" };
+                    return new ChangeOwnSubscriptionRecordResponse() { Error = "No user token specified" };
 
-                if ((request?.Level ?? -1) < 1)
-                    return new ChangeOwnPaymentRecordResponse() { Error = "Level not valid" };
+                if ((request?.Level ?? 0) < 1)
+                    return new ChangeOwnSubscriptionRecordResponse() { Error = "Level not valid" };
 
-                var record = new PaymentRecord()
+                var record = new SubscriptionRecord()
                 {
                     UserID = Google.Protobuf.ByteString.CopyFrom(userToken.Id.ToByteArray()),
                     Level = request.Level,
                     ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow)
                 };
 
-                await paymentProvider.Save(record);
+                await subscriptionProvider.Save(record);
 
-                return new ChangeOwnPaymentRecordResponse()
+                return new ChangeOwnSubscriptionRecordResponse()
                 {
                     Record = record
                 };
             }
             catch
             {
-                return new ChangeOwnPaymentRecordResponse() { Error = "Unknown error" };
+                return new ChangeOwnSubscriptionRecordResponse() { Error = "Unknown error" };
             }
         }
     }

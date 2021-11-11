@@ -109,6 +109,18 @@ namespace NodeF.Authentication.SimpleAuth.Web.Services
             return reply;
         }
 
+        public async Task<string> RenewToken()
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            var req = new RenewTokenRequest();
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.RenewTokenAsync(req, GetMetadata());
+            return reply?.BearerToken;
+        }
+
         private Metadata GetMetadata()
         {
             var data = new Metadata();

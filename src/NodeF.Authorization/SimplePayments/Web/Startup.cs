@@ -32,7 +32,6 @@ namespace NodeF.Authorization.SimplePayments.Web
             services.AddHttpContextAccessor();
             services.AddControllersWithViews();
 
-            services.AddScoped<NodeUserHelper>();
             services.AddScoped<PaymentsService>();
             services.AddSingleton<ServiceNameHelper>();
 

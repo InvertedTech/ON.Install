@@ -18,6 +18,9 @@ namespace NodeF.Authentication
         public string DisplayName { get; set; } = "";
         public const string DisplayNameType = "Display";
 
+        public uint SubscriptionLevel { get; set; } = 0;
+        public const string SubscriptionLevelType = "subscription";
+
         public List<string> Idents { get; private set; } = new List<string>();
         public const string IdentsType = "Idents";
 
@@ -80,6 +83,10 @@ namespace NodeF.Authentication
                     return;
                 case IdentsType:
                     Idents.AddRange(claim.Value.Split(';'));
+                    return;
+                case SubscriptionLevelType:
+                    if (uint.TryParse(claim.Value, out uint i))
+                        SubscriptionLevel = i;
                     return;
                 default:
                     ExtraClaims.Add(claim);

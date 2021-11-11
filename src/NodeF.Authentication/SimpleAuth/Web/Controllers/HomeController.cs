@@ -108,6 +108,25 @@ namespace NodeF.Authentication.SimpleAuth.Web.Controllers
             return RedirectToAction(nameof(LoginGet));
         }
 
+        [HttpGet("/settings/refreshtoken")]
+        public async Task<IActionResult> RefreshToken(string url)
+        {
+            var token = await userService.RenewToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                return Redirect("/logout");
+            }
+
+            Response.Cookies.Append(JwtExtensions.JWT_COOKIE_NAME, token, new CookieOptions()
+            {
+                HttpOnly = true,
+                Expires = DateTimeOffset.UtcNow.AddDays(21),
+                IsEssential = true,
+            });
+
+            return Redirect(url);
+        }
+
         [AllowAnonymous]
         [HttpGet("/register")]
         public IActionResult RegisterGet()

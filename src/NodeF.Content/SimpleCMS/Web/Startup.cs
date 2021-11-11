@@ -28,7 +28,6 @@ namespace NodeF.Content.SimpleCMS.Web
             services.AddHttpContextAccessor();
             services.AddControllersWithViews();
 
-            services.AddScoped<NodeUserHelper>();
             services.AddScoped<ContentService>();
             services.AddSingleton<ServiceNameHelper>();
 

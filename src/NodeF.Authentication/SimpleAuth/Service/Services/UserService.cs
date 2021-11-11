@@ -4,10 +4,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NodeF.Authentication.SimpleAuth.Service.Data;
 using NodeF.Fragments.Authentcation;
+using NodeF.Fragments.Authorization;
 using NodeF.Fragments.Generic;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,13 +24,15 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
         private readonly ILogger<ServiceOpsService> logger;
         private readonly SigningCredentials creds;
         private readonly IUserDataProvider dataProvider;
+        private readonly ClaimsClient claimsClient;
         private static readonly HashAlgorithm hasher = new SHA256Managed();
         private static readonly RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
 
-        public UserService(ILogger<ServiceOpsService> logger, IUserDataProvider dataProvider)
+        public UserService(ILogger<ServiceOpsService> logger, IUserDataProvider dataProvider, ClaimsClient claimsClient)
         {
             this.logger = logger;
             this.dataProvider = dataProvider;
+            this.claimsClient = claimsClient;
 
             creds = new SigningCredentials(JwtExtensions.GetPrivateKey(), SecurityAlgorithms.EcdsaSha256);
         }
@@ -47,9 +51,11 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
             if (!CryptographicOperations.FixedTimeEquals(user.Private.PasswordHash.Span, hash))
                 return new AuthenticatUserResponse();
 
+            var otherClaims = await claimsClient.GetOtherClaims(new Guid(user.Public.UserID.Span));
+
             return new AuthenticatUserResponse()
             {
-                BearerToken = GenerateToken(user)
+                BearerToken = GenerateToken(user, otherClaims)
             };
         }
 
@@ -123,7 +129,7 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
 
             return new CreateUserResponse
             {
-                BearerToken = GenerateToken(user)
+                BearerToken = GenerateToken(user, null)
             };
         }
 
@@ -169,10 +175,11 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
                 record.Private.Emails.AddRange(request.Emails);
 
                 await dataProvider.Save(record);
+                var otherClaims = await claimsClient.GetOtherClaims(userToken.Id);
 
                 string token = "";
                 if (needNewToken)
-                    token = GenerateToken(record);
+                    token = GenerateToken(record, otherClaims);
 
                 return new ModifyOwnUserResponse()
                 {
@@ -182,6 +189,31 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
             catch
             {
                 return new ModifyOwnUserResponse() { Error = "Unknown error" };
+            }
+        }
+
+        public override async Task<RenewTokenResponse> RenewToken(RenewTokenRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new RenewTokenResponse();
+
+                var record = await dataProvider.GetById(userToken.Id);
+                if (record == null)
+                    return new RenewTokenResponse();
+
+                var otherClaims = await claimsClient.GetOtherClaims(userToken.Id);
+
+                return new RenewTokenResponse()
+                {
+                    BearerToken = GenerateToken(record, otherClaims)
+                };
+            }
+            catch
+            {
+                return new RenewTokenResponse();
             }
         }
 
@@ -243,7 +275,7 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
             return hasher.ComputeHash(plainTextWithSaltBytes);
         }
 
-        private string GenerateToken(UserRecord user)
+        private string GenerateToken(UserRecord user, IEnumerable<ClaimRecord> otherClaims)
         {
             var node = new NodeUser()
             {
@@ -254,6 +286,12 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
 
             node.Idents.AddRange(user.Public.Identities);
             node.ExtraClaims.Add(new Claim(ClaimTypes.Role, "Admin"));
+
+            if (otherClaims != null)
+            {
+                node.ExtraClaims.AddRange(otherClaims.Select(c => new Claim(c.Name, c.Value)));
+                node.ExtraClaims.AddRange(otherClaims.Select(c => new Claim(c.Name + "Exp", c.ExpiresOnUTC.Seconds.ToString())));
+            }
 
             return GenerateToken(node);
         }

@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace NodeF.Authorization.SimplePayments.Service.Data
 {
-    public class FileSystemPaymentRecordProvider : IPaymentRecordProvider
+    public class FileSystemSubscriptionRecordProvider : ISubscriptionRecordProvider
     {
         private readonly DirectoryInfo dataDir;
 
-        public FileSystemPaymentRecordProvider(IOptions<AppSettings> settings)
+        public FileSystemSubscriptionRecordProvider(IOptions<AppSettings> settings)
         {
             var root = new DirectoryInfo(settings.Value.DataStore);
             root.Create();
             dataDir = root.CreateSubdirectory("data");
         }
 
-        public async Task<PaymentRecord> GetById(Guid userId)
+        public async Task<SubscriptionRecord> GetById(Guid userId)
         {
             var fd = GetDataFilePath(userId);
             if (!fd.Exists)
@@ -29,10 +29,10 @@ namespace NodeF.Authorization.SimplePayments.Service.Data
 
             var last = (await File.ReadAllLinesAsync(fd.FullName)).Last();
 
-            return PaymentRecord.Parser.ParseFrom(Convert.FromBase64String(last));
+            return SubscriptionRecord.Parser.ParseFrom(Convert.FromBase64String(last));
         }
 
-        public async Task<IEnumerable<PaymentRecord>> GetAllById(Guid userId)
+        public async Task<IEnumerable<SubscriptionRecord>> GetAllById(Guid userId)
         {
             var fd = GetDataFilePath(userId);
             if (!fd.Exists)
@@ -40,10 +40,10 @@ namespace NodeF.Authorization.SimplePayments.Service.Data
 
             var lines = await File.ReadAllLinesAsync(fd.FullName);
 
-            return lines.Select(l => PaymentRecord.Parser.ParseFrom(Convert.FromBase64String(l)));
+            return lines.Select(l => SubscriptionRecord.Parser.ParseFrom(Convert.FromBase64String(l)));
         }
 
-        public async Task Save(PaymentRecord rec)
+        public async Task Save(SubscriptionRecord rec)
         {
             var id = new Guid(rec.UserID.Span);
             var fd = GetDataFilePath(id);
