@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/runtime:5.0-alpine-arm64v8 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim-arm64v8 AS base
 WORKDIR /app
 EXPOSE 80
 
