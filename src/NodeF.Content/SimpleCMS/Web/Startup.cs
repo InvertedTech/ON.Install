@@ -15,6 +15,8 @@ namespace NodeF.Content.SimpleCMS.Web
 {
     public class Startup
     {
+        private static byte[] PONG_RESPONSE = { (byte)'p', (byte)'o', (byte)'n', (byte)'g' };
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
