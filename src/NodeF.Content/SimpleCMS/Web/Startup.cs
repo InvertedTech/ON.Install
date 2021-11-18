@@ -37,6 +37,10 @@ namespace NodeF.Content.SimpleCMS.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.Map("/ping", (app1) => app1.Run(async context => {
+                await context.Response.BodyWriter.WriteAsync(PONG_RESPONSE);
+            }));
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
