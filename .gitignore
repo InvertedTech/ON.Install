@@ -352,3 +352,7 @@ MigrationBackup/
 
 # Project Tye settings
 .tye/
+
+# Terraform hidden files
+.terraform/
+

@@ -9,7 +9,12 @@
       Title="DNS">
 
     <StackPanel>
+        <Label>GoDaddy Login</Label>
+        <StackPanel Orientation="Horizontal">
+            <Button Click="GodaddyCreds_onClick" Content="{Binding Path=GodaddyCredsButtonLabel}" />
+            <Button Click="GodaddyPull_onClick" Content="Pull Domains" />
+        </StackPanel>
         <Label>Domain Name (ex: mysite.com)</Label>
-        <TextBox Text="{Binding Path=Name, Mode=TwoWay}" />
+        <TextBox Text="{Binding Path=Name, Mode=TwoWay}" Name="txtName" />
     </StackPanel>
 </Page>

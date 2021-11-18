@@ -119,9 +119,7 @@ namespace InstallerApp
 
         void SaveCmdExecuted(object target, ExecutedRoutedEventArgs e)
         {
-            var json = JsonSerializer.Serialize(MainModel);
-
-            File.WriteAllText(CurrentFileName, json);
+            PerformSave();
 
             MessageBox.Show("File saved.");
         }
@@ -129,6 +127,26 @@ namespace InstallerApp
         void SaveCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
+        }
+
+        private void PerformSave()
+        {
+            var json = JsonSerializer.Serialize(MainModel);
+
+            File.WriteAllText(CurrentFileName, json);
+        }
+
+        DeployWindow deployWindow;
+        private async void btnDeploy_Click(object sender, RoutedEventArgs e)
+        {
+            PerformSave();
+
+            if (deployWindow != null)
+                return;
+
+            deployWindow = new DeployWindow();
+            deployWindow.Show();
+            await deployWindow.StartDeploying();
         }
 
         private void btnPersonalization_Click(object sender, RoutedEventArgs e)

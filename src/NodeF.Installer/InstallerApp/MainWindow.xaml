@@ -30,6 +30,9 @@
                 <Button Name="btnPreviousPage" Content="Prev" Click="btnPreviousPage_Click" />
                 <Button Name="btnNextPage" Content="Next" Click="btnNextPage_Click" />
             </ToolBar>
+            <ToolBar>
+                <Button Name="btnDeploy" Content="Deploy to Server" Click="btnDeploy_Click" />
+            </ToolBar>
         </ToolBarTray>
         <StackPanel Orientation="Horizontal">
             <StackPanel Width="200" Margin="10px">
