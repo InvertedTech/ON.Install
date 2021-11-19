@@ -170,13 +170,13 @@ namespace InstallerApp
             AddLine("--- Testing Site ---");
             await Task.Delay(30);
 
-            using (WebClient wc = new())
+            while ((DateTime.Now - start).TotalMinutes < 15)
             {
-                wc.Headers["Host"] = MyModel.DNS.Name;
-                while ((DateTime.Now - start).TotalMinutes < 15)
+                try
                 {
-                    try
+                    using (WebClient wc = new())
                     {
+                        wc.Headers["Host"] = MyModel.DNS.Name;
                         var str = $"http://{MyModel.Server.IP}/ping";
                         var res = await wc.DownloadStringTaskAsync(str);
                         if (res == "pong")
@@ -185,9 +185,9 @@ namespace InstallerApp
                             return;
                         }
                     }
-                    catch { }
-                    await Task.Delay(30);
                 }
+                catch { }
+                await Task.Delay(30);
             }
 
             AddLine("Site test unsuccessful...");
@@ -236,12 +236,13 @@ namespace InstallerApp
             AddLine("--- Testing DNS ---");
             await Task.Delay(30);
 
-            using (WebClient wc = new())
+            while ((DateTime.Now - start).TotalMinutes < 15)
             {
-                while ((DateTime.Now - start).TotalMinutes < 15)
+                try
                 {
-                    try
+                    using (WebClient wc = new())
                     {
+                        wc.Headers["Host"] = MyModel.DNS.Name;
                         var str = $"http://{MyModel.DNS.Name}/ping";
                         var res = await wc.DownloadStringTaskAsync(str);
                         if (res == "pong")
@@ -250,9 +251,9 @@ namespace InstallerApp
                             return;
                         }
                     }
-                    catch { }
-                    await Task.Delay(30);
                 }
+                catch { }
+                await Task.Delay(30);
             }
 
             AddLine("DNS test unsuccessful...");

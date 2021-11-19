@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="GodaddyPull" Height="100" Width="400">
     <StackPanel>
-        <TextBlock Text="GoDaddy API Key" />
+        <TextBlock Text="Domain Name" />
         <ComboBox Name="cbDomains" />
         <Button Content="OK" Click="OKButton_Click" />
     </StackPanel>
