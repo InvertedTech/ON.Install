@@ -1,0 +1,38 @@
+﻿@model ManageViewModel
+@{
+    ViewData["Title"] = "Manage Articles";
+}
+
+<a href="/content/new" class="btn btn-primary">New Article</a>
+
+<br /><br />
+
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    @foreach (var record in Model.Records)
+    {
+        <tr>
+            <td>
+                <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())">@record.Public.Title</a>
+            </td>
+            <td>@record.Public.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</td>
+            <td>
+                @if (record.Public.PublishedOnUTC != null)
+                {
+                    <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())/unpublish">Unpublish</a>
+                }
+                else
+                {
+                    <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())/publish">Publish</a>
+                }
+            </td>
+        </tr>
+
+    }
+</table>

@@ -1,0 +1,57 @@
+﻿<Window x:Class="InstallerApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InstallerApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.CommandBindings>
+        <CommandBinding Command="ApplicationCommands.New"
+                  Executed="NewCmdExecuted"
+                  CanExecute="NewCmdCanExecute"/>
+        <CommandBinding Command="ApplicationCommands.Open"
+                  Executed="OpenCmdExecuted"
+                  CanExecute="OpenCmdCanExecute"/>
+        <CommandBinding Command="ApplicationCommands.Save"
+                  Executed="SaveCmdExecuted"
+                  CanExecute="SaveCmdCanExecute"
+                  x:Name="SaveCommandBinding"
+                        />
+    </Window.CommandBindings>
+    <StackPanel>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button Command="New" Content="New" />
+                <Button Command="Open" Content="Open" />
+                <Button Command="Save" Content="Save" />
+            </ToolBar>
+            <ToolBar>
+                <Button Name="btnPreviousPage" Content="Prev" Click="btnPreviousPage_Click" />
+                <Button Name="btnNextPage" Content="Next" Click="btnNextPage_Click" />
+            </ToolBar>
+            <ToolBar>
+                <Button Name="btnDeploy" Content="Deploy to Server" Click="btnDeploy_Click" />
+            </ToolBar>
+        </ToolBarTray>
+        <StackPanel Orientation="Horizontal">
+            <StackPanel Width="200" Margin="10px">
+                <TreeView x:Name="treeNav">
+                    <TreeViewItem Name="btnPersonalization" Header="Personalization" Selected="btnPersonalization_Click" IsSelected="True" />
+                    <TreeViewItem Name="btnDNS" Header="DNS" Selected="btnDNS_Click" />
+                    <TreeViewItem Header="Products" IsExpanded="True">
+                        <TreeViewItem Name="btnCMS" Header="CMS" Selected="btnCMS_Selected" />
+                        <TreeViewItem Name="btnAuthentication" Header="Authentication" Selected="btnAuthentication_Selected" />
+                        <TreeViewItem Name="btnPayments" Header="Payments" Selected="btnPayments_Selected" />
+                        <TreeViewItem Name="btnMicroblog" Header="Microblog" Selected="btnMicroblog_Selected" />
+                        <TreeViewItem Name="btnCommunity" Header="Community" Selected="btnCommunity_Selected" />
+                    </TreeViewItem>
+                    <TreeViewItem Name="btnLocation" Header="Server Location" Selected="btnLocation_Selected" />
+                    <TreeViewItem Name="btnBackup" Header="Backup" Selected="btnBackup_Selected" />
+                    <TreeViewItem Name="btnCredentials" Header="Credentials" Selected="btnCredentials_Selected" />
+                </TreeView>
+            </StackPanel>
+            <Frame x:Name="frmMain" Source="Personalization.xaml" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" Margin="0px 10px 10px 10px" />
+        </StackPanel>
+    </StackPanel>
+</Window>

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package NodeF.Fragments.Content;
+
+import "Protos/NodeF/Fragments/Content/ContentRecord.proto";
+
+// Service for Content backup fragment interface
+service BackupInterface {
+  // Export a list of all data.
+  rpc BackupAllData (BackupAllDataRequest) returns (stream BackupAllDataResponse) {}
+
+  // Export a list of all public data.
+  rpc ExportContent (ExportContentRequest) returns (stream ExportContentResponse) {}
+
+  // Restore a list of all data.
+  rpc RestoreAllData (RestoreAllDataRequest) returns (RestoreAllDataResponse) {}
+}
+  
+message BackupAllDataRequest {}
+  
+message BackupAllDataResponse {
+  ContentBackupDataRecord ContentRecord = 1;
+}
+
+message ContentBackupDataRecord {
+  ContentRecord Data = 1; // Structured content data, including both private and public data
+  bytes ExtraData = 2; // Generic byte structure to save all application specific data for content record
+}
+
+message ExportContentRequest {}
+  
+message ExportContentResponse {
+  ContentRecord.PublicData ContentRecord = 1;
+}
+
+message RestoreAllDataRequest {
+  enum RestorePlan {
+    Wipe = 0;         // Wipe entire content database and restore content.  Any data new content will be deleted.
+    Overwrite = 1;    // Overwrite all records with corresponding record.  Will not delete new records not in list.
+    MissingOnly = 2;  // Only restore missing content records.  Will not overwrite content records that already exist.
+  }
+  RestorePlan Plan = 1;
+  repeated ContentBackupDataRecord ContentRecords = 2;
+}
+
+message RestoreAllDataResponse {
+  int32 NumRecordsRestored = 1;
+  int32 NumRecordsSkipped = 2;
+  int32 NumRecordsOverwriten = 3;
+  int32 NumRecordsWiped = 4;
+}

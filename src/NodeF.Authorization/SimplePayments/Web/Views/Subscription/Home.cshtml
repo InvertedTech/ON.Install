@@ -1,0 +1,13 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "My Subscriptions";
+}
+
+<h1>My Subscriptions</h1>
+
+<p>
+    My subscription level: @(Model.SubscriptionLevelLabel)
+</p>
+<p>
+    <a href="/subscription/change">Change my subscription</a>
+</p>

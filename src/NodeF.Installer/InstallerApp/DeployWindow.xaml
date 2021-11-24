@@ -1,0 +1,48 @@
+﻿<Window x:Class="InstallerApp.DeployWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InstallerApp"
+        mc:Ignorable="d"
+        Title="Deploy" Height="500" Width="800">
+    <StackPanel Margin="10px">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="    Step" Width="150" />
+            <TextBlock Text="Status"  />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="1. Create Server" Width="150" />
+            <TextBlock x:Name="txtCreateServer"  />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="2. Install Docker" Width="150" />
+            <TextBlock x:Name="txtDocker"  />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="3. Deploy Site" Width="150" />
+            <TextBlock x:Name="txtDeploySite"  />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="4. Test Site" Width="150" />
+            <TextBlock x:Name="txtTestSite"  />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="5. Change DNS" Width="150" />
+            <TextBlock x:Name="txtChangeDNS"  />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="6. Test DNS" Width="150" />
+            <TextBlock x:Name="txtTestDNS"  />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="7. Load Data" Width="150" />
+            <TextBlock x:Name="txtLoadData"  />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="8. Setup Backup Server" Width="150" />
+            <TextBlock x:Name="txtBackup"  />
+        </StackPanel>
+        <TextBlock x:Name="txtOutput" TextWrapping="Wrap" Margin="20px"></TextBlock>
+    </StackPanel>
+</Window>

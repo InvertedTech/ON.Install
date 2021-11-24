@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package NodeF.Fragments.Authentcation;
+
+import "Protos/NodeF/Fragments/Authentication/UserRecord.proto";
+
+// Service for Authentcation backup fragment interface
+service BackupInterface {
+  // Export a list of all data.
+  rpc BackupAllData (BackupAllDataRequest) returns (stream BackupAllDataResponse) {}
+
+  // Export a list of all user public data.
+  rpc ExportUsers (ExportUsersRequest) returns (stream ExportUsersResponse) {}
+
+  // Restore a list of all data.
+  rpc RestoreAllData (RestoreAllDataRequest) returns (RestoreAllDataResponse) {}
+}
+  
+message BackupAllDataRequest {}
+  
+message BackupAllDataResponse {
+  UserBackupDataRecord UserRecord = 1;
+}
+
+message ExportUsersRequest {}
+  
+message ExportUsersResponse {
+  UserRecord.PublicData UserRecord = 1;
+}
+
+message RestoreAllDataRequest {
+  enum RestorePlan {
+    Wipe = 0;         // Wipe entire user database and restore users.  Any new users will be deleted.
+    Overwrite = 1;    // Overwrite all records with corresponding record.  Will not delete new records not in list.
+    MissingOnly = 2;  // Only restore missing user records.  Will not overwrite user records that already exist.
+  }
+  RestorePlan Plan = 1;
+  repeated UserBackupDataRecord UserRecords = 2;
+}
+
+message RestoreAllDataResponse {
+  int32 NumUsersRestored = 1;
+  int32 NumUsersSkipped = 2;
+  int32 NumUsersOverwriten = 3;
+  int32 NumUsersWiped = 4;
+}
+
+message UserBackupDataRecord {
+  bytes UserID = 1;    // Guid for the user
+  UserRecord Data = 2; // Structured user data, including both private and public data
+  bytes ExtraData = 3; // Generic byte structure to save all application specific data for user
+}

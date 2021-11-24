@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package NodeF.Fragments.Authentcation;
+
+import "Protos/NodeF/Fragments/Authentication/UserRecord.proto";
+
+// Service for Authentcation user fragment interface
+service UserInterface {
+  // Authenticate a user with a login and password, return a bearer token if successful
+  rpc AuthenticatUser (AuthenticatUserRequest) returns (AuthenticatUserResponse) {}
+
+  // Change user's own password.  Requires user to know their current password.
+  rpc ChangeOwnPassword (ChangeOwnPasswordRequest) returns (ChangeOwnPasswordResponse) {}
+
+  // Create account for a user
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
+
+  // Get User record
+  rpc GetOwnUser (GetOwnUserRequest) returns (GetOwnUserResponse) {}
+
+  // Modify User record
+  rpc ModifyOwnUser (ModifyOwnUserRequest) returns (ModifyOwnUserResponse) {}
+
+  // Renew the bearer token
+  rpc RenewToken (RenewTokenRequest) returns (RenewTokenResponse) {}
+}
+  
+message AuthenticatUserRequest {
+  string UserName = 1;
+  string Password = 2;
+}
+  
+message AuthenticatUserResponse {
+  string BearerToken = 1;
+}
+  
+message ChangeOwnPasswordRequest {
+  string OldPassword = 1;
+  string NewPassword = 2;
+}
+  
+message ChangeOwnPasswordResponse {
+  ErrorType Error = 1;
+
+  enum ErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    BadOldPassword = 1;
+    BadNewPassword = 2;
+  }
+}
+
+message CreateUserRequest {
+  UserRecord Record = 1;
+  string Password = 2;
+}
+  
+message CreateUserResponse {
+  string BearerToken = 1;
+  ErrorType Error = 2;
+
+  enum ErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    UserNameTaken = 1;
+  }
+}
+
+message GetOwnUserRequest {
+}
+  
+message GetOwnUserResponse {
+  UserRecord Record = 1;
+}
+
+message ModifyOwnUserRequest {
+    string DisplayName = 1;           // Public display name of the user
+    repeated string Emails = 2;       // Private email(s) used for password resets
+    repeated string Identities = 3;   // Public identities associated with the user ex: user@domain.com
+}
+  
+message ModifyOwnUserResponse {
+  string Error = 1;
+  string BearerToken = 2;
+}
+
+message RenewTokenRequest {
+}
+  
+message RenewTokenResponse {
+  string BearerToken = 1;
+}

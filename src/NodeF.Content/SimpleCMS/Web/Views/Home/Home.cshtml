@@ -1,0 +1,13 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<h1>Welcome to my home page</h1>
+
+@foreach (var record in Model.Records)
+{
+    <i>@record.Public.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</i>
+    <h3><a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())">@record.Public.Title</a></h3>
+    <pre>@record.Public.Subtitle</pre>
+}

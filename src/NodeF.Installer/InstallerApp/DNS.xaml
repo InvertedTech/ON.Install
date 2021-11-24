@@ -1,0 +1,20 @@
+﻿<Page x:Class="InstallerApp.DNS"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:InstallerApp"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="DNS">
+
+    <StackPanel>
+        <Label>GoDaddy Login</Label>
+        <StackPanel Orientation="Horizontal">
+            <Button Click="GodaddyCreds_onClick" Content="{Binding Path=GodaddyCredsButtonLabel}" />
+            <Button Click="GodaddyPull_onClick" Content="Pull Domains" />
+        </StackPanel>
+        <Label>Domain Name (ex: mysite.com)</Label>
+        <TextBox Text="{Binding Path=Name, Mode=TwoWay}" Name="txtName" />
+    </StackPanel>
+</Page>
