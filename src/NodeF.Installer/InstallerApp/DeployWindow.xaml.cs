@@ -26,6 +26,7 @@ namespace InstallerApp
     public partial class DeployWindow : Window
     {
         MainModel MyModel;
+        DirectoryInfo DeployRootD;
 
         public DeployWindow()
         {
@@ -35,15 +36,15 @@ namespace InstallerApp
         internal async Task StartDeploying()
         {
             MyModel = MainWindow.MainModel;
+            DeployRootD = new DirectoryInfo($"c:/tmp/onf/terraform/{MyModel.DNS.Name}");
 
             var origD = new DirectoryInfo("../../../../../terraform");
-            var targetD = new DirectoryInfo($"terraform/{MyModel.DNS.Name}");
 
-            if (!targetD.Exists)
+            if (!DeployRootD.Exists)
             {
-                targetD.Create();
+                DeployRootD.Create();
                 foreach (var f in origD.GetFiles())
-                    f.CopyTo(targetD + "/" + f.Name);
+                    f.CopyTo(DeployRootD + "/" + f.Name);
             }
 
             Task createServer = CreateServer();
@@ -51,10 +52,10 @@ namespace InstallerApp
             if (!createServer.IsCompletedSuccessfully)
                 return;
 
-            Task installDocker = InstallDocker();
-            await WaitOnTask(installDocker, txtDocker);
-            if (!installDocker.IsCompletedSuccessfully)
-                return;
+            //Task installDocker = InstallDocker();
+            //await WaitOnTask(installDocker, txtDocker);
+            //if (!installDocker.IsCompletedSuccessfully)
+            //    return;
 
             Task deploySite = DeploySite();
             await WaitOnTask(deploySite, txtDeploySite);
@@ -80,10 +81,15 @@ namespace InstallerApp
 
         internal async Task CreateServer()
         {
+            await CreateServeDigitalOcean();
+        }
+
+        internal async Task CreateServerAzure()
+        {
             AddLine("--- Create Server ---");
 
             var origD = new DirectoryInfo("../../../../../terraform/createServer/azure");
-            var targetD = new DirectoryInfo($"terraform/{MyModel.DNS.Name}/createServer/azure");
+            var targetD = new DirectoryInfo($"{DeployRootD.FullName}/createServer/azure");
             var terraD = new DirectoryInfo(targetD.FullName + "/.terraform");
             var varF = new FileInfo(targetD.FullName + "/variables.tf");
 
@@ -109,12 +115,43 @@ namespace InstallerApp
             MyModel.Server.IP = addy;
         }
 
+        internal async Task CreateServeDigitalOcean()
+        {
+            AddLine("--- Create Server ---");
+
+            var origD = new DirectoryInfo("../../../../../terraform/createServer/digitalocean");
+            var targetD = new DirectoryInfo($"{DeployRootD.FullName}/createServer/digitalocean");
+            var terraD = new DirectoryInfo(targetD.FullName + "/.terraform");
+            var varF = new FileInfo(targetD.FullName + "/variables.tf");
+
+            if (!targetD.Exists)
+            {
+                targetD.Create();
+                foreach (var f in origD.GetFiles())
+                    f.CopyTo(targetD + "/" + f.Name);
+            }
+
+            await WriteDigitalOceanVarFile(varF);
+
+            if (!terraD.Exists)
+            {
+                await RunTerraform(targetD, "init");
+            }
+
+            await RunTerraform(targetD, "apply -auto-approve");
+
+            var addyLine = (await File.ReadAllLinesAsync(targetD.FullName + "/terraform.tfstate")).FirstOrDefault(l => l.Contains("\"ipv4_address\""));
+            var addy = addyLine.GetBetween(": \"", "\"");
+            MyModel.Server.IP = addy;
+            MyModel.Server.User = "root";
+        }
+
         internal async Task InstallDocker()
         {
             AddLine("--- Install Docker ---");
 
             var origD = new DirectoryInfo("../../../../../terraform/installDocker");
-            var targetD = new DirectoryInfo($"terraform/{MyModel.DNS.Name}/installDocker");
+            var targetD = new DirectoryInfo($"{DeployRootD.FullName}/installDocker");
             var terraD = new DirectoryInfo(targetD.FullName + "/.terraform");
             var varF = new FileInfo(targetD.FullName + "/variables.tf");
 
@@ -140,7 +177,7 @@ namespace InstallerApp
             AddLine("--- Deploy Site ---");
 
             var origD = new DirectoryInfo("../../../../../terraform/deploySite");
-            var targetD = new DirectoryInfo($"terraform/{MyModel.DNS.Name}/deploySite");
+            var targetD = new DirectoryInfo($"{DeployRootD.FullName}/deploySite");
             var terraD = new DirectoryInfo(targetD.FullName + "/.terraform");
             var varF = new FileInfo(targetD.FullName + "/variables.tf");
             var envF = new FileInfo(targetD.FullName + "/.env");
@@ -269,18 +306,20 @@ namespace InstallerApp
             pInfo.RedirectStandardOutput = true;
             pInfo.RedirectStandardError = true;
 
-            var p = new Process();
-            p.StartInfo = pInfo;
-            p.Start();
+            using (var p = new Process())
+            {
+                p.StartInfo = pInfo;
+                p.Start();
 
-            p.OutputDataReceived += P_OutputDataReceived;
-            p.ErrorDataReceived += P_OutputDataReceived;
-            p.BeginOutputReadLine();
-            p.BeginErrorReadLine();
+                p.OutputDataReceived += P_OutputDataReceived;
+                p.ErrorDataReceived += P_OutputDataReceived;
+                p.BeginOutputReadLine();
+                p.BeginErrorReadLine();
 
-            await p.WaitForExitAsync();
-            if (p.ExitCode != 0)
-                throw new Exception();
+                await p.WaitForExitAsync();
+                if (p.ExitCode != 0)
+                    throw new Exception();
+            }
         }
 
         List<string> lines = new();
@@ -326,11 +365,22 @@ namespace InstallerApp
             await File.WriteAllLinesAsync(f.FullName, l);
         }
 
+        private async Task WriteDigitalOceanVarFile(FileInfo f)
+        {
+            List<string> l = new();
+            l.Add("variable \"prefix\" { default = \"onf-" + MyModel.DNS.Name.Replace(".", "-") + "\" }");
+            l.Add("variable \"location\" { default = \"centralus\" }");
+            l.Add("variable \"username\" { default = \"root\" }");
+            l.Add("variable \"do_token\" { default = \"" + MyModel.Credentials.DigitalOceanKey + "\" }");
+
+            await File.WriteAllLinesAsync(f.FullName, l);
+        }
+
         private async Task WriteSSHVarFile(FileInfo f)
         {
             List<string> l = new();
             l.Add("variable \"ipaddress\" { default = \"" + MyModel.Server.IP + "\" }");
-            l.Add("variable \"username\" { default = \"onfadmin\" }");
+            l.Add("variable \"username\" { default = \"" + MyModel.Server.User + "\" }");
 
             await File.WriteAllLinesAsync(f.FullName, l);
         }
@@ -341,14 +391,14 @@ namespace InstallerApp
 
             while (!t.IsCompleted)
             {
-                txt.Text = $"Running... {(int)((DateTime.Now - start).TotalSeconds)}s";
+                txt.Text = $"Running... {(int)(DateTime.Now - start).TotalSeconds}s";
                 await Task.Delay(1000);
             }
 
             if (t.IsCompletedSuccessfully)
-                txt.Text = "Done";
+                txt.Text = $"Done... {(int)(DateTime.Now - start).TotalSeconds}s";
             else
-                txt.Text = "Error!";
+                txt.Text = $"Error!... {(int)(DateTime.Now - start).TotalSeconds}s";
         }
     }
 }

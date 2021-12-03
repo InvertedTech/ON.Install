@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using NBitcoin;
 using NodeF.Installer.Models;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace InstallerApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static MainModel MainModel { get; set; }
+        public static MainModel MainModel { get; set; } = new();
         public string CurrentFileName = null;
 
         const string FILE_FILTER = "Node Config File (*.ncfgx)|*.ncfgx";
@@ -56,7 +57,6 @@ namespace InstallerApp
                     MessageBox.Show("Unable to parse and load file!");
                 }
             }
-            MainModel = new MainModel();
         }
 
         private void GetNavItems()
@@ -131,6 +131,15 @@ namespace InstallerApp
 
         private void PerformSave()
         {
+            if (MainModel.Credentials == null)
+                MainModel.Credentials = new();
+
+            if (string.IsNullOrWhiteSpace(MainModel.Credentials.MasterKey))
+            {
+                Mnemonic mnemo = new Mnemonic(Wordlist.English, WordCount.TwentyFour);
+                MainModel.Credentials.MasterKey = string.Join(" ", mnemo.Words);
+            }    
+
             var json = JsonSerializer.Serialize(MainModel);
 
             File.WriteAllText(CurrentFileName, json);
