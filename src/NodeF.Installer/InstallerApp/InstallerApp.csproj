@@ -14,4 +14,17 @@
     <ProjectReference Include="..\NodeF.Installer.Models\NodeF.Installer.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="LoadSavedFiles.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="LoadSavedFiles.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>
