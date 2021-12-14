@@ -1,7 +1,6 @@
 ﻿using Grpc.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using NodeF.Authentication.SimpleAuth.Service.Helper;
 using NodeF.Fragments.Authentcation;
 using NodeF.Fragments.Authorization;
 using System;
@@ -9,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace NodeF.Authentication.SimpleAuth.Service.Services
+namespace NodeF.Authentication.SimpleAuth.Service.Helpers
 {
     public class ClaimsClient
     {

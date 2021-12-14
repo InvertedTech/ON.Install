@@ -1,3 +1,7 @@
+variable ipaddress {}
+variable username {}
+variable sshPriv {}
+
 resource null_resource prepareForDockerComposeYaml {
   provisioner remote-exec {
     inline = [
@@ -6,10 +10,10 @@ resource null_resource prepareForDockerComposeYaml {
   }
 
   connection {
-    host     = "${var.ipaddress}"
+    host     = var.ipaddress
     type     = "ssh"
     user     = var.username
-    private_key = file("../ssh.priv")
+    private_key = var.sshPriv
     agent    = "false"
   }
 }
@@ -22,10 +26,10 @@ resource null_resource copyDockerComposeYaml {
   }
 
   connection {
-    host     = "${var.ipaddress}"
+    host     = var.ipaddress
     type     = "ssh"
     user     = var.username
-    private_key = file("../ssh.priv")
+    private_key = var.sshPriv
     agent    = "false"
   }
 
@@ -42,10 +46,10 @@ resource null_resource copyEnv {
   }
 
   connection {
-    host     = "${var.ipaddress}"
+    host     = var.ipaddress
     type     = "ssh"
     user     = var.username
-    private_key = file("../ssh.priv")
+    private_key = var.sshPriv
     agent    = "false"
   }
 
@@ -63,10 +67,10 @@ resource null_resource runDockerComposeYaml {
   }
 
   connection {
-    host     = "${var.ipaddress}"
+    host     = var.ipaddress
     type     = "ssh"
     user     = var.username
-    private_key = file("../ssh.priv")
+    private_key = var.sshPriv
     agent    = "false"
   }
 

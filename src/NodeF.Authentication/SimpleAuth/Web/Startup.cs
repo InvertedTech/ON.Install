@@ -35,6 +35,7 @@ namespace NodeF.Authentication.SimpleAuth.Web
             services.AddSingleton<ServiceNameHelper>();
 
             services.AddJwtAuthentication();
+            services.AddOfflineDetection();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +44,8 @@ namespace NodeF.Authentication.SimpleAuth.Web
             app.Map("/ping", (app1) => app1.Run(async context => {
                 await context.Response.BodyWriter.WriteAsync(PONG_RESPONSE);
             }));
+
+            app.UseOfflineDetection();
 
             if (env.IsDevelopment())
             {

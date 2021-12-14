@@ -1,3 +1,8 @@
+variable prefix {}
+variable location {}
+variable username {}
+variable sshPub {}
+
 provider azurerm {
   features {}
 }
@@ -98,7 +103,7 @@ resource azurerm_linux_virtual_machine main {
 
   admin_ssh_key {
     username   = var.username
-    public_key = file("../../ssh.pub")
+    public_key = var.sshPub
   }
 
   source_image_reference {

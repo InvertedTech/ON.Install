@@ -143,6 +143,8 @@ namespace InstallerApp
             deployWindow = new DeployWindow();
             deployWindow.Show();
             await deployWindow.StartDeploying();
+
+            PerformSave();
         }
 
         private void btnPersonalization_Click(object sender, RoutedEventArgs e)

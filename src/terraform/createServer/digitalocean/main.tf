@@ -1,3 +1,8 @@
+variable prefix {}
+variable location {}
+variable do_token {}
+variable sshKeyId {}
+
 terraform {
   required_providers {
     digitalocean = {
@@ -7,24 +12,17 @@ terraform {
   }
 }
 
-#variable "pvt_key" {}
-
 provider "digitalocean" {
   token = var.do_token
-}
-
-data "digitalocean_ssh_key" "terraform" {
-  name = "${var.prefix}-key"
-  public_key = file("../../ssh.pub")
 }
 
 resource "digitalocean_droplet" "vm1" {
   image = "docker-20-04"
   name = "${var.prefix}-vm-1"
-  region = "nyc3"
+  region = var.location
   size = "s-1vcpu-1gb"
   ssh_keys = [
-    data.digitalocean_ssh_key.terraform.id
+    var.sshKeyId
   ]
 
   # connection {
