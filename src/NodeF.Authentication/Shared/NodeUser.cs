@@ -24,6 +24,9 @@ namespace NodeF.Authentication
         public List<string> Idents { get; private set; } = new List<string>();
         public const string IdentsType = "Idents";
 
+        public List<string> Roles { get; private set; } = new List<string>();
+        public const string RolesType = ClaimTypes.Role;
+
         public List<Claim> ExtraClaims { get; private set; } = new List<Claim>();
 
         public string JwtToken { get; set; } = "";
@@ -83,6 +86,9 @@ namespace NodeF.Authentication
                     return;
                 case IdentsType:
                     Idents.AddRange(claim.Value.Split(';'));
+                    return;
+                case RolesType:
+                    Roles.Add(claim.Value);
                     return;
                 case SubscriptionLevelType:
                     if (uint.TryParse(claim.Value, out uint i))

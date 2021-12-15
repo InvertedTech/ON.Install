@@ -309,7 +309,7 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
             };
 
             node.Idents.AddRange(user.Public.Identities);
-            node.ExtraClaims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            node.ExtraClaims.Add(new Claim(ClaimTypes.Role, "admin"));
 
             if (otherClaims != null)
             {

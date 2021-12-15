@@ -1,19 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NodeF.Authentication.SimpleAuth.Service.Data;
-using NodeF.Authentication.SimpleAuth.Service.Helpers;
-using NodeF.Authentication.SimpleAuth.Service.Models;
-using NodeF.Authentication.SimpleAuth.Service.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using NodeF.Authentication;
+using NodeF.Backup.SimpleBackup.Service.Services;
 
-namespace NodeF.Authentication.SimpleAuth.Service
+namespace NodeF.Backup.SimpleBackup.Service
 {
     public class Startup
     {
@@ -26,23 +24,33 @@ namespace NodeF.Authentication.SimpleAuth.Service
             Configuration = configuration;
         }
 
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddGrpc();
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddSingleton<IUserDataProvider, FileSystemUserDataProvider>();
-            services.AddScoped<ClaimsClient>();
+            services.AddHttpContextAccessor();
+            services.AddControllersWithViews();
+
             services.AddSingleton<ServiceNameHelper>();
-            services.AddSingleton<OfflineHelper>();
 
             services.AddJwtAuthentication();
         }
 
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.Map("/ping", (app1) => app1.Run(async context => {
                 await context.Response.BodyWriter.WriteAsync(PONG_RESPONSE);
             }));
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
 
             app.UseRouting();
 
@@ -50,9 +58,9 @@ namespace NodeF.Authentication.SimpleAuth.Service
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<BackupService>();
-                endpoints.MapGrpcService<ServiceOpsService>();
-                endpoints.MapGrpcService<UserService>();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "backup/{controller=Authentication}/{action=Get}/{id?}");
             });
         }
     }
