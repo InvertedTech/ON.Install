@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using NBitcoin;
 using NodeF.Installer.Models;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Environment;
 
 namespace InstallerApp
 {
@@ -25,8 +27,10 @@ namespace InstallerApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static MainModel MainModel { get; set; }
-        public string CurrentFileName = null;
+        public static MainModel MainModel { get; set; } = new();
+
+        public static DirectoryInfo SaveLocation;
+        public const string SAVED_FILENAME = "config.onf";
 
         const string FILE_FILTER = "Node Config File (*.ncfgx)|*.ncfgx";
 
@@ -34,29 +38,12 @@ namespace InstallerApp
 
         public MainWindow()
         {
-            LoadMainModel(null);
-
             InitializeComponent();
 
             GetNavItems();
-        }
 
-        private void LoadMainModel(string fileName)
-        {
-            if (File.Exists(fileName))
-            {
-                try
-                {
-                    var json = File.ReadAllText(fileName);
-                    MainModel = JsonSerializer.Deserialize<MainModel>(json);
-                    return;
-                }
-                catch
-                {
-                    MessageBox.Show("Unable to parse and load file!");
-                }
-            }
-            MainModel = new MainModel();
+            SaveLocation = new DirectoryInfo(GetFolderPath(SpecialFolder.ApplicationData) + "/ONF/saves");
+            SaveLocation.Create();
         }
 
         private void GetNavItems()
@@ -86,13 +73,8 @@ namespace InstallerApp
 
         void NewCmdExecuted(object target, ExecutedRoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = FILE_FILTER;
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                CurrentFileName = saveFileDialog.FileName;
-                LoadMainModel(null);
-            }
+            MainModel = new();
+            frmMain.Refresh();
         }
 
         void NewCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -102,12 +84,12 @@ namespace InstallerApp
 
         void OpenCmdExecuted(object target, ExecutedRoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = FILE_FILTER;
-            if (openFileDialog.ShowDialog() == true)
+            var dialog = new LoadSavedFiles();
+            dialog.Load();
+
+            if (dialog.ShowDialog() == true)
             {
-                CurrentFileName = openFileDialog.FileName;
-                LoadMainModel(CurrentFileName);
+                MainModel = dialog.Selected;
                 frmMain.Refresh();
             }
         }
@@ -131,9 +113,23 @@ namespace InstallerApp
 
         private void PerformSave()
         {
-            var json = JsonSerializer.Serialize(MainModel);
+            if (MainModel.Id == Guid.Empty)
+                MainModel.Id = Guid.NewGuid();
 
-            File.WriteAllText(CurrentFileName, json);
+            if (MainModel.Credentials == null)
+                MainModel.Credentials = new();
+
+            if (string.IsNullOrWhiteSpace(MainModel.Credentials.MasterKey))
+            {
+                Mnemonic mnemo = new Mnemonic(Wordlist.English, WordCount.TwentyFour);
+                MainModel.Credentials.MasterKey = string.Join(" ", mnemo.Words);
+            }    
+
+            var d = new DirectoryInfo(SaveLocation.FullName + "/" + MainModel.Id);
+            d.Create();
+
+            var json = JsonSerializer.Serialize(MainModel);
+            File.WriteAllText(d.FullName + "/" + SAVED_FILENAME, json);
         }
 
         DeployWindow deployWindow;
@@ -147,6 +143,8 @@ namespace InstallerApp
             deployWindow = new DeployWindow();
             deployWindow.Show();
             await deployWindow.StartDeploying();
+
+            PerformSave();
         }
 
         private void btnPersonalization_Click(object sender, RoutedEventArgs e)

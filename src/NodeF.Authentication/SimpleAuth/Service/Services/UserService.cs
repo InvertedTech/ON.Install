@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NodeF.Authentication.SimpleAuth.Service.Data;
+using NodeF.Authentication.SimpleAuth.Service.Helpers;
 using NodeF.Fragments.Authentcation;
 using NodeF.Fragments.Authorization;
 using NodeF.Fragments.Generic;
@@ -21,6 +22,7 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
     [Authorize]
     public class UserService : UserInterface.UserInterfaceBase
     {
+        private readonly OfflineHelper offlineHelper;
         private readonly ILogger<ServiceOpsService> logger;
         private readonly SigningCredentials creds;
         private readonly IUserDataProvider dataProvider;
@@ -28,8 +30,9 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
         private static readonly HashAlgorithm hasher = new SHA256Managed();
         private static readonly RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
 
-        public UserService(ILogger<ServiceOpsService> logger, IUserDataProvider dataProvider, ClaimsClient claimsClient)
+        public UserService(OfflineHelper offlineHelper, ILogger<ServiceOpsService> logger, IUserDataProvider dataProvider, ClaimsClient claimsClient)
         {
+            this.offlineHelper = offlineHelper;
             this.logger = logger;
             this.dataProvider = dataProvider;
             this.claimsClient = claimsClient;
@@ -40,6 +43,9 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
         [AllowAnonymous]
         public override async Task<AuthenticatUserResponse> AuthenticatUser(AuthenticatUserRequest request, ServerCallContext context)
         {
+            if (offlineHelper.IsOffline)
+                return new AuthenticatUserResponse();
+
             if (string.IsNullOrWhiteSpace(request.UserName) || string.IsNullOrWhiteSpace(request.Password))
                 return new AuthenticatUserResponse();
 
@@ -61,6 +67,9 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
 
         public override async Task<ChangeOwnPasswordResponse> ChangeOwnPassword(ChangeOwnPasswordRequest request, ServerCallContext context)
         {
+            if (offlineHelper.IsOffline)
+                return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ErrorType.UnknownError };
+
             try
             {
                 var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
@@ -95,6 +104,12 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
         [AllowAnonymous]
         public override async Task<CreateUserResponse> CreateUser(CreateUserRequest request, ServerCallContext context)
         {
+            if (offlineHelper.IsOffline)
+                return new CreateUserResponse()
+                {
+                    Error = CreateUserResponse.Types.ErrorType.UnknownError
+                };
+
             var user = request.Record;
             if (user == null)
                 return new CreateUserResponse()
@@ -135,6 +150,9 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
 
         public override async Task<GetOwnUserResponse> GetOwnUser(GetOwnUserRequest request, ServerCallContext context)
         {
+            if (offlineHelper.IsOffline)
+                return new GetOwnUserResponse();
+
             var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
                 return new GetOwnUserResponse();
@@ -147,6 +165,9 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
 
         public override async Task<ModifyOwnUserResponse> ModifyOwnUser(ModifyOwnUserRequest request, ServerCallContext context)
         {
+            if (offlineHelper.IsOffline)
+                return new ModifyOwnUserResponse() { Error = "Service Offline" };
+
             try
             {
                 var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
@@ -194,6 +215,9 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
 
         public override async Task<RenewTokenResponse> RenewToken(RenewTokenRequest request, ServerCallContext context)
         {
+            if (offlineHelper.IsOffline)
+                return new RenewTokenResponse();
+
             try
             {
                 var userToken = NodeUserHelper.ParseUser(context.GetHttpContext());
@@ -285,7 +309,7 @@ namespace NodeF.Authentication.SimpleAuth.Service.Services
             };
 
             node.Idents.AddRange(user.Public.Identities);
-            node.ExtraClaims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            node.ExtraClaims.Add(new Claim(ClaimTypes.Role, "admin"));
 
             if (otherClaims != null)
             {

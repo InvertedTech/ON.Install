@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace NodeF.Authentication.SimpleAuth.Service.Helper
+namespace NodeF.Authentication.SimpleAuth.Service.Helpers
 {
     public class ServiceNameHelper
     {

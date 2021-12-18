@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  tye-runner:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ..:/src
+    working_dir: /src
+    command: tye run --docker

@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim-arm32v7 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+WORKDIR /src
+COPY NodeF.Authentication/Shared NodeF.Authentication/Shared
+COPY NodeF.Backup/SimpleBackup NodeF.Backup/SimpleBackup
+COPY NodeF.Fragment NodeF.Fragment
+RUN dotnet restore "NodeF.Backup/SimpleBackup/Service/NodeF.Backup.SimpleBackup.Service.csproj"
+WORKDIR "/src/NodeF.Backup/SimpleBackup/Service"
+RUN dotnet build "NodeF.Backup.SimpleBackup.Service.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "NodeF.Backup.SimpleBackup.Service.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "NodeF.Backup.SimpleBackup.Service.dll"]

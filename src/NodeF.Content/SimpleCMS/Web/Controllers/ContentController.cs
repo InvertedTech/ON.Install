@@ -14,7 +14,7 @@ using NodeF.Content.SimpleCMS.Web.Services;
 
 namespace NodeF.Content.SimpleCMS.Web.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "admin")]
     public class ContentController : Controller
     {
         private readonly ILogger<HomeController> logger;

@@ -39,6 +39,14 @@ namespace NodeF.Authentication.SimpleAuth.Service.Data
             return true;
         }
 
+        public Task<bool> Delete(Guid userId)
+        {
+            var fd = GetDataFilePath(userId);
+            var res = fd.Exists;
+            fd.Delete();
+            return Task.FromResult(res);
+        }
+
         public Task<bool> Exists(Guid userId)
         {
             var fd = GetDataFilePath(userId);
@@ -49,6 +57,12 @@ namespace NodeF.Authentication.SimpleAuth.Service.Data
         {
             var fi = GetIndexFilePath(loginName);
             return Task.FromResult(fi.Exists);
+        }
+
+        public async IAsyncEnumerable<UserRecord> GetAll()
+        {
+            foreach (var fd in GetAllDataFiles())
+                yield return UserRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
         }
 
         public async Task<UserRecord> GetById(Guid userId)
@@ -81,6 +95,24 @@ namespace NodeF.Authentication.SimpleAuth.Service.Data
             await File.WriteAllBytesAsync(fd.FullName, user.ToByteArray());
         }
 
+        public async Task ReindexAll()
+        {
+            TruncateAllIndexes();
+
+            await foreach(var user in GetAll())
+            {
+                var id = new Guid(user.Public.UserID.Span);
+                var fi = GetIndexFilePath(user.Public.UserName);
+
+                await File.WriteAllTextAsync(fi.FullName, id.ToString());
+            }
+        }
+
+        private IEnumerable<FileInfo> GetAllDataFiles()
+        {
+            return dataDir.EnumerateFiles("*", SearchOption.AllDirectories);
+        }
+
         private FileInfo GetDataFilePath(Guid userID)
         {
             var name = userID.ToString();
@@ -92,6 +124,12 @@ namespace NodeF.Authentication.SimpleAuth.Service.Data
         {
             var dir = indexDir.CreateSubdirectory(loginName.Substring(0, 2)).CreateSubdirectory(loginName.Substring(2, 2));
             return new FileInfo(dir.FullName + "/" + loginName);
+        }
+
+        private void TruncateAllIndexes()
+        {
+            indexDir.Delete(true);
+            indexDir.Create();
         }
     }
 }
