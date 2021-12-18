@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHarness", "TestHarness\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeF.Backup.SimpleBackup.Service", "Service\NodeF.Backup.SimpleBackup.Service.csproj", "{6FCCB84C-CF3D-464A-9958-FB411E2C5628}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeF.Crypto", "..\..\NodeF.Crypto\NodeF.Crypto\NodeF.Crypto.csproj", "{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{6FCCB84C-CF3D-464A-9958-FB411E2C5628}.Release|x64.Build.0 = Release|Any CPU
 		{6FCCB84C-CF3D-464A-9958-FB411E2C5628}.Release|x86.ActiveCfg = Release|Any CPU
 		{6FCCB84C-CF3D-464A-9958-FB411E2C5628}.Release|x86.Build.0 = Release|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Debug|x64.Build.0 = Debug|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Debug|x86.Build.0 = Debug|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Release|x64.ActiveCfg = Release|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Release|x64.Build.0 = Release|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Release|x86.ActiveCfg = Release|Any CPU
+		{B5CFE12B-DA5A-4CEA-924C-EE09EF9ADC32}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

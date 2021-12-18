@@ -1,9 +1,12 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using NodeF.Authentication;
+using NodeF.Crypto;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace TestHarness
 {
@@ -15,10 +18,12 @@ namespace TestHarness
         {
             JwtToken = GenerateToken();
 
+            ECDsa clientKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            var clientPubKey = clientKey.ToPublicEncodedJsonWebKey();
+
             AuthenticationBackupClient client = new();
-            var data = client.GetBackup().Result;
-            client.SetMode().Wait();
-            client.RestoreFromBackup(data).Wait();
+            var data = client.GetBackup(clientPubKey).Result;
+            client.RestoreFromBackup(NodeF.Fragments.Authentcation.RestoreAllDataRequest.Types.RestoreMode.Wipe, clientKey, data).Wait();
         }
 
         private static string GenerateToken()

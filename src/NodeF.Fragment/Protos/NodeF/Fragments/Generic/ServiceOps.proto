@@ -32,6 +32,7 @@ message ServiceStatusResponse {
     Faulted = 4;
   }
 
-  OnlineStatus Status = 1;
-  string Message = 2;
+  string ServiceName = 1;
+  OnlineStatus Status = 2;
+  string Message = 3;
 }

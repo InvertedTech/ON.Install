@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NodeF.Authentication;
 using NodeF.Backup.SimpleBackup.Service.Services;
-using NodeF.Fragments.Authentcation;
+using NodeF.Fragments.Content;
 using System;
 using System.IO;
 using System.Net.Mime;
@@ -15,14 +15,14 @@ namespace NodeF.Backup.SimpleBackup.Service.Controllers
 {
     [Authorize(Roles = "backup")]
     [Route("backup/[controller]")]
-    public class AuthenticationController : Controller
+    public class ContentController : Controller
     {
 
-        private readonly ILogger<AuthenticationController> logger;
+        private readonly ILogger<ContentController> logger;
         private readonly ServiceNameHelper nameHelper;
         public readonly NodeUserHelper userHelper;
 
-        public AuthenticationController(ILogger<AuthenticationController> logger, NodeUserHelper userHelper, ServiceNameHelper nameHelper)
+        public ContentController(ILogger<ContentController> logger, NodeUserHelper userHelper, ServiceNameHelper nameHelper)
         {
             this.logger = logger;
             this.nameHelper = nameHelper;
@@ -32,7 +32,7 @@ namespace NodeF.Backup.SimpleBackup.Service.Controllers
         [HttpGet]
         public async Task Get(string key)
         {
-            var client = new BackupInterface.BackupInterfaceClient(nameHelper.AuthenticationServiceChannel);
+            var client = new BackupInterface.BackupInterfaceClient(nameHelper.ContentServiceChannel);
             var stream = client.BackupAllData(new BackupAllDataRequest() { ClientPublicJwk = key }, GetMetadata());
 
             Response.ContentType = "application/octet-stream";
@@ -67,7 +67,7 @@ namespace NodeF.Backup.SimpleBackup.Service.Controllers
             await Request.Body.CopyToAsync(mem);
             mem.Position = 0;
 
-            var client = new BackupInterface.BackupInterfaceClient(nameHelper.AuthenticationServiceChannel);
+            var client = new BackupInterface.BackupInterfaceClient(nameHelper.ContentServiceChannel);
             var call = client.RestoreAllData(GetMetadata());
 
             await call.RequestStream.WriteAsync(new RestoreAllDataRequest() { Mode = mode });
