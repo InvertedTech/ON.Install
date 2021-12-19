@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization;
+
+import "google/protobuf/timestamp.proto";
+
+service PaymentsInterface {
+  rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse) {}
+  rpc GetAllOwnSubscriptionRecords (GetOwnSubscriptionRecordRequest) returns (GetAllOwnSubscriptionRecordsResponse) {}
+  rpc ChangeOwnSubscriptionRecord (ChangeOwnSubscriptionRecordRequest) returns (ChangeOwnSubscriptionRecordResponse) {}
+}
+  
+// User claim's record
+message SubscriptionRecord {
+  bytes UserID = 1; // Guid for the user
+  uint32 Level = 2;
+  google.protobuf.Timestamp ChangedOnUTC = 3;
+}
+
+message GetOwnSubscriptionRecordRequest {
+}
+  
+message GetOwnSubscriptionRecordResponse {
+  SubscriptionRecord Record = 1;
+}
+  
+message GetAllOwnSubscriptionRecordsResponse {
+  repeated SubscriptionRecord Records = 1;
+}
+  
+message ChangeOwnSubscriptionRecordRequest {
+  uint32 Level = 1;
+}
+  
+message ChangeOwnSubscriptionRecordResponse {
+  SubscriptionRecord Record = 1;
+  string Error = 2;
+}

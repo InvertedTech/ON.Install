@@ -9,7 +9,7 @@ services:
   authweb:
     build:
       context: .
-      dockerfile: ./NodeF.Authentication/SimpleAuth/Web/Dockerfile-amd64
+      dockerfile: ./ON.Authentication/SimpleAuth/Web/Dockerfile-amd64
     image: nodefederation/simpleauth-web:linux-amd64
     depends_on:
       - authservice
@@ -29,7 +29,7 @@ services:
   authservice:
     build:
       context: .
-      dockerfile: ./NodeF.Authentication/SimpleAuth/Service/Dockerfile-amd64
+      dockerfile: ./ON.Authentication/SimpleAuth/Service/Dockerfile-amd64
     image: nodefederation/simpleauth-service:linux-amd64
     expose:
       - "80"
@@ -42,7 +42,7 @@ services:
   cmsweb:
     build:
       context: .
-      dockerfile: ./NodeF.Content/SimpleCMS/Web/Dockerfile-amd64
+      dockerfile: ./ON.Content/SimpleCMS/Web/Dockerfile-amd64
     image: nodefederation/simplecms-web:linux-amd64
     expose:
       - "80"
@@ -60,7 +60,7 @@ services:
   cmsservice:
     build:
       context: .
-      dockerfile: ./NodeF.Content/SimpleCMS/Service/Dockerfile-amd64
+      dockerfile: ./ON.Content/SimpleCMS/Service/Dockerfile-amd64
     image: nodefederation/simplecms-service:linux-amd64
     expose:
       - "80"
@@ -71,7 +71,7 @@ services:
   paymentweb:
     build:
       context: .
-      dockerfile: ./NodeF.Authorization/SimplePayments/Web/Dockerfile-amd64
+      dockerfile: ./ON.Authorization/SimplePayments/Web/Dockerfile-amd64
     image: nodefederation/simplepayments-web:linux-amd64
     expose:
       - "80"
@@ -93,7 +93,7 @@ services:
   paymentservice:
     build:
       context: .
-      dockerfile: ./NodeF.Authorization/SimplePayments/Service/Dockerfile-amd64
+      dockerfile: ./ON.Authorization/SimplePayments/Service/Dockerfile-amd64
     image: nodefederation/simplepayments-service:linux-amd64
     expose:
       - "80"

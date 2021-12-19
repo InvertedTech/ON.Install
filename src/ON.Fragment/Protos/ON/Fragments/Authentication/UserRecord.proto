@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package ON.Fragments.Authentcation;
+
+import "google/protobuf/timestamp.proto";
+
+// User authentication data
+message UserRecord {
+  message PublicData {
+    bytes UserID = 1;                   // Guid for the user
+    string UserName = 2;                // User name of the user
+    string DisplayName = 3;             // Public display name of the user
+    repeated string Identities = 4;     // Public identities associated with the user ex: user@domain.com
+  }
+  message PrivateData {
+    bytes PasswordHash = 1;     // Password hash bytes
+    bytes PasswordSalt = 2;     // Password salt bytes
+    repeated string Emails = 3; // Private email(s) used for password resets
+    google.protobuf.Timestamp CreatedOnUTC = 4;   // UTC timestamp when user was created
+    google.protobuf.Timestamp ModifiedOnUTC = 5;  // UTC timestamp when user record was last modified
+    google.protobuf.Timestamp DisabledOnUTC = 6;  // UTC timestamp when user was disabled, null = not disabled
+  }
+
+  PublicData Public = 1;
+  PrivateData Private = 2;
+}

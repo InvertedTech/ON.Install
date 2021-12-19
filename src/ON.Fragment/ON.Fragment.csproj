@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Protos\ON\Fragments\Authentication\Backup.proto" />
+    <None Remove="Protos\ON\Fragments\Authentication\User.proto" />
+    <None Remove="Protos\ON\Fragments\Authentication\UserRecord.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Backup.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Claims.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments.proto" />
+    <None Remove="Protos\ON\Fragments\Content\AssetRecord.proto" />
+    <None Remove="Protos\ON\Fragments\Content\Backup.proto" />
+    <None Remove="Protos\ON\Fragments\Content\Content.proto" />
+    <None Remove="Protos\ON\Fragments\Content\ContentRecord.proto" />
+    <None Remove="Protos\ON\Fragments\Generic\ServiceOps.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\ON\Fragments\Authentication\User.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authentication\Backup.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authentication\UserRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Backup.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Claims.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Content\AssetRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Content\ContentRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Content\Backup.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Content\Content.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Generic\ServiceOps.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.17.3" />
+    <PackageReference Include="Grpc.Core" Version="2.38.1" />
+    <PackageReference Include="Grpc.Tools" Version="2.38.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
