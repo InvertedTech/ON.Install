@@ -1,12 +1,13 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim-arm32v7 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim-arm32v7 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ON.Authentication/Shared ON.Authentication/Shared
 COPY ON.Authorization/SimplePayments ON.Authorization/SimplePayments
 COPY ON.Fragment ON.Fragment
+COPY ON.Crypto ON.Crypto
 RUN dotnet restore "ON.Authorization/SimplePayments/Web/ON.Authorization.SimplePayments.Web.csproj"
 WORKDIR "/src/ON.Authorization/SimplePayments/Web"
 RUN dotnet build "ON.Authorization.SimplePayments.Web.csproj" -c Release -o /app/build
