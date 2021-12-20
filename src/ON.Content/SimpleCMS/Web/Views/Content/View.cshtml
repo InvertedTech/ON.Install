@@ -1,0 +1,21 @@
+﻿@model ON.Fragments.Content.ContentRecord
+@{
+    ViewData["Title"] = Model.Public.Title;
+}
+
+<p>
+    <a class="btn btn-primary" href="/content/@(new Guid(Model.Public.ContentID.Span).ToString())/edit">Edit</a>
+</p>
+
+
+<br />
+
+
+<h1>@Model.Public.Title</h1>
+
+<h5>@Model.Public.Subtitle</h5>
+
+<em>By: @Model.Public.Author</em>
+
+@Html.Raw(Model.Public.Body)
+

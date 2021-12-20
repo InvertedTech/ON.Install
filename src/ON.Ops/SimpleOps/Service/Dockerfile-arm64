@@ -1,0 +1,21 @@
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim-arm64v8 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ON.Authentication/Shared ON.Authentication/Shared
+COPY ON.Ops/SimpleOps ON.Ops/SimpleOps
+COPY ON.Fragment ON.Fragment
+COPY ON.Crypto ON.Crypto
+RUN dotnet restore "ON.Ops/SimpleOps/Service/ON.Ops.SimpleOps.Service.csproj"
+WORKDIR "/src/ON.Ops/SimpleOps/Service"
+RUN dotnet build "ON.Ops.SimpleOps.Service.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "ON.Ops.SimpleOps.Service.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "ON.Ops.SimpleOps.Service.dll"]

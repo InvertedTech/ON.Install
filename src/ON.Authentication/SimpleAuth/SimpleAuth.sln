@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31321.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Fragment", "..\..\ON.Fragment\ON.Fragment.csproj", "{7631D242-042D-457F-B74B-E3936E93C0A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authentication.SimpleAuth.Service", "Service\ON.Authentication.SimpleAuth.Service.csproj", "{AC59861E-C6B0-46E5-9E5C-D1365E325CC4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authentication.Shared", "..\Shared\ON.Authentication.Shared.csproj", "{EB798306-B406-425D-9C75-7FE75925E7A1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authentication.SimpleAuth.Web", "Web\ON.Authentication.SimpleAuth.Web.csproj", "{816CB623-A787-4360-9515-376FAD45E5A5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{44A252C9-6F6F-4BCB-A57C-63AB903A081A}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		tye.yaml = tye.yaml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Crypto", "..\..\ON.Crypto\ON.Crypto\ON.Crypto.csproj", "{9B13587B-0494-4D76-9E4B-C3400BD5850D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7631D242-042D-457F-B74B-E3936E93C0A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7631D242-042D-457F-B74B-E3936E93C0A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7631D242-042D-457F-B74B-E3936E93C0A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7631D242-042D-457F-B74B-E3936E93C0A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC59861E-C6B0-46E5-9E5C-D1365E325CC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC59861E-C6B0-46E5-9E5C-D1365E325CC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC59861E-C6B0-46E5-9E5C-D1365E325CC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC59861E-C6B0-46E5-9E5C-D1365E325CC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB798306-B406-425D-9C75-7FE75925E7A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB798306-B406-425D-9C75-7FE75925E7A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB798306-B406-425D-9C75-7FE75925E7A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB798306-B406-425D-9C75-7FE75925E7A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{816CB623-A787-4360-9515-376FAD45E5A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{816CB623-A787-4360-9515-376FAD45E5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{816CB623-A787-4360-9515-376FAD45E5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{816CB623-A787-4360-9515-376FAD45E5A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B13587B-0494-4D76-9E4B-C3400BD5850D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B13587B-0494-4D76-9E4B-C3400BD5850D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B13587B-0494-4D76-9E4B-C3400BD5850D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B13587B-0494-4D76-9E4B-C3400BD5850D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C79AA2E0-433D-4986-974E-17B0FD71DA50}
+	EndGlobalSection
+EndGlobal

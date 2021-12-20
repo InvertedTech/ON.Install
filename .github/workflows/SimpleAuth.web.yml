@@ -5,7 +5,7 @@ on:
     branches:
     - main
     paths:
-    - 'src/NodeF.Authentication/SimpleAuth/Web/**'
+    - 'src/ON.Authentication/SimpleAuth/Web/**'
     - '.github/workflows/**'
 
 jobs:
@@ -24,19 +24,19 @@ jobs:
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     
     - name: Build amd64
-      run: docker build src/ --file src/NodeF.Authentication/SimpleAuth/Web/Dockerfile-amd64 --tag nodefederation/simpleauth-web:linux-amd64
+      run: docker build src/ --file src/ON.Authentication/SimpleAuth/Web/Dockerfile-amd64 --tag phillipfisher/simpleauth-web:linux-amd64
     
     - name: Push amd64
-      run: docker push nodefederation/simpleauth-web:linux-amd64
+      run: docker push phillipfisher/simpleauth-web:linux-amd64
     
     - name: Build arm64
-      run: docker build src/ --file src/NodeF.Authentication/SimpleAuth/Web/Dockerfile-arm64 --tag nodefederation/simpleauth-web:linux-arm64
+      run: docker build src/ --file src/ON.Authentication/SimpleAuth/Web/Dockerfile-arm64 --tag phillipfisher/simpleauth-web:linux-arm64
     
     - name: Push arm64
-      run: docker push nodefederation/simpleauth-web:linux-arm64
+      run: docker push phillipfisher/simpleauth-web:linux-arm64
     
     - name: Build arm32
-      run: docker build src/ --file src/NodeF.Authentication/SimpleAuth/Web/Dockerfile-arm32 --tag nodefederation/simpleauth-web:linux-arm32
+      run: docker build src/ --file src/ON.Authentication/SimpleAuth/Web/Dockerfile-arm32 --tag phillipfisher/simpleauth-web:linux-arm32
     
     - name: Push arm32
-      run: docker push nodefederation/simpleauth-web:linux-arm32
+      run: docker push phillipfisher/simpleauth-web:linux-arm32

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization;
+
+import "google/protobuf/timestamp.proto";
+
+// Service for Authorization claims fragment interface
+service ClaimsInterface {
+  // Get claims to add to outgoing auth token
+  rpc GetClaims (GetClaimsRequest) returns (GetClaimsResponse) {}
+}
+  
+// User claim's record
+message ClaimRecord {
+  string Name = 1;   // Name of the user claim
+  string Value = 2;  // Value of the user claim
+  google.protobuf.Timestamp ExpiresOnUTC = 3; // UTC timestamp when user claim expires
+}
+
+message GetClaimsRequest {
+  bytes UserID = 1; // Guid for the user
+}
+  
+message GetClaimsResponse {
+  repeated ClaimRecord Claims = 1;
+}

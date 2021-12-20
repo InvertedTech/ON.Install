@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim-amd64 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ON.Authentication/Shared ON.Authentication/Shared
+COPY ON.Authentication/SimpleAuth ON.Authentication/SimpleAuth
+COPY ON.Fragment ON.Fragment
+COPY ON.Crypto ON.Crypto
+RUN dotnet restore "ON.Authentication/SimpleAuth/Service/ON.Authentication.SimpleAuth.Service.csproj"
+WORKDIR "/src/ON.Authentication/SimpleAuth/Service"
+RUN dotnet build "ON.Authentication.SimpleAuth.Service.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "ON.Authentication.SimpleAuth.Service.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+#COPY assets/ON.localhost.pfx .
+RUN rm -f appsettings.Development.json
+ENV ASPNETCORE_URLS=http://+:80
+#ENV ASPNETCORE_Kestrel__Certificates__Default__Password=nodef
+#ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/app/ON.localhost.pfx
+ENTRYPOINT ["dotnet", "ON.Authentication.SimpleAuth.Service.dll"]
