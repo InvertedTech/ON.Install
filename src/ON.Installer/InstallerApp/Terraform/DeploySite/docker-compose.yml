@@ -9,7 +9,7 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
   authweb:
-    image: nodefederation/simpleauth-web:linux-amd64
+    image: phillipfisher/simpleauth-web:linux-amd64
     expose:
       - "80"
     environment:
@@ -23,7 +23,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       
   authservice:
-    image: nodefederation/simpleauth-web:linux-amd64
+    image: phillipfisher/simpleauth-web:linux-amd64
     expose:
       - "80"
     environment:
@@ -31,7 +31,7 @@ services:
       - JWT_PUB_KEY=${JWTPUB}
       
   cmsweb:
-    image: nodefederation/simplecms-web:linux-amd64
+    image: phillipfisher/simplecms-web:linux-amd64
     expose:
       - "80"
     environment:
@@ -43,14 +43,14 @@ services:
       - SERVICE__CMSSERVICE__PORT=80
       
   cmsservice:
-    image: nodefederation/simplecms-service:linux-amd64
+    image: phillipfisher/simplecms-service:linux-amd64
     expose:
       - "80"
     environment:
       - JWT_PUB_KEY=${JWTPUB}
       
   paymentweb:
-    image: nodefederation/simplepayments-web:linux-amd64
+    image: phillipfisher/simplepayments-web:linux-amd64
     expose:
       - "80"
     environment:
@@ -64,7 +64,7 @@ services:
       - SERVICE__PAYMENTSERVICE__PORT=80
       
   paymentservice:
-    image: nodefederation/simplepayments-service:linux-amd64
+    image: phillipfisher/simplepayments-service:linux-amd64
     expose:
       - "80"
     environment:

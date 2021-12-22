@@ -1,4 +1,5 @@
 ﻿using InstallerApp.Security;
+using InstallerApp.Terraform;
 using ON.Installer.Models;
 using System;
 using System.Collections.Generic;
@@ -6,18 +7,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace InstallerApp
 {
@@ -29,6 +24,9 @@ namespace InstallerApp
         MainModel MyModel;
         DirectoryInfo DeployRootD;
         KeyHelper keyHelper;
+        ResourceHelper resHelper = new ResourceHelper();
+        FileInfo LogFile;
+        bool needDockerInstalled;
 
         public DeployWindow()
         {
@@ -37,18 +35,13 @@ namespace InstallerApp
 
         internal async Task StartDeploying()
         {
+            needDockerInstalled = true;
             MyModel = MainWindow.MainModel;
             keyHelper = new KeyHelper(MyModel.Credentials.MasterKey);
-            DeployRootD = new DirectoryInfo($"c:/tmp/onf/terraform/{MyModel.DNS.Name}");
+            DeployRootD = MainWindow.TerraformLocation;
+            LogFile = new FileInfo(DeployRootD.FullName + "/log.txt");
 
-            var origD = new DirectoryInfo("../../../../../terraform");
-
-            if (!DeployRootD.Exists)
-            {
-                DeployRootD.Create();
-                foreach (var f in origD.GetFiles())
-                    f.CopyTo(DeployRootD + "/" + f.Name);
-            }
+            var names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
 
             Task createServer = CreateServer();
             await WaitOnTask(createServer, txtCreateServer);
@@ -90,9 +83,8 @@ namespace InstallerApp
 
         internal async Task CreateServerAzure()
         {
-            AddLine("--- Create Server ---");
+            await AddLine("--- Create Server ---");
 
-            var origD = new DirectoryInfo("../../../../../terraform/createServer/azure");
             var targetD = new DirectoryInfo($"{DeployRootD.FullName}/createServer/azure");
             var terraD = new DirectoryInfo(targetD.FullName + "/.terraform");
             var varF = new FileInfo(targetD.FullName + "/variables.tf");
@@ -100,8 +92,7 @@ namespace InstallerApp
             if (!targetD.Exists)
             {
                 targetD.Create();
-                foreach (var f in origD.GetFiles())
-                    f.CopyTo(targetD + "/" + f.Name);
+                await resHelper.SaveCreateAzure(targetD);
             }
 
             var ssh = SshHelper.CreateRSAKey("temp@onf");
@@ -130,17 +121,15 @@ namespace InstallerApp
 
         internal async Task ChangeSshKey(string tempSshPriv)
         {
-            AddLine("--- Changing SSH Key ---");
+            await AddLine("--- Changing SSH Key ---");
 
-            var origD = new DirectoryInfo("../../../../../terraform/changeSsh");
             var targetD = new DirectoryInfo($"{DeployRootD.FullName}/changeSsh");
             var terraD = new DirectoryInfo(targetD.FullName + "/.terraform");
 
             if (!targetD.Exists)
             {
                 targetD.Create();
-                foreach (var f in origD.GetFiles())
-                    f.CopyTo(targetD + "/" + f.Name);
+                await resHelper.SaveChangeSSH(targetD);
             }
 
             var ssh = keyHelper.DeriveEcSshKey();
@@ -161,16 +150,14 @@ namespace InstallerApp
 
         internal async Task CreateServeDigitalOcean()
         {
-            AddLine("--- Create Server ---");
+            await AddLine("--- Create Server ---");
 
-            var origD = new DirectoryInfo("../../../../../terraform/createServer/digitalocean");
             var targetD = new DirectoryInfo($"{DeployRootD.FullName}/createServer/digitalocean");
             var terraD = new DirectoryInfo(targetD.FullName + "/.terraform");
             var varF = new FileInfo(targetD.FullName + "/variables.tf");
 
             targetD.Create();
-            foreach (var f in origD.GetFiles())
-                f.CopyTo(targetD + "/" + f.Name, true);
+            await resHelper.SaveCreateDigitalocean(targetD);
 
             string prefix = "onf-" + MyModel.DNS.Name.Replace(".", "-");
 
@@ -196,6 +183,7 @@ namespace InstallerApp
             var addy = addyLine.GetBetween(": \"", "\"");
             MyModel.Server.IP = addy;
             MyModel.Server.User = "root";
+            needDockerInstalled = false;
         }
 
         private async Task<string> SetDigitalOceanKey(string name, string pubKey)
@@ -252,9 +240,14 @@ namespace InstallerApp
 
         internal async Task InstallDocker()
         {
-            AddLine("--- Install Docker ---");
+            if (!needDockerInstalled)
+            {
+                await AddLine("--- Skipping Docker Install ---");
+                return;
+            }
 
-            var origD = new DirectoryInfo("../../../../../terraform/installDocker");
+            await AddLine("--- Install Docker ---");
+
             var targetD = new DirectoryInfo($"{DeployRootD.FullName}/installDocker");
             var terraD = new DirectoryInfo(targetD.FullName + "/.terraform");
             var varF = new FileInfo(targetD.FullName + "/variables.tf");
@@ -262,8 +255,7 @@ namespace InstallerApp
             if (!targetD.Exists)
             {
                 targetD.Create();
-                foreach (var f in origD.GetFiles())
-                    f.CopyTo(targetD + "/" + f.Name);
+                await resHelper.SaveInstallDocker(targetD);
             }
 
             var ssh = keyHelper.DeriveEcSshKey();
@@ -282,9 +274,8 @@ namespace InstallerApp
 
         internal async Task DeploySite()
         {
-            AddLine("--- Deploy Site ---");
+            await AddLine("--- Deploy Site ---");
 
-            var origD = new DirectoryInfo("../../../../../terraform/deploySite");
             var targetD = new DirectoryInfo($"{DeployRootD.FullName}/deploySite");
             var terraD = new DirectoryInfo(targetD.FullName + "/.terraform");
             var varF = new FileInfo(targetD.FullName + "/variables.tf");
@@ -293,8 +284,7 @@ namespace InstallerApp
             if (!targetD.Exists)
             {
                 targetD.Create();
-                foreach (var f in origD.GetFiles())
-                    f.CopyTo(targetD + "/" + f.Name);
+                await resHelper.SaveDeploySite(targetD);
             }
 
             var ssh = keyHelper.DeriveEcSshKey();
@@ -317,7 +307,7 @@ namespace InstallerApp
         {
             DateTime start = DateTime.Now;
 
-            AddLine("--- Testing Site ---");
+            await AddLine("--- Testing Site ---");
             await Task.Delay(30);
 
             while ((DateTime.Now - start).TotalMinutes < 15)
@@ -331,7 +321,7 @@ namespace InstallerApp
                         var res = await wc.DownloadStringTaskAsync(str);
                         if (res == "pong")
                         {
-                            AddLine("Site Verified!");
+                            await AddLine("Site Verified!");
                             return;
                         }
                     }
@@ -340,13 +330,13 @@ namespace InstallerApp
                 await Task.Delay(30);
             }
 
-            AddLine("Site test unsuccessful...");
+            await AddLine("Site test unsuccessful...");
             throw new Exception();
         }
 
         internal async Task ChangeDNS()
         {
-            AddLine("--- Changing DNS ---");
+            await AddLine("--- Changing DNS ---");
 
             using (WebClient wc = new())
             {
@@ -357,7 +347,7 @@ namespace InstallerApp
 
                 if (recs.All(r => r.data == MyModel.Server.IP))
                 {
-                    AddLine("No change needed.");
+                    await AddLine("No change needed.");
                     return;
                 }
 
@@ -375,7 +365,7 @@ namespace InstallerApp
                 wc.Headers.Add("Content-Type", "application/json");
                 await wc.UploadStringTaskAsync($"https://api.godaddy.com/v1/domains/{MyModel.DNS.Name}/records/A/%40", "PUT", json);
 
-                AddLine("Change complete");
+                await AddLine("Change complete");
             }
         }
 
@@ -383,7 +373,7 @@ namespace InstallerApp
         {
             DateTime start = DateTime.Now;
 
-            AddLine("--- Testing DNS ---");
+            await AddLine("--- Testing DNS ---");
             await Task.Delay(30);
 
             while ((DateTime.Now - start).TotalMinutes < 15)
@@ -397,7 +387,7 @@ namespace InstallerApp
                         var res = await wc.DownloadStringTaskAsync(str);
                         if (res == "pong")
                         {
-                            AddLine("DNS Verified!");
+                            await AddLine("DNS Verified!");
                             return;
                         }
                     }
@@ -406,11 +396,11 @@ namespace InstallerApp
                 await Task.Delay(30);
             }
 
-            AddLine("DNS test unsuccessful...");
+            await AddLine("DNS test unsuccessful...");
             throw new Exception();
         }
 
-        private async Task RunTerraform(DirectoryInfo d, string extra, Dictionary<string,string> envVars = null)
+        private async Task RunTerraform(DirectoryInfo d, string extra, Dictionary<string, string> envVars = null)
         {
             var pInfo = new ProcessStartInfo("terraform", extra);
             pInfo.WorkingDirectory = d.FullName;
@@ -444,10 +434,10 @@ namespace InstallerApp
         List<string> lines = new();
         private void P_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            AddLine(e.Data);
+            AddLine(e.Data).Wait();
         }
 
-        private void AddLine(string inStr)
+        private async Task AddLine(string inStr)
         {
             if (inStr == null)
                 return;
@@ -462,6 +452,13 @@ namespace InstallerApp
             {
                 txtOutput.Text = string.Join('\n', lines);
             });
+
+            await AppendLog(str);
+        }
+
+        private async Task AppendLog(string str)
+        {
+            await File.AppendAllTextAsync(LogFile.FullName, str + "\n");
         }
 
         private async Task WriteEnvFile(FileInfo f)
@@ -470,8 +467,8 @@ namespace InstallerApp
 
             List<string> l = new();
             l.Add("DNSNAME=" + MyModel.DNS.Name);
-            l.Add("JWTPRIV="+jwtKey.privKey);
-            l.Add("JWTPUB="+jwtKey.pubKey);
+            l.Add("JWTPRIV=" + jwtKey.privKey);
+            l.Add("JWTPUB=" + jwtKey.pubKey);
 
             await File.WriteAllLinesAsync(f.FullName, l);
         }

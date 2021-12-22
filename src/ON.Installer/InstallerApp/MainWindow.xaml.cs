@@ -29,7 +29,9 @@ namespace InstallerApp
     {
         public static MainModel MainModel { get; set; } = new();
 
+        public static DirectoryInfo RootLocation;
         public static DirectoryInfo SaveLocation;
+        public static DirectoryInfo TerraformLocation;
         public const string SAVED_FILENAME = "config.onf";
 
         const string FILE_FILTER = "ON Config File (*.onfx)|*.onfx";
@@ -42,7 +44,8 @@ namespace InstallerApp
 
             GetNavItems();
 
-            SaveLocation = new DirectoryInfo(GetFolderPath(SpecialFolder.ApplicationData) + "/ONF/saves");
+            RootLocation = new DirectoryInfo(GetFolderPath(SpecialFolder.ApplicationData) + "/ONF");
+            SaveLocation = new DirectoryInfo(RootLocation.FullName + "/saves");
             SaveLocation.Create();
         }
 
@@ -89,9 +92,17 @@ namespace InstallerApp
 
             if (dialog.ShowDialog() == true)
             {
-                MainModel = dialog.Selected;
-                frmMain.Refresh();
+                LoadSavedFile(dialog.Selected);
             }
+        }
+
+        private void LoadSavedFile(LoadSavedFiles.ModelInfo info)
+        {
+            MainModel = info.Model;
+            frmMain.Refresh();
+
+            TerraformLocation = new DirectoryInfo(info.ConfigFile.DirectoryName + "/terraform");
+            TerraformLocation.Create();
         }
 
         void OpenCmdCanExecute(object sender, CanExecuteRoutedEventArgs e)

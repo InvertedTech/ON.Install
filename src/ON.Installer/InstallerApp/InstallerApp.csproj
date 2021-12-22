@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Terraform\ChangeSsh\main.tf" />
+    <None Remove="Terraform\CreateServer\Azure\main.tf" />
+    <None Remove="Terraform\CreateServer\Digitalocean\main.tf" />
+    <None Remove="Terraform\DeploySite\docker-compose.yml" />
+    <None Remove="Terraform\DeploySite\main.tf" />
+    <None Remove="Terraform\InstallDocker\docker-compose" />
+    <None Remove="Terraform\InstallDocker\get-docker.sh" />
+    <None Remove="Terraform\InstallDocker\main.tf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.0" />
     <PackageReference Include="NBitcoin" Version="6.0.18" />
     <PackageReference Include="SshKeyGenerator" Version="1.1.40" />
@@ -15,6 +26,20 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ON.Installer.Models\ON.Installer.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Terraform\ChangeSsh\main.tf" />
+    <EmbeddedResource Include="Terraform\CreateServer\Azure\main.tf" />
+    <EmbeddedResource Include="Terraform\CreateServer\Digitalocean\main.tf" />
+    <EmbeddedResource Include="Terraform\DeploySite\docker-compose.yml" />
+    <EmbeddedResource Include="Terraform\DeploySite\main.tf" />
+    <EmbeddedResource Include="Terraform\InstallDocker\get-docker.sh" />
+    <EmbeddedResource Include="Terraform\InstallDocker\main.tf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Terraform\InstallDocker\docker-compose" />
   </ItemGroup>
 
   <ItemGroup>
