@@ -1,7 +1,7 @@
 FROM node:12
-WORKDIR /app
+WORKDIR "/src/ON.Authorization/StripePayments/"
 COPY package.json /app
 RUN npm install
 COPY . .
-CMD node server.js
-EXPOSE 8081
+CMD npm run start
+EXPOSE 3000
