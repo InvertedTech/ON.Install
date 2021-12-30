@@ -3,7 +3,7 @@ import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
 import { ProtoGrpcType } from '../Proto/payment'
 
-const PORT = process.env.PORT || 9000
+const PORT = process.env.PORT || 3000
 const PROTO_FILE = '../Proto/payment.proto'
 
 const packageDef = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))

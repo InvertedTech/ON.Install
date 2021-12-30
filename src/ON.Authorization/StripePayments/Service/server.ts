@@ -4,7 +4,7 @@ import * as protoLoader from '@grpc/proto-loader'
 import { ProtoGrpcType } from '../Proto/payment'
 import { PaymentHandlers } from '../Proto/paymentPackage/Payment'
 
-const PORT = process.env.PORT || 9000
+const PORT = process.env.PORT || 3000
 const PROTO_FILE = '../Proto/payment.proto'
 
 const packageDef = protoLoader.loadSync(path.resolve(__dirname, PROTO_FILE))
