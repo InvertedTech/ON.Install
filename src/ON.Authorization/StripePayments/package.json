@@ -1,19 +1,20 @@
 {
-  "name": "stripepayments",
-  "version": "1.0.0",
-  "description": "Stripe Payment Server",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Andrew Mingst",
-  "license": "MIT",
-  "devDependencies": {
-    "dotenv": "^10.0.0",
-    "nodemon": "^2.0.15"
-  },
-  "dependencies": {
-    "express": "^4.17.2",
-    "stripe": "^8.195.0"
-  }
+	"name": "stripepayments",
+	"version": "1.0.0",
+	"description": "Stripe Payment Server",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"author": "Andrew Mingst",
+	"license": "MIT",
+	"devDependencies": {
+		"dotenv": "^10.0.0",
+		"nodemon": "^2.0.15"
+	},
+	"dependencies": {
+		"express": "^4.17.2",
+		"jsonwebtoken": "^8.5.1",
+		"stripe": "^8.195.0"
+	}
 }

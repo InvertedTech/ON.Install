@@ -4,6 +4,13 @@ const stripe = require('stripe')
 require('dotenv').config()
 
 const port = process.env.PORT || 4000
-const app = express()
+const server = express()
 
-app.listen(() => console.log(`Listening on port:${port}`))
+server.use(express.json())
+server.use(express.urlencoded({ extended: true }))
+
+//server.use()
+
+server.listen(() =>
+	console.log(`Payment Service (server.js)|| Listening on port:${port}...`)
+)
