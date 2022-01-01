@@ -22,8 +22,11 @@ ingress:
     - path: /logout
       service: authweb
       preservePath: true
-    - path: /subscription
+    - path: /subscription/fake
       service: payweb
+      preservePath: true
+    - path: /subscription
+      service: authweb
       preservePath: true
     - path: /register
       service: authweb

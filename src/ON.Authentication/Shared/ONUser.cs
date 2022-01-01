@@ -23,7 +23,10 @@ namespace ON.Authentication
         public const string DisplayNameType = "Display";
 
         public uint SubscriptionLevel { get; set; } = 0;
-        public const string SubscriptionLevelType = "subscription";
+        public const string SubscriptionLevelType = "SubscriptionLevel";
+
+        public string SubscriptionProvider { get; set; }
+        public const string SubscriptionProviderType = "SubscriptionProvider";
 
         public List<string> Idents { get; private set; } = new List<string>();
         public const string IdentsType = "Idents";
@@ -110,6 +113,9 @@ namespace ON.Authentication
                 case SubscriptionLevelType:
                     if (uint.TryParse(claim.Value, out uint i))
                         SubscriptionLevel = i;
+                    return;
+                case SubscriptionProviderType:
+                    SubscriptionProvider = claim.Value;
                     return;
                 default:
                     ExtraClaims.Add(claim);
