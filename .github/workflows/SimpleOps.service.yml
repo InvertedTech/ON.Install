@@ -24,19 +24,19 @@ jobs:
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     
     - name: Build amd64
-      run: docker build src/ --file src/ON.Ops/SimpleOps/Service/Dockerfile-amd64 --tag phillipfisher/simpleops-service:linux-amd64
+      run: docker build src/ --file src/ON.Ops/SimpleOps/Service/Dockerfile-amd64 --tag opennetwork/simpleops-service:linux-amd64
     
     - name: Push amd64
-      run: docker push phillipfisher/simpleops-service:linux-amd64
+      run: docker push opennetwork/simpleops-service:linux-amd64
     
     - name: Build arm64
-      run: docker build src/ --file src/ON.Ops/SimpleOps/Service/Dockerfile-arm64 --tag phillipfisher/simpleops-service:linux-arm64
+      run: docker build src/ --file src/ON.Ops/SimpleOps/Service/Dockerfile-arm64 --tag opennetwork/simpleops-service:linux-arm64
     
     - name: Push arm64
-      run: docker push phillipfisher/simpleops-service:linux-arm64
+      run: docker push opennetwork/simpleops-service:linux-arm64
     
     - name: Build arm32
-      run: docker build src/ --file src/ON.Ops/SimpleOps/Service/Dockerfile-arm32 --tag phillipfisher/simpleops-service:linux-arm32
+      run: docker build src/ --file src/ON.Ops/SimpleOps/Service/Dockerfile-arm32 --tag opennetwork/simpleops-service:linux-arm32
     
     - name: Push arm32
-      run: docker push phillipfisher/simpleops-service:linux-arm32
+      run: docker push opennetwork/simpleops-service:linux-arm32

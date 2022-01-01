@@ -10,55 +10,24 @@ namespace ON.Crypto
 {
     public static class EcdhHelper
     {
+        private static IEcdh ecdh;
+
+        static EcdhHelper()
+        {
+            if (OperatingSystem.IsWindows())
+                ecdh = new EcdhHelperWindows();
+            else
+                ecdh = new EcdhHelperLinux();
+        }
+
         public static byte[] DeriveKeyClient(ECDsa privKey, JsonWebKey serverPubKey)
         {
-            var param = privKey.ExportParameters(true);
-            using ECDiffieHellmanCng privECDH = new();
-            privECDH.ImportParameters(new ECParameters()
-            {
-                Curve = ECCurve.NamedCurves.nistP256,
-                D = param.D
-            });
-
-            using ECDiffieHellmanCng pubECDH = new();
-            pubECDH.ImportParameters(new ECParameters()
-            {
-                Curve = ECCurve.NamedCurves.nistP256,
-                Q = new ECPoint()
-                {
-                    X = Base64UrlEncoder.DecodeBytes(serverPubKey.X),
-                    Y = Base64UrlEncoder.DecodeBytes(serverPubKey.Y),
-                }
-            });
-
-            return privECDH.DeriveKeyMaterial(pubECDH.PublicKey);
+            return ecdh.DeriveKeyClient(privKey, serverPubKey);
         }
 
         public static byte[] DeriveKeyServer(JsonWebKey clientPubKey, out string serverPubKey)
         {
-            ECDsa privKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
-            serverPubKey = privKey.ToPublicEncodedJsonWebKey();
-
-            var param = privKey.ExportParameters(true);
-            using ECDiffieHellmanCng privECDH = new();
-            privECDH.ImportParameters(new ECParameters()
-            {
-                Curve = ECCurve.NamedCurves.nistP256,
-                D = param.D
-            });
-
-            using ECDiffieHellmanCng pubECDH = new();
-            pubECDH.ImportParameters(new ECParameters()
-            {
-                Curve = ECCurve.NamedCurves.nistP256,
-                Q = new ECPoint()
-                {
-                    X = Base64UrlEncoder.DecodeBytes(clientPubKey.X),
-                    Y = Base64UrlEncoder.DecodeBytes(clientPubKey.Y),
-                }
-            });
-
-            return privECDH.DeriveKeyMaterial(pubECDH.PublicKey);
+            return ecdh.DeriveKeyServer(clientPubKey, out serverPubKey);
         }
     }
 }

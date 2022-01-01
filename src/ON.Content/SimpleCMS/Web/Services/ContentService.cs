@@ -49,7 +49,7 @@ namespace ON.Content.SimpleCMS.Web.Services
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            var res = await client.SaveContentAsync(req);
+            var res = await client.SaveContentAsync(req, GetMetadata());
 
             return res;
         }
@@ -77,6 +77,9 @@ namespace ON.Content.SimpleCMS.Web.Services
 
         public async Task PublishContent(Guid contentId)
         {
+            if (!(User.IsAdmin || User.IsPublisher))
+                return;
+
             var res = await GetContent(contentId);
             var rec = res?.Content;
             if (rec == null)
@@ -91,11 +94,14 @@ namespace ON.Content.SimpleCMS.Web.Services
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            await client.SaveContentAsync(req);
+            await client.SaveContentAsync(req, GetMetadata());
         }
 
         public async Task UnpublishContent(Guid contentId)
         {
+            if (!(User.IsAdmin || User.IsPublisher))
+                return;
+
             var res = await GetContent(contentId);
             var rec = res?.Content;
             if (rec == null)
@@ -110,7 +116,7 @@ namespace ON.Content.SimpleCMS.Web.Services
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            await client.SaveContentAsync(req);
+            await client.SaveContentAsync(req, GetMetadata());
         }
 
         public async Task<SaveContentResponse> UpdateContent(ContentRecord rec)
@@ -124,9 +130,17 @@ namespace ON.Content.SimpleCMS.Web.Services
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            var res = await client.SaveContentAsync(req);
+            var res = await client.SaveContentAsync(req, GetMetadata());
 
             return res;
+        }
+
+        private Metadata GetMetadata()
+        {
+            var data = new Metadata();
+            data.Add("Authorization", "Bearer " + User.JwtToken);
+
+            return data;
         }
     }
 }

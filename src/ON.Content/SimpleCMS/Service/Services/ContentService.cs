@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
@@ -47,8 +48,14 @@ namespace ON.Content.SimpleCMS.Service
 
         public override async Task<SaveContentResponse> SaveContent(SaveContentRequest request, ServerCallContext context)
         {
-            //var userToken = context.GetHttpContext().User as ONUser;
             var content = request.Content;
+
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (user == null)
+                return new SaveContentResponse();
+
+            if (!(user.IsAdmin || user.IsPublisher || user.IsWriter))
+                return new SaveContentResponse();
 
             await dataProvider.Save(content);
 

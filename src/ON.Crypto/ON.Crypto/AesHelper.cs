@@ -12,7 +12,7 @@ namespace ON.Crypto
     {
         public static void Decrypt(in byte[] key, in byte[] iv, in byte[] encryptedMessage, out byte[] plaintextMessage)
         {
-            using (Aes aes = new AesCryptoServiceProvider())
+            using (Aes aes = Aes.Create())
             {
                 aes.Key = key;
                 aes.IV = iv;
@@ -30,7 +30,7 @@ namespace ON.Crypto
 
         public static void Encrypt(in byte[] key, out byte[] iv, in byte[] plaintextMessage, out byte[] encryptedMessage)
         {
-            using (Aes aes = new AesCryptoServiceProvider())
+            using (Aes aes = Aes.Create())
             {
                 aes.Key = key;
                 iv = aes.IV;

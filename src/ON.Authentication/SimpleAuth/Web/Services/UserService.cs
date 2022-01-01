@@ -103,7 +103,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             if (nameHelper.UserServiceChannel == null)
                 return null;
 
-            if (!User.IsAdmin())
+            if (!User.IsAdmin)
                 return null;
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
@@ -119,7 +119,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             if (nameHelper.UserServiceChannel == null)
                 return null;
 
-            if (!User.IsAdmin())
+            if (!User.IsAdmin)
                 return null;
 
             var list = new List<UserRecord.Types.PublicData>();

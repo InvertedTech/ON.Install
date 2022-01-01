@@ -28,8 +28,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
         private readonly SigningCredentials creds;
         private readonly IUserDataProvider dataProvider;
         private readonly ClaimsClient claimsClient;
-        private static readonly HashAlgorithm hasher = new SHA256Managed();
-        private static readonly RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
+        private static readonly HashAlgorithm hasher = SHA256.Create();
 
         public UserService(OfflineHelper offlineHelper, ILogger<ServiceOpsService> logger, IUserDataProvider dataProvider, ClaimsClient claimsClient)
         {
@@ -85,8 +84,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 if (record == null)
                     return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ErrorType.UnknownError };
 
-                byte[] salt = new byte[16];
-                rngCsp.GetBytes(salt);
+                byte[] salt = RandomNumberGenerator.GetBytes(16);
                 record.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
                 record.Private.PasswordHash = Google.Protobuf.ByteString.CopyFrom(ComputeSaltedHash(request.NewPassword, salt));
 
@@ -121,8 +119,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 if (!CryptographicOperations.FixedTimeEquals(record.Private.PasswordHash.Span, hash))
                     return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ErrorType.BadOldPassword };
 
-                byte[] salt = new byte[16];
-                rngCsp.GetBytes(salt);
+                byte[] salt = RandomNumberGenerator.GetBytes(16);
                 record.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
                 record.Private.PasswordHash = Google.Protobuf.ByteString.CopyFrom(ComputeSaltedHash(request.NewPassword, salt));
 
@@ -154,8 +151,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     Error = CreateUserResponse.Types.ErrorType.UnknownError
                 };
 
-            byte[] salt = new byte[16];
-            rngCsp.GetBytes(salt);
+            byte[] salt = RandomNumberGenerator.GetBytes(16);
             user.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
             user.Private.PasswordHash = Google.Protobuf.ByteString.CopyFrom(ComputeSaltedHash(request.Password, salt));
             user.Public.CreatedOnUTC = user.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
@@ -528,8 +524,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             };
             record.Public.Roles.Add("admin");
 
-            byte[] salt = new byte[16];
-            rngCsp.GetBytes(salt);
+            byte[] salt = RandomNumberGenerator.GetBytes(16);
             record.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
             record.Private.PasswordHash = Google.Protobuf.ByteString.CopyFrom(ComputeSaltedHash("admin", salt));
 
