@@ -1,6 +1,6 @@
 ﻿using Google.Protobuf;
 using ON.Crypto;
-using ON.Fragments.Authentcation;
+using ON.Fragments.Authentication;
 using System;
 using System.Collections.Generic;
 using System.IO;

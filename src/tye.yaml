@@ -10,6 +10,9 @@ ingress:
   bindings:
     - port: 8080
   rules:
+    - path: /auth/admin
+      service: authweb
+      preservePath: true
     - path: /changepassword
       service: authweb
       preservePath: true

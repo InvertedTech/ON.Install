@@ -1,4 +1,4 @@
-﻿using ON.Fragments.Authentcation;
+﻿using ON.Fragments.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +8,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 {
     public interface IUserDataProvider
     {
+        Task<bool> ChangeLogin(string oldLoginName, string newLoginName, Guid id);
         Task<bool> Create(UserRecord user);
         Task<bool> Delete(Guid userId);
         Task<bool> Exists(Guid userId);

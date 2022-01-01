@@ -1,7 +1,7 @@
 ﻿using Google.Protobuf;
 using Microsoft.Extensions.Options;
 using ON.Authentication.SimpleAuth.Service.Models;
-using ON.Fragments.Authentcation;
+using ON.Fragments.Authentication;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +21,19 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             root.Create();
             dataDir = root.CreateSubdirectory("data");
             indexDir = root.CreateSubdirectory("index");
+        }
+
+        public async Task<bool> ChangeLogin(string oldLoginName, string newLoginName, Guid id)
+        {
+            var fiOld = GetIndexFilePath(oldLoginName);
+            var fiNew = GetIndexFilePath(newLoginName);
+            if (!fiOld.Exists || fiNew.Exists)
+                return false;
+
+            await File.WriteAllTextAsync(fiNew.FullName, id.ToString());
+            fiOld.Delete();
+
+            return true;
         }
 
         public async Task<bool> Create(UserRecord user)

@@ -9,6 +9,10 @@ namespace ON.Authentication
 {
     public class ONUser : ClaimsPrincipal
     {
+        public const string ROLE_ADMIN = "admin";
+        public const string ROLE_WRITER = "writer";
+        public const string ROLE_PUBLISHER = "publisher";
+
         public Guid Id { get; set; } = Guid.Empty;
         public const string IdType = "Id";
 
@@ -46,6 +50,9 @@ namespace ON.Authentication
             if (Idents.Count != 0)
                 yield return new Claim(IdentsType, string.Join(';', Idents));
 
+            foreach (var r in Roles)
+                yield return new Claim(RolesType, r);
+
             foreach (var c in ExtraClaims)
                 yield return c;
         }
@@ -64,6 +71,16 @@ namespace ON.Authentication
                 return null;
 
             return user;
+        }
+
+        public bool IsAdmin()
+        {
+            return Roles.Contains(ROLE_ADMIN);
+        }
+
+        public override bool IsInRole(string role)
+        {
+            return Roles.Contains(role);
         }
 
         private bool IsValid()
