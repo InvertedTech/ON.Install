@@ -14,7 +14,7 @@ using ON.Content.SimpleCMS.Web.Services;
 
 namespace ON.Content.SimpleCMS.Web.Controllers
 {
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = ONUser.ROLE_ADMIN + "," + ONUser.ROLE_PUBLISHER + "," + ONUser.ROLE_WRITER)]
     public class ContentController : Controller
     {
         private readonly ILogger<HomeController> logger;
@@ -125,6 +125,7 @@ namespace ON.Content.SimpleCMS.Web.Controllers
             return Redirect("/content/" + new Guid(res2.Content.Public.ContentID.Span).ToString());
         }
 
+        [Authorize(Roles = ONUser.ROLE_ADMIN + "," + ONUser.ROLE_PUBLISHER)]
         [HttpGet("/content/{id}/publish")]
         public async Task<IActionResult> Publish(string id)
         {
@@ -137,6 +138,7 @@ namespace ON.Content.SimpleCMS.Web.Controllers
             return Redirect("/content/manage");
         }
 
+        [Authorize(Roles = ONUser.ROLE_ADMIN + "," + ONUser.ROLE_PUBLISHER)]
         [HttpGet("/content/{id}/unpublish")]
         public async Task<IActionResult> Unpublish(string id)
         {

@@ -97,7 +97,7 @@ namespace ON.Authentication.SimpleAuth.Web.Controllers
                 Expires = DateTimeOffset.UtcNow.AddDays(21),
                 IsEssential = true,
             });
-            return RedirectToAction(nameof(SettingsGet));
+            return Redirect("/");
         }
 
         [AllowAnonymous]

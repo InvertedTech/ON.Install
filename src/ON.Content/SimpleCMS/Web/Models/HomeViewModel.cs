@@ -17,8 +17,11 @@ namespace ON.Content.SimpleCMS.Web.Models
         {
             Records.AddRange(records);
 
+            ShowLockStatus = !(user?.IsWriterOrHigher ?? false);
             UserSubscriptionLevel = user?.SubscriptionLevel ?? 0;
         }
+
+        public bool ShowLockStatus { get; set; }
 
         public uint UserSubscriptionLevel { get; set; } = 0;
 

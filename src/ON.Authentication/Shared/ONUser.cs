@@ -33,6 +33,11 @@ namespace ON.Authentication
 
         public List<string> Roles { get; private set; } = new List<string>();
         public const string RolesType = ClaimTypes.Role;
+        public bool IsAdmin { get => IsInRole(ROLE_ADMIN); }
+        public bool IsPublisher { get => IsInRole(ROLE_PUBLISHER); }
+        public bool IsPublisherOrHigher { get => IsPublisher || IsAdmin; }
+        public bool IsWriter { get => IsInRole(ROLE_WRITER); }
+        public bool IsWriterOrHigher { get => IsWriter || IsPublisherOrHigher; }
 
         public List<Claim> ExtraClaims { get; private set; } = new List<Claim>();
 
@@ -74,11 +79,6 @@ namespace ON.Authentication
                 return null;
 
             return user;
-        }
-
-        public bool IsAdmin()
-        {
-            return Roles.Contains(ROLE_ADMIN);
         }
 
         public override bool IsInRole(string role)
