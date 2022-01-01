@@ -27,7 +27,7 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 
         public async Task<IEnumerable<ClaimRecord>> GetOtherClaims(Guid userId)
         {
-            var client = new ClaimsInterface.ClaimsInterfaceClient(nameHelper.PaymentServiceChannel);
+            var client = new ClaimsInterface.ClaimsInterfaceClient(nameHelper.FakePaymentServiceChannel);
             var reply = await client.GetClaimsAsync(new GetClaimsRequest()
             {
                 UserID = Google.Protobuf.ByteString.CopyFrom(userId.ToByteArray())
