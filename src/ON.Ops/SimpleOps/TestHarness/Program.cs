@@ -24,7 +24,7 @@ namespace TestHarness
 
             AuthenticationBackupClient client = new();
             var data = client.GetBackup(clientPubKey).Result;
-            client.RestoreFromBackup(ON.Fragments.Authentcation.RestoreAllDataRequest.Types.RestoreMode.Wipe, clientKey, data).Wait();
+            client.RestoreFromBackup(ON.Fragments.Authentication.RestoreAllDataRequest.Types.RestoreMode.Wipe, clientKey, data).Wait();
 
             //using (var wc = new WebClient())
             //{

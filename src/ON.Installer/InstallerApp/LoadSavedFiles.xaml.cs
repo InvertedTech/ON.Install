@@ -27,11 +27,11 @@ namespace InstallerApp
             InitializeComponent();
         }
 
-        public MainModel Selected { get; set; }
+        public ModelInfo Selected { get; set; }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            Selected = (treeFiles.SelectedItem as TreeViewItem)?.DataContext as MainModel;
+            Selected = (treeFiles.SelectedItem as TreeViewItem)?.DataContext as ModelInfo;
 
             DialogResult = true;
         }
@@ -52,7 +52,12 @@ namespace InstallerApp
 
                     TreeViewItem item = new TreeViewItem();
                     item.Header = m.Personalization.Name;
-                    item.DataContext = m;
+                    item.DataContext = new ModelInfo()
+                    {
+                        ConfigFile = f,
+                        Model = m
+                    };
+
 
                     treeFiles.Items.Add(item);
                 }
@@ -64,6 +69,12 @@ namespace InstallerApp
         {
             var json = File.ReadAllText(f.FullName);
             return JsonSerializer.Deserialize<MainModel>(json);
+        }
+
+        public class ModelInfo
+        {
+            public MainModel Model;
+            public FileInfo ConfigFile;
         }
     }
 }

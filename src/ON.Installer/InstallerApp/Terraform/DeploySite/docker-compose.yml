@@ -1,0 +1,71 @@
+version: '3.1'
+
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:dev-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  authweb:
+    image: phillipfisher/simpleauth-web:linux-amd64
+    expose:
+      - "80"
+    environment:
+      - VIRTUAL_HOST=${DNSNAME}
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=~^/(changepassword|login|logout|register|settings)
+      - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__authservice__PROTOCOL=http
+      - SERVICE__authservice__HOST=authservice
+      - SERVICE__authservice__PORT=80
+      - ASPNETCORE_ENVIRONMENT=Development
+      
+  authservice:
+    image: phillipfisher/simpleauth-web:linux-amd64
+    expose:
+      - "80"
+    environment:
+      - JWT_PRIV_KEY=${JWTPRIV}
+      - JWT_PUB_KEY=${JWTPUB}
+      
+  cmsweb:
+    image: phillipfisher/simplecms-web:linux-amd64
+    expose:
+      - "80"
+    environment:
+      - VIRTUAL_HOST=${DNSNAME}
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=/
+      - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__CMSSERVICE__HOST=cmsservice
+      - SERVICE__CMSSERVICE__PORT=80
+      
+  cmsservice:
+    image: phillipfisher/simplecms-service:linux-amd64
+    expose:
+      - "80"
+    environment:
+      - JWT_PUB_KEY=${JWTPUB}
+      
+  paymentweb:
+    image: phillipfisher/simplepayments-web:linux-amd64
+    expose:
+      - "80"
+    environment:
+      - VIRTUAL_HOST=${DNSNAME}
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=~^/(subscription)
+      - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__CMSSERVICE__HOST=cmsservice
+      - SERVICE__CMSSERVICE__PORT=80
+      - SERVICE__PAYMENTSERVICE__HOST=paymentservice
+      - SERVICE__PAYMENTSERVICE__PORT=80
+      
+  paymentservice:
+    image: phillipfisher/simplepayments-service:linux-amd64
+    expose:
+      - "80"
+    environment:
+      - JWT_PUB_KEY=${JWTPUB}

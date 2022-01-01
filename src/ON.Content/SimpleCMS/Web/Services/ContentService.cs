@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Web.Helper;
 using ON.Content.SimpleCMS.Web.Models;
-using ON.Fragments.Authentcation;
+using ON.Fragments.Authentication;
 using ON.Fragments.Content;
 using System;
 using System.Collections.Generic;
@@ -39,6 +39,7 @@ namespace ON.Content.SimpleCMS.Web.Services
                         Author = vm.Author,
                         Body = vm.Body ?? "",
                         CreatedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow),
+                        SubscriptionLevel = vm.Level
                     },
                     Private = new ContentRecord.Types.PrivateData
                     {

@@ -13,6 +13,7 @@
             <th>Title</th>
             <th>Date</th>
             <th>Status</th>
+            <th>Subscription</th>
         </tr>
     </thead>
     @foreach (var record in Model.Records)
@@ -32,6 +33,7 @@
                     <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())/publish">Publish</a>
                 }
             </td>
+            <td>@(CurrencyLevel.FromValue(record.Public.SubscriptionLevel).Label)</td>
         </tr>
 
     }

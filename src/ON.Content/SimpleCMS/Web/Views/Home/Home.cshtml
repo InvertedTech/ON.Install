@@ -8,6 +8,17 @@
 @foreach (var record in Model.Records)
 {
     <i>@record.Public.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</i>
-    <h3><a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())">@record.Public.Title</a></h3>
+    <h3>
+        <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())">@record.Public.Title</a>
+        @if (record.Public.SubscriptionLevel > 0)
+        {
+            if (record.Public.SubscriptionLevel > Model.UserSubscriptionLevel)
+            {
+                <i class="bi-lock-fill" style="font-size: 1rem; color: cornflowerblue;" aria-label="Locked"></i>
+            } else {
+                <i class="bi-unlock-fill" style="font-size: 1rem; color: cornflowerblue;" aria-label="UnLocked"></i>
+            }
+        }
+    </h3>
     <pre>@record.Public.Subtitle</pre>
 }

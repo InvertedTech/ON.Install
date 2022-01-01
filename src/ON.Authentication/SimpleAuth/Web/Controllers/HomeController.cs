@@ -54,13 +54,13 @@ namespace ON.Authentication.SimpleAuth.Web.Controllers
             var error = await userService.ChangePasswordCurrentUser(vm);
             switch (error)
             {
-                case Fragments.Authentcation.ChangeOwnPasswordResponse.Types.ErrorType.NoError:
+                case Fragments.Authentication.ChangeOwnPasswordResponse.Types.ErrorType.NoError:
                     return View("ChangePassword", new ChangePasswordViewModel { SuccessMessage = "Settings updated Successfully" });
-                case Fragments.Authentcation.ChangeOwnPasswordResponse.Types.ErrorType.BadOldPassword:
+                case Fragments.Authentication.ChangeOwnPasswordResponse.Types.ErrorType.BadOldPassword:
                     return View("ChangePassword", new ChangePasswordViewModel { ErrorMessage = "Old password is not correct" });
-                case Fragments.Authentcation.ChangeOwnPasswordResponse.Types.ErrorType.BadNewPassword:
+                case Fragments.Authentication.ChangeOwnPasswordResponse.Types.ErrorType.BadNewPassword:
                     return View("ChangePassword", new ChangePasswordViewModel { ErrorMessage = "New password is not valid" });
-                case Fragments.Authentcation.ChangeOwnPasswordResponse.Types.ErrorType.UnknownError:
+                case Fragments.Authentication.ChangeOwnPasswordResponse.Types.ErrorType.UnknownError:
                 default:
                     return RedirectToAction(nameof(Error));
             }
@@ -146,13 +146,13 @@ namespace ON.Authentication.SimpleAuth.Web.Controllers
 
             var res = await userService.CreateUser(vm);
 
-            if (res.Error == Fragments.Authentcation.CreateUserResponse.Types.ErrorType.UserNameTaken)
+            if (res.Error == Fragments.Authentication.CreateUserResponse.Types.ErrorType.UserNameTaken)
             {
                 vm.ErrorMessage = "The User Name is already taken.";
                 return View(vm);
             }
 
-            if (res.Error == Fragments.Authentcation.CreateUserResponse.Types.ErrorType.UnknownError)
+            if (res.Error == Fragments.Authentication.CreateUserResponse.Types.ErrorType.UnknownError)
             {
                 vm.ErrorMessage = "An error occured creating your account.";
                 return View(vm);

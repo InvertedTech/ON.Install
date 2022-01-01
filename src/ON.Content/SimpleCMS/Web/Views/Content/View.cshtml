@@ -1,4 +1,5 @@
 ﻿@model ON.Fragments.Content.ContentRecord
+@using userHelper = ON.Authentication.ONUserHelper;
 @{
     ViewData["Title"] = Model.Public.Title;
 }
@@ -17,5 +18,23 @@
 
 <em>By: @Model.Public.Author</em>
 
-@Html.Raw(Model.Public.Body)
+@if (Model.Public.SubscriptionLevel == 0)
+{
+    @Html.Raw(Model.Public.Body)
+} else
+{
+    if (Model.Public.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    {
+        @Html.Raw(Model.Public.Body)
+    } else
+    {
+        if (userHelper.MyUser == null)
+        {
+            <pre>To see the content <a href="/register">sign up</a> for an account</pre>
+        }else
+        {
+            <pre>To see the content change your <a href="/subscription">subscription</a>  level</pre>
+        }
+    }
+}
 

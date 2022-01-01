@@ -10,6 +10,9 @@ ingress:
   bindings:
     - port: 8080
   rules:
+    - path: /auth/admin
+      service: authweb
+      preservePath: true
     - path: /changepassword
       service: authweb
       preservePath: true
@@ -19,8 +22,11 @@ ingress:
     - path: /logout
       service: authweb
       preservePath: true
+    - path: /subscription/fake
+      service: fakepayweb
+      preservePath: true
     - path: /subscription
-      service: payweb
+      service: authweb
       preservePath: true
     - path: /register
       service: authweb
@@ -65,13 +71,13 @@ services:
   env:
   - name: JWT_PUB_KEY
     value: eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjpudWxsLCJEUCI6bnVsbCwiRFEiOm51bGwsIkUiOm51bGwsIksiOm51bGwsIktleUlkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS2V5T3BzIjpbXSwiS2lkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS3R5IjoiRUMiLCJOIjpudWxsLCJPdGgiOm51bGwsIlAiOm51bGwsIlEiOm51bGwsIlFJIjpudWxsLCJVc2UiOiJzaWciLCJYIjoiVDNCQzlQUlNkamFIcEV4VXF6Z1RpMWt5X2pvMG9YSHMtbVNoN0RsRVZFMCIsIlg1YyI6W10sIlg1dCI6bnVsbCwiWDV0UzI1NiI6bnVsbCwiWDV1IjpudWxsLCJZIjoiMjhmNEtLS0hyZ3dfM2Z4SlJsX1c0eExkcm5FUXVPQWNfZ0wyN0tNc0NSOCIsIktleVNpemUiOjI1NiwiSGFzUHJpdmF0ZUtleSI6ZmFsc2UsIkNyeXB0b1Byb3ZpZGVyRmFjdG9yeSI6eyJDcnlwdG9Qcm92aWRlckNhY2hlIjp7fSwiQ3VzdG9tQ3J5cHRvUHJvdmlkZXIiOm51bGwsIkNhY2hlU2lnbmF0dXJlUHJvdmlkZXJzIjp0cnVlfX0
-- name: payweb
-  project: ON.Authorization/SimplePayments/Web/ON.Authorization.SimplePayments.Web.csproj
+- name: fakepayweb
+  project: ON.Authorization/FakePayments/Web/ON.Authorization.FakePayments.Web.csproj
   env:
   - name: JWT_PUB_KEY
     value: eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjpudWxsLCJEUCI6bnVsbCwiRFEiOm51bGwsIkUiOm51bGwsIksiOm51bGwsIktleUlkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS2V5T3BzIjpbXSwiS2lkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS3R5IjoiRUMiLCJOIjpudWxsLCJPdGgiOm51bGwsIlAiOm51bGwsIlEiOm51bGwsIlFJIjpudWxsLCJVc2UiOiJzaWciLCJYIjoiVDNCQzlQUlNkamFIcEV4VXF6Z1RpMWt5X2pvMG9YSHMtbVNoN0RsRVZFMCIsIlg1YyI6W10sIlg1dCI6bnVsbCwiWDV0UzI1NiI6bnVsbCwiWDV1IjpudWxsLCJZIjoiMjhmNEtLS0hyZ3dfM2Z4SlJsX1c0eExkcm5FUXVPQWNfZ0wyN0tNc0NSOCIsIktleVNpemUiOjI1NiwiSGFzUHJpdmF0ZUtleSI6ZmFsc2UsIkNyeXB0b1Byb3ZpZGVyRmFjdG9yeSI6eyJDcnlwdG9Qcm92aWRlckNhY2hlIjp7fSwiQ3VzdG9tQ3J5cHRvUHJvdmlkZXIiOm51bGwsIkNhY2hlU2lnbmF0dXJlUHJvdmlkZXJzIjp0cnVlfX0
-- name: payservice
-  project: ON.Authorization/SimplePayments/Service/ON.Authorization.SimplePayments.Service.csproj
+- name: fakepayservice
+  project: ON.Authorization/FakePayments/Service/ON.Authorization.FakePayments.Service.csproj
   env:
   - name: JWT_PUB_KEY
     value: eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjpudWxsLCJEUCI6bnVsbCwiRFEiOm51bGwsIkUiOm51bGwsIksiOm51bGwsIktleUlkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS2V5T3BzIjpbXSwiS2lkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS3R5IjoiRUMiLCJOIjpudWxsLCJPdGgiOm51bGwsIlAiOm51bGwsIlEiOm51bGwsIlFJIjpudWxsLCJVc2UiOiJzaWciLCJYIjoiVDNCQzlQUlNkamFIcEV4VXF6Z1RpMWt5X2pvMG9YSHMtbVNoN0RsRVZFMCIsIlg1YyI6W10sIlg1dCI6bnVsbCwiWDV0UzI1NiI6bnVsbCwiWDV1IjpudWxsLCJZIjoiMjhmNEtLS0hyZ3dfM2Z4SlJsX1c0eExkcm5FUXVPQWNfZ0wyN0tNc0NSOCIsIktleVNpemUiOjI1NiwiSGFzUHJpdmF0ZUtleSI6ZmFsc2UsIkNyeXB0b1Byb3ZpZGVyRmFjdG9yeSI6eyJDcnlwdG9Qcm92aWRlckNhY2hlIjp7fSwiQ3VzdG9tQ3J5cHRvUHJvdmlkZXIiOm51bGwsIkNhY2hlU2lnbmF0dXJlUHJvdmlkZXJzIjp0cnVlfX0

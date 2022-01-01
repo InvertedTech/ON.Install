@@ -5,6 +5,8 @@ namespace ON.Authentication.SimpleAuth.Service
 {
     public class Program
     {
+        public static bool IsDevelopment = false;
+
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();

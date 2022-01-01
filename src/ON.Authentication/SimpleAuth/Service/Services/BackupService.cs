@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication.SimpleAuth.Service.Data;
 using ON.Authentication.SimpleAuth.Service.Helpers;
 using ON.Crypto;
-using ON.Fragments.Authentcation;
+using ON.Fragments.Authentication;
 using ON.Fragments.Generic;
 using System;
 using System.Collections.Generic;
@@ -64,7 +64,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !userToken.Roles.Contains("backup"))
+                if (userToken == null || !(userToken.Roles.Contains("backup") || userToken.Roles.Contains("admin")))
                     return;
 
                 await foreach (var r in dataProvider.GetAll())

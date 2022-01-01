@@ -88,6 +88,7 @@ namespace ON.Content.SimpleCMS.Web.Controllers
                 Subtitle = res.Content.Public.Subtitle,
                 Author = res.Content.Public.Author,
                 Body = res.Content.Public.Body,
+                Level = res.Content.Public.SubscriptionLevel,
             };
 
             return View("Edit", vm);
@@ -117,6 +118,7 @@ namespace ON.Content.SimpleCMS.Web.Controllers
             rec.Public.Subtitle = vm.Subtitle;
             rec.Public.Author = vm.Author;
             rec.Public.Body = vm.Body ?? "";
+            rec.Public.SubscriptionLevel = vm.Level;
 
             var res2 = await contentService.UpdateContent(rec);
 
