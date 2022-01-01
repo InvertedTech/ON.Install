@@ -24,19 +24,19 @@ jobs:
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     
     - name: Build amd64
-      run: docker build src/ --file src/ON.Authorization/FakePayments/Web/Dockerfile-amd64 --tag phillipfisher/FakePayments-web:linux-amd64
+      run: docker build src/ --file src/ON.Authorization/FakePayments/Web/Dockerfile-amd64 --tag phillipfisher/fakepayments-web:linux-amd64
     
     - name: Push amd64
-      run: docker push phillipfisher/FakePayments-web:linux-amd64
+      run: docker push phillipfisher/fakepayments-web:linux-amd64
     
     - name: Build arm64
-      run: docker build src/ --file src/ON.Authorization/FakePayments/Web/Dockerfile-arm64 --tag phillipfisher/FakePayments-web:linux-arm64
+      run: docker build src/ --file src/ON.Authorization/FakePayments/Web/Dockerfile-arm64 --tag phillipfisher/fakepayments-web:linux-arm64
     
     - name: Push arm64
-      run: docker push phillipfisher/FakePayments-web:linux-arm64
+      run: docker push phillipfisher/fakepayments-web:linux-arm64
     
     - name: Build arm32
-      run: docker build src/ --file src/ON.Authorization/FakePayments/Web/Dockerfile-arm32 --tag phillipfisher/FakePayments-web:linux-arm32
+      run: docker build src/ --file src/ON.Authorization/FakePayments/Web/Dockerfile-arm32 --tag phillipfisher/fakepayments-web:linux-arm32
     
     - name: Push arm32
-      run: docker push phillipfisher/FakePayments-web:linux-arm32
+      run: docker push phillipfisher/fakepayments-web:linux-arm32
