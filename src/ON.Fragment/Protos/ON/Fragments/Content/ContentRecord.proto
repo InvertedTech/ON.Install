@@ -17,6 +17,7 @@ message ContentRecord {
     string URL = 8;
     string Body = 9;
     repeated bytes AssetIds = 10;
+    uint32 SubscriptionLevel = 11;
   }
   message PrivateData {
     string CreatedBy = 1;

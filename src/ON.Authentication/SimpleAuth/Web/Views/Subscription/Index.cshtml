@@ -1,0 +1,32 @@
+﻿@model ON.Authentication.SimpleAuth.Web.Models.Subscription.IndexViewModel
+@{
+    ViewData["Title"] = "My Subscriptions";
+}
+
+<h1>My Subscriptions</h1>
+
+@if (Model.IsSubscribed)
+{
+    <p>
+        My subscription level: @(Model.SubscriptionLevelLabel)
+    </p>
+    <p>
+        <a href="/subscription/@(Model.SubscriptionProvider)">Change my subscription</a>
+    </p>
+}
+else
+{
+    <p>
+        My subscription level: None
+    </p>
+    <p>
+        Pick a payment provider below to sign up!
+    </p>
+    <p>
+        <a href="/subscription/fake">*Dev Only* Fake Payment Provider</a>
+    </p>
+    <p>
+        <a href="/subscription/stripe">Stripe (credit/debit cards)</a>
+    </p>
+
+}

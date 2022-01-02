@@ -24,19 +24,19 @@ jobs:
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     
     - name: Build amd64
-      run: docker build src/ --file src/ON.Authentication/SimpleAuth/Service/Dockerfile-amd64 --tag phillipfisher/simpleauth-service:linux-amd64
+      run: docker build src/ --file src/ON.Authentication/SimpleAuth/Service/Dockerfile-amd64 --tag opennetwork/simpleauth-service:linux-amd64
     
     - name: Push amd64
-      run: docker push phillipfisher/simpleauth-service:linux-amd64
+      run: docker push opennetwork/simpleauth-service:linux-amd64
     
     - name: Build arm64
-      run: docker build src/ --file src/ON.Authentication/SimpleAuth/Service/Dockerfile-arm64 --tag phillipfisher/simpleauth-service:linux-arm64
+      run: docker build src/ --file src/ON.Authentication/SimpleAuth/Service/Dockerfile-arm64 --tag opennetwork/simpleauth-service:linux-arm64
     
     - name: Push arm64
-      run: docker push phillipfisher/simpleauth-service:linux-arm64
+      run: docker push opennetwork/simpleauth-service:linux-arm64
     
     - name: Build arm32
-      run: docker build src/ --file src/ON.Authentication/SimpleAuth/Service/Dockerfile-arm32 --tag phillipfisher/simpleauth-service:linux-arm32
+      run: docker build src/ --file src/ON.Authentication/SimpleAuth/Service/Dockerfile-arm32 --tag opennetwork/simpleauth-service:linux-arm32
     
     - name: Push arm32
-      run: docker push phillipfisher/simpleauth-service:linux-arm32
+      run: docker push opennetwork/simpleauth-service:linux-arm32

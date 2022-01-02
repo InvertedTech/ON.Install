@@ -44,6 +44,9 @@ namespace ON.Authentication.SimpleAuth.Service
                 await context.Response.BodyWriter.WriteAsync(PONG_RESPONSE);
             }));
 
+            if (env.IsDevelopment())
+                Program.IsDevelopment = true;
+
             app.UseRouting();
 
             app.UseJwtAuthentication();

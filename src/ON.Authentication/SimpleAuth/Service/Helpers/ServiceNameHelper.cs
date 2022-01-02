@@ -10,14 +10,14 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 {
     public class ServiceNameHelper
     {
-        public readonly Channel PaymentServiceChannel;
+        public readonly Channel FakePaymentServiceChannel;
 
         public ServiceNameHelper(IConfiguration configuration, ILogger<ServiceNameHelper> logger)
         {
-            var uri = configuration.GetServiceUri("payservice");
+            var uri = configuration.GetServiceUri("fakepayservice");
 
             if (uri != null)
-                PaymentServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+                FakePaymentServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
         }
     }
 }

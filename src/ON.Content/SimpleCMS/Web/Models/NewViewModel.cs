@@ -1,5 +1,5 @@
 ﻿using ON.Authentication;
-using ON.Fragments.Authentcation;
+using ON.Fragments.Authentication;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -26,6 +26,10 @@ namespace ON.Content.SimpleCMS.Web.Models
         [Display(Name = "Subtitle")]
         [StringLength(100, ErrorMessage = "{0} length must be less than {1}.")]
         public string Subtitle { get; set; }
+
+        [Display(Name = "Minimum subscription to view")]
+        [DataType(DataType.Currency)]
+        public uint Level { get; set; }
 
         [Required]
         [Display(Name = "Author")]

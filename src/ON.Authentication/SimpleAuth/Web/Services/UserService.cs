@@ -1,9 +1,11 @@
-﻿using Grpc.Core;
+﻿using Google.Protobuf;
+using Grpc.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ON.Authentication.SimpleAuth.Web.Helper;
 using ON.Authentication.SimpleAuth.Web.Models;
-using ON.Fragments.Authentcation;
+using ON.Fragment.Protos.ON.Fragments.Generic;
+using ON.Fragments.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +33,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
         public async Task<string> AuthenticateUser(string loginName, string password)
         {
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
-            var reply = await client.AuthenticatUserAsync(new AuthenticatUserRequest {
+            var reply = await client.AuthenticateUserAsync(new AuthenticateUserRequest {
                 UserName = loginName,
                 Password = password,
             });
@@ -93,6 +95,46 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             return reply.Record;
         }
 
+        public async Task<UserRecord> GetOtherUser(Guid userId)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            if (nameHelper.UserServiceChannel == null)
+                return null;
+
+            if (!User.IsAdmin)
+                return null;
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.GetOtherUserAsync(new GetOtherUserRequest() { UserID = userId.ToByteString() }, GetMetadata());
+            return reply.Record;
+        }
+
+        public async Task<UserRecord.Types.PublicData[]> GetUserList()
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            if (nameHelper.UserServiceChannel == null)
+                return null;
+
+            if (!User.IsAdmin)
+                return null;
+
+            var list = new List<UserRecord.Types.PublicData>();
+
+            var client = new BackupInterface.BackupInterfaceClient(nameHelper.UserServiceChannel);
+            using var call = client.ExportUsers(new ExportUsersRequest(), GetMetadata());
+
+            await foreach (var r in call.ResponseStream.ReadAllAsync())
+            {
+                list.Add(r.ContentRecord);
+            }
+
+            return list.ToArray();
+        }
+
         public async Task<ModifyOwnUserResponse> ModifyCurrentUser(SettingsViewModel vm)
         {
             if (!IsLoggedIn)
@@ -106,6 +148,31 @@ namespace ON.Authentication.SimpleAuth.Web.Services
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.ModifyOwnUserAsync(req, GetMetadata());
+            return reply;
+        }
+
+        public async Task<ModifyOtherUserResponse> ModifyOtherUser(Guid userId, Models.Admin.EditUserViewModel vm)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            var req = new ModifyOtherUserRequest()
+            {
+                UserID = userId.ToByteString(),
+                UserName = vm.UserName,
+                DisplayName = vm.DisplayName,
+            };
+            req.Emails.Add(vm.Email);
+
+            if (vm.IsAdmin)
+                req.Roles.Add(ONUser.ROLE_ADMIN);
+            if (vm.IsPublisher)
+                req.Roles.Add(ONUser.ROLE_PUBLISHER);
+            if (vm.IsWriter)
+                req.Roles.Add(ONUser.ROLE_WRITER);
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.ModifyOtherUserAsync(req, GetMetadata());
             return reply;
         }
 

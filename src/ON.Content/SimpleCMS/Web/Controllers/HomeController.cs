@@ -16,16 +16,18 @@ namespace ON.Content.SimpleCMS.Web.Controllers
     {
         private readonly ILogger<HomeController> logger;
         private readonly ContentService contentService;
+        private readonly ONUserHelper userHelper;
 
-        public HomeController(ILogger<HomeController> logger, ContentService contentService)
+        public HomeController(ILogger<HomeController> logger, ContentService contentService, ONUserHelper userHelper)
         {
             this.logger = logger;
             this.contentService = contentService;
+            this.userHelper = userHelper;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View("Home", new HomeViewModel((await contentService.GetAll()).Records.Where(r => r.Public.PublishedOnUTC != null)));
+            return View("Home", new HomeViewModel((await contentService.GetAll()).Records.Where(r => r.Public.PublishedOnUTC != null), userHelper.MyUser));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

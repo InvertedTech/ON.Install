@@ -1,13 +1,16 @@
 syntax = "proto3";
 
-package ON.Fragments.Authentcation;
+package ON.Fragments.Authentication;
 
 import "Protos/ON/Fragments/Authentication/UserRecord.proto";
 
-// Service for Authentcation user fragment interface
+// Service for Authentication user fragment interface
 service UserInterface {
   // Authenticate a user with a login and password, return a bearer token if successful
-  rpc AuthenticatUser (AuthenticatUserRequest) returns (AuthenticatUserResponse) {}
+  rpc AuthenticateUser (AuthenticateUserRequest) returns (AuthenticateUserResponse) {}
+
+  // Change another user's password.  Requires current user to be an admin.
+  rpc ChangeOtherPassword (ChangeOtherPasswordRequest) returns (ChangeOtherPasswordResponse) {}
 
   // Change user's own password.  Requires user to know their current password.
   rpc ChangeOwnPassword (ChangeOwnPasswordRequest) returns (ChangeOwnPasswordResponse) {}
@@ -15,8 +18,20 @@ service UserInterface {
   // Create account for a user
   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
 
+  // Disable another user.  Requires current user to be an admin.
+  rpc DisableOtherUser (DisableOtherUserRequest) returns (DisableOtherUserResponse) {}
+
+  // Enable another user.  Requires current user to be an admin.
+  rpc EnableOtherUser (EnableOtherUserRequest) returns (EnableOtherUserResponse) {}
+
+  // Get User record
+  rpc GetOtherUser (GetOtherUserRequest) returns (GetOtherUserResponse) {}
+
   // Get User record
   rpc GetOwnUser (GetOwnUserRequest) returns (GetOwnUserResponse) {}
+
+  // Modify User record
+  rpc ModifyOtherUser (ModifyOtherUserRequest) returns (ModifyOtherUserResponse) {}
 
   // Modify User record
   rpc ModifyOwnUser (ModifyOwnUserRequest) returns (ModifyOwnUserResponse) {}
@@ -25,13 +40,28 @@ service UserInterface {
   rpc RenewToken (RenewTokenRequest) returns (RenewTokenResponse) {}
 }
   
-message AuthenticatUserRequest {
+message AuthenticateUserRequest {
   string UserName = 1;
   string Password = 2;
 }
   
-message AuthenticatUserResponse {
+message AuthenticateUserResponse {
   string BearerToken = 1;
+}
+  
+message ChangeOtherPasswordRequest {
+  bytes UserID = 1;                   // Guid for the user
+  string NewPassword = 2;
+}
+  
+message ChangeOtherPasswordResponse {
+  ErrorType Error = 1;
+
+  enum ErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    BadNewPassword = 2;
+  }
 }
   
 message ChangeOwnPasswordRequest {
@@ -66,6 +96,40 @@ message CreateUserResponse {
   }
 }
 
+message DisableOtherUserRequest {
+  bytes UserID = 1;                   // Guid for the user
+}
+  
+message DisableOtherUserResponse {
+  ErrorType Error = 1;
+
+  enum ErrorType {
+    NoError = 0;
+    UnknownError = -1;
+  }
+}
+  
+message EnableOtherUserRequest {
+  bytes UserID = 1;                   // Guid for the user
+}
+  
+message EnableOtherUserResponse {
+  ErrorType Error = 1;
+
+  enum ErrorType {
+    NoError = 0;
+    UnknownError = -1;
+  }
+}
+  
+message GetOtherUserRequest {
+  bytes UserID = 1;                   // Guid for the user
+}
+  
+message GetOtherUserResponse {
+  UserRecord Record = 1;
+}
+
 message GetOwnUserRequest {
 }
   
@@ -73,10 +137,22 @@ message GetOwnUserResponse {
   UserRecord Record = 1;
 }
 
+message ModifyOtherUserRequest {
+  bytes UserID = 1;                 // Guid for the user
+  string UserName = 2;              // User name of the user
+  string DisplayName = 3;           // Public display name of the user
+  repeated string Emails = 4;       // Private email(s) used for password resets
+  repeated string Roles = 5;        // Roles for the user
+}
+  
+message ModifyOtherUserResponse {
+  string Error = 1;
+}
+
 message ModifyOwnUserRequest {
-    string DisplayName = 1;           // Public display name of the user
-    repeated string Emails = 2;       // Private email(s) used for password resets
-    repeated string Identities = 3;   // Public identities associated with the user ex: user@domain.com
+  string DisplayName = 1;           // Public display name of the user
+  repeated string Emails = 2;       // Private email(s) used for password resets
+  repeated string Identities = 3;   // Public identities associated with the user ex: user@domain.com
 }
   
 message ModifyOwnUserResponse {

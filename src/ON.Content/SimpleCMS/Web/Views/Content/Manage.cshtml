@@ -5,7 +5,8 @@
 
 <a href="/content/new" class="btn btn-primary">New Article</a>
 
-<br /><br />
+<br />
+<br />
 
 <table>
     <thead>
@@ -13,6 +14,7 @@
             <th>Title</th>
             <th>Date</th>
             <th>Status</th>
+            <th>Subscription</th>
         </tr>
     </thead>
     @foreach (var record in Model.Records)
@@ -25,13 +27,28 @@
             <td>
                 @if (record.Public.PublishedOnUTC != null)
                 {
-                    <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())/unpublish">Unpublish</a>
+                    @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER))
+                    {
+                        <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())/unpublish">Published</a>
+                    }
+                    else
+                    {
+                        <span>Published</span>
+                    }
                 }
                 else
                 {
-                    <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())/publish">Publish</a>
+                    @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER))
+                    {
+                        <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())/publish">Not Published</a>
+                    }
+                    else
+                    {
+                        <span>Not Published</span>
+                    }
                 }
             </td>
+            <td>@(CurrencyLevel.FromValue(record.Public.SubscriptionLevel).Label)</td>
         </tr>
 
     }

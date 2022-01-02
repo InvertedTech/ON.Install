@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package ON.Fragments.Authentcation;
+package ON.Fragments.Authentication;
 
 import "Protos/ON/Fragments/Authentication/UserRecord.proto";
 
-// Service for Authentcation backup fragment interface
+// Service for Authentication backup fragment interface
 service BackupInterface {
   // Export a list of all data.
   rpc BackupAllData (BackupAllDataRequest) returns (stream BackupAllDataResponse) {}

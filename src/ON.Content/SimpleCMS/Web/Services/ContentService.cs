@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Web.Helper;
 using ON.Content.SimpleCMS.Web.Models;
-using ON.Fragments.Authentcation;
+using ON.Fragments.Authentication;
 using ON.Fragments.Content;
 using System;
 using System.Collections.Generic;
@@ -39,6 +39,7 @@ namespace ON.Content.SimpleCMS.Web.Services
                         Author = vm.Author,
                         Body = vm.Body ?? "",
                         CreatedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow),
+                        SubscriptionLevel = vm.Level
                     },
                     Private = new ContentRecord.Types.PrivateData
                     {
@@ -48,7 +49,7 @@ namespace ON.Content.SimpleCMS.Web.Services
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            var res = await client.SaveContentAsync(req);
+            var res = await client.SaveContentAsync(req, GetMetadata());
 
             return res;
         }
@@ -76,6 +77,9 @@ namespace ON.Content.SimpleCMS.Web.Services
 
         public async Task PublishContent(Guid contentId)
         {
+            if (!(User.IsAdmin || User.IsPublisher))
+                return;
+
             var res = await GetContent(contentId);
             var rec = res?.Content;
             if (rec == null)
@@ -90,11 +94,14 @@ namespace ON.Content.SimpleCMS.Web.Services
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            await client.SaveContentAsync(req);
+            await client.SaveContentAsync(req, GetMetadata());
         }
 
         public async Task UnpublishContent(Guid contentId)
         {
+            if (!(User.IsAdmin || User.IsPublisher))
+                return;
+
             var res = await GetContent(contentId);
             var rec = res?.Content;
             if (rec == null)
@@ -109,7 +116,7 @@ namespace ON.Content.SimpleCMS.Web.Services
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            await client.SaveContentAsync(req);
+            await client.SaveContentAsync(req, GetMetadata());
         }
 
         public async Task<SaveContentResponse> UpdateContent(ContentRecord rec)
@@ -123,9 +130,17 @@ namespace ON.Content.SimpleCMS.Web.Services
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            var res = await client.SaveContentAsync(req);
+            var res = await client.SaveContentAsync(req, GetMetadata());
 
             return res;
+        }
+
+        private Metadata GetMetadata()
+        {
+            var data = new Metadata();
+            data.Add("Authorization", "Bearer " + User.JwtToken);
+
+            return data;
         }
     }
 }

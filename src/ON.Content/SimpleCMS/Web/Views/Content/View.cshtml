@@ -1,14 +1,16 @@
 ﻿@model ON.Fragments.Content.ContentRecord
+@using userHelper = ON.Authentication.ONUserHelper;
 @{
     ViewData["Title"] = Model.Public.Title;
 }
 
-<p>
-    <a class="btn btn-primary" href="/content/@(new Guid(Model.Public.ContentID.Span).ToString())/edit">Edit</a>
-</p>
-
-
-<br />
+@if (userHelper.MyUser?.IsWriterOrHigher ?? false)
+{
+    <p>
+        <a class="btn btn-primary" href="/content/@(new Guid(Model.Public.ContentID.Span).ToString())/edit">Edit</a>
+    </p>
+    <br />
+}
 
 
 <h1>@Model.Public.Title</h1>
@@ -17,5 +19,28 @@
 
 <em>By: @Model.Public.Author</em>
 
-@Html.Raw(Model.Public.Body)
+@if (Model.Public.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
+{
+    @Html.Raw(Model.Public.Body)
+}
+else
+{
+    if (Model.Public.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    {
+        @Html.Raw(Model.Public.Body)
+    }
+    else
+    {
+        <br />
+        <br />
+        if (userHelper.MyUser == null)
+        {
+            <pre>To see the content <a href="/register">sign up</a> for an account</pre>
+        }
+        else
+        {
+            <pre>To see the content change your <a href="/subscription">subscription</a>  level</pre>
+        }
+    }
+}
 
