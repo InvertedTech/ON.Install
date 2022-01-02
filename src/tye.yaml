@@ -37,6 +37,9 @@ ingress:
       - path: /
         service: cmsweb
         preservePath: true
+      - path: /stripe
+        service: stripeservice
+        preservePath: true
 services:
   - name: cmsweb
     project: ON.Content/SimpleCMS/Web/ON.Content.SimpleCMS.Web.csproj
