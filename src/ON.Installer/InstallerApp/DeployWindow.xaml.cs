@@ -466,6 +466,8 @@ namespace InstallerApp
             var jwtKey = keyHelper.DeriveEcJwtKey();
 
             List<string> l = new();
+            l.Add("WEBSITE_NAME=" + MyModel.Personalization.Name);
+            l.Add("WEBSITE_DESC=" + MyModel.Personalization.Description);
             l.Add("DNSNAME=" + MyModel.DNS.Name);
             l.Add("JWTPRIV=" + jwtKey.privKey);
             l.Add("JWTPUB=" + jwtKey.pubKey);
