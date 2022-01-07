@@ -6,6 +6,7 @@ import "google/protobuf/timestamp.proto";
 
 service SubscriptionService {
   rpc NewSubscription (Subscription) returns (NewSubscriptionResponse) {}
+  rpc GetAll (Empty) returns (SubscriptionList) {}
 }
 
 message Empty {}
@@ -13,13 +14,23 @@ message Empty {}
 message Subscription {
   string id = 1;                                // ID of the subscription
   string user = 2;                              // ID of the user
-  google.protobuf.Timestamp createdOnUTC = 3;   // Timestamp of the created subscription
-  int32 paymentCycleMonths = 4;                 // Payment interval in months
-  struct card = 5;                              // Stripe Card object
+  int32 paymentCycleMonths = 3;                 // Payment interval in months
+  float price = 4;                              // Price of the subscription
+  int32 tier = 5;                               // Subscription Tier
+  Card card = 6;                                // Stripe Card object
+  bool isActive = 7;                            // Active subscription flag
+  string createdOnUTC = 8;                      // Timestamp of the created subscription
+}
+
+message Card {
+  string card = 1;
 }
 
 message NewSubscriptionResponse {
-  google.protobuf.Timestamp createdOnUTC = 1;   // Timestamp of the response
-  bool success = 2;                             // Whether or not the response was successfull
-  string response = 3;                          // Response message
+  bool success = 1;                             // Successful response flag
+  string response = 2;                          // Response message
+}
+
+message SubscriptionList {
+  repeated Subscription data = 1;               // Array of Subscriptions
 }
