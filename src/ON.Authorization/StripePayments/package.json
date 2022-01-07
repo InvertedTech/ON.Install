@@ -1,19 +1,17 @@
 {
-	"name": "stripepayments",
+	"name": "node-grpc",
 	"version": "1.0.0",
-	"description": "",
 	"main": "index.js",
+	"license": "MIT",
 	"scripts": {
-		"server": "node server.js",
-		"client": "node index.js"
+		"proto:gen": "rm -rf ./proto/randomPackage && rm -rf ./client/src/proto && ./proto-gen.sh",
+		"start": "ts-node server",
+		"client": "ts-node client"
 	},
-	"author": "",
-	"license": "ISC",
-	"dependencies": {
-		"@grpc/grpc-js": "^1.4.6",
-		"express": "^4.17.2",
-		"jose": "^4.3.7",
-		"jsonwebtoken": "^8.5.1",
-		"uuid": "^8.3.2"
+	"devDependencies": {
+		"@grpc/grpc-js": "^1.3.2",
+		"@grpc/proto-loader": "^0.6.2",
+		"ts-node": "^10.0.0",
+		"typescript": "^4.3.2"
 	}
 }
