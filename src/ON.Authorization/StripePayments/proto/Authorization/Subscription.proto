@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization;
+
+import "google/protobuf/timestamp.proto";
+
+service SubscriptionService {
+  rpc NewSubscription (Subscription) returns (NewSubscriptionResponse) {}
+}
+
+message Empty {}
+
+message Subscription {
+  string id = 1;                                // ID of the subscription
+  string user = 2;                              // ID of the user
+  google.protobuf.Timestamp createdOnUTC = 3;   // Timestamp of the created subscription
+  int32 paymentCycleMonths = 4;                 // Payment interval in months
+  struct card = 5;                              // Stripe Card object
+}
+
+message NewSubscriptionResponse {
+  google.protobuf.Timestamp createdOnUTC = 1;   // Timestamp of the response
+  bool success = 2;                             // Whether or not the response was successfull
+  string response = 3;                          // Response message
+}
