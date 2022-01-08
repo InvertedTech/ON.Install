@@ -3,43 +3,55 @@
 	ViewData["Title"] = "Registration";
 }
 
-<h1>Registration</h1>
-<br />
+<article>
+  <section class = "left-trim"></section>
+  <section class = "main">
 
-@if(!string.IsNullOrEmpty(Model?.ErrorMessage))
-{
-    <h2 style="color: red;">@Model.ErrorMessage</h2>
-}
+    <div class = "row">
+      <div class = "centered-panel">
+        <h3>Welcome!</h3>
+        <a href = "/login">login</a>
+      </div>
 
-<form asp-action="register" method="post" class="needs-validation" novalidate>
-  <div class="form-group">
-    <label asp-for="UserName"></label>
-    <input class="form-control" asp-for="UserName" />
-    <span asp-validation-for="UserName"></span>
-  </div>
-  <div class="form-group">
-    <label asp-for="DisplayName"></label>
-    <input class="form-control" asp-for="DisplayName" />
-    <span asp-validation-for="DisplayName"></span>
-  </div>
-  <div class="form-group">
-    <label asp-for="Email"></label>
-    <input class="form-control" asp-for="Email" />
-    <span asp-validation-for="Email"></span>
-  </div>
-  <div class="form-group">
-    <label asp-for="Password"></label>
-    <input class="form-control" asp-for="Password" />
-    <span asp-validation-for="Password"></span>
-  </div>
-  <div class="form-group">
-    <label asp-for="ConfirmPassword"></label>
-    <input class="form-control" asp-for="ConfirmPassword" />
-    <span asp-validation-for="ConfirmPassword"></span>
-  </div>
+      <form asp-action="register" method="post" class="needs-validation" novalidate>
+        <h2>Register</h2>
+        @if(!string.IsNullOrEmpty(Model?.ErrorMessage))
+        {
+            <p style="color: red;">@Model.ErrorMessage</p>
+        }
+        <div class="form-group rows">
+          <label asp-for="UserName"></label>
+          <input class="form-control" asp-for="UserName" />
+          <span asp-validation-for="UserName"></span>
+        </div>
+        <div class="form-group rows">
+          <label asp-for="DisplayName"></label>
+          <input class="form-control" asp-for="DisplayName" />
+          <span asp-validation-for="DisplayName"></span>
+        </div>
+        <div class="form-group rows">
+          <label asp-for="Email"></label>
+          <input class="form-control" asp-for="Email" />
+          <span asp-validation-for="Email"></span>
+        </div>
+        <div class="form-group rows">
+          <label asp-for="Password"></label>
+          <input class="form-control" asp-for="Password" />
+          <span asp-validation-for="Password"></span>
+        </div>
+        <div class="form-group rows">
+          <label asp-for="ConfirmPassword"></label>
+          <input class="form-control" asp-for="ConfirmPassword" />
+          <span asp-validation-for="ConfirmPassword"></span>
+        </div>
+        <div class = "buttons">
+          <button type="submit" class="btn btn-primary cta">Submit</button>
+        </div>
+      </form>
+    </div>
 
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+  </section>
+</article>
 
 @section scripts
 {
