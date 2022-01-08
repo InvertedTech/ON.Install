@@ -9,29 +9,32 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
   authweb:
-    image: phillipfisher/simpleauth-web:linux-amd64
+    image: opennetwork/simpleauth-web:linux-amd64
     expose:
       - "80"
     environment:
       - VIRTUAL_HOST=${DNSNAME}
       - VIRTUAL_PORT=80
-      - VIRTUAL_PATH=~^/(changepassword|login|logout|register|settings)
+      - VIRTUAL_PATH=~^/(auth|changepassword|login|logout|register|settings|subscription)
       - JWT_PUB_KEY=${JWTPUB}
-      - SERVICE__authservice__PROTOCOL=http
-      - SERVICE__authservice__HOST=authservice
-      - SERVICE__authservice__PORT=80
+      - SUBSCRIPTION_TIERS=${SUBSCRIPTION_TIERS}
+      - WEBSITE_NAME=${WEBSITE_NAME}
+      - SERVICE__AUTHSERVICE__HOST=authservice
+      - SERVICE__AUTHSERVICE__PORT=80
       - ASPNETCORE_ENVIRONMENT=Development
       
   authservice:
-    image: phillipfisher/simpleauth-web:linux-amd64
+    image: opennetwork/simpleauth-web:linux-amd64
     expose:
       - "80"
     environment:
       - JWT_PRIV_KEY=${JWTPRIV}
       - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__FAKEPAYSERVICE__HOST=fakepayservice
+      - SERVICE__FAKEPAYSERVICE__PORT=80
       
   cmsweb:
-    image: phillipfisher/simplecms-web:linux-amd64
+    image: opennetwork/simplecms-web:linux-amd64
     expose:
       - "80"
     environment:
@@ -39,32 +42,36 @@ services:
       - VIRTUAL_PORT=80
       - VIRTUAL_PATH=/
       - JWT_PUB_KEY=${JWTPUB}
+      - WEBSITE_NAME=${WEBSITE_NAME}
+      - WEBSITE_DESC=${WEBSITE_DESC}
       - SERVICE__CMSSERVICE__HOST=cmsservice
       - SERVICE__CMSSERVICE__PORT=80
       
   cmsservice:
-    image: phillipfisher/simplecms-service:linux-amd64
+    image: opennetwork/simplecms-service:linux-amd64
     expose:
       - "80"
     environment:
       - JWT_PUB_KEY=${JWTPUB}
       
-  paymentweb:
-    image: phillipfisher/simplepayments-web:linux-amd64
+  fakepayweb:
+    image: opennetwork/fakepayments-web:linux-amd64
     expose:
       - "80"
     environment:
       - VIRTUAL_HOST=${DNSNAME}
       - VIRTUAL_PORT=80
-      - VIRTUAL_PATH=~^/(subscription)
+      - VIRTUAL_PATH=~^/subscription/fake
       - JWT_PUB_KEY=${JWTPUB}
+      - SUBSCRIPTION_TIERS=${SUBSCRIPTION_TIERS}
+      - WEBSITE_NAME=${WEBSITE_NAME}
       - SERVICE__CMSSERVICE__HOST=cmsservice
       - SERVICE__CMSSERVICE__PORT=80
-      - SERVICE__PAYMENTSERVICE__HOST=paymentservice
-      - SERVICE__PAYMENTSERVICE__PORT=80
+      - SERVICE__FAKEPAYSERVICE__HOST=fakepayservice
+      - SERVICE__FAKEPAYSERVICE__PORT=80
       
-  paymentservice:
-    image: phillipfisher/simplepayments-service:linux-amd64
+  fakepayservice:
+    image: opennetwork/fakepayments-service:linux-amd64
     expose:
       - "80"
     environment:
