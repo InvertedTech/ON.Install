@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ON.Crypto\ON.Crypto\ON.Crypto.csproj" />
+    <ProjectReference Include="../../ON.Crypto/ON.Crypto/ON.Crypto.csproj" />
   </ItemGroup>
 
 </Project>
