@@ -257,6 +257,7 @@ section.body article form label::after {
 }
 
 section.body article form input[type=password],
+section.body article form input[type=email],
 section.body article form input[type=text] {
 	font-size: 1rem;
 	border-radius: 5px;
