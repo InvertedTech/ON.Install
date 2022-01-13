@@ -25,7 +25,7 @@ services:
     volumes:
       - .:/app
     working_dir: /app/ON.Authentication/SimpleAuth/Web
-    command: dotnet watch run --urls=http://+:80/
+    command: dotnet watch run --urls=http://+:80/ --no-launch-profile
   authservice:
     image: mcr.microsoft.com/dotnet/sdk:6.0
     expose:
@@ -40,7 +40,7 @@ services:
       - .:/app
       - authdata:/data  
     working_dir: /app/ON.Authentication/SimpleAuth/Service
-    command: dotnet watch run --urls=http://+:80/
+    command: dotnet watch run --urls=http://+:80/ --no-launch-profile
   cmsweb:
     image: mcr.microsoft.com/dotnet/sdk:6.0
     expose:
@@ -59,7 +59,7 @@ services:
     volumes:
       - .:/app
     working_dir: /app/ON.Content/SimpleCMS/Web
-    command: dotnet watch run --urls=http://+:80/
+    command: dotnet watch run --urls=http://+:80/ --no-launch-profile
   cmsservice:
     image: mcr.microsoft.com/dotnet/sdk:6.0
     expose:
@@ -70,7 +70,7 @@ services:
       - .:/app
       - cmsdata:/data
     working_dir: /app/ON.Content/SimpleCMS/Service
-    command: dotnet watch run --urls=http://+:80/
+    command: dotnet watch run --urls=http://+:80/ --no-launch-profile
 volumes:
   authdata:
   cmsdata:
