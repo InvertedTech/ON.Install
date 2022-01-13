@@ -7,9 +7,6 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
   authweb:
-    build:
-      context: .
-      dockerfile: ./ON.Authentication/SimpleAuth/Web/Dockerfile-amd64
     image: opennetwork/simpleauth-web:linux-amd64
     depends_on:
       - authservice
@@ -29,9 +26,6 @@ services:
       - SERVICE__FAKEPAYSERVICE__HOST=fakepayservice
       - SERVICE__FAKEPAYSERVICE__PORT=80
   authservice:
-    build:
-      context: .
-      dockerfile: ./ON.Authentication/SimpleAuth/Service/Dockerfile-amd64
     image: opennetwork/simpleauth-service:linux-amd64
     expose:
       - "80"
@@ -41,9 +35,6 @@ services:
     volumes:
       - authdata:/data  
   cmsweb:
-    build:
-      context: .
-      dockerfile: ./ON.Content/SimpleCMS/Web/Dockerfile-amd64
     image: opennetwork/simplecms-web:linux-amd64
     expose:
       - "80"
@@ -59,9 +50,6 @@ services:
       - SERVICE__CMSSERVICE__HOST=cmsservice
       - SERVICE__CMSSERVICE__PORT=80
   cmsservice:
-    build:
-      context: .
-      dockerfile: ./ON.Content/SimpleCMS/Service/Dockerfile-amd64
     image: opennetwork/simplecms-service:linux-amd64
     expose:
       - "80"
@@ -70,9 +58,6 @@ services:
     volumes:
       - cmsdata:/data
   fakepayweb:
-    build:
-      context: .
-      dockerfile: ./ON.Authorization/FakePayments/Web/Dockerfile-amd64
     image: opennetwork/fakepayments-web:linux-amd64
     expose:
       - "80"
@@ -88,9 +73,6 @@ services:
       - SERVICE__FAKEPAYSERVICE__HOST=fakepayservice
       - SERVICE__FAKEPAYSERVICE__PORT=80
   fakepayservice:
-    build:
-      context: .
-      dockerfile: ./ON.Authorization/FakePayments/Service/Dockerfile-amd64
     image: opennetwork/fakepayments-service:linux-amd64
     expose:
       - "80"
@@ -99,9 +81,6 @@ services:
     volumes:
       - fakepaydata:/data
   grpc-lb:
-    build:
-      context: ./grpc-lb
-      dockerfile: ./grpc-lb/Dockerfile
     image: opennetwork/grpc-lb:linux-amd64
     ports:
       - "8080:80"
