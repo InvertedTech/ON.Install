@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using ON.Crypto;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,8 +52,8 @@ namespace InstallerApp.Terraform.DeploySite
             l.Add("WEBSITE_NAME=" + Base64UrlEncoder.Encode(window.MyModel.Personalization.Name));
             l.Add("WEBSITE_DESC=" + Base64UrlEncoder.Encode(window.MyModel.Personalization.Description));
             l.Add("DNSNAME=" + window.MyModel.DNS.Name);
-            l.Add("JWTPRIV=" + jwtKey.privKey);
-            l.Add("JWTPUB=" + jwtKey.pubKey);
+            l.Add("JWTPRIV=" + jwtKey.ToPrivateEncodedJsonWebKey());
+            l.Add("JWTPUB=" + jwtKey.ToPublicEncodedJsonWebKey());
             l.Add("PAYPAL_API_KEY=" + window.MyModel.Payment.PayPalApiKey);
             l.Add("STRIPE_API_KEY=" + window.MyModel.Payment.StripeApiKey);
 
