@@ -10,9 +10,10 @@ namespace ON.Authentication
     public class ONUser : ClaimsPrincipal
     {
         public const string ROLE_ADMIN = "admin";
-        public const string ROLE_WRITER = "writer";
-        public const string ROLE_PUBLISHER = "publisher";
+        public const string ROLE_BACKUP = "backup";
         public const string ROLE_OPS = "ops";
+        public const string ROLE_PUBLISHER = "publisher";
+        public const string ROLE_WRITER = "writer";
 
         public Guid Id { get; set; } = Guid.Empty;
         public const string IdType = "Id";

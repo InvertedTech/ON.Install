@@ -29,7 +29,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !userToken.Roles.Contains("backup"))
+                if (userToken == null || !userToken.Roles.Contains(ONUser.ROLE_BACKUP))
                     return;
 
                 var encKey = EcdhHelper.DeriveKeyServer(request.ClientPublicJwk.DecodeJsonWebKey(), out string serverPubKey);
@@ -64,7 +64,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !(userToken.Roles.Contains("backup") || userToken.Roles.Contains("admin")))
+                if (userToken == null || !(userToken.Roles.Contains(ONUser.ROLE_BACKUP) || userToken.Roles.Contains(ONUser.ROLE_ADMIN)))
                     return;
 
                 await foreach (var r in dataProvider.GetAll())
@@ -89,7 +89,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !userToken.Roles.Contains("backup"))
+                if (userToken == null || !userToken.Roles.Contains(ONUser.ROLE_BACKUP))
                     return res;
 
                 await foreach (var r in requestStream.ReadAllAsync())

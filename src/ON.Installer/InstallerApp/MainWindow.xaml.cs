@@ -31,6 +31,7 @@ namespace InstallerApp
 
         public static DirectoryInfo RootLocation;
         public static DirectoryInfo SaveLocation;
+        public static DirectoryInfo BackupLocation;
         public static DirectoryInfo TerraformLocation;
         public const string SAVED_FILENAME = "config.onf";
 
@@ -47,6 +48,8 @@ namespace InstallerApp
             RootLocation = new DirectoryInfo(GetFolderPath(SpecialFolder.ApplicationData) + "/ONF");
             SaveLocation = new DirectoryInfo(RootLocation.FullName + "/saves");
             SaveLocation.Create();
+            BackupLocation = new DirectoryInfo(RootLocation.FullName + "/backups");
+            BackupLocation.Create();
         }
 
         private void GetNavItems()

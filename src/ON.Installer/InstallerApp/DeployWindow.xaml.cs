@@ -1,4 +1,5 @@
-﻿using InstallerApp.Security;
+﻿using InstallerApp.BackupRestore;
+using InstallerApp.Security;
 using InstallerApp.Terraform;
 using ON.Installer.Models;
 using System;
@@ -28,6 +29,7 @@ namespace InstallerApp
         internal TerraformHelper terraformHelper;
         FileInfo LogFile;
         internal bool needDockerInstalled;
+        internal BackupRestoreServer backup;
 
         public DeployWindow()
         {
@@ -42,38 +44,43 @@ namespace InstallerApp
             keyHelper = new KeyHelper(MyModel.Credentials.MasterKey);
             DeployRootD = MainWindow.TerraformLocation;
             LogFile = new FileInfo(DeployRootD.FullName + "/log.txt");
+            backup = new BackupRestoreServer(MainWindow.BackupLocation, new ServiceNameHelper(), keyHelper);
 
-            var names = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            //Task createServer = CreateServer();
+            //await WaitOnTask(createServer, txtCreateServer);
+            //if (!createServer.IsCompletedSuccessfully)
+            //    return;
 
-            Task createServer = CreateServer();
-            await WaitOnTask(createServer, txtCreateServer);
-            if (!createServer.IsCompletedSuccessfully)
+            //Task installDocker = Terraform.InstallDocker.Runner.InstallDocker(this);
+            //await WaitOnTask(installDocker, txtDocker);
+            //if (!installDocker.IsCompletedSuccessfully)
+            //    return;
+
+            //Task deploySite = Terraform.DeploySite.Runner.DeploySite(this);
+            //await WaitOnTask(deploySite, txtDeploySite);
+            //if (!deploySite.IsCompletedSuccessfully)
+            //    return;
+
+            //Task testSite = Deploy.DNSHelper.TestSite(this);
+            //await WaitOnTask(testSite, txtTestSite);
+            //if (!testSite.IsCompletedSuccessfully)
+            //    return;
+
+
+            Task loadData = Deploy.LoadInitialData.Load(this);
+            await WaitOnTask(loadData, txtLoadData);
+            if (!loadData.IsCompletedSuccessfully)
                 return;
 
-            Task installDocker = Terraform.InstallDocker.Runner.InstallDocker(this);
-            await WaitOnTask(installDocker, txtDocker);
-            if (!installDocker.IsCompletedSuccessfully)
-                return;
+            //Task changeDns = Deploy.Godaddy.ChangeDNS(this);
+            //await WaitOnTask(changeDns, txtChangeDNS);
+            //if (!changeDns.IsCompletedSuccessfully)
+            //    return;
 
-            Task deploySite = Terraform.DeploySite.Runner.DeploySite(this);
-            await WaitOnTask(deploySite, txtDeploySite);
-            if (!deploySite.IsCompletedSuccessfully)
-                return;
-
-            Task testSite = Deploy.DNSHelper.TestSite(this);
-            await WaitOnTask(testSite, txtTestSite);
-            if (!testSite.IsCompletedSuccessfully)
-                return;
-
-            Task changeDns = Deploy.Godaddy.ChangeDNS(this);
-            await WaitOnTask(changeDns, txtChangeDNS);
-            if (!changeDns.IsCompletedSuccessfully)
-                return;
-
-            Task testDns = Deploy.DNSHelper.TestDNS(this);
-            await WaitOnTask(testDns, txtTestDNS);
-            if (!testDns.IsCompletedSuccessfully)
-                return;
+            //Task testDns = Deploy.DNSHelper.TestDNS(this);
+            //await WaitOnTask(testDns, txtTestDNS);
+            //if (!testDns.IsCompletedSuccessfully)
+            //    return;
 
         }
 

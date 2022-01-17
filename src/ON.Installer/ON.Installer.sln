@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Fragment", "..\ON.Fragme
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authentication.Shared", "..\ON.Authentication\Shared\ON.Authentication.Shared.csproj", "{43B672A2-672F-4794-A653-E89DE8DB54CE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Crypto", "..\ON.Crypto\ON.Crypto\ON.Crypto.csproj", "{4FACDC43-7EB6-43DF-9167-300043FE2A3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{43B672A2-672F-4794-A653-E89DE8DB54CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43B672A2-672F-4794-A653-E89DE8DB54CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43B672A2-672F-4794-A653-E89DE8DB54CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FACDC43-7EB6-43DF-9167-300043FE2A3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FACDC43-7EB6-43DF-9167-300043FE2A3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FACDC43-7EB6-43DF-9167-300043FE2A3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FACDC43-7EB6-43DF-9167-300043FE2A3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
