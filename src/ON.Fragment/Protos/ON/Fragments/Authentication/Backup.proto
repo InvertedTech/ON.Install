@@ -35,7 +35,7 @@ message EncryptedUserBackupDataRecord {
 message ExportUsersRequest {}
 
 message ExportUsersResponse {
-  UserRecord.PublicData ContentRecord = 1;
+  UserRecord.PublicData UserRecord = 1;
 }
 
 message RestoreAllDataRequest {

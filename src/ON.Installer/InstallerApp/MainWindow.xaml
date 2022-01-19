@@ -32,6 +32,8 @@
             </ToolBar>
             <ToolBar>
                 <Button Name="btnDeploy" Content="Deploy to Server" Click="btnDeploy_Click" />
+                <Button Name="btnDoBackup" Content="Backup Server" Click="btnDoBackup_Click" />
+                <Button Name="btnDoRestore" Content="Restore Server" Click="btnDoRestore_Click" />
             </ToolBar>
         </ToolBarTray>
         <StackPanel Orientation="Horizontal">

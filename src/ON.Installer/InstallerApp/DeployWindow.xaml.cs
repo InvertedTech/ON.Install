@@ -44,7 +44,7 @@ namespace InstallerApp
             keyHelper = new KeyHelper(MyModel.Credentials.MasterKey);
             DeployRootD = MainWindow.TerraformLocation;
             LogFile = new FileInfo(DeployRootD.FullName + "/log.txt");
-            backup = new BackupRestoreServer(MainWindow.BackupLocation, new ServiceNameHelper(), keyHelper);
+            backup = new BackupRestoreServer(MainWindow.BackupLocation, new ServiceNameHelper("localhost"), keyHelper);
 
             //Task createServer = CreateServer();
             //await WaitOnTask(createServer, txtCreateServer);

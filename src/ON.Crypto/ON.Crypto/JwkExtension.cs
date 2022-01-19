@@ -57,7 +57,7 @@ namespace ON.Crypto
 
         public static string ToPublicEncodedJsonWebKey(this ECDsa eckey)
         {
-            return Base64UrlEncoder.Encode(System.Text.Json.JsonSerializer.Serialize(eckey.ToPublicJsonWebKey));
+            return Base64UrlEncoder.Encode(System.Text.Json.JsonSerializer.Serialize(eckey.ToPublicJsonWebKey()));
         }
     }
 }

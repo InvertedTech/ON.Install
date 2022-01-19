@@ -1,24 +1,22 @@
-using Google.Protobuf;
+﻿using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using ON.Authentication.SimpleAuth.Service.Data;
-using ON.Authentication.SimpleAuth.Service.Helpers;
+using ON.Authentication;
+using ON.Content.SimpleCMS.Service.Data;
 using ON.Crypto;
-using ON.Fragments.Authentication;
-using ON.Fragments.Generic;
+using ON.Fragments.Content;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace ON.Authentication.SimpleAuth.Service.Services
+namespace ON.Content.SimpleCMS.Service.Services
 {
     public class BackupService : BackupInterface.BackupInterfaceBase
     {
-        private readonly IUserDataProvider dataProvider;
+        private readonly IContentDataProvider dataProvider;
         private readonly ILogger<BackupService> logger;
 
-        public BackupService(IUserDataProvider dataProvider, ILogger<BackupService> logger)
+        public BackupService(IContentDataProvider dataProvider, ILogger<BackupService> logger)
         {
             this.dataProvider = dataProvider;
             this.logger = logger;
@@ -37,7 +35,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 await foreach (var r in dataProvider.GetAll())
                 {
-                    var dr = new UserBackupDataRecord()
+                    var dr = new ContentBackupDataRecord()
                     {
                         Data = r
                     };
@@ -46,7 +44,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                     await responseStream.WriteAsync(new BackupAllDataResponse()
                     {
-                        EncryptedRecord = new EncryptedUserBackupDataRecord()
+                        EncryptedRecord = new EncryptedContentBackupDataRecord()
                         {
                             EncryptionIV = ByteString.CopyFrom(iv),
                             Data = ByteString.CopyFrom(encData)
@@ -59,7 +57,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
-        public override async Task ExportUsers(ExportUsersRequest request, IServerStreamWriter<ExportUsersResponse> responseStream, ServerCallContext context)
+        public override async Task ExportContent(ExportContentRequest request, IServerStreamWriter<ExportContentResponse> responseStream, ServerCallContext context)
         {
             try
             {
@@ -68,7 +66,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return;
 
                 await foreach (var r in dataProvider.GetAll())
-                    await responseStream.WriteAsync(new ExportUsersResponse() { UserRecord = r.Public });
+                    await responseStream.WriteAsync(new ExportContentResponse() { ContentRecord = r.Public });
             }
             catch
             {
@@ -94,7 +92,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 await foreach (var r in requestStream.ReadAllAsync())
                 {
-                    Guid id = new Guid(r.Record.Data.Public.UserID.Span);
+                    Guid id = new Guid(r.Record.Data.Public.ContentID.Span);
                     idsLoaded.Add(id);
 
                     try
@@ -103,17 +101,17 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                         {
                             if (restoreMode == RestoreAllDataRequest.Types.RestoreMode.MissingOnly)
                             {
-                                res.NumUsersSkipped++;
+                                res.NumRecordsSkipped++;
                                 continue;
                             }
 
                             await dataProvider.Save(r.Record.Data);
-                            res.NumUsersOverwriten++;
+                            res.NumRecordsOverwriten++;
                         }
                         else
                         {
                             await dataProvider.Save(r.Record.Data);
-                            res.NumUsersRestored++;
+                            res.NumRecordsRestored++;
                         }
                     }
                     catch { }
@@ -123,11 +121,11 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 {
                     await foreach (var r in dataProvider.GetAll())
                     {
-                        Guid id = new Guid(r.Public.UserID.Span);
+                        Guid id = new Guid(r.Public.ContentID.Span);
                         if (!idsLoaded.Contains(id))
                         {
                             await dataProvider.Delete(id);
-                            res.NumUsersWiped++;
+                            res.NumRecordsWiped++;
                         }
                     }
                 }
@@ -135,8 +133,6 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             catch
             {
             }
-
-            await dataProvider.ReindexAll();
 
             return res;
         }

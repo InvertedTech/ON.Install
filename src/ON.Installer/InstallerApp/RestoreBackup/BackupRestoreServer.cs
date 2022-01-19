@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf;
 using Grpc.Core;
 using Auth = ON.Fragments.Authentication;
+using Content = ON.Fragments.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,17 +36,20 @@ namespace InstallerApp.BackupRestore
         public async Task BackupAll(uint backupNum)
         {
             await BackupAuth(backupNum);
+            await BackupContent(backupNum);
         }
 
         public async Task BackupAuth(uint backupNum)
         {
             var file = new FileInfo(GenerateDirectory(backupNum).FullName + "/" + FILENAME_AUTH);
 
-            var client = new Auth.BackupInterface.BackupInterfaceClient(nameHelper.AuthenticationServiceChannel);
-            var call = client.BackupAllData(new Auth.BackupAllDataRequest()
+            var req = new Auth.BackupAllDataRequest()
             {
                 ClientPublicJwk = keyHelper.DeriveEcBackupKey(0, backupNum).ToPublicEncodedJsonWebKey()
-            }, GetMetadata());
+            };
+
+            var client = new Auth.BackupInterface.BackupInterfaceClient(nameHelper.AuthenticationServiceChannel);
+            using var call = client.BackupAllData(req, GetMetadata());
 
             using var fstream = file.Create();
 
@@ -53,6 +57,32 @@ namespace InstallerApp.BackupRestore
             {
                 response.WriteDelimitedTo(fstream);
             }
+        }
+
+        public async Task BackupContent(uint backupNum)
+        {
+            var file = new FileInfo(GenerateDirectory(backupNum).FullName + "/" + FILENAME_CMS);
+
+            var req = new Content.BackupAllDataRequest()
+            {
+                ClientPublicJwk = keyHelper.DeriveEcBackupKey(0, backupNum).ToPublicEncodedJsonWebKey()
+            };
+
+            var client = new Content.BackupInterface.BackupInterfaceClient(nameHelper.ContentServiceChannel);
+            using var call = client.BackupAllData(req, GetMetadata());
+
+            using var fstream = file.Create();
+
+            await foreach (var response in call.ResponseStream.ReadAllAsync())
+            {
+                response.WriteDelimitedTo(fstream);
+            }
+        }
+
+        public async Task RestoreAll(uint backupNum)
+        {
+            await RestoreAuth(backupNum);
+            await RestoreContent(backupNum);
         }
 
         public async Task<Auth.RestoreAllDataResponse> RestoreAuth(uint backupNum)
@@ -66,7 +96,7 @@ namespace InstallerApp.BackupRestore
             var decKey = EcdhHelper.DeriveKeyClient(backupPrivKey, keyRec.ServerPublicJwk.DecodeJsonWebKey());
 
             var client = new Auth.BackupInterface.BackupInterfaceClient(nameHelper.AuthenticationServiceChannel);
-            var call = client.RestoreAllData(GetMetadata());
+            using var call = client.RestoreAllData(GetMetadata());
 
             await call.RequestStream.WriteAsync(new Auth.RestoreAllDataRequest()
             {
@@ -92,10 +122,47 @@ namespace InstallerApp.BackupRestore
             return res;
         }
 
+        public async Task<Content.RestoreAllDataResponse> RestoreContent(uint backupNum)
+        {
+            var file = new FileInfo(GenerateDirectory(backupNum).FullName + "/" + FILENAME_CMS);
+
+            using var fstream = file.OpenRead();
+            var keyRec = Content.BackupAllDataResponse.Parser.ParseDelimitedFrom(fstream);
+
+            var backupPrivKey = keyHelper.DeriveEcBackupKey(0, backupNum);
+            var decKey = EcdhHelper.DeriveKeyClient(backupPrivKey, keyRec.ServerPublicJwk.DecodeJsonWebKey());
+
+            var client = new Content.BackupInterface.BackupInterfaceClient(nameHelper.ContentServiceChannel);
+            using var call = client.RestoreAllData(GetMetadata());
+
+            await call.RequestStream.WriteAsync(new Content.RestoreAllDataRequest()
+            {
+                Mode = Content.RestoreAllDataRequest.Types.RestoreMode.Wipe,
+            });
+
+            while (fstream.Position != fstream.Length)
+            {
+                var encRec = Content.BackupAllDataResponse.Parser.ParseDelimitedFrom(fstream);
+                AesHelper.Decrypt(decKey, encRec.EncryptedRecord.EncryptionIV.ToByteArray(), encRec.EncryptedRecord.Data.ToByteArray(), out var plaintText);
+
+                var decRec = Content.ContentBackupDataRecord.Parser.ParseFrom(plaintText);
+
+                await call.RequestStream.WriteAsync(new Content.RestoreAllDataRequest()
+                {
+                    Record = decRec,
+                });
+            }
+
+            await call.RequestStream.CompleteAsync();
+
+            var res = await call;
+            return res;
+        }
+
         public async Task<Auth.RestoreAllDataResponse> RestoreOneAuth(Auth.UserBackupDataRecord rec)
         {
             var client = new Auth.BackupInterface.BackupInterfaceClient(nameHelper.AuthenticationServiceChannel);
-            var call = client.RestoreAllData(GetMetadata());
+            using var call = client.RestoreAllData(GetMetadata());
 
             await call.RequestStream.WriteAsync(new Auth.RestoreAllDataRequest()
             {
@@ -103,6 +170,27 @@ namespace InstallerApp.BackupRestore
             });
 
             await call.RequestStream.WriteAsync(new Auth.RestoreAllDataRequest()
+            {
+                Record = rec,
+            });
+
+            await call.RequestStream.CompleteAsync();
+
+            var res = await call;
+            return res;
+        }
+
+        public async Task<Content.RestoreAllDataResponse> RestoreOneContent(Content.ContentBackupDataRecord rec)
+        {
+            var client = new Content.BackupInterface.BackupInterfaceClient(nameHelper.ContentServiceChannel);
+            using var call = client.RestoreAllData(GetMetadata());
+
+            await call.RequestStream.WriteAsync(new Content.RestoreAllDataRequest()
+            {
+                Mode = Content.RestoreAllDataRequest.Types.RestoreMode.Overwrite,
+            });
+
+            await call.RequestStream.WriteAsync(new Content.RestoreAllDataRequest()
             {
                 Record = rec,
             });

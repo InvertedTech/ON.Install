@@ -8,8 +8,10 @@ namespace ON.Content.SimpleCMS.Service.Data
 {
     public interface IContentDataProvider
     {
-        Task<IEnumerable<ContentRecord>> GetAll();
+        IAsyncEnumerable<ContentRecord> GetAll();
         Task<ContentRecord> GetById(Guid contentId);
+        Task<bool> Delete(Guid contentId);
+        Task<bool> Exists(Guid contentId);
         Task Save(ContentRecord content);
     }
 }

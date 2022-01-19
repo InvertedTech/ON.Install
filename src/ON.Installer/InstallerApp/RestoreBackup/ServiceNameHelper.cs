@@ -7,19 +7,19 @@ namespace InstallerApp.BackupRestore
     {
         public readonly Channel AuthenticationServiceChannel;
         public readonly Channel ContentServiceChannel;
-        public readonly Channel PaymentsServiceChannel;
+        public readonly Channel FakePayServiceChannel;
 
         public Channel[] ChannelList => new Channel[] {
             AuthenticationServiceChannel,
             ContentServiceChannel,
-            //PaymentsServiceChannel,
+            FakePayServiceChannel,
         };
 
-        public ServiceNameHelper()
+        public ServiceNameHelper(string ip)
         {
-            AuthenticationServiceChannel = new Channel("localhost", 8080, ChannelCredentials.Insecure);
-            ContentServiceChannel = new Channel("localhost", 8080, ChannelCredentials.Insecure);
-            PaymentsServiceChannel = new Channel("localhost", 8080, ChannelCredentials.Insecure);
+            AuthenticationServiceChannel = new Channel(ip, 7001, ChannelCredentials.Insecure);
+            ContentServiceChannel = new Channel(ip, 7002, ChannelCredentials.Insecure);
+            FakePayServiceChannel = new Channel(ip, 7003, ChannelCredentials.Insecure);
         }
     }
 }

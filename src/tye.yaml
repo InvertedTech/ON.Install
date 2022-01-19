@@ -55,6 +55,8 @@ services:
   volumes:
   - source: tmpdata/cms/
     target: /data
+  bindings:
+  - port: 7002
 - name: authweb
   project: ON.Authentication/SimpleAuth/Web/ON.Authentication.SimpleAuth.Web.csproj
   env:
@@ -68,6 +70,8 @@ services:
   volumes:
   - source: tmpdata/auth/
     target: /data
+  bindings:
+  - port: 7001
 # - name: opsservice
   # project: ON.Ops/SimpleOps/Service/ON.Ops.SimpleOps.Service.csproj
   # env:
@@ -84,6 +88,8 @@ services:
   volumes:
   - source: tmpdata/fakepay/
     target: /data
+  bindings:
+  - port: 7003
 # - name: grpc-lb
   # dockerFile: grpc-lb/Dockerfile
   # dockerFileContext: grpc-lb
