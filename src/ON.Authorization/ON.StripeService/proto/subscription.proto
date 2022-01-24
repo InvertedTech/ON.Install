@@ -4,6 +4,12 @@ package stripe;
 
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// TODO: Ask if message should only store the stripe ID references
+service SubscriptionService {
+  rpc CreateSubscription(Subscription) returns (google.protobuf.Empty) {};
+}
 
 message Subscription {
   string id = 1;
