@@ -33,7 +33,16 @@ namespace InstallerApp.BackupRestore
             this.keyHelper = keyHelper;
         }
 
-        public async Task BackupAll(uint backupNum)
+        public async Task BackupAll()
+        {
+            uint latestBackupNum = GetLatestBackupNum();
+            latestBackupNum++;
+            await RestoreAuth(latestBackupNum);
+            await RestoreContent(latestBackupNum);
+        }
+
+
+        private async Task BackupAll(uint backupNum)
         {
             await BackupAuth(backupNum);
             await BackupContent(backupNum);
@@ -79,7 +88,27 @@ namespace InstallerApp.BackupRestore
             }
         }
 
-        public async Task RestoreAll(uint backupNum)
+        public async Task RestoreLatest()
+        {
+            uint latestBackupNum = GetLatestBackupNum();
+            await RestoreAuth(latestBackupNum);
+            await RestoreContent(latestBackupNum);
+        }
+
+        private uint GetLatestBackupNum()
+        {
+            if (rootBackupDir.GetDirectories().Length == 0)
+                return 0;
+
+            var dir = rootBackupDir.GetDirectories().OrderByDescending(x => x.Name).First()
+                                    .GetDirectories().OrderByDescending(x => x.Name).First()
+                                    .GetDirectories().OrderByDescending(x => x.Name).First()
+                                    .GetDirectories().OrderByDescending(x => x.Name).First();
+
+            return uint.Parse(dir.Name);
+        }
+
+        public async Task RestoreSpecific(uint backupNum)
         {
             await RestoreAuth(backupNum);
             await RestoreContent(backupNum);
@@ -211,9 +240,8 @@ namespace InstallerApp.BackupRestore
 
         private DirectoryInfo GenerateDirectory(uint backupNum)
         {
-            var num = backupNum.ToString("0000");
-            num = num.Substring(num.Length - 4, 4);
-            return rootBackupDir.CreateSubdirectory(num.Substring(0, 2)).CreateSubdirectory(num.Substring(2, 2));
+            var num = backupNum.ToString("00000000");
+            return rootBackupDir.CreateSubdirectory(num.Substring(0, 2)).CreateSubdirectory(num.Substring(2, 2)).CreateSubdirectory(num.Substring(4, 2)).CreateSubdirectory(num);
         }
 
 

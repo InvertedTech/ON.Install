@@ -172,7 +172,7 @@ namespace InstallerApp
                 var nameHelper = new ServiceNameHelper("localhost");
                 var keyHelper = new KeyHelper(MainModel.Credentials.MasterKey);
                 var server = new BackupRestoreServer(BackupLocation, nameHelper, keyHelper);
-                await server.BackupAll(1);
+                await server.BackupAll();
             }
             catch (Exception ex)
             {
@@ -190,7 +190,7 @@ namespace InstallerApp
                 var nameHelper = new ServiceNameHelper("localhost");
                 var keyHelper = new KeyHelper(MainModel.Credentials.MasterKey);
                 var server = new BackupRestoreServer(BackupLocation, nameHelper, keyHelper);
-                await server.RestoreAll(1);
+                await server.RestoreLatest();
             }
             catch (Exception ex)
             {
