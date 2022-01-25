@@ -10,6 +10,7 @@ import "google/protobuf/empty.proto";
 service StripeService {
   rpc WriteStripeData(StripeData) returns (google.protobuf.Empty) {};
   rpc ReadStripeData(google.protobuf.Empty) returns (StripeData) {};
+  rpc UpdateStripeData(StripeData) returns (google.protobuf.Empty) {};
 }
 
 message StripeId {
