@@ -7,10 +7,14 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 service SubscriptionService {
-  rpc CreateSubscription(Subscription) returns (google.protobuf.Empty) {};
+  rpc StoreSubscription(Subscription) returns (google.protobuf.Empty) {};
   rpc StoreSubscriptionItem(SubscriptionItem) returns (google.protobuf.Empty) {};
   rpc GetSubscriptionFromId(StripeId) returns (Subscription) {};
   rpc GetSubscriptionFromCustomer(StripeId) returns (Subscription) {};
+  rpc GetSubscriptionItem(StripeId) returns (SubscriptionItem) {};
+  rpc UpdateSubscription(StripeId) returns (google.protobuf.Empty) {};
+  rpc UpdateSubscriptionItem(StripeId) returns (google.protobuf.Empty) {};
+  rpc DeleteSubscriptionItem(StripeId) returns (google.protobuf.Empty) {};
 }
 
 message StripeId {
