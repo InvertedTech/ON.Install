@@ -4,10 +4,12 @@ package stripe;
 
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
+// TODO: Lock services behind auth
 service StripeService {
-  rpc WriteStripeData(StripeRequest) returns (StripeResponse) {};
-  rpc ReadStripeData(StripeRequest) returns (StripeResponse) {};
+  rpc WriteStripeData(StripeData) returns (google.protobuf.Empty) {};
+  rpc ReadStripeData(google.protobuf.Empty) returns (StripeData) {};
 }
 
 message StripeId {
