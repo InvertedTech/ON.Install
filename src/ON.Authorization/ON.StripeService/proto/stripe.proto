@@ -17,6 +17,8 @@ service SubscriptionService {
   rpc DeleteSubscriptionItem(StripeId) returns (google.protobuf.Empty) {};
 }
 
+service StripeService {}
+
 message StripeId {
   string stripeId = 1;
 }
