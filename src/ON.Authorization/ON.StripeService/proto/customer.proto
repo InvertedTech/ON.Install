@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package stripe;
+
+service CustomerService {}
+
+message CustomerId {
+  string stripeId = 1;
+}
