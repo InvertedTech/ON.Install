@@ -4,18 +4,29 @@ package stripe;
 
 // import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
+// import "google/protobuf/empty.proto";
 
-service SubscriptionService {
-  rpc StoreSubscription(Subscription) returns (google.protobuf.Empty) {};
-  rpc StoreSubscriptionItem(SubscriptionItem) returns (google.protobuf.Empty) {};
-  rpc GetSubscriptionFromId(StripeId) returns (Subscription) {};
-  rpc GetSubscriptionFromCustomer(StripeId) returns (Subscription) {};
-  rpc GetSubscriptionItem(StripeId) returns (SubscriptionItem) {};
-  rpc UpdateSubscription(StripeId) returns (google.protobuf.Empty) {};
-  rpc UpdateSubscriptionItem(StripeId) returns (google.protobuf.Empty) {};
-  rpc DeleteSubscriptionItem(StripeId) returns (google.protobuf.Empty) {};
-}
+// service SubscriptionService {
+//   rpc StoreSubscription(Subscription) returns (google.protobuf.Empty) {};
+//   rpc StoreSubscriptionItem(SubscriptionItem) returns (google.protobuf.Empty) {};
+//   rpc GetSubscriptionFromId(StripeId) returns (Subscription) {};
+//   rpc GetSubscriptionFromCustomer(StripeId) returns (Subscription) {};
+//   rpc GetSubscriptionItem(StripeId) returns (SubscriptionItem) {};
+//   rpc UpdateSubscription(StripeId) returns (google.protobuf.Empty) {};
+//   rpc UpdateSubscriptionItem(StripeId) returns (google.protobuf.Empty) {};
+//   rpc DeleteSubscriptionItem(StripeId) returns (google.protobuf.Empty) {};
+// }
+
+// message Subscription {
+//   StripeId subscriptionId = 1;
+//   StripeId customerId = 2;
+//   google.protobuf.Timestamp created = 3;
+// }
+
+// message SubscriptionItem {
+//   StripeId itemId = 1;
+//   google.protobuf.Timestamp created = 2;
+// }
 
 service StripeService {}
 
@@ -23,14 +34,10 @@ message StripeId {
   string stripeId = 1;
 }
 
-message Subscription {
-  StripeId subscriptionId = 1;
-  StripeId customerId = 2;
-  google.protobuf.Timestamp created = 3;
-}
-
-message SubscriptionItem {
-  StripeId itemId = 1;
+message Data {
+  repeated StripeId subscriptionItems = 1;
   google.protobuf.Timestamp created = 2;
 }
+
+
  
