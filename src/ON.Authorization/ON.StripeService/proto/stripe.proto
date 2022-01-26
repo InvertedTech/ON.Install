@@ -2,15 +2,15 @@ syntax = "proto3";
 
 package stripe;
 
-import "google/protobuf/struct.proto";
-import "google/protobuf/timestamp.proto";
+//import "google/protobuf/struct.proto";
+//import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 // protoc -I=. ./proto/*.proto --js_out=import_style=commonjs,binary:./server --grpc_out=./server --plugin=protoc-gen-grpc=./node_modules/grpc-tools/bin/grpc_node_plugin.exe
 // TODO: Lock services behind auth
 // TODO: Define CRUD operations for all StripeData items
 service StripeService {
-  rpc WriteStripeData(StripeData) returns (google.protobuf.Empty) {};
+  rpc WriteStripeData(StripeRequest) returns (StripeResponse) {};
   rpc ReadStripeData(google.protobuf.Empty) returns (StripeData) {};
   rpc UpdateStripeData(StripeData) returns (google.protobuf.Empty) {};
 }
@@ -21,21 +21,23 @@ message StripeId {
 
 message StripeRequest {
   string id = 1;
-  google.protobuf.Timestamp created = 2;
+  string created = 2;
   StripeId stripeId = 3;
   StripeData stripeData = 4;
 }
 
 message StripeResponse {
-  string id = 1;
-  google.protobuf.Timestamp created = 2;
-  string responseMessage = 3;
-  bool success = 4;
-  google.protobuf.Struct errors = 5;
+  string responseMessage = 1;
+  // string id = 1;
+  // string created = 2;
+  // string responseMessage = 3;
+  // bool success = 4;
+  // google.protobuf.Struct errors = 5;
 }
 
+// TODO: Set StripeId fields to hashmaps
 message StripeData {
-  google.protobuf.Timestamp created = 1;
+  string created = 1;
   repeated StripeId subscriptionItems = 2;
   repeated StripeId customers = 3;
   repeated StripeId subscriptions = 4;
