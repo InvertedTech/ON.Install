@@ -5,11 +5,6 @@ const { v4: uuidv4 } = require('uuid')
 var service = require('../server/proto/stripe_grpc_pb')
 var StripeService = require('../server/proto/stripe_pb')
 
-// TODO: Check typeof(data) === json
-// function buildRequest(requestData) {
-// 	return new StripeService.StripeRequest(requestData)
-// }
-
 function main() {
 	// Define the client
 	// TODO: Set port from env
