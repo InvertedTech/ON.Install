@@ -6,7 +6,9 @@ import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
+// protoc -I=. ./proto/*.proto --js_out=import_style=commonjs,binary:./server --grpc_out=./server --plugin=protoc-gen-grpc=./node_modules/grpc-tools/bin/grpc_node_plugin.exe
 // TODO: Lock services behind auth
+// TODO: Define CRUD operations for all StripeData items
 service StripeService {
   rpc WriteStripeData(StripeData) returns (google.protobuf.Empty) {};
   rpc ReadStripeData(google.protobuf.Empty) returns (StripeData) {};
