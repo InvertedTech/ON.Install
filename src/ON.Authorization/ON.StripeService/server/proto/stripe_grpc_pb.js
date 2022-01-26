@@ -3,90 +3,142 @@
 'use strict';
 var grpc = require('grpc');
 var proto_stripe_pb = require('../proto/stripe_pb.js');
-var google_protobuf_empty_pb = require('google-protobuf/google/protobuf/empty_pb.js');
+var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
 
-function serialize_google_protobuf_Empty(arg) {
-  if (!(arg instanceof google_protobuf_empty_pb.Empty)) {
-    throw new Error('Expected argument of type google.protobuf.Empty');
+function serialize_CancelOwnSubscriptionRequest(arg) {
+  if (!(arg instanceof proto_stripe_pb.CancelOwnSubscriptionRequest)) {
+    throw new Error('Expected argument of type CancelOwnSubscriptionRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_google_protobuf_Empty(buffer_arg) {
-  return google_protobuf_empty_pb.Empty.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_CancelOwnSubscriptionRequest(buffer_arg) {
+  return proto_stripe_pb.CancelOwnSubscriptionRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_stripe_StripeData(arg) {
-  if (!(arg instanceof proto_stripe_pb.StripeData)) {
-    throw new Error('Expected argument of type stripe.StripeData');
+function serialize_CancelOwnSubscriptionResponse(arg) {
+  if (!(arg instanceof proto_stripe_pb.CancelOwnSubscriptionResponse)) {
+    throw new Error('Expected argument of type CancelOwnSubscriptionResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_stripe_StripeData(buffer_arg) {
-  return proto_stripe_pb.StripeData.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_CancelOwnSubscriptionResponse(buffer_arg) {
+  return proto_stripe_pb.CancelOwnSubscriptionResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_stripe_StripeRequest(arg) {
-  if (!(arg instanceof proto_stripe_pb.StripeRequest)) {
-    throw new Error('Expected argument of type stripe.StripeRequest');
+function serialize_GetAccountDetailsRequest(arg) {
+  if (!(arg instanceof proto_stripe_pb.GetAccountDetailsRequest)) {
+    throw new Error('Expected argument of type GetAccountDetailsRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_stripe_StripeRequest(buffer_arg) {
-  return proto_stripe_pb.StripeRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_GetAccountDetailsRequest(buffer_arg) {
+  return proto_stripe_pb.GetAccountDetailsRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_stripe_StripeResponse(arg) {
-  if (!(arg instanceof proto_stripe_pb.StripeResponse)) {
-    throw new Error('Expected argument of type stripe.StripeResponse');
+function serialize_GetAccountDetailsResponse(arg) {
+  if (!(arg instanceof proto_stripe_pb.GetAccountDetailsResponse)) {
+    throw new Error('Expected argument of type GetAccountDetailsResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_stripe_StripeResponse(buffer_arg) {
-  return proto_stripe_pb.StripeResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_GetAccountDetailsResponse(buffer_arg) {
+  return proto_stripe_pb.GetAccountDetailsResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_GetOwnSubscriptionRecordRequest(arg) {
+  if (!(arg instanceof proto_stripe_pb.GetOwnSubscriptionRecordRequest)) {
+    throw new Error('Expected argument of type GetOwnSubscriptionRecordRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_GetOwnSubscriptionRecordRequest(buffer_arg) {
+  return proto_stripe_pb.GetOwnSubscriptionRecordRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_GetOwnSubscriptionRecordResponse(arg) {
+  if (!(arg instanceof proto_stripe_pb.GetOwnSubscriptionRecordResponse)) {
+    throw new Error('Expected argument of type GetOwnSubscriptionRecordResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_GetOwnSubscriptionRecordResponse(buffer_arg) {
+  return proto_stripe_pb.GetOwnSubscriptionRecordResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_NewOwnSubscriptionRequest(arg) {
+  if (!(arg instanceof proto_stripe_pb.NewOwnSubscriptionRequest)) {
+    throw new Error('Expected argument of type NewOwnSubscriptionRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_NewOwnSubscriptionRequest(buffer_arg) {
+  return proto_stripe_pb.NewOwnSubscriptionRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_NewOwnSubscriptionResponse(arg) {
+  if (!(arg instanceof proto_stripe_pb.NewOwnSubscriptionResponse)) {
+    throw new Error('Expected argument of type NewOwnSubscriptionResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_NewOwnSubscriptionResponse(buffer_arg) {
+  return proto_stripe_pb.NewOwnSubscriptionResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
-// protoc -I=. ./proto/*.proto --js_out=import_style=commonjs,binary:./server --grpc_out=./server --plugin=protoc-gen-grpc=./node_modules/grpc-tools/bin/grpc_node_plugin.exe
-// TODO: Lock services behind auth
-// TODO: Define CRUD operations for all StripeData items
-var StripeServiceService = exports.StripeServiceService = {
-  writeStripeData: {
-    path: '/stripe.StripeService/WriteStripeData',
+var StripeInterfaceService = exports.StripeInterfaceService = {
+  cancelOwnSubscription: {
+    path: '/StripeInterface/CancelOwnSubscription',
     requestStream: false,
     responseStream: false,
-    requestType: proto_stripe_pb.StripeRequest,
-    responseType: proto_stripe_pb.StripeResponse,
-    requestSerialize: serialize_stripe_StripeRequest,
-    requestDeserialize: deserialize_stripe_StripeRequest,
-    responseSerialize: serialize_stripe_StripeResponse,
-    responseDeserialize: deserialize_stripe_StripeResponse,
+    requestType: proto_stripe_pb.CancelOwnSubscriptionRequest,
+    responseType: proto_stripe_pb.CancelOwnSubscriptionResponse,
+    requestSerialize: serialize_CancelOwnSubscriptionRequest,
+    requestDeserialize: deserialize_CancelOwnSubscriptionRequest,
+    responseSerialize: serialize_CancelOwnSubscriptionResponse,
+    responseDeserialize: deserialize_CancelOwnSubscriptionResponse,
   },
-  readStripeData: {
-    path: '/stripe.StripeService/ReadStripeData',
+  getAccountDetails: {
+    path: '/StripeInterface/GetAccountDetails',
     requestStream: false,
     responseStream: false,
-    requestType: google_protobuf_empty_pb.Empty,
-    responseType: proto_stripe_pb.StripeData,
-    requestSerialize: serialize_google_protobuf_Empty,
-    requestDeserialize: deserialize_google_protobuf_Empty,
-    responseSerialize: serialize_stripe_StripeData,
-    responseDeserialize: deserialize_stripe_StripeData,
+    requestType: proto_stripe_pb.GetAccountDetailsRequest,
+    responseType: proto_stripe_pb.GetAccountDetailsResponse,
+    requestSerialize: serialize_GetAccountDetailsRequest,
+    requestDeserialize: deserialize_GetAccountDetailsRequest,
+    responseSerialize: serialize_GetAccountDetailsResponse,
+    responseDeserialize: deserialize_GetAccountDetailsResponse,
   },
-  updateStripeData: {
-    path: '/stripe.StripeService/UpdateStripeData',
+  getOwnSubscriptionRecord: {
+    path: '/StripeInterface/GetOwnSubscriptionRecord',
     requestStream: false,
     responseStream: false,
-    requestType: proto_stripe_pb.StripeData,
-    responseType: google_protobuf_empty_pb.Empty,
-    requestSerialize: serialize_stripe_StripeData,
-    requestDeserialize: deserialize_stripe_StripeData,
-    responseSerialize: serialize_google_protobuf_Empty,
-    responseDeserialize: deserialize_google_protobuf_Empty,
+    requestType: proto_stripe_pb.GetOwnSubscriptionRecordRequest,
+    responseType: proto_stripe_pb.GetOwnSubscriptionRecordResponse,
+    requestSerialize: serialize_GetOwnSubscriptionRecordRequest,
+    requestDeserialize: deserialize_GetOwnSubscriptionRecordRequest,
+    responseSerialize: serialize_GetOwnSubscriptionRecordResponse,
+    responseDeserialize: deserialize_GetOwnSubscriptionRecordResponse,
+  },
+  newOwnSubscription: {
+    path: '/StripeInterface/NewOwnSubscription',
+    requestStream: false,
+    responseStream: false,
+    requestType: proto_stripe_pb.NewOwnSubscriptionRequest,
+    responseType: proto_stripe_pb.NewOwnSubscriptionResponse,
+    requestSerialize: serialize_NewOwnSubscriptionRequest,
+    requestDeserialize: deserialize_NewOwnSubscriptionRequest,
+    responseSerialize: serialize_NewOwnSubscriptionResponse,
+    responseDeserialize: deserialize_NewOwnSubscriptionResponse,
   },
 };
 
-exports.StripeServiceClient = grpc.makeGenericClientConstructor(StripeServiceService);
+exports.StripeInterfaceClient = grpc.makeGenericClientConstructor(StripeInterfaceService);

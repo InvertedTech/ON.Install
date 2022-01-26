@@ -1,37 +1,64 @@
 syntax = "proto3";
 
-package ON.Fragments.Authorization.Payments.Stripe;
+import "google/protobuf/timestamp.proto";
 
-import "Protos/ON/Fragments/Authorization/Payments/Stripe/PlanRecord.proto";
-import "Protos/ON/Fragments/Authorization/Payments/Stripe/SubscriptionRecord.proto";
-
+service PaymentsInterface {
+  rpc CancelOwnSubscription (CancelOwnSubscriptionRequest) returns (CancelOwnSubscriptionResponse) {}
+  rpc GetAccountDetails (GetAccountDetailsRequest) returns (GetAccountDetailsResponse) {}
+  rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse) {}
+  rpc NewOwnSubscription (NewOwnSubscriptionRequest) returns (NewOwnSubscriptionResponse) {}
+}
+  
 message CancelOwnSubscriptionRequest {
-  string reason = 1;
+  string Reason = 1;
 }
-
+  
 message CancelOwnSubscriptionResponse {
-  SubscriptionRecord record = 1;
-  string error = 2;
+  SubscriptionRecord Record = 1;
+  string Error = 2;
 }
 
-message GetAccountDetailsRequest {}
-
+message GetAccountDetailsRequest {
+}
+  
 message GetAccountDetailsResponse {
-  PlanList plans = 1;
-  string clientId = 2;
+  PlanList Plans = 1;
+  string ClientId = 2;
 }
-
-message GetOwnSubscriptionRecordRequest {}
-
+  
+message GetOwnSubscriptionRecordRequest {
+}
+  
 message GetOwnSubscriptionRecordResponse {
-  SubscriptionRecord record = 1;
+  SubscriptionRecord Record = 1;
 }
 
 message NewOwnSubscriptionRequest {
   string SubscriptionId = 1;
 }
-
+  
 message NewOwnSubscriptionResponse {
-  SubscriptionRecord record = 1;
-  string error = 2;
+  SubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
+message PlanList {
+  repeated PlanRecord Records = 1;
+}
+
+message PlanRecord {
+  uint32 Value = 1;
+  string Name = 2;
+  string PlanID = 3;
+}
+
+message SubscriptionRecord {
+  bytes UserID = 1; // Guid for the user
+  uint32 Level = 2;
+  string SubscriptionId = 3;
+  google.protobuf.Timestamp LastPaidUTC = 4;
+  google.protobuf.Timestamp PaidThruUTC = 5;
+  google.protobuf.Timestamp RenewsOnUTC = 6;
+  google.protobuf.Timestamp CanceledOnUTC = 7;
+  google.protobuf.Timestamp ChangedOnUTC = 100;
 }

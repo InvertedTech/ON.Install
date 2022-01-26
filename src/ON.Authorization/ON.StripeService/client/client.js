@@ -23,41 +23,11 @@ var StripeService = require('../server/proto/stripe_pb')
 
 function main() {
 	// Define the client
+	// TODO: Set port from env
 	var client = new service.StripeServiceClient(
 		'localhost:50051',
 		grpc.credentials.createInsecure()
 	)
-
-	var timestamp = Date.now()
-
-	// Build the data
-	// TODO: Dynamic data in production
-	var stripeData = new StripeService.StripeData()
-	stripeData.setCreated(timestamp.toString())
-	stripeData.setSubscriptionitemsList()
-	stripeData.setCustomersList()
-	stripeData.setSubscriptionsList()
-
-	// Create instance of StripeID
-	var stripeId = new StripeService.StripeId()
-	stripeId.setStripeid('pub key')
-
-	// Create Request
-	var request = new StripeService.StripeRequest()
-	request.setId(uuidv4())
-	request.setCreated(Date.now())
-	request.setStripeid(stripeId)
-	request.setStripedata(stripeData)
-
-	// Call the WriteStripeData service
-	client.writeStripeData(request, (error, response) => {
-		if (!error) {
-			console.log('Stripe Response: ' + response.getResponsemessage())
-		} else {
-			console.log('error')
-			console.error(error)
-		}
-	})
 }
 
 main()
