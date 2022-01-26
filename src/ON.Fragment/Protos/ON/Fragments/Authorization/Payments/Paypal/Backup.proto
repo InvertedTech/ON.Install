@@ -1,8 +1,10 @@
 syntax = "proto3";
 
-package ON.Fragments.Authorization;
+package ON.Fragments.Authorization.Payments.Paypal;
 
-// Service for Authorization backup fragment interface
+import "Protos/ON/Fragments/Authorization/Payments/Paypal/SubscriptionRecord.proto";
+
+// Service for Paypal backup fragment interface
 service BackupInterface {
   // Export a list of all data.
   rpc BackupAllData (BackupAllDataRequest) returns (stream BackupAllDataResponse) {}
@@ -49,5 +51,5 @@ message RestoreAllDataResponse {
 
 message UserBackupDataRecord {
   bytes ExtraData = 1;   // Generic byte structure to save all application specific data for user
-  bytes SubscriptionRecord = 2; // SubscriptionRecord
+  SubscriptionRecord SubscriptionRecord = 2; // SubscriptionRecord
 }
