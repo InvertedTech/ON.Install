@@ -5,10 +5,6 @@ var service = require('../server/proto/stripe_grpc_pb')
 var StripeService = require('../server/proto/stripe_pb')
 const writeBuffer = require('./utils/writeBuffer')
 
-function buildResponse(data) {
-	return new StripeService.StripeResponse(data)
-}
-
 function writeData(call, callback) {
 	let req = call.request.serializeBinary()
 
