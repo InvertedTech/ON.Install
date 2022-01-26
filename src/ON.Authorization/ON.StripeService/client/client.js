@@ -6,17 +6,6 @@ var service = require('../server/proto/stripe_grpc_pb')
 var StripeService = require('../server/proto/stripe_pb')
 
 // TODO: Check typeof(data) === json
-// function buildData(data) {
-// 	var stripeData = new StripeService.StripeData()
-// 	stripeData.setCreated(data.created)
-// 	stripeData.setSubscriptionitems(data.subscriptionItems)
-// 	stripeData.setCustomers(data.customers)
-// 	stripeData.setSubscriptions(data.subscriptions)
-
-// 	return stripeData
-// }
-
-// TODO: Check typeof(data) === json
 // function buildRequest(requestData) {
 // 	return new StripeService.StripeRequest(requestData)
 // }
