@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payments.Stripe;
+
+import "Protos/ON/Fragments/Authorization/Payments/Stripe/PlanRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Stripe/SubscriptionRecord.proto";
+
+message CancelOwnSubscriptionRequest {
+  string reason = 1;
+}
+
+message CancelOwnSubscriptionResponse {
+  SubscriptionRecord record = 1;
+  string error = 2;
+}
+
+message GetAccountDetailsRequest {}
+
+message GetAccountDetailsResponse {
+  PlanList plans = 1;
+  string clientId = 2;
+}
+
+message GetOwnSubscriptionRecordRequest {}
+
+message GetOwnSubscriptionRecordResponse {
+  SubscriptionRecord record = 1;
+}
+
+message NewOwnSubscriptionRequest {
+  string SubscriptionId = 1;
+}
+
+message NewOwnSubscriptionResponse {
+  SubscriptionRecord record = 1;
+  string error = 2;
+}

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payments.Stripe;
+
+message PlanList {
+  repeated PlanRecord records = 1;
+}
+
+message PlanRecord {
+  uint32 value = 1;
+  string name = 2;
+  string planId = 3;
+}
