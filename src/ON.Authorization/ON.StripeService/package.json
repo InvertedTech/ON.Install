@@ -1,0 +1,19 @@
+{
+	"name": "grpc",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"crypto": "^1.0.1",
+		"fs": "^0.0.1-security",
+		"google-protobuf": "^3.19.3",
+		"grpc": "^1.24.11",
+		"grpc-tools": "^1.11.2",
+		"uuid": "^8.3.2"
+	}
+}
