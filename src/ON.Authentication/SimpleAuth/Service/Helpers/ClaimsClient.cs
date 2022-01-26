@@ -27,13 +27,35 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 
         public async Task<IEnumerable<ClaimRecord>> GetOtherClaims(Guid userId)
         {
-            var client = new ClaimsInterface.ClaimsInterfaceClient(nameHelper.FakePaymentServiceChannel);
-            var reply = await client.GetClaimsAsync(new GetClaimsRequest()
-            {
-                UserID = Google.Protobuf.ByteString.CopyFrom(userId.ToByteArray())
-            });
+            List<Channel> channels = new List<Channel>();
+            //channels.Add(nameHelper.FakePaymentServiceChannel);
+            channels.Add(nameHelper.PaypalServiceChannel);
 
-            return reply.Claims;
+            var tasks = channels.Select(c => GetOtherClaims(userId, c));
+
+            await Task.WhenAll(tasks);
+
+            return tasks.SelectMany(t => t.Result);
+        }
+
+        private async Task<IEnumerable<ClaimRecord>> GetOtherClaims(Guid userId, Channel channel)
+        {
+            try
+            {
+                var client = new ClaimsInterface.ClaimsInterfaceClient(channel);
+                var reply = await client.GetClaimsAsync(new GetClaimsRequest()
+                {
+                    UserID = Google.Protobuf.ByteString.CopyFrom(userId.ToByteArray())
+                });
+
+                return reply.Claims;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return new ClaimRecord[0];
         }
     }
 }

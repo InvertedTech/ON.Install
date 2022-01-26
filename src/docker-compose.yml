@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3'
 services:
   nginx-proxy:
     image: nginxproxy/nginx-proxy:dev-alpine
@@ -7,7 +7,7 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
   authweb:
-    image: mcr.microsoft.com/dotnet/sdk:5.0
+    image: mcr.microsoft.com/dotnet/sdk:6.0
     expose:
       - "80"
     depends_on:
@@ -25,9 +25,9 @@ services:
     volumes:
       - .:/app
     working_dir: /app/ON.Authentication/SimpleAuth/Web
-    command: dotnet watch run --urls=http://+:80/
+    command: dotnet watch run --urls=http://+:80/ --no-launch-profile
   authservice:
-    image: mcr.microsoft.com/dotnet/sdk:5.0
+    image: mcr.microsoft.com/dotnet/sdk:6.0
     expose:
       - "80"
     environment:
@@ -40,9 +40,9 @@ services:
       - .:/app
       - authdata:/data  
     working_dir: /app/ON.Authentication/SimpleAuth/Service
-    command: dotnet watch run --urls=http://+:80/
+    command: dotnet watch run --urls=http://+:80/ --no-launch-profile
   cmsweb:
-    image: mcr.microsoft.com/dotnet/sdk:5.0
+    image: mcr.microsoft.com/dotnet/sdk:6.0
     expose:
       - "80"
     depends_on:
@@ -59,9 +59,9 @@ services:
     volumes:
       - .:/app
     working_dir: /app/ON.Content/SimpleCMS/Web
-    command: dotnet watch run --urls=http://+:80/
+    command: dotnet watch run --urls=http://+:80/ --no-launch-profile
   cmsservice:
-    image: mcr.microsoft.com/dotnet/sdk:5.0
+    image: mcr.microsoft.com/dotnet/sdk:6.0
     expose:
       - "80"
     environment:
@@ -70,7 +70,7 @@ services:
       - .:/app
       - cmsdata:/data
     working_dir: /app/ON.Content/SimpleCMS/Service
-    command: dotnet watch run --urls=http://+:80/
+    command: dotnet watch run --urls=http://+:80/ --no-launch-profile
 volumes:
   authdata:
   cmsdata:

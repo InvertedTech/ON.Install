@@ -27,7 +27,11 @@ namespace ON.Content.SimpleCMS.Service
         {
             var res = new GetAllContentResponse();
 
-            res.Records.AddRange(await dataProvider.GetAll());
+            List<ContentRecord> list = new();
+            await foreach (var rec in dataProvider.GetAll())
+                list.Add(rec);
+
+            res.Records.AddRange(list.OrderByDescending( r => r.Public.CreatedOnUTC));
 
             return res;
         }

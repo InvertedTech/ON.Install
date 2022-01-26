@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
 using ON.Content.SimpleCMS.Service.Models;
+using ON.Content.SimpleCMS.Service.Services;
 
 namespace ON.Content.SimpleCMS.Service
 {
@@ -43,6 +44,7 @@ namespace ON.Content.SimpleCMS.Service
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ContentService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
             });

@@ -28,16 +28,16 @@
             <TextBlock x:Name="txtTestSite"  />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="5. Change DNS" Width="150" />
+            <TextBlock Text="5. Load Data" Width="150" />
+            <TextBlock x:Name="txtLoadData"  />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="6. Change DNS" Width="150" />
             <TextBlock x:Name="txtChangeDNS"  />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="6. Test DNS" Width="150" />
+            <TextBlock Text="7. Test DNS" Width="150" />
             <TextBlock x:Name="txtTestDNS"  />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="7. Load Data" Width="150" />
-            <TextBlock x:Name="txtLoadData"  />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="8. Setup Backup Server" Width="150" />

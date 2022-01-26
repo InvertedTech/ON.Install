@@ -355,3 +355,5 @@ MigrationBackup/
 
 # Terraform hidden files
 .terraform/
+
+tmpdata/

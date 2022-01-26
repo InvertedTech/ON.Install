@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿using InstallerApp.BackupRestore;
+using InstallerApp.Security;
+using Microsoft.Win32;
 using NBitcoin;
 using ON.Installer.Models;
 using System;
@@ -31,6 +33,7 @@ namespace InstallerApp
 
         public static DirectoryInfo RootLocation;
         public static DirectoryInfo SaveLocation;
+        public static DirectoryInfo BackupLocation;
         public static DirectoryInfo TerraformLocation;
         public const string SAVED_FILENAME = "config.onf";
 
@@ -47,6 +50,8 @@ namespace InstallerApp
             RootLocation = new DirectoryInfo(GetFolderPath(SpecialFolder.ApplicationData) + "/ONF");
             SaveLocation = new DirectoryInfo(RootLocation.FullName + "/saves");
             SaveLocation.Create();
+            BackupLocation = new DirectoryInfo(RootLocation.FullName + "/backups");
+            BackupLocation.Create();
         }
 
         private void GetNavItems()
@@ -134,7 +139,7 @@ namespace InstallerApp
             {
                 Mnemonic mnemo = new Mnemonic(Wordlist.English, WordCount.TwentyFour);
                 MainModel.Credentials.MasterKey = string.Join(" ", mnemo.Words);
-            }    
+            }
 
             var d = new DirectoryInfo(SaveLocation.FullName + "/" + MainModel.Id);
             d.Create();
@@ -154,6 +159,43 @@ namespace InstallerApp
             deployWindow = new DeployWindow();
             deployWindow.Show();
             await deployWindow.StartDeploying();
+
+            PerformSave();
+        }
+
+        private async void btnDoBackup_Click(object sender, RoutedEventArgs e)
+        {
+            PerformSave();
+
+            try
+            {
+                var nameHelper = new ServiceNameHelper("localhost");
+                var keyHelper = new KeyHelper(MainModel.Credentials.MasterKey);
+                var server = new BackupRestoreServer(BackupLocation, nameHelper, keyHelper);
+                await server.BackupAll();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            PerformSave();
+        }
+
+        private async void btnDoRestore_Click(object sender, RoutedEventArgs e)
+        {
+            PerformSave();
+
+            try
+            {
+                var nameHelper = new ServiceNameHelper("localhost");
+                var keyHelper = new KeyHelper(MainModel.Credentials.MasterKey);
+                var server = new BackupRestoreServer(BackupLocation, nameHelper, keyHelper);
+                await server.RestoreLatest();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
 
             PerformSave();
         }
