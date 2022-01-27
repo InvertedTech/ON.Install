@@ -10,6 +10,10 @@
     <None Remove="Protos\ON\Fragments\Authentication\UserRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Backup.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Claims.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\Backup.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\Payments.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\PlanRecord.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\SubscriptionRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Paypal\PlanRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Paypal\SubscriptionRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\AssetRecord.proto" />
@@ -24,6 +28,10 @@
     <Protobuf Include="Protos\ON\Fragments\Authentication\User.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authentication\Backup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authentication\UserRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Stripe\Backup.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Stripe\Payments.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Stripe\PlanRecord.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Stripe\SubscriptionRecord.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Paypal\Backup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Claims.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Paypal\PlanRecord.proto" />
