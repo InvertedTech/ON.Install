@@ -74,6 +74,7 @@ namespace ON.Authorization.Stripe.Web.Services
             return reply;
         }
 
+        // Fetch JWT Bearer token
         private Metadata GetMetadata()
         {
             var data = new Metadata();
