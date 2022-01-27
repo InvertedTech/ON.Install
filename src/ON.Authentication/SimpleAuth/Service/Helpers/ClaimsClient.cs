@@ -28,8 +28,9 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
         public async Task<IEnumerable<ClaimRecord>> GetOtherClaims(Guid userId)
         {
             List<Channel> channels = new List<Channel>();
-            //channels.Add(nameHelper.FakePaymentServiceChannel);
+            channels.Add(nameHelper.FakePaymentServiceChannel);
             channels.Add(nameHelper.PaypalServiceChannel);
+            channels.Add(nameHelper.StripeServiceChannel);
 
             var tasks = channels.Select(c => GetOtherClaims(userId, c));
 

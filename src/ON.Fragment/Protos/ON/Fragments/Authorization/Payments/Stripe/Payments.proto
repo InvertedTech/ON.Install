@@ -1,6 +1,9 @@
 syntax = "proto3";
 
-import "google/protobuf/timestamp.proto";
+package ON.Fragments.Authorization.Payments.Stripe;
+
+import "Protos/ON/Fragments/Authorization/Payments/Stripe/PlanRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Stripe/SubscriptionRecord.proto";
 
 service PaymentsInterface {
   rpc CancelOwnSubscription (CancelOwnSubscriptionRequest) returns (CancelOwnSubscriptionResponse) {}
@@ -40,25 +43,4 @@ message NewOwnSubscriptionRequest {
 message NewOwnSubscriptionResponse {
   SubscriptionRecord Record = 1;
   string Error = 2;
-}
-
-message PlanList {
-  repeated PlanRecord Records = 1;
-}
-
-message PlanRecord {
-  uint32 Value = 1;
-  string Name = 2;
-  string PlanID = 3;
-}
-
-message SubscriptionRecord {
-  bytes UserID = 1; // Guid for the user
-  uint32 Level = 2;
-  string SubscriptionId = 3;
-  google.protobuf.Timestamp LastPaidUTC = 4;
-  google.protobuf.Timestamp PaidThruUTC = 5;
-  google.protobuf.Timestamp RenewsOnUTC = 6;
-  google.protobuf.Timestamp CanceledOnUTC = 7;
-  google.protobuf.Timestamp ChangedOnUTC = 100;
 }
