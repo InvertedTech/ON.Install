@@ -1,47 +1,77 @@
 syntax = "proto3";
 
-package stripe;
+import "google/protobuf/timestamp.proto";
 
-//import "google/protobuf/struct.proto";
-//import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
-
-// protoc -I=. ./proto/*.proto --js_out=import_style=commonjs,binary:./server --grpc_out=./server --plugin=protoc-gen-grpc=./node_modules/grpc-tools/bin/grpc_node_plugin.exe
-// TODO: Lock services behind auth
-// TODO: Define CRUD operations for all StripeData items
-service StripeService {
-  rpc WriteStripeData(StripeRequest) returns (StripeResponse) {};
-  rpc ReadStripeData(google.protobuf.Empty) returns (StripeData) {};
-  rpc UpdateStripeData(StripeData) returns (google.protobuf.Empty) {};
+service StripeInterface {
+  rpc CancelOwnSubscription (CancelOwnSubscriptionRequest) returns (CancelOwnSubscriptionResponse) {}
+  rpc GetAccountDetails (GetAccountDetailsRequest) returns (GetAccountDetailsResponse) {}
+  rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse) {}
+  rpc NewOwnSubscription (NewOwnSubscriptionRequest) returns (NewOwnSubscriptionResponse) {}
+  rpc StripeInitiate (StripeInitRequest) returns (StripeInitResponse) {}
 }
 
-message StripeId {
-  string stripeId = 1;
+message StripeInitRequest {
+  string name = 1;
 }
 
-message StripeRequest {
-  string id = 1;
-  string created = 2;
-  StripeId stripeId = 3;
-  StripeData stripeData = 4;
+message StripeInitResponse {
+  string msg = 1;
+}
+  
+message CancelOwnSubscriptionRequest {
+  string Reason = 1;
+}
+  
+message CancelOwnSubscriptionResponse {
+  SubscriptionRecord Record = 1;
+  string Error = 2;
 }
 
-message StripeResponse {
-  string responseMessage = 1;
-  // string id = 1;
-  // string created = 2;
-  // string responseMessage = 3;
-  // bool success = 4;
-  // google.protobuf.Struct errors = 5;
+message GetAccountDetailsRequest {
+}
+  
+message GetAccountDetailsResponse {
+  PlanList Plans = 1;
+  string ClientId = 2;
+}
+  
+message GetOwnSubscriptionRecordRequest {
+}
+  
+message GetOwnSubscriptionRecordResponse {
+  SubscriptionRecord Record = 1;
 }
 
-// TODO: Set StripeId fields to hashmaps
-message StripeData {
-  string created = 1;
-  repeated StripeId subscriptionItems = 2;
-  repeated StripeId customers = 3;
-  repeated StripeId subscriptions = 4;
+message NewOwnSubscriptionRequest {
+  string SubscriptionId = 1;
 }
+  
+message NewOwnSubscriptionResponse {
+  SubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
+message PlanList {
+  repeated PlanRecord Records = 1;
+}
+
+message PlanRecord {
+  uint32 Value = 1;
+  string Name = 2;
+  string PlanID = 3;
+}
+
+message SubscriptionRecord {
+  bytes UserID = 1; // Guid for the user
+  uint32 Level = 2;
+  string SubscriptionId = 3;
+  google.protobuf.Timestamp LastPaidUTC = 4;
+  google.protobuf.Timestamp PaidThruUTC = 5;
+  google.protobuf.Timestamp RenewsOnUTC = 6;
+  google.protobuf.Timestamp CanceledOnUTC = 7;
+  google.protobuf.Timestamp ChangedOnUTC = 100;
+}
+
 
 
  
