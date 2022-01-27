@@ -7,6 +7,15 @@ service StripeInterface {
   rpc GetAccountDetails (GetAccountDetailsRequest) returns (GetAccountDetailsResponse) {}
   rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse) {}
   rpc NewOwnSubscription (NewOwnSubscriptionRequest) returns (NewOwnSubscriptionResponse) {}
+  rpc StripeInitiate (StripeInitRequest) returns (StripeInitResponse) {}
+}
+
+message StripeInitRequest {
+  string name = 1;
+}
+
+message StripeInitResponse {
+  string msg = 1;
 }
   
 message CancelOwnSubscriptionRequest {
