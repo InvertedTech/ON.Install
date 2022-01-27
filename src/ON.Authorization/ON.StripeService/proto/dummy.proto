@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package dummy;
+
+message DummyMessage{}
+
+service DummyService{}
+
+// protoc -I=. ./proto/*.proto --js_out=import_style=commonjs,binary:./server --grpc_out=./server --plugin=protoc-gen-grpc=./node_modules/grpc-tools/bin/grpc_node_plugin.exe
