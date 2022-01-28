@@ -48,7 +48,7 @@ namespace ON.Authorization.Stripe.Service.Clients
             Plans = recordProvider.GetAll().Result;
 
             //Setup();
-            EnsurePlans().Wait();
+            //EnsurePlans().Wait();
         }
 
         private async Task EnsurePlans()

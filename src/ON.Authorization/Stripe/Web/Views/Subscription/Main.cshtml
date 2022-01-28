@@ -37,9 +37,16 @@
                     </div>
                     <div class="card-body">
                         <div class="column">
-                            <h1 class="card-title pricing-card-title">$@(plan.Value)<small class="text-muted fw-light">/mo</small></h1>
+                            <h1 class="card-title pricing-card-title">$@(plan.Value/100)<small class="text-muted fw-light">/mo</small></h1>
 
+                            <div class="container">
+                                <form action="/create-checkout-session" method="POST">
+                                  <!-- Note: If using PHP set the action to /create-checkout-session.php -->
 
+                                  <input type="hidden" name="priceId" value="price_G0FvDp6vZvdwRZ" />
+                                  <button type="submit">Subscribe</button>
+                                </form>    
+                            </div>
                         </div>
                     </div>
                 </div>
