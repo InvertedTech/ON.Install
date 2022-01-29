@@ -63,7 +63,6 @@ namespace ON.Authorization.Stripe.Service
         public override Task<GetAccountDetailsResponse> GetAccountDetails(GetAccountDetailsRequest request, ServerCallContext context)
         {
             var res = new GetAccountDetailsResponse();
-            //res.Plans = client.Plans;
             res.Products = client.Products;
             res.ClientId = settings.StripeClientID;
             return Task.FromResult(res);

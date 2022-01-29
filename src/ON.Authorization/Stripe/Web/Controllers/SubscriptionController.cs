@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Authorization.Stripe.Web.Models;
 using ON.Authorization.Stripe.Web.Services;
+using Stripe;
 
 namespace ON.Authorization.Stripe.Web.Controllers
 {
@@ -19,15 +21,19 @@ namespace ON.Authorization.Stripe.Web.Controllers
     {
         private readonly ILogger<SubscriptionController> logger;
         private readonly PaymentsService paymentsService;
-        private readonly AccountService acctsService;
+        private readonly Services.AccountService acctsService;
         private readonly ONUserHelper userHelper;
+        private StripeClient stripeClient;
+        private readonly string webhookSecret;
 
-        public SubscriptionController(ILogger<SubscriptionController> logger, PaymentsService paymentsService, AccountService acctsService, ONUserHelper userHelper)
+        public SubscriptionController(ILogger<SubscriptionController> logger, PaymentsService paymentsService, Services.AccountService acctsService, ONUserHelper userHelper)
         {
             this.logger = logger;
             this.paymentsService = paymentsService;
             this.acctsService = acctsService;
             this.userHelper = userHelper;
+            this.stripeClient = new StripeClient("sk_test_51KARZjJUpMW7yiO47dnj228fk6q4YKFLAObA9lMSg21R7VTpGwkUTScaD03lKv7oyQpB5lykutwX0PYIja96Y62W00YnJBQHFP");
+            this.webhookSecret = "whsec_IVtmC7qjbf0554YgVM5Ue17QlRZsH4Zm";
         }
 
         [HttpGet("")]
@@ -47,15 +53,78 @@ namespace ON.Authorization.Stripe.Web.Controllers
             return RedirectToAction(nameof(OverviewGet));
         }
 
-        [HttpGet("new")]
-        public async Task<IActionResult> New(string subId)
+        [HttpPost("create-payment-intent")]
+        public async Task<IActionResult> CreatePaymentIntent()
         {
-            if (string.IsNullOrWhiteSpace(subId))
-                return RedirectToAction(nameof(OverviewGet));
+            var options = new PaymentIntentCreateOptions
+            {
+                Amount = 1999,
+                Currency = "USD",
+                PaymentMethodTypes = new List<string>
+                {
+                    "card"
+                }
+            };
+            var service = new PaymentIntentService(this.stripeClient);
+            
+            try
+            {
+                var paymentIntent = await service.CreateAsync(options);
+                return Ok(new { clientSecret = paymentIntent.ClientSecret });
+            }
+            catch (StripeException ex)
+            {
+                return BadRequest(new
+                {
+                    Error = new
+                    {
+                        Message = ex.Message,
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-            await paymentsService.NewSubscription(subId);
+        [HttpPost("webhook")]
+        public async Task<IActionResult> Webhook()
+        {
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+            Event stripeEvent;
 
-            return Redirect("/settings/refreshtoken?url=/subscription/stripe");
+            try
+            {
+                stripeEvent = EventUtility.ConstructEvent(
+                        json,
+                        Request.Headers["Stripe-Signature"],
+                        this.webhookSecret
+                   );
+                logger.LogWarning($"***STRIPE EVENT: {stripeEvent.Type}***");
+            }
+            catch (StripeException ex)
+            {
+                return BadRequest(new
+                {
+                    Error = new
+                    {
+                        Message = ex.Message,
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+
+            if (stripeEvent.Type == "payment_intent.created")
+            {
+                var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+            }
+
+            return Ok();
         }
     }
 }
