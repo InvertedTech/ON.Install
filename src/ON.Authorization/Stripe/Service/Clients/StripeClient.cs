@@ -34,6 +34,7 @@ namespace ON.Authorization.Stripe.Service.Clients
         private DateTime bearerExpiration = DateTime.MinValue;
         private DateTime bearerSoftExpiration = DateTime.MinValue;
 
+
         private object syncObject = new();
 
         public StripeClient(ILogger<StripeClient> logger,IOptions<AppSettings> settings, IProductRecordProvider recordProvider)
@@ -55,25 +56,36 @@ namespace ON.Authorization.Stripe.Service.Clients
                 EnsureProducts();
                 logger.LogWarning(Products.CalculateSize().ToString());
             }
+            
         }
 
+        // TODO: Validate metadata has key url
         private void EnsureProducts()
         {
             var stripeProducts = productService.List();
 
             foreach (Product prod in stripeProducts)
             {
-                var priceId = GetPriceId(prod.Id);
-                var name = prod.Name;
-                var price = GetPrice(name.ToLower());
+                if (prod.Active == true)
+                {
+                    var priceId = GetPriceId(prod.Id);
+                    var url = prod.Metadata.First().Value.ToString();
+                    logger.LogWarning(prod.Name);
+                    if (priceId != "not found" && HasProperName(prod.Name.ToLower()))
+                    {
+                        var name = prod.Name;
+                        var price = GetPrice(name.ToLower());
+                        logger.LogWarning(prod.Metadata.First().Value.ToString());
 
-                if (name == null)
-                {
-                    Products.Records.Add(new ProductRecord { CheckoutUrl = "Not Found", PriceId = priceId, ProductId = prod.Id, Name = "NoName", Price = 0 });
-                }
-                else
-                {
-                    Products.Records.Add(new ProductRecord { CheckoutUrl = "Not Found", PriceId = priceId, ProductId = prod.Id, Name = prod.Name, Price = price });
+                        if (name == null)
+                        {
+                            Products.Records.Add(new ProductRecord { CheckoutUrl = url, PriceId = priceId, ProductId = prod.Id, Name = "NoName", Price = 0 });
+                        }
+                        else
+                        {
+                            Products.Records.Add(new ProductRecord { CheckoutUrl = url, PriceId = priceId, ProductId = prod.Id, Name = name, Price = price });
+                        }
+                    }
                 }
                 
             }
@@ -81,6 +93,38 @@ namespace ON.Authorization.Stripe.Service.Clients
             recordProvider.SaveAll(Products).Wait();
         }
 
+       
+
+        private bool HasProperName(string name)
+        {
+            bool isCorrectName;
+
+            switch (name)
+            {
+                case "lord of the manor":
+                    isCorrectName = true;
+                    break;
+                case "the best!":
+                    isCorrectName = true;
+                    break;
+                case "big spender":
+                    isCorrectName = true;
+                    break;
+                case "awesome member":
+                    isCorrectName = true;
+                    break;
+                case "member":
+                    isCorrectName = true;
+                    break;
+                default:
+                    isCorrectName = false;
+                    break;
+            }
+
+            return isCorrectName;
+        }
+
+        // TODO Convert price from float to int and pass in priceid
         private int GetPrice(string name)
         {
             int price;
