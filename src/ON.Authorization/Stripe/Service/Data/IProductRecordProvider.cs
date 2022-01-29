@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ON.Authorization.Stripe.Service.Data
 {
-    public interface IPlanRecordProvider
+    public interface IProductRecordProvider
     {
-        Task<PlanList> GetAll();
-        Task SaveAll(PlanList list);
+        Task<ProductList> GetAll();
+        Task SaveAll(ProductList list);
     }
 }

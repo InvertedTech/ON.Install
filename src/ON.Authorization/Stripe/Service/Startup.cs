@@ -35,7 +35,7 @@ namespace ON.Authorization.Stripe.Service
             services.AddSingleton<StripeClient>();
             services.AddGrpc();
             services.AddSingleton<ISubscriptionRecordProvider, FileSystemSubscriptionRecordProvider>();
-            services.AddSingleton<IPlanRecordProvider, FileSystemPlanRecordProvider>();
+            services.AddSingleton<IProductRecordProvider, FileSystemProductRecordProvider>();
 
             services.AddJwtAuthentication();
         }

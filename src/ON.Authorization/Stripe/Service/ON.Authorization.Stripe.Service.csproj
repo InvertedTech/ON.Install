@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.34.0" />
+    <PackageReference Include="Json.Net" Version="1.0.33" />
     <PackageReference Include="Stripe.net" Version="39.89.0" />
   </ItemGroup>
 

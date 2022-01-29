@@ -20,13 +20,14 @@ namespace ON.Authorization.Stripe.Service.Clients
 {
     public class StripeClient
     {
-        public readonly PlanList Plans;
+        public readonly ProductList Products;
 
         private readonly AppSettings settings;
-        private readonly IPlanRecordProvider recordProvider;
+        private readonly IProductRecordProvider recordProvider;
         private readonly ILogger<StripeClient> logger;
 
         private ProductService productService;
+        private PriceService priceService;
         private ProductCreateOptions productOptions;
         private Task loginTask;
         private string bearerToken;
@@ -35,118 +36,91 @@ namespace ON.Authorization.Stripe.Service.Clients
 
         private object syncObject = new();
 
-        public StripeClient(ILogger<StripeClient> logger,IOptions<AppSettings> settings, IPlanRecordProvider recordProvider)
+        public StripeClient(ILogger<StripeClient> logger,IOptions<AppSettings> settings, IProductRecordProvider recordProvider)
         {
             this.settings = settings.Value;
             this.logger = logger;
             this.recordProvider = recordProvider;
             this.productService = new ProductService();
+            this.priceService = new PriceService();
 
             // Set Client Secret
             StripeConfiguration.ApiKey = this.settings.StripeClientSecret;
 
-            Plans = recordProvider.GetAll().Result;
+            Products = recordProvider.GetAll().Result;
+            int size = Products.CalculateSize();
 
-            //Setup();
-            //EnsurePlans().Wait();
-        }
-
-        private async Task EnsurePlans()
-        {
-            //foreach (var tier in SiteConfig.SubscriptionTiers)
-            //    var stripePlan = await productService.Get(tier.PlanId);
-            //    if (tier.Value > 0)
-            //        await EnsurePlan(tier);
-
-            var records = await this.recordProvider.GetAll();
-            //logger.LogWarning($"*****Records: {records.Records} *****");
-            foreach (var record in records.Records)
-                await EnsurePlan(record.PlanId);
-        }
-
-        private async Task EnsurePlan(string planId)
-        {
-            Product product = this.productService.Get(planId);
-            if (product == null)
-                return;
-            else
-                // Get product
-                logger.LogWarning($"**** prod: {product.Id} ****");
-
-            return;
-                
-        }
-
-        private void Setup()
-        {
-            StripeConfiguration.ApiKey = this.settings.StripeClientSecret;
-
-            foreach (var tier in SiteConfig.SubscriptionTiers.Where(t => t.Value > 0))
+            if (size == 0)
             {
-                //Generate the stripe Product objects
-                //if (Plans.Records.FirstOrDefault(l => l.Value == tier.Value) == null)
-                //    this.productOptions = new ProductCreateOptions()
-                //    {
-                //        Name = tier.Name,
-                //    };
-                //    var newProd = productService.Create(this.productOptions);
+                EnsureProducts();
+                logger.LogWarning(Products.CalculateSize().ToString());
+            }
+        }
 
-                //    Plans.Records.Add(new PlanRecord
-                //    {
-                //        Name = tier.Name,
-                //        Value = (uint)tier.Value,
-                //        PlanId = (string)newProd.Id,
-                //    });
+        private void EnsureProducts()
+        {
+            var stripeProducts = productService.List();
 
-                //
-                // replace with real code setting up plans on stripe
-                //
-                //
+            foreach (Product prod in stripeProducts)
+            {
+                var priceId = GetPriceId(prod.Id);
+                var name = prod.Name;
+                var price = GetPrice(name.ToLower());
 
-                
-
-                if (Plans.Records.FirstOrDefault(l => l.Value == tier.Value) == null)
+                if (name == null)
                 {
-                    this.productOptions = new ProductCreateOptions()
-                    {
-                        Name = tier.Name,
-                    };
-
-                    Product newProduct = productService.Create(this.productOptions);
-                    logger.LogWarning($"******created product {newProduct.Id}******");
-
-                    Plans.Records.Add(new PlanRecord
-                    {
-                        Name = tier.Name,
-                        Value = (uint)tier.Value * 100,
-                        PlanId = newProduct.Id,
-                    });
-                } else
-                {
-                    this.productOptions = new ProductCreateOptions()
-                    {
-                        Name = tier.Name,
-                    };
-
-                    Product newProduct = productService.Create(this.productOptions);
-                    logger.LogWarning($"******created product {newProduct.Id}******");
-
-                    Plans.Records.Add(new PlanRecord
-                    {
-                        Name = tier.Name,
-                        Value = (uint)tier.Value,
-                        PlanId = newProduct.Id,
-                    });
+                    Products.Records.Add(new ProductRecord { CheckoutUrl = "Not Found", PriceId = priceId, ProductId = prod.Id, Name = "NoName", Price = 0 });
                 }
-
-                //
-                //
-                // replace with real code setting up plans on stripe
-                //
-                //
+                else
+                {
+                    Products.Records.Add(new ProductRecord { CheckoutUrl = "Not Found", PriceId = priceId, ProductId = prod.Id, Name = prod.Name, Price = price });
+                }
+                
             }
 
-            recordProvider.SaveAll(Plans).Wait();
+            recordProvider.SaveAll(Products).Wait();
+        }
+
+        private int GetPrice(string name)
+        {
+            int price;
+
+            switch(name)
+            {
+                case "lord of the manor":
+                    price = 100;
+                    break;
+                case "the best!":
+                    price = 50;
+                    break;
+                case "big spender":
+                    price = 20;
+                    break;
+                case "awesome member":
+                    price = 10;
+                    break;
+                case "member":
+                    price = 5;
+                    break;
+                default:
+                    price = 0;
+                    break;
+            }
+
+            return price;
+        }
+
+        private string GetPriceId(string productId)
+        {
+            var stripePrices = this.priceService.List();
+
+            foreach (Price price in stripePrices)
+            {
+                if (price.ProductId == productId)
+                    return price.Id;
+            }
+
+            return "not found";
         }
 
         //private async Task<ProductRecordModel> CreateProduct(SubscriptionTier tier)

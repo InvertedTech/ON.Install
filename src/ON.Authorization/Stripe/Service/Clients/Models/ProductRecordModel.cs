@@ -2,9 +2,8 @@
 {
     public class ProductRecordModel
     {
-        public string id { get; set; }
-        public string name { get; set; }
-        public string type { get; set; } = "SERVICE";
-        public string category { get; set; } = "SOFTWARE";
+        public string productId { get; set; }
+        public string priceId { get; set; }
+        public string checkoutUrl { get; set; }
     }
 }

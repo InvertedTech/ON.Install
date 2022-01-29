@@ -28,7 +28,7 @@
     <br />
 
     <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
-        @foreach (var plan in acct.Plans)
+        @foreach (var plan in acct.Products)
         {
             <div class="col">
                 <div class="card mb-4 rounded-3 shadow-sm">
@@ -37,7 +37,7 @@
                     </div>
                     <div class="card-body">
                         <div class="column">
-                            <h1 class="card-title pricing-card-title">$@(plan.Value/100)<small class="text-muted fw-light">/mo</small></h1>
+                            <h1 class="card-title pricing-card-title">@(plan.Price)<small class="text-muted fw-light">/mo</small></h1>
 
                             <div class="container">
                                 <form action="/create-checkout-session" method="POST">
