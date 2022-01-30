@@ -12,6 +12,7 @@ using ON.Authentication;
 using ON.Authorization.Stripe.Web.Models;
 using ON.Authorization.Stripe.Web.Services;
 using Stripe;
+using Stripe.Checkout;
 
 namespace ON.Authorization.Stripe.Web.Controllers
 {
@@ -53,6 +54,36 @@ namespace ON.Authorization.Stripe.Web.Controllers
             return RedirectToAction(nameof(OverviewGet));
         }
 
+        [HttpPost("create-checkout-session")]
+        public async Task<IActionResult> CreateCheckoutSession(string PriceId)
+        {
+            StripeConfiguration.ApiKey = this.stripeClient.ApiKey;
+            PriceService priceService = new PriceService();
+            ProductService productService = new ProductService();
+            var options = new SessionCreateOptions
+            {
+                SuccessUrl = "https://localhost/subscription/",
+                CancelUrl = "https://localhost/subscription/",
+                Mode = "subscription",
+                LineItems = new List<SessionLineItemOptions>
+                {
+                    new SessionLineItemOptions
+                    {
+                        Name = priceService.Get(PriceId).Product.Name,
+                        Currency = "USD",
+                        Amount = priceService.Get(PriceId).UnitAmount,
+                        Quantity = 1,
+                    },
+                },
+            };
+
+            var service = new SessionService();
+            var session = await service.CreateAsync(options);
+
+            Response.Headers.Add("Location", session.Url);
+            return Redirect(session.Url);
+        }
+
         [HttpPost("create-payment-intent")]
         public async Task<IActionResult> CreatePaymentIntent()
         {
@@ -88,6 +119,7 @@ namespace ON.Authorization.Stripe.Web.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost("webhook")]
         public async Task<IActionResult> Webhook()
         {
