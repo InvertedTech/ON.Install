@@ -14,6 +14,7 @@ using ON.Authorization.Stripe.Web.Services;
 using Stripe;
 using Stripe.Checkout;
 
+// TODO: Refactor Intents To Server
 namespace ON.Authorization.Stripe.Web.Controllers
 {
     [Authorize]
