@@ -319,9 +319,13 @@ section.body button {
 	border: 0;
 	border-radius: 5px;
 	color: white;
-	background-color: black;
+	background-color: #246;
 	font-weight: bold;
 	box-shadow: 0 0.25em 0.25em rgba(0,0,0,0.333);
+}
+
+section.body .btn-primary {
+	background-color: #26D;
 }
 
 section.body button.cta {
@@ -346,7 +350,7 @@ section.footer > .row {
 }
 
 section.footer > .row > p {
-	margin: 1rem;
+	
 }
 
 form {
@@ -375,6 +379,7 @@ form {
 .footer section {
 	flex: 1;
 	padding: 1rem;
+	margin:  1rem;
 }
 
 .footer section:not(:last-child) {
@@ -444,4 +449,16 @@ h4, h5, h6 {
          url('/fonts/rabbidhighwaysignii-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+}
+
+.search-bar label {
+	margin-bottom: 0;
+}
+
+.btn-primary {
+	color: #CCC !important;
+}
+
+.nav-link {
+	padding: 0;
 }
