@@ -3,6 +3,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>@ViewData["Title"] - @ON.SiteConfig.WebsiteName</title>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" />
 <link rel="stylesheet" href="~/css/fleur.css" />
 </head>
 
@@ -16,6 +18,19 @@
     <div class = "rows">
         <ul class = "links">
             <li><a href = "/">Home</a></li>
+            @if (userHelper.IsLoggedIn)
+            {
+                <li><a class="" href="/subscription">Manage Subscription</a></li>
+                <li><a class="" href="/settings">User Profile</a></li>
+                @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER) || User.IsInRole(ONUser.ROLE_WRITER))
+                {
+                    <li><a class="" href="/content/manage">Manage Articles</a></li>
+                }
+                @if (User.IsInRole(ONUser.ROLE_ADMIN))
+                {
+                    <li><a class="" href="/auth/admin">Manage Users</a></li>
+                }
+            }
         </ul>
         <div class = "search">
             <div class = "search-bar">
@@ -133,16 +148,16 @@
                 @if (!userHelper.IsLoggedIn)
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="login" asp-action="">login</a>
+                        <a class="nav-link" asp-area="" asp-controller="login" asp-action="">login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="register" asp-action="">register</a>
+                        <a class="nav-link" asp-area="" asp-controller="register" asp-action="">register</a>
                     </li>
                 }
                 else
                 {
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="logout" asp-action="">logout</a>
+                        <a class="nav-link" asp-area="" asp-controller="logout" asp-action="">logout</a>
                     </li>
                 }
             </ul>
@@ -159,9 +174,10 @@
         <div class="container">
             
         </div>
-        <p>@ON.SiteConfig.WebsiteName &copy; 2022
-            Made with love by <a href="https://opennetworkfoundation.org">Open Network Foundation</a></p>
-        <p>Design &copy; 2021 <a href = "https://seanmorr.is/">Sean Morris</a></p>
+        <p><a>Made with love</a></p>
+        <p>&copy; 2022
+            <a href="https://opennetworkfoundation.org">Open Network Foundation</a></p>
+        <p>Design by <a href = "https://seanmorr.is/">Sean Morris</a></p>
     </div>
 </section>
 @await RenderSectionAsync("Scripts", required: false)

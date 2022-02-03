@@ -5,8 +5,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\ON.Fragment\ON.Fragment.csproj" />
-		<ProjectReference Include="..\..\Shared\ON.Authentication.Shared.csproj" />
+		<ProjectReference Include="../../../ON.Fragment/ON.Fragment.csproj" />
+		<ProjectReference Include="../../Shared/ON.Authentication.Shared.csproj" />
 		<PackageReference Include="Grpc.AspNetCore" Version="2.41.0" />
 		<PackageReference Include="Microsoft.Tye.Extensions.Configuration" Version="0.4.0-*" />
 	</ItemGroup>
