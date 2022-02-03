@@ -302,7 +302,7 @@ section.body article ol li::marker {
 	font-size: 0.8rem;
 }
 
-section.body .buttons {
+/*section.body .buttons {
 	text-align: right;
 	clear: both;
 	margin-bottom: 1rem;
@@ -336,7 +336,7 @@ section.body button:active {
 	transform: translateY(1px);
 	box-shadow: 0 0.125em 0.25em rgba(0,0,0,0.333);
 }
-
+*/
 section.footer {
 	text-align: right;
 	font-size: 0.9rem;

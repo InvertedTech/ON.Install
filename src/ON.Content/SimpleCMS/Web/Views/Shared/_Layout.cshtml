@@ -1,18 +1,19 @@
 ﻿<!DOCTYPE html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>@ViewData["Title"] - @ON.SiteConfig.WebsiteName</title>
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<link rel="stylesheet" href="~/css/site.css" />
-<link rel="stylesheet" href="~/css/fleur.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @ON.SiteConfig.WebsiteName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/fleur.css" />
+    @await RenderSectionAsync("Head", required: false)
 </head>
 
 <body>
 <section class = "header">
     <div class = "logo">
         <img src = "/img/fleur.svg">
-        <span>GET ON</span>
+        <span>@ON.SiteConfig.WebsiteName</span>
     </div>
     
     <div class = "rows">
@@ -174,11 +175,15 @@
         <div class="container">
             
         </div>
-        <p><a>Made with love</a></p>
-        <p>&copy; 2022
-            <a href="https://opennetworkfoundation.org">Open Network Foundation</a></p>
+        <p>Copyright &copy; @ON.SiteConfig.WebsiteName</p>
+        <p>&nbsp; - &nbsp;</p>
+        <p>Made with love by <a href="https://opennetworkfoundation.org">Open Network Foundation</a></p>
+        <p>&nbsp; - &nbsp;</p>
         <p>Design by <a href = "https://seanmorr.is/">Sean Morris</a></p>
     </div>
 </section>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
