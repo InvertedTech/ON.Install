@@ -1,18 +1,19 @@
 ﻿<!DOCTYPE html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>@ViewData["Title"] - @ON.SiteConfig.WebsiteName</title>
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-<link rel="stylesheet" href="~/css/site.css" />
-<link rel="stylesheet" href="~/css/fleur.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @ON.SiteConfig.WebsiteName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/fleur.css" />
+    @await RenderSectionAsync("Head", required: false)
 </head>
 
 <body>
 <section class = "header">
-    <div class = "logo">
+    <div class = "logo" onclick="location='/';">
         <img src = "/img/fleur.svg">
-        <span>GET ON</span>
+        <span>@ON.SiteConfig.WebsiteName</span>
     </div>
     
     <div class = "rows">
@@ -20,11 +21,11 @@
             <li><a href = "/">Home</a></li>
             @if (userHelper.IsLoggedIn)
             {
-                <li><a class="" href="/subscription">Manage Subscription</a></li>
-                <li><a class="" href="/settings">User Profile</a></li>
+                <li><a class="" href="/subscription">Subscription</a></li>
+                <li><a class="" href="/settings">My Profile</a></li>
                 @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER) || User.IsInRole(ONUser.ROLE_WRITER))
                 {
-                    <li><a class="" href="/content/manage">Manage Articles</a></li>
+                    <li><a class="" href="/content/manage">Articles</a></li>
                 }
                 @if (User.IsInRole(ONUser.ROLE_ADMIN))
                 {
@@ -174,11 +175,14 @@
         <div class="container">
             
         </div>
-        <p><a>Made with love</a></p>
-        <p>&copy; 2021-2022
-            <a href="https://opennetworkfoundation.org">Open Network Foundation</a></p>
+        <p>Copyright &copy; @ON.SiteConfig.WebsiteName</p>
+        <p>&nbsp; &nbsp; - &nbsp; &nbsp;</p>
+        <p>Made with love by <a href="https://opennetworkfoundation.org">Open Network Foundation</a></p>
         <p>Design by <a href = "https://seanmorr.is/">Sean Morris</a></p>
     </div>
 </section>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>

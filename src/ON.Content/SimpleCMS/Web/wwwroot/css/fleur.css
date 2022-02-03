@@ -60,7 +60,7 @@ a[href^="//"]::after,
 a[href^="http://"]::after,
 a[href^="https://"]::after {
 	display: inline-block;
-	background-image: url(/new-tab.svg);
+	background-image: url(https://icons.getbootstrap.com/assets/icons/arrow-up-right-square.svg);
 	width: 0.8rem;
 	height: 0.8rem;
 	margin-left: 0.2rem;
@@ -175,9 +175,10 @@ section.header .search .search-bar input {
 }
 
 section.header .search .search-bar .icon {
-	background-image: url(/icon-search.png);
-	width: 32px;
-	height: 32px;
+	background-image: url(https://icons.getbootstrap.com/assets/icons/search.svg);
+	width: 16px;
+	height: 16px;
+	background-repeat: no-repeat;
 	margin-left: 8px;
 	margin-right: 8px;
 	opacity: 0.75;

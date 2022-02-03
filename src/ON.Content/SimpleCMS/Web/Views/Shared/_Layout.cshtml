@@ -11,7 +11,7 @@
 
 <body>
 <section class = "header">
-    <div class = "logo">
+    <div class = "logo" onclick="location='/';">
         <img src = "/img/fleur.svg">
         <span>@ON.SiteConfig.WebsiteName</span>
     </div>
@@ -21,11 +21,11 @@
             <li><a href = "/">Home</a></li>
             @if (userHelper.IsLoggedIn)
             {
-                <li><a class="" href="/subscription">Manage Subscription</a></li>
-                <li><a class="" href="/settings">User Profile</a></li>
+                <li><a class="" href="/subscription">Subscription</a></li>
+                <li><a class="" href="/settings">My Profile</a></li>
                 @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER) || User.IsInRole(ONUser.ROLE_WRITER))
                 {
-                    <li><a class="" href="/content/manage">Manage Articles</a></li>
+                    <li><a class="" href="/content/manage">Articles</a></li>
                 }
                 @if (User.IsInRole(ONUser.ROLE_ADMIN))
                 {
@@ -176,9 +176,8 @@
             
         </div>
         <p>Copyright &copy; @ON.SiteConfig.WebsiteName</p>
-        <p>&nbsp; - &nbsp;</p>
+        <p>&nbsp; &nbsp; - &nbsp; &nbsp;</p>
         <p>Made with love by <a href="https://opennetworkfoundation.org">Open Network Foundation</a></p>
-        <p>&nbsp; - &nbsp;</p>
         <p>Design by <a href = "https://seanmorr.is/">Sean Morris</a></p>
     </div>
 </section>
