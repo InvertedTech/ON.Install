@@ -9,9 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ON.Authentication\Shared\ON.Authentication.Shared.csproj" />
-    <ProjectReference Include="..\..\..\ON.Fragment\ON.Fragment.csproj" />
-    <ProjectReference Include="..\Lib\ON.Authorization.FakePayments.Shared.csproj" />
+    <ProjectReference Include="../../../ON.Authentication/Shared/ON.Authentication.Shared.csproj" />
+    <ProjectReference Include="../../../ON.Fragment/ON.Fragment.csproj" />
+    <ProjectReference Include="../Lib/ON.Authorization.FakePayments.Shared.csproj" />
   </ItemGroup>
 
 </Project>

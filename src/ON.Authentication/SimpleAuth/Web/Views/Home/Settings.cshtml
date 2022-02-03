@@ -4,7 +4,6 @@
 }
 
 <h1>Update My Settings</h1>
-<br />
 
 @if(!string.IsNullOrEmpty(Model?.ErrorMessage))
 {
@@ -15,6 +14,8 @@
 {
     <h2 style="color: green;">@Model.SuccessMessage</h2>
 }
+
+<p><a asp-area="" asp-controller="changepassword" asp-action="">Change my password</a></p>
 
 <form asp-controller="settings" asp-action="Index" method="post" class="needs-validation" novalidate>
   <div class="form-group">
@@ -37,10 +38,6 @@
 
 <br />
 
-<p>
- <h4> -- or --</h4>
- <a class="btn btn-primary" asp-area="" asp-controller="changepassword" asp-action="">Change my password</a>
-</p>
 
 @section scripts
 {

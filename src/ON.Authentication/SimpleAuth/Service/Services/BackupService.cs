@@ -16,9 +16,9 @@ namespace ON.Authentication.SimpleAuth.Service.Services
     public class BackupService : BackupInterface.BackupInterfaceBase
     {
         private readonly IUserDataProvider dataProvider;
-        private readonly ILogger<ServiceOpsService> logger;
+        private readonly ILogger<BackupService> logger;
 
-        public BackupService(IUserDataProvider dataProvider, ILogger<ServiceOpsService> logger)
+        public BackupService(IUserDataProvider dataProvider, ILogger<BackupService> logger)
         {
             this.dataProvider = dataProvider;
             this.logger = logger;
@@ -29,7 +29,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !userToken.Roles.Contains("backup"))
+                if (userToken == null || !userToken.Roles.Contains(ONUser.ROLE_BACKUP))
                     return;
 
                 var encKey = EcdhHelper.DeriveKeyServer(request.ClientPublicJwk.DecodeJsonWebKey(), out string serverPubKey);
@@ -64,11 +64,11 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !(userToken.Roles.Contains("backup") || userToken.Roles.Contains("admin")))
+                if (userToken == null || !(userToken.Roles.Contains(ONUser.ROLE_BACKUP) || userToken.Roles.Contains(ONUser.ROLE_ADMIN)))
                     return;
 
                 await foreach (var r in dataProvider.GetAll())
-                    await responseStream.WriteAsync(new ExportUsersResponse() { ContentRecord = r.Public });
+                    await responseStream.WriteAsync(new ExportUsersResponse() { UserRecord = r.Public });
             }
             catch
             {
@@ -89,7 +89,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !userToken.Roles.Contains("backup"))
+                if (userToken == null || !userToken.Roles.Contains(ONUser.ROLE_BACKUP))
                     return res;
 
                 await foreach (var r in requestStream.ReadAllAsync())

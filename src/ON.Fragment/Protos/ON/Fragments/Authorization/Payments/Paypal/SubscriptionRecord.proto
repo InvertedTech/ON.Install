@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payments.Paypal;
+
+import "google/protobuf/timestamp.proto";
+
+// User claim's record
+message SubscriptionRecord {
+  bytes UserID = 1; // Guid for the user
+  uint32 Level = 2;
+  string SubscriptionId = 3;
+  google.protobuf.Timestamp LastPaidUTC = 4;
+  google.protobuf.Timestamp PaidThruUTC = 5;
+  google.protobuf.Timestamp RenewsOnUTC = 6;
+  google.protobuf.Timestamp CanceledOnUTC = 7;
+  google.protobuf.Timestamp ChangedOnUTC = 100;
+}

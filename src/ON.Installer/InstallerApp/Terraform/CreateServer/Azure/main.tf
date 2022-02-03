@@ -75,6 +75,17 @@ resource azurerm_network_security_group main {
   security_rule {
     access                     = "Allow"
     direction                  = "Inbound"
+    name                       = "http8080"
+    priority                   = 102
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    source_address_prefix      = "*"
+    destination_port_range     = "8080"
+    destination_address_prefix = "*"
+  }
+  security_rule {
+    access                     = "Allow"
+    direction                  = "Inbound"
     name                       = "ssh"
     priority                   = 110
     protocol                   = "Tcp"

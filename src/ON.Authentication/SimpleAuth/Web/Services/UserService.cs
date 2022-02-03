@@ -129,7 +129,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
 
             await foreach (var r in call.ResponseStream.ReadAllAsync())
             {
-                list.Add(r.ContentRecord);
+                list.Add(r.UserRecord);
             }
 
             return list.ToArray();

@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace InstallerApp.Security
 {
-    class KeyHelper
+    public class KeyHelper
     {
         private readonly Mnemonic mnemo;
         private readonly ExtKey master;
 
         private const string KEYPATH_JWTKEY = "12021'/0'";
         private const string KEYPATH_SSHKEY = "12021'/1'";
+        private const string KEYPATH_BACKUPKEY = "12021'/2'";
 
         public KeyHelper(string mnemoWords, string passphrase = null)
         {
@@ -32,35 +33,30 @@ namespace InstallerApp.Security
             return mnemo.ToString();
         }
 
-        public (string privKey, string pubKey) DeriveEcJwtKey(uint account = 0, uint keyNum = 0)
+        public ECDsa DeriveEcJwtKey(uint account = 0, uint keyNum = 0)
         {
-            var jwtKey = master.Derive(new KeyPath($"{KEYPATH_JWTKEY}/{account}'/{keyNum}'"));
+            var extKey = master.Derive(new KeyPath($"{KEYPATH_JWTKEY}/{account}'/{keyNum}'"));
 
             var eckey = ECDsa.Create(new ECParameters()
             {
                 Curve = ECCurve.NamedCurves.nistP256,
-                D = jwtKey.PrivateKey.ToBytes()
+                D = extKey.PrivateKey.ToBytes()
             });
 
-            var parameters = eckey.ExportParameters(true);
+            return eckey;
+        }
 
-            var jwk = new JsonWebKey()
+        public ECDsa DeriveEcBackupKey(uint account = 0, uint keyNum = 0)
+        {
+            var extKey = master.Derive(new KeyPath($"{KEYPATH_BACKUPKEY}/{account}'/{keyNum}'"));
+
+            var eckey = ECDsa.Create(new ECParameters()
             {
-                Kty = JsonWebAlgorithmsKeyTypes.EllipticCurve,
-                Use = "sig",
-                X = Base64UrlEncoder.Encode(parameters.Q.X),
-                Y = Base64UrlEncoder.Encode(parameters.Q.Y),
-                D = Base64UrlEncoder.Encode(parameters.D),
-                Crv = JsonWebKeyECTypes.P256,
-                Alg = "ES256"
-            };
+                Curve = ECCurve.NamedCurves.nistP256,
+                D = extKey.PrivateKey.ToBytes()
+            });
 
-            var privJwt = Base64UrlEncoder.Encode(System.Text.Json.JsonSerializer.Serialize(jwk));
-
-            jwk.D = null;
-            var pubJwt = Base64UrlEncoder.Encode(System.Text.Json.JsonSerializer.Serialize(jwk));
-
-            return (privJwt, pubJwt);
+            return eckey;
         }
 
         public (string privKey, string pubKey) DeriveEcSshKey(uint account = 0, uint keyNum = 0)

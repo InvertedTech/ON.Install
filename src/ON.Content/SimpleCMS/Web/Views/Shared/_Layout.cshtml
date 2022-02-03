@@ -1,84 +1,188 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ON.Content.SimpleCMS.Web</title>
+    <title>@ViewData["Title"] - @ON.SiteConfig.WebsiteName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="~/css/fleur.css" />
     @await RenderSectionAsync("Head", required: false)
 </head>
+
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="navbar-toggler-icon"></span>
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="/">Home</a>
-                            @if (userHelper.IsLoggedIn)
-                            {
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/subscription">Manage Subscription</a>
-                                <a class="dropdown-item" href="/settings">User Profile</a>
-                                @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER) || User.IsInRole(ONUser.ROLE_WRITER))
-                                {
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="/content/manage">Manage Articles</a>
-                                }
-                                @if (User.IsInRole(ONUser.ROLE_ADMIN))
-                                {
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="/auth/admin">Manage Users</a>
-                                }
-                            }
-                        </div>
-                    </li>
-                </ul>
-                &nbsp; &nbsp;
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Simple Web</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        @if (!userHelper.IsLoggedIn)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="login" asp-action="">Login</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="logout" asp-action="">Logout</a>
-                            </li>
-                        }
-                    </ul>
+<section class = "header">
+    <div class = "logo" onclick="location='/';">
+        <img src = "/img/fleur.svg">
+        <span>@ON.SiteConfig.WebsiteName</span>
+    </div>
+    
+    <div class = "rows">
+        <ul class = "links">
+            <li><a href = "/">Home</a></li>
+            @if (userHelper.IsLoggedIn)
+            {
+                <li><a class="" href="/subscription">Subscription</a></li>
+                <li><a class="" href="/settings">My Profile</a></li>
+                @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER) || User.IsInRole(ONUser.ROLE_WRITER))
+                {
+                    <li><a class="" href="/content/manage">Articles</a></li>
+                }
+                @if (User.IsInRole(ONUser.ROLE_ADMIN))
+                {
+                    <li><a class="" href="/auth/admin">Manage Users</a></li>
+                }
+            }
+        </ul>
+        <div class = "search">
+            <div class = "search-bar">
+                <label>
+                    <input cv-bind = "searchInput" cv-on = "focus:handleSearchFocus" placeholder = "Search...">
+                    <div class = "icon"></div>
+                </label>
+
+                <div class = "suggestions">
+                    
+                    <dl>
+                        <dt>suggestions...</dt>
+                        
+                        <span class = "contents" cv-each = "suggestions:suggestion">
+                            <dd tabindex="0" cv-on = "click:selectSuggestion(suggestion)">[[suggestion]]</dd>
+                        </span>
+
+                        <span class = "contents" cv-if = "!suggestions">
+
+                            <svg viewBox="0 0 100 100">
+                                <ellipse
+                                    style="
+                                        stroke-width: 5;
+                                        fill:         none;
+                                        stroke:       #404040;
+                                    "
+                                    stroke-dasharray = "314px"
+                                    cx               = "50"
+                                    cy               = "50"
+                                    rx               = "47.5"
+                                    ry               = "47.5"
+                                >
+                                    <animateTransform
+                                        attributeName = "transform"
+                                        attributeType = "XML"
+                                        type          = "rotate"
+                                        from          = "0   50 50"
+                                        to            = "360 50 50"
+                                        dur           = "0.3s"
+                                        repeatCount   = "indefinite"
+                                    />
+                                    <animate
+                                        attributeName = "stroke-dashoffset"
+                                        attributeType = "XML"
+                                        from          = "0px"
+                                        to            = "628px"
+                                        dur           = "1s"
+                                        repeatCount   = "indefinite"
+                                    />
+                                </ellipse>
+                            </svg>
+                        </span>
+
+                    </dl>
+                    
+                    <dl>
+                        <dt>more list items...</dt>
+                        <span class = "contents" cv-each = "suggestions:suggestion">
+                            <dd tabindex="0" cv-on = "click:selectSuggestion(suggestion)">[[suggestion]]</dd>
+                        </span>
+
+                        <span class = "contents" cv-if = "loading">
+
+                            <svg viewBox="0 0 100 100">
+                                <ellipse
+                                    style="
+                                        stroke-width: 5;
+                                        fill:         none;
+                                        stroke:       #404040;
+                                    "
+                                    stroke-dasharray = "314px"
+                                    cx               = "50"
+                                    cy               = "50"
+                                    rx               = "47.5"
+                                    ry               = "47.5"
+                                >
+                                    <animateTransform
+                                        attributeName = "transform"
+                                        attributeType = "XML"
+                                        type          = "rotate"
+                                        from          = "0   50 50"
+                                        to            = "360 50 50"
+                                        dur           = "0.3s"
+                                        repeatCount   = "indefinite"
+                                    />
+                                    <animate
+                                        attributeName = "stroke-dashoffset"
+                                        attributeType = "XML"
+                                        from          = "0px"
+                                        to            = "628px"
+                                        dur           = "1s"
+                                        repeatCount   = "indefinite"
+                                    />
+                                </ellipse>
+                            </svg>
+                        </span>
+                    </dl>
+
                 </div>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2021 - Simple Web -
-            Made with love by <a href="https://opennetworkfoundation.org">Open Network Foundation</a>
         </div>
-    </footer>
+    </div>
+</section>
+
+<section class = "body">
+    @RenderBody()
+</section>
+
+<section class = "footer">
+    <div class = "row">
+        <section>
+            <b>footer</b>
+            <ul>
+                <li><a href = "/">home</a></li>
+                @if (!userHelper.IsLoggedIn)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="login" asp-action="">login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="register" asp-action="">register</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="logout" asp-action="">logout</a>
+                    </li>
+                }
+            </ul>
+        </section>
+       
+        <section>
+            <b>fleur de lis theme</b>
+            <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua..."</p>
+            <p>"Nor is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain..."</p>
+        </section>
+    
+    </div>
+    <div class = "row">
+        <div class="container">
+            
+        </div>
+        <p>Copyright &copy; @ON.SiteConfig.WebsiteName</p>
+        <p>&nbsp; &nbsp; - &nbsp; &nbsp;</p>
+        <p>Made with love by <a href="https://opennetworkfoundation.org">Open Network Foundation</a></p>
+        <p>Design by <a href = "https://seanmorr.is/">Sean Morris</a></p>
+    </div>
+</section>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+@await RenderSectionAsync("Scripts", required: false)
 </body>
-</html>
