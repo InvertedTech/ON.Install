@@ -36,7 +36,26 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 
             await Task.WhenAll(tasks);
 
-            return tasks.SelectMany(t => t.Result);
+            Dictionary<string, ClaimRecord> dict = new Dictionary<string, ClaimRecord>();
+
+            foreach(var t in tasks)
+            {
+                foreach (var claim in await t)
+                {
+                    if (!dict.ContainsKey(claim.Name))
+                    {
+                        dict[claim.Name] = claim;
+                        continue;
+                    }
+
+                    if (dict[claim.Name].ExpiresOnUTC < claim.ExpiresOnUTC)
+                    {
+                        dict[claim.Name] = claim;
+                    }
+                }
+            }
+
+            return dict.Values;
         }
 
         private async Task<IEnumerable<ClaimRecord>> GetOtherClaims(Guid userId, Channel channel)
