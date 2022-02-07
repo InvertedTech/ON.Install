@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using ON.Authentication.SimpleAuth.Service.Data;
 using ON.Authentication.SimpleAuth.Service.Helpers;
-using ON.Fragment.Protos.ON.Fragments.Generic;
 using ON.Fragments.Authentication;
 using ON.Fragments.Authorization;
 using ON.Fragments.Generic;

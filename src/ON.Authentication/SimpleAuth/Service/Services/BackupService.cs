@@ -77,6 +77,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
         public override async Task<RestoreAllDataResponse> RestoreAllData(IAsyncStreamReader<RestoreAllDataRequest> requestStream, ServerCallContext context)
         {
+            logger.LogWarning("*** RestoreAllData - Entrance ***");
+
             RestoreAllDataResponse res = new RestoreAllDataResponse();
             HashSet<Guid> idsLoaded = new HashSet<Guid>();
 
@@ -132,11 +134,16 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                logger.LogWarning($"*** RestoreAllData - {ex.Message} ***");
             }
 
+            logger.LogWarning("*** RestoreAllData - Start Reindex ***");
+
             await dataProvider.ReindexAll();
+
+            logger.LogWarning("*** RestoreAllData - Exit ***");
 
             return res;
         }

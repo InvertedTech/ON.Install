@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ON.Fragment.Protos.ON.Fragments.Generic
+namespace ON.Fragments.Generic
 {
     public static class GenericExtensions
     {
