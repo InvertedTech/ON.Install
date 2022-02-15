@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,8 +25,11 @@ namespace ON.Authorization.Stripe.Web.Controllers
         private readonly ILogger<SubscriptionController> logger;
         private readonly PaymentsService paymentsService;
         private readonly Services.AccountService acctsService;
+        private CustomerService customerService;
         private readonly ONUserHelper userHelper;
         private StripeClient stripeClient;
+        private EventService eventService;
+        private SubscriptionService subscriptionService;
         private readonly string webhookSecret;
 
         public SubscriptionController(ILogger<SubscriptionController> logger, PaymentsService paymentsService, Services.AccountService acctsService, ONUserHelper userHelper)
@@ -33,9 +37,12 @@ namespace ON.Authorization.Stripe.Web.Controllers
             this.logger = logger;
             this.paymentsService = paymentsService;
             this.acctsService = acctsService;
+            this.eventService = new EventService(stripeClient);
             this.userHelper = userHelper;
             this.stripeClient = new StripeClient("sk_test_51KARZjJUpMW7yiO47dnj228fk6q4YKFLAObA9lMSg21R7VTpGwkUTScaD03lKv7oyQpB5lykutwX0PYIja96Y62W00YnJBQHFP");
-            this.webhookSecret = "whsec_IVtmC7qjbf0554YgVM5Ue17QlRZsH4Zm";
+            this.webhookSecret = "whsec_2df5a0c1b7beebd12d5426c9f9fc99b64f032bd325587ae54659c3031457052e";
+            this.customerService = new CustomerService(stripeClient);
+            this.subscriptionService = new SubscriptionService(stripeClient);
         }
 
         [HttpGet("")]
@@ -50,6 +57,7 @@ namespace ON.Authorization.Stripe.Web.Controllers
         [HttpGet("cancel")]
         public async Task<IActionResult> Cancel(string reason = null)
         {
+            logger.LogWarning($"***HIT***");
             await paymentsService.CancelSubscription(reason ?? "No reason");
 
             return RedirectToAction(nameof(OverviewGet));
@@ -58,31 +66,42 @@ namespace ON.Authorization.Stripe.Web.Controllers
         [HttpPost("create-checkout-session")]
         public async Task<IActionResult> CreateCheckoutSession(string PriceId)
         {
-            StripeConfiguration.ApiKey = this.stripeClient.ApiKey;
-            PriceService priceService = new PriceService();
-            ProductService productService = new ProductService();
-            var options = new SessionCreateOptions
+            try
             {
-                SuccessUrl = "https://localhost/subscription/",
-                CancelUrl = "https://localhost/subscription/",
-                Mode = "subscription",
-                LineItems = new List<SessionLineItemOptions>
+                StripeConfiguration.ApiKey = this.stripeClient.ApiKey;
+                PriceService priceService = new PriceService();
+                ProductService productService = new ProductService();
+                Price price = priceService.Get(PriceId);
+                Product product = productService.Get(price.ProductId);
+                // TODO: Fix redirect links
+                SessionCreateOptions options = new SessionCreateOptions
+                {
+                    SuccessUrl = "http://localhost/subscription/",
+                    CancelUrl = "https://localhost/subscription/",
+                    Mode = "subscription",
+                    LineItems = new List<SessionLineItemOptions>
                 {
                     new SessionLineItemOptions
                     {
-                        Name = priceService.Get(PriceId).Product.Name,
-                        Currency = "USD",
-                        Amount = priceService.Get(PriceId).UnitAmount,
+                        Price = PriceId,
                         Quantity = 1,
+
                     },
                 },
-            };
+                };
 
-            var service = new SessionService();
-            var session = await service.CreateAsync(options);
+                SessionService service = new SessionService();
+                Session session = await service.CreateAsync(options);
 
-            Response.Headers.Add("Location", session.Url);
-            return Redirect(session.Url);
+
+                logger.LogWarning($"****Link: {session}");
+                return Redirect(session.Url);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok();
         }
 
         [HttpPost("create-payment-intent")]
@@ -98,7 +117,7 @@ namespace ON.Authorization.Stripe.Web.Controllers
                 }
             };
             var service = new PaymentIntentService(this.stripeClient);
-            
+
             try
             {
                 var paymentIntent = await service.CreateAsync(options);
@@ -134,7 +153,29 @@ namespace ON.Authorization.Stripe.Web.Controllers
                         Request.Headers["Stripe-Signature"],
                         this.webhookSecret
                    );
+
                 logger.LogWarning($"***STRIPE EVENT: {stripeEvent.Type}***");
+
+                switch (stripeEvent.Type)
+                {
+                    case "checkout.session.completed":
+                        logger.LogWarning($"***Completed Checkout Session");
+                        break;
+                    case "payment_intent.created":
+                        logger.LogWarning($"***Payment Intent Created");
+                        break;
+                    case "customer.subscription.created":
+                        var subId = stripeEvent.Data.Object as Subscription;
+                        if (string.IsNullOrWhiteSpace(subId.Id))
+                            return RedirectToAction(nameof(OverviewGet));
+
+                        await paymentsService.NewSubscription(subId.Id);
+
+                        break;
+                    default:
+                        return BadRequest();
+                }
+
             }
             catch (StripeException ex)
             {
@@ -150,13 +191,14 @@ namespace ON.Authorization.Stripe.Web.Controllers
             {
                 return BadRequest(ex.Message);
             }
+
+
+            //if (stripeEvent.Type == "payment_intent.created")
+            //{
+            //    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+            //}
+
             
-
-            if (stripeEvent.Type == "payment_intent.created")
-            {
-                var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-            }
-
             return Ok();
         }
     }

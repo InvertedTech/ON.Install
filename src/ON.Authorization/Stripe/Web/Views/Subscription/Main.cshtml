@@ -39,10 +39,10 @@
                         <div class="column">
                             <h1 class="card-title pricing-card-title">@(plan.Price)<small class="text-muted fw-light">/mo</small></h1>
 
-                            <form action="/subscription/stripe/create-checkout-session?PriceId=@(plan.PriceId)" method="POST">
+                            <form action="/subscription/stripe/create-checkout-session" method="POST">
                               <!-- Note: If using PHP set the action to /create-checkout-session.php -->
 
-                              <input type="hidden" name="PriceId" value=@(plan.PriceId) />
+                              <input type="hidden" name="PriceId" value="@(plan.PriceId)" />
                               <button type="submit">Checkout</button>
                             </form>
                         </div>
