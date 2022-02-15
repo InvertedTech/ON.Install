@@ -15,7 +15,7 @@ namespace ON.Crypto
             return new JsonWebKey(Base64UrlEncoder.Decode(encodedJWK));
         }
 
-        public static string ToPrivateEncodedJsonWebKey(this ECDsa eckey)
+        public static JsonWebKey ToPrivateJsonWebKey(this ECDsa eckey)
         {
             var parameters = eckey.ExportParameters(true);
 
@@ -30,10 +30,15 @@ namespace ON.Crypto
                 Alg = "ES256"
             };
 
-            return Base64UrlEncoder.Encode(System.Text.Json.JsonSerializer.Serialize(jwk));
+            return jwk;
         }
 
-        public static string ToPublicEncodedJsonWebKey(this ECDsa eckey)
+        public static string ToPrivateEncodedJsonWebKey(this ECDsa eckey)
+        {
+            return Base64UrlEncoder.Encode(System.Text.Json.JsonSerializer.Serialize(eckey.ToPrivateJsonWebKey()));
+        }
+
+        public static JsonWebKey ToPublicJsonWebKey(this ECDsa eckey)
         {
             var parameters = eckey.ExportParameters(false);
 
@@ -47,7 +52,12 @@ namespace ON.Crypto
                 Alg = "ES256"
             };
 
-            return Base64UrlEncoder.Encode(System.Text.Json.JsonSerializer.Serialize(jwk));
+            return jwk;
+        }
+
+        public static string ToPublicEncodedJsonWebKey(this ECDsa eckey)
+        {
+            return Base64UrlEncoder.Encode(System.Text.Json.JsonSerializer.Serialize(eckey.ToPublicJsonWebKey()));
         }
     }
 }

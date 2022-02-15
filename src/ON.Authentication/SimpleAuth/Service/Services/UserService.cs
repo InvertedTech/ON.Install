@@ -522,7 +522,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 },
                 Private = new UserRecord.Types.PrivateData()
             };
-            record.Public.Roles.Add("admin");
+            record.Public.Roles.Add(ONUser.ROLE_ADMIN);
 
             byte[] salt = RandomNumberGenerator.GetBytes(16);
             record.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);

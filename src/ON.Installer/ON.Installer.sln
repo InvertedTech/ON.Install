@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31220.234
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InstallerApp", "InstallerApp\InstallerApp.csproj", "{91C89D9D-AAA6-45E7-B771-FC2FED23DA5D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ON.Installer.Models", "ON.Installer.Models\ON.Installer.Models.csproj", "{558C0F9A-32A8-42FC-8AF1-66D940496CC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Installer.Models", "ON.Installer.Models\ON.Installer.Models.csproj", "{558C0F9A-32A8-42FC-8AF1-66D940496CC6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Fragment", "..\ON.Fragment\ON.Fragment.csproj", "{35963A41-77FE-432C-86D4-F8D0C5C98577}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authentication.Shared", "..\ON.Authentication\Shared\ON.Authentication.Shared.csproj", "{43B672A2-672F-4794-A653-E89DE8DB54CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Crypto", "..\ON.Crypto\ON.Crypto\ON.Crypto.csproj", "{4FACDC43-7EB6-43DF-9167-300043FE2A3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{558C0F9A-32A8-42FC-8AF1-66D940496CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{558C0F9A-32A8-42FC-8AF1-66D940496CC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{558C0F9A-32A8-42FC-8AF1-66D940496CC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35963A41-77FE-432C-86D4-F8D0C5C98577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35963A41-77FE-432C-86D4-F8D0C5C98577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35963A41-77FE-432C-86D4-F8D0C5C98577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35963A41-77FE-432C-86D4-F8D0C5C98577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43B672A2-672F-4794-A653-E89DE8DB54CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43B672A2-672F-4794-A653-E89DE8DB54CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43B672A2-672F-4794-A653-E89DE8DB54CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43B672A2-672F-4794-A653-E89DE8DB54CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FACDC43-7EB6-43DF-9167-300043FE2A3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FACDC43-7EB6-43DF-9167-300043FE2A3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FACDC43-7EB6-43DF-9167-300043FE2A3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FACDC43-7EB6-43DF-9167-300043FE2A3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

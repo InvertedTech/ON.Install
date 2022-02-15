@@ -52,12 +52,20 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             return true;
         }
 
-        public Task<bool> Delete(Guid userId)
+        public async Task<bool> Delete(Guid userId)
         {
             var fd = GetDataFilePath(userId);
-            var res = fd.Exists;
+            if (!fd.Exists)
+                return false;
+
+            var rec = UserRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
             fd.Delete();
-            return Task.FromResult(res);
+
+            var fi = GetIndexFilePath(rec.Public.UserName);
+            if (fi.Exists)
+                fi.Delete();
+
+            return true;
         }
 
         public Task<bool> Exists(Guid userId)

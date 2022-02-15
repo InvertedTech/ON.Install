@@ -3,7 +3,9 @@
     ViewData["Title"] = "Home";
 }
 
-<h1>Welcome to my home page</h1>
+<div>
+    <h1>@ON.SiteConfig.WebsiteDesc</h1>
+</div>
 
 @foreach (var record in Model.Records)
 {

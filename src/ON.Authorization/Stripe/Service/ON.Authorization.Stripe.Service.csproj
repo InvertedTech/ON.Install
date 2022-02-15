@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.34.0" />
+    <PackageReference Include="Json.Net" Version="1.0.33" />
+    <PackageReference Include="Stripe.net" Version="39.89.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../ON.Authentication/Shared/ON.Authentication.Shared.csproj" />
+    <ProjectReference Include="../../../ON.Fragment/ON.Fragment.csproj" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
+</Project>

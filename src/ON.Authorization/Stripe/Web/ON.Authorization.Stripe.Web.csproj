@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ON.Authentication\Shared\ON.Authentication.Shared.csproj" />
+    <ProjectReference Include="..\..\..\ON.Fragment\ON.Fragment.csproj" />
+    <ProjectReference Include="..\Service\ON.Authorization.Stripe.Service.csproj" />
+    <PackageReference Include="Json.Net" Version="1.0.33" />
+	<PackageReference Include="Microsoft.Tye.Extensions.Configuration" Version="0.4.0-*" />
+	<PackageReference Include="Stripe.net" Version="39.89.0" />
+  </ItemGroup>
+
+</Project>

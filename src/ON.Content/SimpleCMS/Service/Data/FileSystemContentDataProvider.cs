@@ -21,15 +21,26 @@ namespace ON.Content.SimpleCMS.Service.Data
             contentDir = root.CreateSubdirectory("content");
         }
 
-        public async Task<IEnumerable<ContentRecord>> GetAll()
+        public Task<bool> Delete(Guid userId)
         {
-            List<ContentRecord> items = new List<ContentRecord>();
+            var fd = GetContentFilePath(userId);
+            var res = fd.Exists;
+            fd.Delete();
+            return Task.FromResult(res);
+        }
+
+        public Task<bool> Exists(Guid userId)
+        {
+            var fd = GetContentFilePath(userId);
+            return Task.FromResult(fd.Exists);
+        }
+
+        public async IAsyncEnumerable<ContentRecord> GetAll()
+        {
             foreach (var file in contentDir.GetFiles())
             {
-                items.Add(ContentRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(file.FullName)));
+                yield return ContentRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(file.FullName));
             }
-
-            return items.OrderByDescending(i => i.Public.CreatedOnUTC);
         }
 
         public async Task<ContentRecord> GetById(Guid contentId)

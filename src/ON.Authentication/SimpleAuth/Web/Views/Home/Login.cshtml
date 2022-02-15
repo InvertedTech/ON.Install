@@ -3,28 +3,37 @@
 	ViewData["Title"] = "Login";
 }
 
-<form asp-controller="login" asp-action="" method="post" class="needs-validation" novalidate>
- <h2 style="color:red;">@Model?.ErrorMessage</h2>
- <div class="form-group">
-  <label asp-for="LoginName"></label>
-  <input class="form-control" asp-for="LoginName" />
-  <span asp-validation-for="LoginName"></span>
- </div>
- <div class="form-group">
-  <label asp-for="Password"></label>
-  <input class="form-control" asp-for="Password" />
-  <span asp-validation-for="Password"></span>
- </div>
+<section class = "body">
+<article>
+  <section class = "left-trim"></section>
+  <section class = "main">
 
- <button type="submit" class="btn btn-primary">Login</button>
-</form>
+    <div class = "row">
+      <div class = "centered-panel">
+        <a href = "#forgot-my-password">forgot your password?</a>
+        <a href = "/register">register</a>
+      </div>
 
-<br />
+      <form asp-controller="login" asp-action="" method="post" class="needs-validation" novalidate>
+        <h2>Login</h2>
+        <p style="color:red;">@Model?.ErrorMessage</p>
+        <div class="form-group rows">
+          <label asp-for="LoginName"></label>
+          <input class="form-control" asp-for="LoginName" />
+          <span asp-validation-for="LoginName"></span>
+        </div>
+        <div class="form-group rows">
+          <label asp-for="Password"></label>
+          <input class="form-control" asp-for="Password" />
+          <span asp-validation-for="Password"></span>
+         </div>
 
-<p>
- <h4> -- or --</h4>
- <a class="btn btn-primary" asp-area="" asp-controller="register" asp-action="">Register</a>
-</p>
+         <button type="submit" class="btn btn-primary cta">Login</button>
+      </form>
+    </div>
+  </section>
+</article>
+</section>
 
 @section scripts
 {

@@ -10,9 +10,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ON.Crypto\ON.Crypto\ON.Crypto.csproj" />
-    <ProjectReference Include="..\..\..\ON.Fragment\ON.Fragment.csproj" />
-    <ProjectReference Include="..\..\Shared\ON.Authentication.Shared.csproj" />
+    <ProjectReference Include="../../../ON.Crypto/ON.Crypto/ON.Crypto.csproj" />
+    <ProjectReference Include="../../../ON.Fragment/ON.Fragment.csproj" />
+    <ProjectReference Include="../../Shared/ON.Authentication.Shared.csproj" />
   </ItemGroup>
 
 </Project>
