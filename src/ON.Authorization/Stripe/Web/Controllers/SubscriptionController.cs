@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Authorization.Stripe.Web.Models;
 using ON.Authorization.Stripe.Web.Services;
+using ON.Fragments.Authorization.Payments.Stripe;
 using Stripe;
 using Stripe.Checkout;
 
@@ -55,10 +56,14 @@ namespace ON.Authorization.Stripe.Web.Controllers
         }
 
         [HttpGet("cancel")]
+        // TODO: figure out how to not display cancel sub in menu after cancellation
         public async Task<IActionResult> Cancel(string reason = null)
         {
-            logger.LogWarning($"***HIT***");
-            await paymentsService.CancelSubscription(reason ?? "No reason");
+            
+            var res = await paymentsService.CancelSubscription(reason ?? "No reason");
+            SubscriptionRecord record = res.Record;
+            logger.LogWarning($"***HIT: {record.SubscriptionId}***");
+            this.subscriptionService.Cancel(record.SubscriptionId);
 
             return RedirectToAction(nameof(OverviewGet));
         }

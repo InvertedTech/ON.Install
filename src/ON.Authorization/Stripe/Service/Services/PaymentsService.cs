@@ -47,11 +47,7 @@ namespace ON.Authorization.Stripe.Service
                 //
 
                 return new CancelOwnSubscriptionResponse() {
-                    //
-                    //
-                    // return updated record here
-                    //
-                    //
+                    Record = record,
                 };
             }
             catch
