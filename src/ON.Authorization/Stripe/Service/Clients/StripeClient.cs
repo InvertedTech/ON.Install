@@ -59,6 +59,25 @@ namespace ON.Authorization.Stripe.Service.Clients
             
         }
 
+        private string GetProductName(int price)
+        {
+            switch (price)
+            {
+                case 100:
+                    return "Lord of the Manor";
+                case 50:
+                    return "The Best!";
+                case 20:
+                    return "Big Spender";
+                case 10:
+                    return "Awesome Member";
+                case 5:
+                    return "Member";
+                default:
+                    return "No Name";
+            }
+        }
+
         // TODO: Validate metadata has key url
         private void EnsureProducts()
         {
@@ -75,6 +94,7 @@ namespace ON.Authorization.Stripe.Service.Clients
                     {
                         var name = prod.Name;
                         var price = GetPrice(name.ToLower());
+                        name = GetProductName(price);
                         logger.LogWarning(prod.Metadata.First().Value.ToString());
 
                         if (name == null)

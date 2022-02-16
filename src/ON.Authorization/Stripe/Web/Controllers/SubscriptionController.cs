@@ -171,10 +171,14 @@ namespace ON.Authorization.Stripe.Web.Controllers
                         break;
                     case "customer.subscription.created":
                         var subId = stripeEvent.Data.Object as Subscription;
+                        var priceAmount = subId.Items.First().Price.UnitAmount;
+                        logger.LogWarning($"******SUBID: {subId}");
+                        logger.LogWarning($"******Price: {priceAmount}");
+                        logger.LogWarning($"******TIMESTAMP: {DateTime.Now.ToLongTimeString()}");
                         if (string.IsNullOrWhiteSpace(subId.Id))
                             return RedirectToAction(nameof(OverviewGet));
 
-                        await paymentsService.NewSubscription(subId.Id);
+                        await paymentsService.NewSubscription(subId.Id, (int)priceAmount);
 
                         break;
                     default:

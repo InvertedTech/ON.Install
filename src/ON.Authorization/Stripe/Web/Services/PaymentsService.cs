@@ -59,14 +59,16 @@ namespace ON.Authorization.Stripe.Web.Services
             return reply.Record;
         }
 
-        public async Task<NewOwnSubscriptionResponse> NewSubscription(string subscriptionId)
+        public async Task<NewOwnSubscriptionResponse> NewSubscription(string subscriptionId, int price)
         {
             if (!IsLoggedIn)
                 return null;
+            price /= 100;
 
             var req = new NewOwnSubscriptionRequest()
             {
-                SubscriptionId = subscriptionId
+                SubscriptionId = subscriptionId,
+                SubscriptionPrice = (uint)price
             };
 
             var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentsServiceChannel);

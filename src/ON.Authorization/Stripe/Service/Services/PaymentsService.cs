@@ -40,11 +40,12 @@ namespace ON.Authorization.Stripe.Service
                 var record = await subscriptionProvider.GetById(userToken.Id);
                 if (record == null)
                     return new CancelOwnSubscriptionResponse() { Error = "Record not found" };
-                //
-                //
-                // process cancel request here
-                //
-                //
+
+                record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.RenewsOnUTC = null;
+
+                await subscriptionProvider.Save(record);
 
                 return new CancelOwnSubscriptionResponse() {
                     Record = record,
@@ -97,7 +98,7 @@ namespace ON.Authorization.Stripe.Service
                 var record = new SubscriptionRecord()
                 {
                     UserID = Google.Protobuf.ByteString.CopyFrom(userToken.Id.ToByteArray()),
-                    Level = 1,
+                    Level = request.SubscriptionPrice,
                     ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
                     LastPaidUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
                     SubscriptionId = request?.SubscriptionId,
