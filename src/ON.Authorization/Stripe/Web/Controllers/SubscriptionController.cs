@@ -159,7 +159,7 @@ namespace ON.Authorization.Stripe.Web.Controllers
                         this.webhookSecret
                    );
 
-                logger.LogWarning($"***STRIPE EVENT: {stripeEvent.Type}***");
+                //logger.LogWarning($"***STRIPE EVENT: {stripeEvent.Type}***");
 
                 switch (stripeEvent.Type)
                 {
@@ -172,13 +172,15 @@ namespace ON.Authorization.Stripe.Web.Controllers
                     case "customer.subscription.created":
                         var subId = stripeEvent.Data.Object as Subscription;
                         var priceAmount = subId.Items.First().Price.UnitAmount;
-                        logger.LogWarning($"******SUBID: {subId}");
-                        logger.LogWarning($"******Price: {priceAmount}");
-                        logger.LogWarning($"******TIMESTAMP: {DateTime.Now.ToLongTimeString()}");
+                        //logger.LogWarning($"******SUBID: {subId}");
+                        //logger.LogWarning($"******Price: {priceAmount}");
+                        //logger.LogWarning($"******TIMESTAMP: {DateTime.Now.ToLongTimeString()}");
                         if (string.IsNullOrWhiteSpace(subId.Id))
                             return RedirectToAction(nameof(OverviewGet));
 
                         await paymentsService.NewSubscription(subId.Id, (int)priceAmount);
+                        logger.LogWarning($"***Completed Subscription Creation");
+
 
                         break;
                     default:
