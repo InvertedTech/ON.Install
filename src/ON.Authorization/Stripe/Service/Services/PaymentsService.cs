@@ -104,6 +104,7 @@ namespace ON.Authorization.Stripe.Service
                     SubscriptionId = request?.SubscriptionId,
                     PaidThruUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
                     RenewsOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    CustomerId = request?.CustomerId,
                 };
 
                 logger.LogWarning($"***SUBID: {record}");

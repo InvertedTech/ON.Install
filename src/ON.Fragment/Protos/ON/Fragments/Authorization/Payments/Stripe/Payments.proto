@@ -39,6 +39,7 @@ message GetOwnSubscriptionRecordResponse {
 message NewOwnSubscriptionRequest {
   string SubscriptionId = 1;
   uint32 SubscriptionPrice = 2;
+  string CustomerId = 3;
 }
   
 message NewOwnSubscriptionResponse {

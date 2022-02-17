@@ -30,9 +30,9 @@ namespace ON.Authorization.Stripe.Web.Controllers
         private readonly ONUserHelper userHelper;
         private StripeClient stripeClient;
         private EventService eventService;
-        private SessionService sessionService;
         private SubscriptionService subscriptionService;
         private readonly string webhookSecret;
+        private readonly PortalService portalService;
 
         public SubscriptionController(ILogger<SubscriptionController> logger, PaymentsService paymentsService, Services.AccountService acctsService, ONUserHelper userHelper)
         {
@@ -45,7 +45,7 @@ namespace ON.Authorization.Stripe.Web.Controllers
             this.webhookSecret = "whsec_2df5a0c1b7beebd12d5426c9f9fc99b64f032bd325587ae54659c3031457052e";
             this.customerService = new CustomerService(stripeClient);
             this.subscriptionService = new SubscriptionService(stripeClient);
-            this.sessionService = new SessionService(stripeClient);
+            this.portalService = new PortalService(this.stripeClient);
         }
 
         [HttpGet("")]
@@ -149,17 +149,17 @@ namespace ON.Authorization.Stripe.Web.Controllers
         [HttpPost("create-customer-portal")]
         public async Task<IActionResult> CreateCustomerPortal()
         {
-            var customerId = "";
-            var options = new SessionCreateOptions
-            {
-                Customer = customerId,
-                SuccessUrl = "/subscription/stripe",
-                CancelUrl = "/subscription/stripe",
-            };
+            var rec = await paymentsService.GetCurrentRecord();
+            if (rec == null)
+                return View("Main", null);
 
-            var session = await this.sessionService.CreateAsync(options);
+            var portalUrl = await this.portalService.CreatePortal(rec.CustomerId);
 
-            return Redirect(session.Url);
+            if (portalUrl == null)
+                return View("Main", null);
+
+            return Redirect(portalUrl);
+
         }
 
         [AllowAnonymous]
@@ -190,13 +190,15 @@ namespace ON.Authorization.Stripe.Web.Controllers
                     case "customer.subscription.created":
                         var subId = stripeEvent.Data.Object as Subscription;
                         var priceAmount = subId.Items.First().Price.UnitAmount;
+                        var customerId = subId.CustomerId;
                         //logger.LogWarning($"******SUBID: {subId}");
                         //logger.LogWarning($"******Price: {priceAmount}");
                         //logger.LogWarning($"******TIMESTAMP: {DateTime.Now.ToLongTimeString()}");
+                        //logger.LogWarning($"*****CustomerID: {customerId}");
                         if (string.IsNullOrWhiteSpace(subId.Id))
                             return RedirectToAction(nameof(OverviewGet));
 
-                        await paymentsService.NewSubscription(subId.Id, (int)priceAmount);
+                        await paymentsService.NewSubscription(subId.Id, (int)priceAmount, customerId);
                         logger.LogWarning($"***Completed Subscription Creation");
 
 
