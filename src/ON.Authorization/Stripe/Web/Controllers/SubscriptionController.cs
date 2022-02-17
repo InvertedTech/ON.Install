@@ -77,6 +77,8 @@ namespace ON.Authorization.Stripe.Web.Controllers
                 PriceService priceService = new PriceService();
                 ProductService productService = new ProductService();
                 Price price = priceService.Get(PriceId);
+
+                logger.LogWarning($"PRICE******{price}");
                 Product product = productService.Get(price.ProductId);
                 // TODO: Fix redirect links
                 SessionCreateOptions options = new SessionCreateOptions
@@ -105,8 +107,6 @@ namespace ON.Authorization.Stripe.Web.Controllers
             {
                 return BadRequest(ex.Message);
             }
-
-            return Ok();
         }
 
         [HttpPost("create-payment-intent")]
