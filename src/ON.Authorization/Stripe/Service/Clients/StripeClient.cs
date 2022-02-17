@@ -44,19 +44,40 @@ namespace ON.Authorization.Stripe.Service.Clients
             this.recordProvider = recordProvider;
             this.productService = new ProductService();
             this.priceService = new PriceService();
+            this.Products = new ProductList();
 
             // Set Client Secret
             StripeConfiguration.ApiKey = this.settings.StripeClientSecret;
 
-            Products = recordProvider.GetAll().Result;
-            int size = Products.CalculateSize();
+            // Products = recordProvider.GetAll().Result;
+            EnsureProducts();
+            //int size = Products.CalculateSize();
 
-            if (size == 0)
-            {
-                EnsureProducts();
-                logger.LogWarning(Products.CalculateSize().ToString());
-            }
+            //if (size == 0)
+            //{
+            //    EnsureProducts();
+            //    logger.LogWarning(Products.CalculateSize().ToString());
+            //}
             
+        }
+
+        private string CreatePaymentLink(string priceId)
+        {
+            var opts = new PaymentLinkCreateOptions()
+            {
+                LineItems = new List<PaymentLinkLineItemOptions>
+                {
+                    new PaymentLinkLineItemOptions
+                    {
+                        Price = priceId,
+                        Quantity = 1,
+                    },
+                },
+            };
+
+            var service = new PaymentLinkService();
+            var link =  service.CreateAsync(opts);
+            return link.Result.Url.ToString();
         }
 
         // TODO: Validate metadata has key url
@@ -70,13 +91,14 @@ namespace ON.Authorization.Stripe.Service.Clients
                 if (prod.Active == true)
                 {
                     var priceId = GetPriceId(prod.Id);
-                    var url = prod.Metadata.First().Value.ToString();
-                    logger.LogWarning(prod.Name);
+                    var url = CreatePaymentLink(priceId);
+                    prod.Url = url;
+                    //logger.LogWarning(prod.Name);
                     if (priceId != "not found" && HasProperName(prod.Name.ToLower()))
                     {
                         var name = prod.Name;
                         var price = GetPrice(name.ToLower());
-                        logger.LogWarning(prod.Metadata.First().Value.ToString());
+                        logger.LogWarning(url);
 
                         if (name == null)
                         {
@@ -84,7 +106,7 @@ namespace ON.Authorization.Stripe.Service.Clients
                         }
                         else
                         {
-                            Products.Records.Add(new ProductRecord { CheckoutUrl = url, PriceId = priceId, ProductId = prod.Id, Name = name, Price = price });
+                            Products.Records.Add(new ProductRecord { CheckoutUrl = prod.Url, PriceId = priceId, ProductId = prod.Id, Name = name, Price = price });
                         }
                     }
                 }
@@ -94,7 +116,18 @@ namespace ON.Authorization.Stripe.Service.Clients
             recordProvider.SaveAll(Products).Wait();
         }
 
-       
+        private string GetPriceUrl(string productId)
+        {
+            var stripePrices = this.priceService.List();
+
+            foreach (Price price in stripePrices)
+            {
+                logger.LogWarning($"&&&PRICE {price}");
+            }
+
+            return "not found";
+        }
+
 
         private bool HasProperName(string name)
         {
