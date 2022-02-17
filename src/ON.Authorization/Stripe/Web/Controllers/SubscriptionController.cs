@@ -30,6 +30,7 @@ namespace ON.Authorization.Stripe.Web.Controllers
         private readonly ONUserHelper userHelper;
         private StripeClient stripeClient;
         private EventService eventService;
+        private SessionService sessionService;
         private SubscriptionService subscriptionService;
         private readonly string webhookSecret;
 
@@ -44,6 +45,7 @@ namespace ON.Authorization.Stripe.Web.Controllers
             this.webhookSecret = "whsec_2df5a0c1b7beebd12d5426c9f9fc99b64f032bd325587ae54659c3031457052e";
             this.customerService = new CustomerService(stripeClient);
             this.subscriptionService = new SubscriptionService(stripeClient);
+            this.sessionService = new SessionService(stripeClient);
         }
 
         [HttpGet("")]
@@ -142,6 +144,22 @@ namespace ON.Authorization.Stripe.Web.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost("create-customer-portal")]
+        public async Task<IActionResult> CreateCustomerPortal()
+        {
+            var customerId = "";
+            var options = new SessionCreateOptions
+            {
+                Customer = customerId,
+                SuccessUrl = "/subscription/stripe",
+                CancelUrl = "/subscription/stripe",
+            };
+
+            var session = await this.sessionService.CreateAsync(options);
+
+            return Redirect(session.Url);
         }
 
         [AllowAnonymous]
