@@ -58,7 +58,6 @@ namespace ON.Authorization.Stripe.Web.Controllers
         }
 
         [HttpGet("cancel")]
-        // TODO: figure out how to not display cancel sub in menu after cancellation
         public async Task<IActionResult> Cancel(string reason = null)
         {
             
@@ -177,24 +176,29 @@ namespace ON.Authorization.Stripe.Web.Controllers
                         this.webhookSecret
                    );
 
-                //logger.LogWarning($"***STRIPE EVENT: {stripeEvent.Type}***");
 
                 switch (stripeEvent.Type)
                 {
                     case "checkout.session.completed":
-                        logger.LogWarning($"***Completed Checkout Session");
+                        logger.LogInformation($"### Completed Checkout Session ###");
                         break;
                     case "payment_intent.created":
-                        logger.LogWarning($"***Payment Intent Created");
+                        var intent = stripeEvent.Data.Object as PaymentIntent;
+
+                        if (intent == null)
+                        {
+                            logger.LogError($"### Payment Intent Failed ###");
+                            // Handle
+                            break;
+                        }
+
+                        logger.LogInformation($"### Created Payment Intent ###");
                         break;
                     case "customer.subscription.created":
                         var subId = stripeEvent.Data.Object as Subscription;
                         var priceAmount = subId.Items.First().Price.UnitAmount;
                         var customerId = subId.CustomerId;
-                        //logger.LogWarning($"******SUBID: {subId}");
-                        //logger.LogWarning($"******Price: {priceAmount}");
-                        //logger.LogWarning($"******TIMESTAMP: {DateTime.Now.ToLongTimeString()}");
-                        //logger.LogWarning($"*****CustomerID: {customerId}");
+
                         if (string.IsNullOrWhiteSpace(subId.Id))
                             return RedirectToAction(nameof(OverviewGet));
 
@@ -222,13 +226,6 @@ namespace ON.Authorization.Stripe.Web.Controllers
             {
                 return BadRequest(ex.Message);
             }
-
-
-            //if (stripeEvent.Type == "payment_intent.created")
-            //{
-            //    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-            //}
-
             
             return Ok();
         }
