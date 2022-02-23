@@ -8,6 +8,7 @@ using ON.Authorization.Stripe.Service.Models;
 using ON.Fragments.Authorization;
 using ON.Fragments.Authorization.Payments.Stripe;
 using ON.Fragments.Generic;
+using Stripe;
 using System;
 using System.Threading.Tasks;
 
@@ -17,10 +18,10 @@ namespace ON.Authorization.Stripe.Service
     {
         private readonly ILogger<PaymentsService> logger;
         private readonly ISubscriptionRecordProvider subscriptionProvider;
-        private readonly StripeClient client;
+        private readonly Clients.StripeClient client;
         private readonly AppSettings settings;
 
-        public PaymentsService(ILogger<PaymentsService> logger, ISubscriptionRecordProvider subscriptionProvider, StripeClient client, IOptions<AppSettings> settings)
+        public PaymentsService(ILogger<PaymentsService> logger, ISubscriptionRecordProvider subscriptionProvider, Clients.StripeClient client, IOptions<AppSettings> settings)
         {
             this.logger = logger;
             this.subscriptionProvider = subscriptionProvider;
@@ -40,18 +41,14 @@ namespace ON.Authorization.Stripe.Service
                 if (record == null)
                     return new CancelOwnSubscriptionResponse() { Error = "Record not found" };
 
-                //
-                //
-                // process cancel request here
-                //
-                //
+                record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.RenewsOnUTC = null;
+
+                await subscriptionProvider.Save(record);
 
                 return new CancelOwnSubscriptionResponse() {
-                    //
-                    //
-                    // return updated record here
-                    //
-                    //
+                    Record = record,
                 };
             }
             catch
@@ -63,7 +60,7 @@ namespace ON.Authorization.Stripe.Service
         public override Task<GetAccountDetailsResponse> GetAccountDetails(GetAccountDetailsRequest request, ServerCallContext context)
         {
             var res = new GetAccountDetailsResponse();
-            res.Plans = client.Plans;
+            res.Products = client.Products;
             res.ClientId = settings.StripeClientID;
             return Task.FromResult(res);
         }
@@ -97,15 +94,20 @@ namespace ON.Authorization.Stripe.Service
                 //
                 //
 
+                // TODO: Set values from the sub
                 var record = new SubscriptionRecord()
                 {
                     UserID = Google.Protobuf.ByteString.CopyFrom(userToken.Id.ToByteArray()),
-                    //
-                    //
-                    // save results here
-                    //
-                    //
+                    Level = request.SubscriptionPrice,
+                    ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    LastPaidUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    SubscriptionId = request?.SubscriptionId,
+                    PaidThruUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    RenewsOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    CustomerId = request?.CustomerId,
                 };
+
+                logger.LogWarning($"***SUBID: {record}");
 
                 await subscriptionProvider.Save(record);
 

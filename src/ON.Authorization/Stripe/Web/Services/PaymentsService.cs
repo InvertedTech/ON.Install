@@ -59,14 +59,17 @@ namespace ON.Authorization.Stripe.Web.Services
             return reply.Record;
         }
 
-        public async Task<NewOwnSubscriptionResponse> NewSubscription(string subscriptionId)
+        public async Task<NewOwnSubscriptionResponse> NewSubscription(string subscriptionId, int price, string customerId)
         {
             if (!IsLoggedIn)
                 return null;
+            price /= 100;
 
             var req = new NewOwnSubscriptionRequest()
             {
-                SubscriptionId = subscriptionId
+                SubscriptionId = subscriptionId,
+                SubscriptionPrice = (uint)price,
+                CustomerId = customerId,
             };
 
             var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentsServiceChannel);
@@ -74,6 +77,7 @@ namespace ON.Authorization.Stripe.Web.Services
             return reply;
         }
 
+        // Fetch JWT Bearer token
         private Metadata GetMetadata()
         {
             var data = new Metadata();

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ON.Fragments.Authorization.Payments.Stripe;
 
-import "Protos/ON/Fragments/Authorization/Payments/Stripe/PlanRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Stripe/ProductRecord.proto";
 import "Protos/ON/Fragments/Authorization/Payments/Stripe/SubscriptionRecord.proto";
 
 service PaymentsInterface {
@@ -25,7 +25,7 @@ message GetAccountDetailsRequest {
 }
   
 message GetAccountDetailsResponse {
-  PlanList Plans = 1;
+  ProductList Products = 1;
   string ClientId = 2;
 }
   
@@ -38,6 +38,8 @@ message GetOwnSubscriptionRecordResponse {
 
 message NewOwnSubscriptionRequest {
   string SubscriptionId = 1;
+  uint32 SubscriptionPrice = 2;
+  string CustomerId = 3;
 }
   
 message NewOwnSubscriptionResponse {
