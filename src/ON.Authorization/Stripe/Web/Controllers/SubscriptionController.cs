@@ -16,7 +16,7 @@ using ON.Fragments.Authorization.Payments.Stripe;
 using Stripe;
 using Stripe.Checkout;
 
-// TODO: Refactor Intents To Server
+// TODO: Refactor ALL stripe api services to the server side
 namespace ON.Authorization.Stripe.Web.Controllers
 {
     [Authorize]
@@ -26,12 +26,14 @@ namespace ON.Authorization.Stripe.Web.Controllers
         private readonly ILogger<SubscriptionController> logger;
         private readonly PaymentsService paymentsService;
         private readonly Services.AccountService acctsService;
-        private CustomerService customerService;
         private readonly ONUserHelper userHelper;
+        private readonly string webhookSecret;
+
+        // Move to Server
         private StripeClient stripeClient;
         private EventService eventService;
         private SubscriptionService subscriptionService;
-        private readonly string webhookSecret;
+        private CustomerService customerService;
         private readonly PortalService portalService;
 
         public SubscriptionController(ILogger<SubscriptionController> logger, PaymentsService paymentsService, Services.AccountService acctsService, ONUserHelper userHelper)
@@ -39,13 +41,15 @@ namespace ON.Authorization.Stripe.Web.Controllers
             this.logger = logger;
             this.paymentsService = paymentsService;
             this.acctsService = acctsService;
-            this.eventService = new EventService(stripeClient);
             this.userHelper = userHelper;
-            this.stripeClient = new StripeClient("sk_test_51KARZjJUpMW7yiO47dnj228fk6q4YKFLAObA9lMSg21R7VTpGwkUTScaD03lKv7oyQpB5lykutwX0PYIja96Y62W00YnJBQHFP");
             this.webhookSecret = "whsec_2df5a0c1b7beebd12d5426c9f9fc99b64f032bd325587ae54659c3031457052e";
+
+            // Move to Server
+            this.stripeClient = new StripeClient("sk_test_51KARZjJUpMW7yiO47dnj228fk6q4YKFLAObA9lMSg21R7VTpGwkUTScaD03lKv7oyQpB5lykutwX0PYIja96Y62W00YnJBQHFP");
             this.customerService = new CustomerService(stripeClient);
             this.subscriptionService = new SubscriptionService(stripeClient);
             this.portalService = new PortalService(this.stripeClient);
+            this.eventService = new EventService(stripeClient);
         }
 
         [HttpGet("")]

@@ -2,6 +2,8 @@
 using Stripe.BillingPortal;
 using System.Threading.Tasks;
 
+// TODO: Refactor to server
+
 namespace ON.Authorization.Stripe.Web.Services
 {
     public class PortalService

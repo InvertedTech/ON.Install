@@ -12,6 +12,7 @@ using Stripe;
 using System;
 using System.Threading.Tasks;
 
+// TODO: Handle ALL stripe calls here
 namespace ON.Authorization.Stripe.Service
 {
     public class PaymentsService : PaymentsInterface.PaymentsInterfaceBase
