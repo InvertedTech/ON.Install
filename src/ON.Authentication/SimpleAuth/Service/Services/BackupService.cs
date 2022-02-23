@@ -84,7 +84,10 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
             await requestStream.MoveNext();
             if (requestStream.Current.RequestOneofCase != RestoreAllDataRequest.RequestOneofOneofCase.Mode)
+            {
+                logger.LogWarning("*** RestoreAllData - Mode missing ***");
                 return res;
+            }
 
             var restoreMode = requestStream.Current.Mode;
 
@@ -92,7 +95,10 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
                 if (userToken == null || !userToken.Roles.Contains(ONUser.ROLE_BACKUP))
+                {
+                    logger.LogWarning("*** RestoreAllData - token bad ***");
                     return res;
+                }
 
                 await foreach (var r in requestStream.ReadAllAsync())
                 {
@@ -136,7 +142,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
             catch (Exception ex)
             {
-                logger.LogWarning($"*** RestoreAllData - {ex.Message} ***");
+                logger.LogWarning("*** RestoreAllData - ERROR ***");
+                logger.LogWarning($"*** RestoreAllData - ERROR: {ex.Message} ***");
             }
 
             logger.LogWarning("*** RestoreAllData - Start Reindex ***");

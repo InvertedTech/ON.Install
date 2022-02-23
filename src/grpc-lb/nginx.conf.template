@@ -5,39 +5,62 @@ events {
 }
 
 http {
-  upstream auth_server {
-    ## Leave both commented for default round robin
-    ## To use least connections lb
-    least_conn;
-    ## To send the same IP Hash to the same server every call
-    #ip_hash;
+#  upstream auth_server {
+#    ## Leave both commented for default round robin
+#    ## To use least connections lb
+#    least_conn;
+#    ## To send the same IP Hash to the same server every call
+#    #ip_hash;
 
-    server ${SERVICE__AUTHSERVICE__HOST}:${SERVICE__AUTHSERVICE__PORT};
-  }
+#    server ${SERVICE__AUTHSERVICE__HOST}:${SERVICE__AUTHSERVICE__PORT};
+#  }
 
-  upstream cms_server {
-    least_conn;
-    server ${SERVICE__CMSSERVICE__HOST}:${SERVICE__CMSSERVICE__PORT};
-  }
+#  upstream cms_server {
+#    least_conn;
+#    server ${SERVICE__CMSSERVICE__HOST}:${SERVICE__CMSSERVICE__PORT};
+#  }
 
-  upstream fakepay_server {
-    least_conn;
-    server ${SERVICE__FAKEPAYSERVICE__HOST}:${SERVICE__FAKEPAYSERVICE__PORT};
-  }
+#  upstream fakepay_server {
+#    least_conn;
+#    server ${SERVICE__FAKEPAYSERVICE__HOST}:${SERVICE__FAKEPAYSERVICE__PORT};
+#  }
 
+#  server {
+#    listen 80 http2;
+#    server_name api.${DNSNAME};
+#    location /ON.Fragments.Authentication {
+#      grpc_pass grpc://auth_server;
+#    }
+#    location /ON.Fragments.Content {
+#      grpc_pass grpc://cms_server;
+#    }
+#    location /ON.Fragments.Authorization {
+#      grpc_pass grpc://fakepay_server;
+#    }
+#    location /ON.Authorization.FakePayments {
+#      grpc_pass grpc://fakepay_server;
+#    }
+#  }
   server {
-    listen 80 http2;
-    location /ON.Fragments.Authentication {
-      grpc_pass grpc://auth_server;
+    listen 80;
+    server_name ${DNSNAME};
+	
+	location ~^/(subscription/fake) {
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_pass http://${SERVICE__FAKEPAYWEB__HOST}:${SERVICE__FAKEPAYWEB__PORT};
     }
-    location /ON.Fragments.Content {
-      grpc_pass grpc://cms_server;
+
+	location ~^/(changepassword|login|logout|register|settings|subscription) {
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_pass http://${SERVICE__AUTHWEB__HOST}:${SERVICE__AUTHWEB__PORT};
     }
-    location /ON.Fragments.Authorization {
-      grpc_pass grpc://fakepay_server;
-    }
-    location /ON.Authorization.FakePayments {
-      grpc_pass grpc://fakepay_server;
+	
+	location / {
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_pass http://${SERVICE__CMSWEB__HOST}:${SERVICE__CMSWEB__PORT}/;
     }
   }
 }
