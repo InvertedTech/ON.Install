@@ -30,6 +30,7 @@ namespace ON.Authorization.Stripe.Service
             this.subscriptionProvider = subscriptionProvider;
             this.client = client;
             this.settings = settings.Value;
+            // Figure out how the fuck not passing in settings.Value or this.settings works
             this.stripeService = new ONStripeService(settings);
         }
 
