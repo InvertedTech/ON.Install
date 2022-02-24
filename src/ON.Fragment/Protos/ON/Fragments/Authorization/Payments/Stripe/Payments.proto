@@ -4,7 +4,6 @@ package ON.Fragments.Authorization.Payments.Stripe;
 
 import "Protos/ON/Fragments/Authorization/Payments/Stripe/ProductRecord.proto";
 import "Protos/ON/Fragments/Authorization/Payments/Stripe/SubscriptionRecord.proto";
-import "Protos/ON/Fragments/Authorization/Payments/Stripe/CustomerRecord.proto";
 
 service PaymentsInterface {
   rpc CancelOwnSubscription (CancelOwnSubscriptionRequest) returns (CancelOwnSubscriptionResponse) {}
@@ -13,25 +12,6 @@ service PaymentsInterface {
   rpc NewOwnSubscription (NewOwnSubscriptionRequest) returns (NewOwnSubscriptionResponse) {}
   rpc CreateBillingPortal (CreateBillingPortalRequest) returns (CreateBillingPortalResponse) {}
   rpc CreateCheckoutSession(CheckoutSessionRequest) returns (CheckoutSessionResponse) {}
-  rpc GetCustomers(GetCustomersRequest) returns (GetCustomersResponse) {}
-  rpc NewCustomer(NewCustomerRequest) returns (NewCustomerResponse) {}
-}
-
-message NewCustomerRequest{
-	bytes GUID = 1;
-	string CustomerId = 2;
-}
-
-message NewCustomerResponse {
-	CustomerRecord Customer = 1;
-	string Error = 2;
-}
-
-message GetCustomersRequest{}
-
-message GetCustomersResponse
-{
-	CustomerList Customers = 1;
 }
 
 message CheckoutSessionRequest {
