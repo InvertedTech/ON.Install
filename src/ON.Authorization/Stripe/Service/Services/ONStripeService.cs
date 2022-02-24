@@ -1,8 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ON.Authorization.Stripe.Service.Models;
-using Stripe;
 using Stripe.BillingPortal;
+using BillingService = Stripe.BillingPortal.SessionService;
+using BillingSessionOpts = Stripe.BillingPortal.SessionCreateOptions;
+using CheckoutSessionOpts = Stripe.Checkout.SessionCreateOptions;
+using CheckoutService = Stripe.Checkout.SessionService;
+using CheckoutItems = Stripe.Checkout.SessionLineItemOptions;
+using CheckoutSession = Stripe.Checkout.Session;
+using Stripe;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ON.Authorization.Stripe.Service.Services
@@ -13,6 +21,7 @@ namespace ON.Authorization.Stripe.Service.Services
         private readonly AppSettings settings;
         private StripeClient stripe;
         private SubscriptionService subService;
+        private PriceService priceService;
 
         public ONStripeService(IOptions<AppSettings> settings)
         { 
@@ -79,16 +88,53 @@ namespace ON.Authorization.Stripe.Service.Services
         {
             StripeConfiguration.ApiKey = this.stripe.ApiKey;
             var configId = await ConfigurePortal();
-            var portalOpts = new SessionCreateOptions
+            var portalOpts = new BillingSessionOpts
             {
                 Customer = customerId,
                 Configuration = configId
             };
 
-            var service = new SessionService();
+            var service = new BillingService();
             var session = await service.CreateAsync(portalOpts);
 
             return session.Url;
+        }
+
+        public async Task<string> CreateCheckoutSession(string priceId)
+        {
+            if (priceId == null) { return string.Empty; };
+            try
+            {
+                StripeConfiguration.ApiKey = this.stripe.ApiKey;
+                priceService = new PriceService(stripe);
+                Price price = await priceService.GetAsync(priceId);
+                var chekoutOpts= new CheckoutSessionOpts
+                {
+                    SuccessUrl = "http://localhost/subscription/",
+                    CancelUrl = "https://localhost/subscription/",
+                    Mode = "subscription",
+                    LineItems = new List<CheckoutItems>
+                    {
+                        new CheckoutItems
+                        {
+                            Price = priceId,
+                            Quantity = 1,
+
+                        },
+                    },
+                };
+
+                var service = new CheckoutService();
+                var session = await service.CreateAsync(chekoutOpts);
+                
+
+                return session.Url.ToString();
+
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
     }
 }

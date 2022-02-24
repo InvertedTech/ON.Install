@@ -100,5 +100,20 @@ namespace ON.Authorization.Stripe.Web.Services
 
             return data;
         }
+
+        public async Task<CheckoutSessionResponse> CreateCheckoutSession(string priceId)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            var req = new CheckoutSessionRequest()
+            {
+                PriceId = priceId
+            };
+            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentsServiceChannel);
+            var reply = await client.CreateCheckoutSessionAsync(req, GetMetadata());
+
+            return reply;
+        }
     }
 }

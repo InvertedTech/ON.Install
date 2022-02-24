@@ -62,7 +62,7 @@ namespace ON.Authorization.Stripe.Web.Controllers
         [HttpGet("cancel")]
         public async Task<IActionResult> Cancel(string reason = null)
         {
-            
+            // TODO: Move to billing portal
             var res = await paymentsService.CancelSubscription(reason ?? "No reason");
             SubscriptionRecord record = res.Record;
             logger.LogWarning($"***HIT: {record.SubscriptionId}***");
@@ -76,36 +76,13 @@ namespace ON.Authorization.Stripe.Web.Controllers
         {
             try
             {
-                StripeConfiguration.ApiKey = this.stripeClient.ApiKey;
-                PriceService priceService = new PriceService();
-                ProductService productService = new ProductService();
-                Price price = priceService.Get(PriceId);
+                var response = await paymentsService.CreateCheckoutSession(PriceId);
 
-                logger.LogWarning($"PRICE******{price}");
-                Product product = productService.Get(price.ProductId);
-                // TODO: Fix redirect links
-                SessionCreateOptions options = new SessionCreateOptions
-                {
-                    SuccessUrl = "http://localhost/subscription/",
-                    CancelUrl = "https://localhost/subscription/",
-                    Mode = "subscription",
-                    LineItems = new List<SessionLineItemOptions>
-                {
-                    new SessionLineItemOptions
-                    {
-                        Price = PriceId,
-                        Quantity = 1,
+                if (response == null)
+                    return View("Main", null);
 
-                    },
-                },
-                };
+                return Redirect(response.SessionUrl);
 
-                SessionService service = new SessionService();
-                Session session = await service.CreateAsync(options);
-
-
-                logger.LogWarning($"****Link: {session}");
-                return Redirect(session.Url);
             } catch (Exception ex)
             {
                 return BadRequest(ex.Message);

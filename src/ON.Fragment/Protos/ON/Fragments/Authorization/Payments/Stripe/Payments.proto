@@ -11,6 +11,16 @@ service PaymentsInterface {
   rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse) {}
   rpc NewOwnSubscription (NewOwnSubscriptionRequest) returns (NewOwnSubscriptionResponse) {}
   rpc CreateBillingPortal (CreateBillingPortalRequest) returns (CreateBillingPortalResponse) {}
+  rpc CreateCheckoutSession(CheckoutSessionRequest) returns (CheckoutSessionResponse) {}
+}
+
+message CheckoutSessionRequest {
+	string PriceId = 1;
+}
+
+message CheckoutSessionResponse {
+	string SessionUrl = 1;
+	string Error = 2;
 }
  
 message CreateBillingPortalRequest {

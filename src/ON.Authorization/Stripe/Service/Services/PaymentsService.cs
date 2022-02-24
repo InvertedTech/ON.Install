@@ -149,5 +149,29 @@ namespace ON.Authorization.Stripe.Service
                 Url = portalUrl,
             };
         }
+
+        public override async Task<CheckoutSessionResponse> CreateCheckoutSession(CheckoutSessionRequest request, ServerCallContext context)
+        {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null)
+                return new CheckoutSessionResponse() { Error = "No user token specified" };
+
+            if (request?.PriceId == null)
+            {
+                return new CheckoutSessionResponse() { Error = "Invalid Price Id" };
+            }
+
+            var url = await stripeService.CreateCheckoutSession(request.PriceId);
+            logger.LogWarning($"### URL: {url}");
+            if (url == null)
+            {
+                return new CheckoutSessionResponse() { Error = "No URL Found" };
+            }
+
+            return new CheckoutSessionResponse()
+            {
+                SessionUrl = url,
+            };
+        }
     }
 }
