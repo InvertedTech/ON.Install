@@ -34,7 +34,6 @@ namespace ON.Authorization.Stripe.Web.Controllers
         private EventService eventService;
         private SubscriptionService subscriptionService;
         private CustomerService customerService;
-        private readonly PortalService portalService;
 
         public SubscriptionController(ILogger<SubscriptionController> logger, PaymentsService paymentsService, Services.AccountService acctsService, ONUserHelper userHelper)
         {
@@ -48,7 +47,6 @@ namespace ON.Authorization.Stripe.Web.Controllers
             this.stripeClient = new StripeClient("sk_test_51KARZjJUpMW7yiO47dnj228fk6q4YKFLAObA9lMSg21R7VTpGwkUTScaD03lKv7oyQpB5lykutwX0PYIja96Y62W00YnJBQHFP");
             this.customerService = new CustomerService(stripeClient);
             this.subscriptionService = new SubscriptionService(stripeClient);
-            this.portalService = new PortalService(this.stripeClient);
             this.eventService = new EventService(stripeClient);
         }
 
@@ -156,12 +154,12 @@ namespace ON.Authorization.Stripe.Web.Controllers
             if (rec == null)
                 return View("Main", null);
 
-            var portalUrl = await this.portalService.CreatePortal(rec.CustomerId);
+            var response = await paymentsService.CreatePortal(rec.CustomerId);
 
-            if (portalUrl == null)
+            if (response == null)
                 return View("Main", null);
 
-            return Redirect(portalUrl);
+            return Redirect(response.Url);
 
         }
 

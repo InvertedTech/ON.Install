@@ -10,10 +10,21 @@ service PaymentsInterface {
   rpc GetAccountDetails (GetAccountDetailsRequest) returns (GetAccountDetailsResponse) {}
   rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse) {}
   rpc NewOwnSubscription (NewOwnSubscriptionRequest) returns (NewOwnSubscriptionResponse) {}
+  rpc CreateBillingPortal (CreateBillingPortalRequest) returns (CreateBillingPortalResponse) {}
 }
-  
+ 
+message CreateBillingPortalRequest {
+	string CustomerId = 1;
+}
+
+message CreateBillingPortalResponse {
+	string Url = 1;
+	string Error = 2;
+}
+
 message CancelOwnSubscriptionRequest {
   string Reason = 1;
+  string SubscriptionId = 2;
 }
   
 message CancelOwnSubscriptionResponse {

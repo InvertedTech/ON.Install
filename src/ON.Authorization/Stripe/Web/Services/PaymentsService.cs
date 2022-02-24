@@ -77,6 +77,21 @@ namespace ON.Authorization.Stripe.Web.Services
             return reply;
         }
 
+        public async Task<CreateBillingPortalResponse> CreatePortal(string customerId)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            var req = new CreateBillingPortalRequest()
+            {
+                CustomerId = customerId
+            };
+            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentsServiceChannel);
+            var reply = await client.CreateBillingPortalAsync(req, GetMetadata());
+
+            return reply;
+        }
+
         // Fetch JWT Bearer token
         private Metadata GetMetadata()
         {

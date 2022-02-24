@@ -5,6 +5,7 @@ using ON.Authentication;
 using ON.Authorization.Stripe.Service.Clients;
 using ON.Authorization.Stripe.Service.Data;
 using ON.Authorization.Stripe.Service.Models;
+using ON.Authorization.Stripe.Service.Services;
 using ON.Fragments.Authorization;
 using ON.Fragments.Authorization.Payments.Stripe;
 using ON.Fragments.Generic;
@@ -21,6 +22,7 @@ namespace ON.Authorization.Stripe.Service
         private readonly ISubscriptionRecordProvider subscriptionProvider;
         private readonly Clients.StripeClient client;
         private readonly AppSettings settings;
+        private ONStripeService stripeService;
 
         public PaymentsService(ILogger<PaymentsService> logger, ISubscriptionRecordProvider subscriptionProvider, Clients.StripeClient client, IOptions<AppSettings> settings)
         {
@@ -28,6 +30,7 @@ namespace ON.Authorization.Stripe.Service
             this.subscriptionProvider = subscriptionProvider;
             this.client = client;
             this.settings = settings.Value;
+            this.stripeService = new ONStripeService(settings);
         }
 
         public override async Task<CancelOwnSubscriptionResponse> CancelOwnSubscription(CancelOwnSubscriptionRequest request, ServerCallContext context)
@@ -121,6 +124,30 @@ namespace ON.Authorization.Stripe.Service
             {
                 return new NewOwnSubscriptionResponse() { Error = "Unknown error" };
             }
+        }
+
+        public override async Task<CreateBillingPortalResponse> CreateBillingPortal(CreateBillingPortalRequest request, ServerCallContext context)
+        {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null)
+                return new CreateBillingPortalResponse() { Error = "No user token specified" };
+
+            if (request?.CustomerId == null)
+            {
+                return new CreateBillingPortalResponse() { Error = "Invalid Customer Id" };
+            }
+
+            var portalUrl = await stripeService.CreateBillingPortal(request.CustomerId);
+
+            if (portalUrl == null)
+            {
+                return new CreateBillingPortalResponse() { Error = "Error creating portal" };
+            }
+
+            return new CreateBillingPortalResponse()
+            {
+                Url = portalUrl,
+            };
         }
     }
 }

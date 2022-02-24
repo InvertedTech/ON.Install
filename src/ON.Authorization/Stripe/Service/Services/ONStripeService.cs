@@ -1,23 +1,44 @@
-﻿using Stripe;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using ON.Authorization.Stripe.Service.Models;
+using Stripe;
 using Stripe.BillingPortal;
 using System.Threading.Tasks;
 
-// TODO: Delete File
-
-namespace ON.Authorization.Stripe.Web.Services
+namespace ON.Authorization.Stripe.Service.Services
 {
-    public class PortalService
+    public class ONStripeService
     {
-        private StripeClient _stripeClient;
+        private readonly ILogger<ONStripeService> logger;
+        private readonly AppSettings settings;
+        private StripeClient stripe;
+        private SubscriptionService subService;
 
-        public PortalService(StripeClient client)
-        {
-            this._stripeClient = client;
+        public ONStripeService(IOptions<AppSettings> settings)
+        { 
+            this.settings = settings.Value;
+            this.stripe = new StripeClient(this.settings.StripeClientSecret);
         }
 
-        private async Task<string> CreatePortalConfig()
+        public async Task<bool> CancelSubscription(string subId)
         {
-            StripeConfiguration.ApiKey = this._stripeClient.ApiKey;
+            StripeConfiguration.ApiKey = this.stripe.ApiKey;
+            subService = new SubscriptionService(stripe);
+
+            var cancelledSub = await subService.CancelAsync(subId);
+
+            if (cancelledSub != null)
+            {
+                return true;
+            }
+            
+            return false;
+        }
+
+        private async Task<string> ConfigurePortal()
+        {
+            // TODO: Check for existing portal config
+            StripeConfiguration.ApiKey = this.stripe.ApiKey;
             var options = new ConfigurationCreateOptions
             {
                 Features = new ConfigurationFeaturesOptions
@@ -50,23 +71,25 @@ namespace ON.Authorization.Stripe.Web.Services
 
             var configService = new ConfigurationService();
             var config = await configService.CreateAsync(options);
+
             return config.Id;
         }
-        
-        public async Task<string> CreatePortal(string customerId)
-        {
-            StripeConfiguration.ApiKey = this._stripeClient.ApiKey;
 
-            var configId = await this.CreatePortalConfig();
+        public async Task<string> CreateBillingPortal(string customerId)
+        {
+            StripeConfiguration.ApiKey = this.stripe.ApiKey;
+            var configId = await ConfigurePortal();
             var portalOpts = new SessionCreateOptions
             {
                 Customer = customerId,
-                Configuration = configId,
+                Configuration = configId
             };
 
             var service = new SessionService();
             var session = await service.CreateAsync(portalOpts);
+
             return session.Url;
         }
     }
 }
+
