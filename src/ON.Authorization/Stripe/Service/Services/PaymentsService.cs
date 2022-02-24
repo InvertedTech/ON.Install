@@ -46,6 +46,13 @@ namespace ON.Authorization.Stripe.Service
                 if (record == null)
                     return new CancelOwnSubscriptionResponse() { Error = "Record not found" };
 
+                //var isCancelled = await stripeService.CancelSubscription(record.SubscriptionId);
+
+                //if (!isCancelled)
+                //{
+                //    return new CancelOwnSubscriptionResponse() { Error = "Unknown error" };
+                //}
+
                 record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.RenewsOnUTC = null;

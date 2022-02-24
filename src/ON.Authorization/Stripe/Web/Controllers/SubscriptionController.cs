@@ -57,18 +57,6 @@ namespace ON.Authorization.Stripe.Web.Controllers
             return View("Main", new CurrentViewModel(rec.Level, acctsService, rec.CanceledOnUTC != null));
         }
 
-        [HttpGet("cancel")]
-        public async Task<IActionResult> Cancel(string reason = null)
-        {
-            // TODO: Move to billing portal
-            var res = await paymentsService.CancelSubscription(reason ?? "No reason");
-            SubscriptionRecord record = res.Record;
-            logger.LogWarning($"***HIT: {record.SubscriptionId}***");
-            this.subscriptionService.Cancel(record.SubscriptionId);
-
-            return RedirectToAction(nameof(OverviewGet));
-        }
-
         [HttpPost("create-checkout-session")]
         public async Task<IActionResult> CreateCheckoutSession(string PriceId)
         {
@@ -140,7 +128,25 @@ namespace ON.Authorization.Stripe.Web.Controllers
 
 
                         break;
-                    case "customer.subscription.deleted":
+                    case "customer.subscription.updated":
+                        var subscription = stripeEvent.Data.Object as Subscription;
+
+
+                        if (string.IsNullOrWhiteSpace(subscription.Id))
+                            return RedirectToAction(nameof(OverviewGet));
+
+                        if (subscription.CancelAt == null)
+                        {
+                            var price = subscription.Items.First().Price.UnitAmount;
+                            var custId = subscription.CustomerId;
+
+                            await paymentsService.NewSubscription(subscription.Id, (int)price, custId);
+                            logger.LogInformation($"### Plan was uncancelled ###");
+                            break;
+                        }
+
+                        await paymentsService.CancelSubscription(subscription.Id);
+
                         break;
                     default:
                         return BadRequest();

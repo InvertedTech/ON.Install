@@ -17,9 +17,6 @@
     }
     else
     {
-        <br />
-        <a href="/subscription/stripe/cancel">Cancel my subscription</a>
-        <br />
         <form action="/subscription/stripe/create-customer-portal" method="POST">
                               
 
@@ -31,6 +28,14 @@
 
 @if (Model == null || Model.IsCancelled)
 {
+    <br />
+        <form action="/subscription/stripe/create-customer-portal" method="POST">
+                              
+
+            <input type="hidden" name="" value="" />
+            <button type="submit">Manage my subscription</button>
+        </form>
+    <br />
     <h1>Sign up for membership</h1>
     <br />
 

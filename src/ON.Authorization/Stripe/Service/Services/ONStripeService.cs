@@ -71,6 +71,12 @@ namespace ON.Authorization.Stripe.Service.Services
                     {
                         Enabled = true,
                     },
+                    SubscriptionCancel = new ConfigurationFeaturesSubscriptionCancelOptions
+                    {
+                        Enabled= true,
+                        Mode = "at_period_end",
+                        ProrationBehavior = "none"
+                    }
                 },
                 BusinessProfile = new ConfigurationBusinessProfileOptions
                 {
