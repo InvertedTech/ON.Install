@@ -89,40 +89,40 @@ namespace ON.Authorization.Stripe.Web.Controllers
             }
         }
 
-        [HttpPost("create-payment-intent")]
-        public async Task<IActionResult> CreatePaymentIntent()
-        {
-            var options = new PaymentIntentCreateOptions
-            {
-                Amount = 1999,
-                Currency = "USD",
-                PaymentMethodTypes = new List<string>
-                {
-                    "card"
-                }
-            };
-            var service = new PaymentIntentService(this.stripeClient);
+        //[HttpPost("create-payment-intent")]
+        //public async Task<IActionResult> CreatePaymentIntent()
+        //{
+        //    var options = new PaymentIntentCreateOptions
+        //    {
+        //        Amount = 1999,
+        //        Currency = "USD",
+        //        PaymentMethodTypes = new List<string>
+        //        {
+        //            "card"
+        //        }
+        //    };
+        //    var service = new PaymentIntentService(this.stripeClient);
 
-            try
-            {
-                var paymentIntent = await service.CreateAsync(options);
-                return Ok(new { clientSecret = paymentIntent.ClientSecret });
-            }
-            catch (StripeException ex)
-            {
-                return BadRequest(new
-                {
-                    Error = new
-                    {
-                        Message = ex.Message,
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //    try
+        //    {
+        //        var paymentIntent = await service.CreateAsync(options);
+        //        return Ok(new { clientSecret = paymentIntent.ClientSecret });
+        //    }
+        //    catch (StripeException ex)
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            Error = new
+        //            {
+        //                Message = ex.Message,
+        //            }
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
         [HttpPost("create-customer-portal")]
         public async Task<IActionResult> CreateCustomerPortal()
@@ -162,15 +162,6 @@ namespace ON.Authorization.Stripe.Web.Controllers
                         logger.LogInformation($"### Completed Checkout Session ###");
                         break;
                     case "payment_intent.created":
-                        var intent = stripeEvent.Data.Object as PaymentIntent;
-
-                        if (intent == null)
-                        {
-                            logger.LogError($"### Payment Intent Failed ###");
-                            // Handle
-                            break;
-                        }
-
                         logger.LogInformation($"### Created Payment Intent ###");
                         break;
                     case "customer.subscription.created":
@@ -185,6 +176,8 @@ namespace ON.Authorization.Stripe.Web.Controllers
                         logger.LogWarning($"***Completed Subscription Creation");
 
 
+                        break;
+                    case "customer.subscription.deleted":
                         break;
                     default:
                         return BadRequest();
