@@ -33,7 +33,6 @@ namespace ON.Authorization.Stripe.Web.Controllers
         private StripeClient stripeClient;
         private EventService eventService;
         private SubscriptionService subscriptionService;
-        private CustomerService customerService;
 
         public SubscriptionController(ILogger<SubscriptionController> logger, PaymentsService paymentsService, Services.AccountService acctsService, ONUserHelper userHelper)
         {
@@ -45,7 +44,6 @@ namespace ON.Authorization.Stripe.Web.Controllers
 
             // Move to Server
             this.stripeClient = new StripeClient("sk_test_51KARZjJUpMW7yiO47dnj228fk6q4YKFLAObA9lMSg21R7VTpGwkUTScaD03lKv7oyQpB5lykutwX0PYIja96Y62W00YnJBQHFP");
-            this.customerService = new CustomerService(stripeClient);
             this.subscriptionService = new SubscriptionService(stripeClient);
             this.eventService = new EventService(stripeClient);
         }
