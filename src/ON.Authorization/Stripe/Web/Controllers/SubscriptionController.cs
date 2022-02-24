@@ -89,41 +89,6 @@ namespace ON.Authorization.Stripe.Web.Controllers
             }
         }
 
-        //[HttpPost("create-payment-intent")]
-        //public async Task<IActionResult> CreatePaymentIntent()
-        //{
-        //    var options = new PaymentIntentCreateOptions
-        //    {
-        //        Amount = 1999,
-        //        Currency = "USD",
-        //        PaymentMethodTypes = new List<string>
-        //        {
-        //            "card"
-        //        }
-        //    };
-        //    var service = new PaymentIntentService(this.stripeClient);
-
-        //    try
-        //    {
-        //        var paymentIntent = await service.CreateAsync(options);
-        //        return Ok(new { clientSecret = paymentIntent.ClientSecret });
-        //    }
-        //    catch (StripeException ex)
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Error = new
-        //            {
-        //                Message = ex.Message,
-        //            }
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
-
         [HttpPost("create-customer-portal")]
         public async Task<IActionResult> CreateCustomerPortal()
         {
