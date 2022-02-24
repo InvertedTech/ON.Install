@@ -26,7 +26,9 @@ namespace ON.Authorization.Stripe.Service.Services
         public ONStripeService(IOptions<AppSettings> settings)
         { 
             this.settings = settings.Value;
-            this.stripe = new StripeClient(this.settings.StripeClientSecret);
+
+            stripe = new StripeClient(this.settings.StripeClientSecret);
+            priceService = new PriceService(stripe);
         }
 
         public async Task<bool> CancelSubscription(string subId)
@@ -106,8 +108,8 @@ namespace ON.Authorization.Stripe.Service.Services
             try
             {
                 StripeConfiguration.ApiKey = this.stripe.ApiKey;
-                priceService = new PriceService(stripe);
                 Price price = await priceService.GetAsync(priceId);
+
                 var chekoutOpts= new CheckoutSessionOpts
                 {
                     SuccessUrl = "http://localhost/subscription/",
