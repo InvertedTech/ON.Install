@@ -29,7 +29,10 @@ namespace ON.Content.SimpleCMS.Service
 
             List<ContentRecord> list = new();
             await foreach (var rec in dataProvider.GetAll())
+            {
+                rec.Public.Body = "";
                 list.Add(rec);
+            }
 
             res.Records.AddRange(list.OrderByDescending( r => r.Public.CreatedOnUTC));
 
@@ -38,15 +41,23 @@ namespace ON.Content.SimpleCMS.Service
 
         public override async Task<GetContentResponse> GetContent(GetContentRequest request, ServerCallContext context)
         {
-            //var userToken = context.GetHttpContext().User as ONUser;
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             Guid contentId = new Guid(request.ContentID.ToByteArray());
 
             if (contentId == Guid.Empty)
                 return new GetContentResponse();
 
+            var rec = await dataProvider.GetById(contentId);
+
+            if (userToken == null || !userToken.IsWriterOrHigher)
+            {
+                if ((userToken?.SubscriptionLevel ?? 0) < rec.Public.SubscriptionLevel)
+                    rec.Public.Body = "";
+            }
+
             return new GetContentResponse
             {
-                Content = await dataProvider.GetById(contentId)
+                Content = rec
             };
         }
 
