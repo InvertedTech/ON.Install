@@ -27,6 +27,13 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
         public override Task<ServiceStatusResponse> ServiceOperation(ServiceOperationRequest request, ServerCallContext context)
         {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null || !userToken.Roles.Contains(ONUser.ROLE_OPS))
+                return Task.FromResult(new ServiceStatusResponse()
+                {
+                    Status = offlineHelper.CurrentStatus
+                });
+
             switch (request.Operation)
             {
                 case ServiceOperationRequest.Types.ServiceOperation.Offline:
@@ -39,7 +46,10 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     break;
             }
 
-            return Task.FromResult(new ServiceStatusResponse());
+            return Task.FromResult(new ServiceStatusResponse()
+            {
+                Status = offlineHelper.CurrentStatus
+            });
         }
     }
 }
