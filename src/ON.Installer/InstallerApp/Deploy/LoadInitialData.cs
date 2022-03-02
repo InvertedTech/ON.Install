@@ -1,5 +1,5 @@
 ﻿using InstallerApp.BackupRestore;
-using ON.Fragment.Protos.ON.Fragments.Generic;
+using ON.Fragments.Generic;
 using ON.Fragments.Authentication;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace InstallerApp.Deploy
         {
             try
             {
-                await window.AddLine("--- Changing DNS ---");
+                await window.AddLine("--- Load Initial Data ---");
 
                 var date = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 var password = "admin";
