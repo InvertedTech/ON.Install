@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package ON.Fragments.Content;
 
+import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Content/ContentRecord.proto";
 
 // Service for Content fragment interface
@@ -16,7 +17,7 @@ message GetAllContentRequest {
 }
   
 message GetAllContentResponse {
-  repeated ContentRecord Records = 1;
+  repeated ContentListRecord Records = 1;
 }
   
 message GetContentRequest {
@@ -33,4 +34,13 @@ message SaveContentRequest {
   
 message SaveContentResponse {
   ContentRecord Content = 1;
+}
+
+message ContentListRecord {
+  bytes ContentID = 1;                          // Guid for the content record
+  google.protobuf.Timestamp CreatedOnUTC = 2;   // UTC timestamp when content was created
+  google.protobuf.Timestamp PublishedOnUTC = 3; // UTC timestamp when content was published
+  string Title = 4;
+  string Subtitle = 5;
+  uint32 SubscriptionLevel = 6;
 }
