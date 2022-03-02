@@ -27,7 +27,7 @@ namespace ON.Content.SimpleCMS.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View("Home", new HomeViewModel((await contentService.GetAll()).Records.Where(r => r.Public.PublishedOnUTC != null), userHelper.MyUser));
+            return View("Home", new HomeViewModel((await contentService.GetAll()).Records.Where(r => r.PublishedOnUTC != null), userHelper.MyUser));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

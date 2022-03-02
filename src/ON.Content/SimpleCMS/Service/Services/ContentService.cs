@@ -27,14 +27,21 @@ namespace ON.Content.SimpleCMS.Service
         {
             var res = new GetAllContentResponse();
 
-            List<ContentRecord> list = new();
+            List<ContentListRecord> list = new();
             await foreach (var rec in dataProvider.GetAll())
             {
-                rec.Public.Body = "";
-                list.Add(rec);
+                list.Add(new ContentListRecord()
+                {
+                    ContentID = rec.Public.ContentID,
+                    CreatedOnUTC = rec.Public.CreatedOnUTC,
+                    PublishedOnUTC = rec.Public.PublishedOnUTC,
+                    Title = rec.Public.Title,
+                    Subtitle = rec.Public.Subtitle,
+                    SubscriptionLevel = rec.Public.SubscriptionLevel,
+                });
             }
 
-            res.Records.AddRange(list.OrderByDescending( r => r.Public.CreatedOnUTC));
+            res.Records.AddRange(list.OrderByDescending( r => r.CreatedOnUTC));
 
             return res;
         }

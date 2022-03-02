@@ -13,7 +13,7 @@ namespace ON.Content.SimpleCMS.Web.Models
     {
         public HomeViewModel() { }
 
-        public HomeViewModel(IEnumerable<ContentRecord> records, ONUser user)
+        public HomeViewModel(IEnumerable<ContentListRecord> records, ONUser user)
         {
             Records.AddRange(records);
 
@@ -25,6 +25,6 @@ namespace ON.Content.SimpleCMS.Web.Models
 
         public uint UserSubscriptionLevel { get; set; } = 0;
 
-        public List<ContentRecord> Records { get; } = new List<ContentRecord>();
+        public List<ContentListRecord> Records { get; } = new List<ContentListRecord>();
     }
 }
