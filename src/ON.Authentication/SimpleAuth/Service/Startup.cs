@@ -36,6 +36,8 @@ namespace ON.Authentication.SimpleAuth.Service
             services.AddSingleton<OfflineHelper>();
 
             services.AddJwtAuthentication();
+
+            Console.WriteLine("*** Loading pubkey: ("+ JwtExtensions.GetPublicKey()+ ")  ***");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
