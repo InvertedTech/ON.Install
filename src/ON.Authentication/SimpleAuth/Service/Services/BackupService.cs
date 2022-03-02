@@ -94,9 +94,14 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !userToken.Roles.Contains(ONUser.ROLE_BACKUP))
+                if (userToken == null)
                 {
                     logger.LogWarning("*** RestoreAllData - token bad ***");
+                    return res;
+                }
+                if (!userToken.Roles.Contains(ONUser.ROLE_BACKUP))
+                {
+                    logger.LogWarning("*** RestoreAllData - not backup user: (" + String.Join(',', userToken.Roles) + ") ***");
                     return res;
                 }
 
