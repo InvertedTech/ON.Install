@@ -103,6 +103,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 if (!userToken.Roles.Contains(ONUser.ROLE_BACKUP))
                 {
                     logger.LogWarning("*** RestoreAllData - not backup user: (" + String.Join(',', userToken.Roles) + ") ***");
+                    logger.LogWarning("*** RestoreAllData - jwttoken (" + (context.GetHttpContext()?.Request?.Headers["Authorization"] ?? "empty") + ") ***");
                     return res;
                 }
 
