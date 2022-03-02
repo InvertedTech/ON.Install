@@ -97,6 +97,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 if (userToken == null)
                 {
                     logger.LogWarning("*** RestoreAllData - token bad ***");
+                    logger.LogWarning("*** RestoreAllData - jwttoken (" + (context.GetHttpContext()?.Request?.Headers["Authorization"] ?? "empty") + ") ***");
                     return res;
                 }
                 if (!userToken.Roles.Contains(ONUser.ROLE_BACKUP))
