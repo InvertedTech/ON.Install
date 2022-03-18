@@ -17,7 +17,7 @@ namespace ON.Fragments.Content
                 public Guid ContentIDGuid
                 {
                     get => ContentID.ToGuid();
-                    set => ContentID = value.ToByteString();
+                    set => ContentID = value.ToString();
                 }
             }
         }

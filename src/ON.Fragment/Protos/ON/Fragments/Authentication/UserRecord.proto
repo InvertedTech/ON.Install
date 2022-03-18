@@ -7,7 +7,7 @@ import "google/protobuf/timestamp.proto";
 // User authentication data
 message UserRecord {
   message PublicData {
-    bytes UserID = 1;                   // Guid for the user
+    string UserID = 1;                   // Guid for the user
     string UserName = 2;                // User name of the user
     string DisplayName = 3;             // Public display name of the user
     repeated string Identities = 4;     // Public identities associated with the user ex: user@domain.com

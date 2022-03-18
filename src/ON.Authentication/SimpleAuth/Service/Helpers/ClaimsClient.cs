@@ -60,6 +60,9 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 
         private async Task<IEnumerable<ClaimRecord>> GetOtherClaims(Guid userId, Channel channel)
         {
+            if (channel == null)
+                return new ClaimRecord[0];
+
             try
             {
                 var client = new ClaimsInterface.ClaimsInterfaceClient(channel);
@@ -70,7 +73,7 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 
                 return reply.Claims;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

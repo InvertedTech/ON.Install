@@ -2,42 +2,104 @@ syntax = "proto3";
 
 package ON.Fragments.Authentication;
 
+import "google/api/annotations.proto";
 import "Protos/ON/Fragments/Authentication/UserRecord.proto";
 
 // Service for Authentication user fragment interface
 service UserInterface {
   // Authenticate a user with a login and password, return a bearer token if successful
-  rpc AuthenticateUser (AuthenticateUserRequest) returns (AuthenticateUserResponse) {}
+  rpc AuthenticateUser (AuthenticateUserRequest) returns (AuthenticateUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/login"
+      body: "*"
+    };
+  }
 
   // Change another user's password.  Requires current user to be an admin.
-  rpc ChangeOtherPassword (ChangeOtherPasswordRequest) returns (ChangeOtherPasswordResponse) {}
+  rpc ChangeOtherPassword (ChangeOtherPasswordRequest) returns (ChangeOtherPasswordResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/password"
+      body: "*"
+    };
+  }
 
   // Change user's own password.  Requires user to know their current password.
-  rpc ChangeOwnPassword (ChangeOwnPasswordRequest) returns (ChangeOwnPasswordResponse) {}
+  rpc ChangeOwnPassword (ChangeOwnPasswordRequest) returns (ChangeOwnPasswordResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/password"
+      body: "*"
+    };
+  }
 
   // Create account for a user
-  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {}
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/createuser"
+      body: "*"
+    };
+  }
 
   // Disable another user.  Requires current user to be an admin.
-  rpc DisableOtherUser (DisableOtherUserRequest) returns (DisableOtherUserResponse) {}
+  rpc DisableOtherUser (DisableEnableOtherUserRequest) returns (DisableEnableOtherUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/user/{UserID}/disable"
+    };
+  }
 
   // Enable another user.  Requires current user to be an admin.
-  rpc EnableOtherUser (EnableOtherUserRequest) returns (EnableOtherUserResponse) {}
+  rpc EnableOtherUser (DisableEnableOtherUserRequest) returns (DisableEnableOtherUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/user/{UserID}/enable"
+    };
+  }
 
   // Get User record
-  rpc GetOtherUser (GetOtherUserRequest) returns (GetOtherUserResponse) {}
+  rpc GetOtherUser (GetOtherUserRequest) returns (GetOtherUserResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/admin/user/{UserID}"
+    };
+  }
 
   // Get User record
-  rpc GetOwnUser (GetOwnUserRequest) returns (GetOwnUserResponse) {}
+  rpc GetOwnUser (GetOwnUserRequest) returns (GetOwnUserResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/user"
+    };
+  }
 
   // Modify User record
-  rpc ModifyOtherUser (ModifyOtherUserRequest) returns (ModifyOtherUserResponse) {}
+  rpc ModifyOtherUser (ModifyOtherUserRequest) returns (ModifyOtherUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/user"
+      body: "*"
+    };
+  }
 
   // Modify User record
-  rpc ModifyOwnUser (ModifyOwnUserRequest) returns (ModifyOwnUserResponse) {}
+  rpc ModifyOwnUser (ModifyOwnUserRequest) returns (ModifyOwnUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/user"
+      body: "*"
+    };
+  }
 
   // Renew the bearer token
-  rpc RenewToken (RenewTokenRequest) returns (RenewTokenResponse) {}
+  rpc RenewToken (RenewTokenRequest) returns (RenewTokenResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/renewtoken"
+    };
+  }
 }
   
 message AuthenticateUserRequest {
@@ -50,14 +112,14 @@ message AuthenticateUserResponse {
 }
   
 message ChangeOtherPasswordRequest {
-  bytes UserID = 1;                   // Guid for the user
+  string UserID = 1;                   // Guid for the user
   string NewPassword = 2;
 }
   
 message ChangeOtherPasswordResponse {
-  ErrorType Error = 1;
+  ChangeOtherPasswordResponseErrorType Error = 1;
 
-  enum ErrorType {
+  enum ChangeOtherPasswordResponseErrorType {
     NoError = 0;
     UnknownError = -1;
     BadNewPassword = 2;
@@ -70,9 +132,9 @@ message ChangeOwnPasswordRequest {
 }
   
 message ChangeOwnPasswordResponse {
-  ErrorType Error = 1;
+  ChangeOwnPasswordResponseErrorType Error = 1;
 
-  enum ErrorType {
+  enum ChangeOwnPasswordResponseErrorType {
     NoError = 0;
     UnknownError = -1;
     BadOldPassword = 1;
@@ -87,43 +149,30 @@ message CreateUserRequest {
   
 message CreateUserResponse {
   string BearerToken = 1;
-  ErrorType Error = 2;
+  CreateUserResponseErrorType Error = 2;
 
-  enum ErrorType {
+  enum CreateUserResponseErrorType {
     NoError = 0;
     UnknownError = -1;
     UserNameTaken = 1;
   }
 }
 
-message DisableOtherUserRequest {
-  bytes UserID = 1;                   // Guid for the user
+message DisableEnableOtherUserRequest {
+  string UserID = 1;                   // Guid for the user
 }
   
-message DisableOtherUserResponse {
-  ErrorType Error = 1;
+message DisableEnableOtherUserResponse {
+  DisableEnableOtherUserResponseErrorType Error = 1;
 
-  enum ErrorType {
-    NoError = 0;
-    UnknownError = -1;
-  }
-}
-  
-message EnableOtherUserRequest {
-  bytes UserID = 1;                   // Guid for the user
-}
-  
-message EnableOtherUserResponse {
-  ErrorType Error = 1;
-
-  enum ErrorType {
+  enum DisableEnableOtherUserResponseErrorType {
     NoError = 0;
     UnknownError = -1;
   }
 }
   
 message GetOtherUserRequest {
-  bytes UserID = 1;                   // Guid for the user
+  string UserID = 1;                   // Guid for the user
 }
   
 message GetOtherUserResponse {
@@ -138,7 +187,7 @@ message GetOwnUserResponse {
 }
 
 message ModifyOtherUserRequest {
-  bytes UserID = 1;                 // Guid for the user
+  string UserID = 1;                 // Guid for the user
   string UserName = 2;              // User name of the user
   string DisplayName = 3;           // Public display name of the user
   repeated string Emails = 4;       // Private email(s) used for password resets

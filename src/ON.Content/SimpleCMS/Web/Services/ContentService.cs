@@ -33,7 +33,7 @@ namespace ON.Content.SimpleCMS.Web.Services
                 {
                     Public = new ContentRecord.Types.PublicData
                     {
-                        ContentID = Google.Protobuf.ByteString.CopyFrom(Guid.NewGuid().ToByteArray()),
+                        ContentID = Guid.NewGuid().ToString(),
                         Title = vm.Title,
                         Subtitle = vm.Subtitle,
                         Author = vm.Author,
@@ -66,7 +66,7 @@ namespace ON.Content.SimpleCMS.Web.Services
         {
             var req = new GetContentRequest
             {
-                ContentID = Google.Protobuf.ByteString.CopyFrom(contentId.ToByteArray()),
+                ContentID = contentId.ToString(),
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);

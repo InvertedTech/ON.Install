@@ -9,14 +9,9 @@ namespace ON.Fragments.Generic
 {
     public static class GenericExtensions
     {
-        public static ByteString ToByteString(this Guid id)
+        public static Guid ToGuid(this string id)
         {
-            return ByteString.CopyFrom(id.ToByteArray());
-        }
-
-        public static Guid ToGuid(this ByteString id)
-        {
-            return new Guid(id.Span);
+            return new Guid(id);
         }
     }
 }

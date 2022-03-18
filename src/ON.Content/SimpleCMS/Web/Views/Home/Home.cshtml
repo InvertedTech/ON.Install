@@ -11,7 +11,7 @@
 {
     <i>@record.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</i>
     <h3>
-        <a href="/content/@(new Guid(record.ContentID.Span).ToString())">@record.Title</a>
+        <a href="/content/@(record.ContentID)">@record.Title</a>
         @if (record.SubscriptionLevel > 0 && Model.ShowLockStatus)
         {
             if (record.SubscriptionLevel > Model.UserSubscriptionLevel)

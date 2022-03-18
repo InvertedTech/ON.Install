@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using ON.Authentication.SimpleAuth.Service.Models;
 using ON.Fragments.Authentication;
+using ON.Fragments.Generic;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,7 +39,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         public async Task<bool> Create(UserRecord user)
         {
-            var id = new Guid(user.Public.UserID.Span);
+            var id = user.Public.UserID.ToGuid();
             var fd = GetDataFilePath(id);
             var fi = GetIndexFilePath(user.Public.UserName);
 
@@ -111,7 +112,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         public async Task Save(UserRecord user)
         {
-            var id = new Guid(user.Public.UserID.Span);
+            var id = user.Public.UserID.ToGuid();
             var fd = GetDataFilePath(id);
             await File.WriteAllBytesAsync(fd.FullName, user.ToByteArray());
         }
@@ -122,7 +123,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
             await foreach(var user in GetAll())
             {
-                var id = new Guid(user.Public.UserID.Span);
+                var id = user.Public.UserID.ToGuid();
                 var fi = GetIndexFilePath(user.Public.UserName);
 
                 await File.WriteAllTextAsync(fi.FullName, id.ToString());

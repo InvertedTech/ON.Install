@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using ON.Content.SimpleCMS.Service.Models;
 using ON.Fragments.Content;
+using ON.Fragments.Generic;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -54,7 +55,7 @@ namespace ON.Content.SimpleCMS.Service.Data
 
         public async Task Save(ContentRecord content)
         {
-            var id = new Guid(content.Public.ContentID.Span);
+            var id = content.Public.ContentID.ToGuid();
             var fd = GetContentFilePath(id);
             await File.WriteAllBytesAsync(fd.FullName, content.ToByteArray());
         }

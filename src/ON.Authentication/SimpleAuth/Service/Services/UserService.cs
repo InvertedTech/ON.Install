@@ -61,7 +61,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (!CryptographicOperations.FixedTimeEquals(user.Private.PasswordHash.Span, hash))
                 return new AuthenticateUserResponse();
 
-            var otherClaims = await claimsClient.GetOtherClaims(new Guid(user.Public.UserID.Span));
+            var otherClaims = await claimsClient.GetOtherClaims(user.Public.UserID.ToGuid());
 
             return new AuthenticateUserResponse()
             {
@@ -72,16 +72,16 @@ namespace ON.Authentication.SimpleAuth.Service.Services
         public override async Task<ChangeOtherPasswordResponse> ChangeOtherPassword(ChangeOtherPasswordRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
-                return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ErrorType.UnknownError };
+                return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ChangeOtherPasswordResponseErrorType.UnknownError };
 
             try
             {
                 if (!await AmIReallyAdmin(context))
-                    return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ErrorType.UnknownError };
+                    return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ChangeOtherPasswordResponseErrorType.UnknownError };
 
                 var record = await dataProvider.GetById(request.UserID.ToGuid());
                 if (record == null)
-                    return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ErrorType.UnknownError };
+                    return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ChangeOtherPasswordResponseErrorType.UnknownError };
 
                 byte[] salt = RandomNumberGenerator.GetBytes(16);
                 record.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
@@ -91,32 +91,32 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 await dataProvider.Save(record);
 
-                return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ErrorType.NoError };
+                return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ChangeOtherPasswordResponseErrorType.NoError };
             }
             catch
             {
-                return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ErrorType.UnknownError };
+                return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ChangeOtherPasswordResponseErrorType.UnknownError };
             }
         }
 
         public override async Task<ChangeOwnPasswordResponse> ChangeOwnPassword(ChangeOwnPasswordRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
-                return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ErrorType.UnknownError };
+                return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ChangeOwnPasswordResponseErrorType.UnknownError };
 
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
                 if (userToken == null)
-                    return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ErrorType.UnknownError };
+                    return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ChangeOwnPasswordResponseErrorType.UnknownError };
 
                 var record = await dataProvider.GetById(userToken.Id);
                 if (record == null)
-                    return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ErrorType.UnknownError };
+                    return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ChangeOwnPasswordResponseErrorType.UnknownError };
 
                 var hash = ComputeSaltedHash(request.OldPassword, record.Private.PasswordSalt.Span);
                 if (!CryptographicOperations.FixedTimeEquals(record.Private.PasswordHash.Span, hash))
-                    return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ErrorType.BadOldPassword };
+                    return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ChangeOwnPasswordResponseErrorType.BadOldPassword };
 
                 byte[] salt = RandomNumberGenerator.GetBytes(16);
                 record.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
@@ -126,11 +126,11 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 await dataProvider.Save(record);
 
-                return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ErrorType.NoError };
+                return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ChangeOwnPasswordResponseErrorType.NoError };
             }
             catch
             {
-                return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ErrorType.UnknownError };
+                return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ChangeOwnPasswordResponseErrorType.UnknownError };
             }
         }
 
@@ -140,14 +140,14 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (offlineHelper.IsOffline)
                 return new CreateUserResponse()
                 {
-                    Error = CreateUserResponse.Types.ErrorType.UnknownError
+                    Error = CreateUserResponse.Types.CreateUserResponseErrorType.UnknownError
                 };
 
             var user = request.Record;
             if (user == null)
                 return new CreateUserResponse()
                 {
-                    Error = CreateUserResponse.Types.ErrorType.UnknownError
+                    Error = CreateUserResponse.Types.CreateUserResponseErrorType.UnknownError
                 };
 
             byte[] salt = RandomNumberGenerator.GetBytes(16);
@@ -158,20 +158,20 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (!IsValid(user))
                 return new CreateUserResponse
                 {
-                    Error = CreateUserResponse.Types.ErrorType.UnknownError
+                    Error = CreateUserResponse.Types.CreateUserResponseErrorType.UnknownError
                 };
 
             if (await dataProvider.Exists(request.Record.Public.UserName))
                 return new CreateUserResponse
                 {
-                    Error = CreateUserResponse.Types.ErrorType.UserNameTaken
+                    Error = CreateUserResponse.Types.CreateUserResponseErrorType.UserNameTaken
                 };
 
             var res = await dataProvider.Create(user);
             if (!res)
                 return new CreateUserResponse
                 {
-                    Error = CreateUserResponse.Types.ErrorType.UnknownError
+                    Error = CreateUserResponse.Types.CreateUserResponseErrorType.UnknownError
                 };
 
             return new CreateUserResponse
@@ -180,56 +180,56 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             };
         }
 
-        public override async Task<DisableOtherUserResponse> DisableOtherUser(DisableOtherUserRequest request, ServerCallContext context)
+        public override async Task<DisableEnableOtherUserResponse> DisableOtherUser(DisableEnableOtherUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
-                return new DisableOtherUserResponse { Error = DisableOtherUserResponse.Types.ErrorType.UnknownError };
+                return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.UnknownError };
 
             try
             {
                 if (!await AmIReallyAdmin(context))
-                    return new DisableOtherUserResponse { Error = DisableOtherUserResponse.Types.ErrorType.UnknownError };
+                    return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.UnknownError };
 
                 var record = await dataProvider.GetById(request.UserID.ToGuid());
                 if (record == null)
-                    return new DisableOtherUserResponse { Error = DisableOtherUserResponse.Types.ErrorType.UnknownError };
+                    return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.UnknownError };
 
                 record.Public.DisabledOnUTC = record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
 
                 await dataProvider.Save(record);
 
-                return new DisableOtherUserResponse { Error = DisableOtherUserResponse.Types.ErrorType.NoError };
+                return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.NoError };
             }
             catch
             {
-                return new DisableOtherUserResponse { Error = DisableOtherUserResponse.Types.ErrorType.UnknownError };
+                return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.UnknownError };
             }
         }
 
-        public override async Task<EnableOtherUserResponse> EnableOtherUser(EnableOtherUserRequest request, ServerCallContext context)
+        public override async Task<DisableEnableOtherUserResponse> EnableOtherUser(DisableEnableOtherUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
-                return new EnableOtherUserResponse { Error = EnableOtherUserResponse.Types.ErrorType.UnknownError };
+                return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.UnknownError };
 
             try
             {
                 if (!await AmIReallyAdmin(context))
-                    return new EnableOtherUserResponse { Error = EnableOtherUserResponse.Types.ErrorType.UnknownError };
+                    return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.UnknownError };
 
                 var record = await dataProvider.GetById(request.UserID.ToGuid());
                 if (record == null)
-                    return new EnableOtherUserResponse { Error = EnableOtherUserResponse.Types.ErrorType.UnknownError };
+                    return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.UnknownError };
 
                 record.Public.DisabledOnUTC = null;
                 record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
 
                 await dataProvider.Save(record);
 
-                return new EnableOtherUserResponse { Error = EnableOtherUserResponse.Types.ErrorType.NoError };
+                return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.NoError };
             }
             catch
             {
-                return new EnableOtherUserResponse { Error = EnableOtherUserResponse.Types.ErrorType.UnknownError };
+                return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.UnknownError };
             }
         }
 
@@ -399,6 +399,9 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 return false;
 
             var record = await dataProvider.GetById(userToken.Id);
+            if (record == null)
+                return false;
+
             if (!record.Public.Roles.Contains(ONUser.ROLE_ADMIN))
                 return false;
 
@@ -407,7 +410,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
         private bool IsValid(UserRecord user)
         {
-            if (new Guid(user.Public.UserID.Span) == Guid.Empty)
+            if (user.Public.UserID.ToGuid() == Guid.Empty)
                 return false;
 
             user.Public.DisplayName = user.Public.DisplayName?.Trim() ?? "";
@@ -467,7 +470,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
         {
             var onUser = new ONUser()
             {
-                Id = new Guid(user.Public.UserID.Span),
+                Id = user.Public.UserID.ToGuid(),
                 UserName = user.Public.UserName,
                 DisplayName = user.Public.DisplayName,
             };
@@ -513,7 +516,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             {
                 Public = new UserRecord.Types.PublicData()
                 {
-                    UserID = Guid.NewGuid().ToByteString(),
+                    UserID = Guid.NewGuid().ToString(),
                     UserName = "admin",
                     DisplayName = "Admin",
                     CreatedOnUTC = date,

@@ -68,7 +68,7 @@ namespace ON.Content.SimpleCMS.Web.Controllers
 
             var res = await contentService.CreateContent(vm);
 
-            return Redirect("/content/" + new Guid(res.Content.Public.ContentID.Span).ToString());
+            return Redirect("/content/" + res.Content.Public.ContentID);
         }
 
         [HttpGet("/content/{id}/edit")]
@@ -122,7 +122,7 @@ namespace ON.Content.SimpleCMS.Web.Controllers
 
             var res2 = await contentService.UpdateContent(rec);
 
-            return Redirect("/content/" + new Guid(res2.Content.Public.ContentID.Span).ToString());
+            return Redirect("/content/" + res2.Content.Public.ContentID);
         }
 
         [Authorize(Roles = ONUser.ROLE_ADMIN + "," + ONUser.ROLE_PUBLISHER)]

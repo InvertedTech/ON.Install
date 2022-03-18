@@ -7,7 +7,7 @@ import "google/protobuf/timestamp.proto";
 // Content record data
 message AssetRecord {
   message PublicData {
-    bytes AssetID = 1;                 // Guid for the content record
+    string AssetID = 1;                 // Guid for the content record
     google.protobuf.Timestamp CreatedOnUTC = 2; // UTC timestamp when content was created
     google.protobuf.Timestamp ModifiedOnUTC = 3;  // UTC timestamp when content record was last modified
     google.protobuf.Timestamp PublishedOnUTC = 4;  // UTC timestamp when content was published

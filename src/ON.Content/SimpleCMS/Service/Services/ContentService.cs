@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
 using ON.Fragments.Content;
+using ON.Fragments.Generic;
 
 namespace ON.Content.SimpleCMS.Service
 {
@@ -49,7 +50,7 @@ namespace ON.Content.SimpleCMS.Service
         public override async Task<GetContentResponse> GetContent(GetContentRequest request, ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-            Guid contentId = new Guid(request.ContentID.ToByteArray());
+            Guid contentId = request.ContentID.ToGuid();
 
             if (contentId == Guid.Empty)
                 return new GetContentResponse();

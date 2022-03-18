@@ -17,7 +17,7 @@ namespace ON.Fragments.Authentication
                 public Guid UserIDGuid 
                 {
                     get => UserID.ToGuid();
-                    set => UserID = value.ToByteString();
+                    set => UserID = value.ToString();
                 }
             }
         }

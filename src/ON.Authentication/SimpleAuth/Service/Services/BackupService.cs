@@ -109,7 +109,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 await foreach (var r in requestStream.ReadAllAsync())
                 {
-                    Guid id = new Guid(r.Record.Data.Public.UserID.Span);
+                    Guid id = r.Record.Data.Public.UserID.ToGuid();
                     idsLoaded.Add(id);
 
                     try
@@ -138,7 +138,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 {
                     await foreach (var r in dataProvider.GetAll())
                     {
-                        Guid id = new Guid(r.Public.UserID.Span);
+                        Guid id = r.Public.UserID.ToGuid();
                         if (!idsLoaded.Contains(id))
                         {
                             await dataProvider.Delete(id);

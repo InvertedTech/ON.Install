@@ -17,7 +17,7 @@ namespace ON.Fragments.Content
                 public Guid AssetIDGuid
                 {
                     get => AssetID.ToGuid();
-                    set => AssetID = value.ToByteString();
+                    set => AssetID = value.ToString();
                 }
             }
         }
