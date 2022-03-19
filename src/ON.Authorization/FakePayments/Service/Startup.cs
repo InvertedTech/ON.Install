@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using ON.Authentication;
 using ON.Authorization.FakePayments.Service.Data;
 using ON.Authorization.FakePayments.Service.Models;
@@ -28,7 +29,14 @@ namespace ON.Authorization.FakePayments.Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddGrpc();
+            services.AddGrpcHttpApi();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("fakepay", new OpenApiInfo { Title = "Fake Pay API" });
+            });
+            services.AddGrpcSwagger();
+
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<ISubscriptionRecordProvider, FileSystemSubscriptionRecordProvider>();
 
@@ -41,6 +49,16 @@ namespace ON.Authorization.FakePayments.Service
             app.Map("/ping", (app1) => app1.Run(async context => {
                 await context.Response.BodyWriter.WriteAsync(PONG_RESPONSE);
             }));
+
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "api/{documentName}/swagger.json";
+            });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/api/fakepay/swagger.json", "Fake Pay API");
+                c.RoutePrefix = "api/fakepay";
+            });
 
             app.UseRouting();
 

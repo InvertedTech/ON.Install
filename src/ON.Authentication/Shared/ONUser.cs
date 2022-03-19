@@ -90,7 +90,7 @@ namespace ON.Authentication
 
         private bool IsValid()
         {
-            return Id != Guid.Empty;
+            return true;// Id != Guid.Empty;
         }
 
         private void LoadClaim(Claim claim)

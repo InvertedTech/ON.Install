@@ -13,11 +13,11 @@ namespace ON.Content.SimpleCMS.Web.Models
     {
         public ManageViewModel() { }
 
-        public ManageViewModel(IEnumerable<ContentRecord> records)
+        public ManageViewModel(IEnumerable<ContentListRecord> records)
         {
             Records.AddRange(records);
         }
 
-        public List<ContentRecord> Records { get; } = new List<ContentRecord>();
+        public List<ContentListRecord> Records { get; } = new List<ContentListRecord>();
     }
 }

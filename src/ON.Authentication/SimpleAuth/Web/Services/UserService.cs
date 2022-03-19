@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ON.Authentication.SimpleAuth.Web.Helper;
 using ON.Authentication.SimpleAuth.Web.Models;
-using ON.Fragment.Protos.ON.Fragments.Generic;
 using ON.Fragments.Authentication;
+using ON.Fragments.Generic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +41,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             return reply.BearerToken;
         }
 
-        public async Task<ChangeOwnPasswordResponse.Types.ErrorType> ChangePasswordCurrentUser(ChangePasswordViewModel vm)
+        public async Task<ChangeOwnPasswordResponse.Types.ChangeOwnPasswordResponseErrorType> ChangePasswordCurrentUser(ChangePasswordViewModel vm)
         {
             var req = new ChangeOwnPasswordRequest()
             {
@@ -64,7 +64,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
                     Private = new UserRecord.Types.PrivateData(),
                     Public = new UserRecord.Types.PublicData()
                     {
-                        UserID = Google.Protobuf.ByteString.CopyFrom(Guid.NewGuid().ToByteArray()),
+                        UserID = Guid.NewGuid().ToString(),
                         UserName = vm.UserName,
                         DisplayName = vm.DisplayName
                     }
@@ -107,7 +107,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
                 return null;
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
-            var reply = await client.GetOtherUserAsync(new GetOtherUserRequest() { UserID = userId.ToByteString() }, GetMetadata());
+            var reply = await client.GetOtherUserAsync(new GetOtherUserRequest() { UserID = userId.ToString() }, GetMetadata());
             return reply.Record;
         }
 
@@ -158,7 +158,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
 
             var req = new ModifyOtherUserRequest()
             {
-                UserID = userId.ToByteString(),
+                UserID = userId.ToString(),
                 UserName = vm.UserName,
                 DisplayName = vm.DisplayName,
             };

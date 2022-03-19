@@ -21,15 +21,15 @@
     {
         <tr>
             <td>
-                <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())">@record.Public.Title</a>
+                <a href="/content/@(record.ContentID)">@record.Title</a>
             </td>
-            <td>@record.Public.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</td>
+            <td>@record.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</td>
             <td>
-                @if (record.Public.PublishedOnUTC != null)
+                @if (record.PublishedOnUTC != null)
                 {
                     @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER))
                     {
-                        <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())/unpublish">Published</a>
+                        <a href="/content/@(record.ContentID)/unpublish">Published</a>
                     }
                     else
                     {
@@ -40,7 +40,7 @@
                 {
                     @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER))
                     {
-                        <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())/publish">Not Published</a>
+                        <a href="/content/@(record.ContentID)/publish">Not Published</a>
                     }
                     else
                     {
@@ -48,7 +48,7 @@
                     }
                 }
             </td>
-            <td>@(CurrencyLevel.FromValue(record.Public.SubscriptionLevel).Label)</td>
+            <td>@(CurrencyLevel.FromValue(record.SubscriptionLevel).Label)</td>
         </tr>
 
     }

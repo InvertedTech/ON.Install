@@ -1,4 +1,4 @@
-﻿using ON.Fragment.Protos.ON.Fragments.Generic;
+﻿using ON.Fragments.Generic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace ON.Fragments.Content
                 public Guid ContentIDGuid
                 {
                     get => ContentID.ToGuid();
-                    set => ContentID = value.ToByteString();
+                    set => ContentID = value.ToString();
                 }
             }
         }

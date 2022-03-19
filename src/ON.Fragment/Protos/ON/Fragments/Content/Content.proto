@@ -2,25 +2,42 @@ syntax = "proto3";
 
 package ON.Fragments.Content;
 
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Content/ContentRecord.proto";
 
 // Service for Content fragment interface
 service ContentInterface {
-  rpc GetAllContent (GetAllContentRequest) returns (GetAllContentResponse) {}
-  rpc GetContent (GetContentRequest) returns (GetContentResponse) {}
-  rpc SaveContent (SaveContentRequest) returns (SaveContentResponse) {}
-
+  rpc GetAllContent (GetAllContentRequest) returns (GetAllContentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/content"
+    };
+  }
+  rpc GetContent (GetContentRequest) returns (GetContentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/content/{ContentID}"
+    };
+  }
+  rpc SaveContent (SaveContentRequest) returns (SaveContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/content"
+      body: "*"
+    };
+  }
 }
   
 message GetAllContentRequest {
 }
   
 message GetAllContentResponse {
-  repeated ContentRecord Records = 1;
+  repeated ContentListRecord Records = 1;
 }
   
 message GetContentRequest {
-  bytes ContentID = 1;   // Guid for the content record
+  string ContentID = 1;   // Guid for the content record
 }
   
 message GetContentResponse {
@@ -33,4 +50,13 @@ message SaveContentRequest {
   
 message SaveContentResponse {
   ContentRecord Content = 1;
+}
+
+message ContentListRecord {
+  string ContentID = 1;                          // Guid for the content record
+  google.protobuf.Timestamp CreatedOnUTC = 2;   // UTC timestamp when content was created
+  google.protobuf.Timestamp PublishedOnUTC = 3; // UTC timestamp when content was published
+  string Title = 4;
+  string Subtitle = 5;
+  uint32 SubscriptionLevel = 6;
 }

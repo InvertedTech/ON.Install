@@ -37,8 +37,7 @@ namespace InstallerApp.BackupRestore
         {
             uint latestBackupNum = GetLatestBackupNum();
             latestBackupNum++;
-            await RestoreAuth(latestBackupNum);
-            await RestoreContent(latestBackupNum);
+            await BackupAll(latestBackupNum);
         }
 
 
@@ -230,6 +229,17 @@ namespace InstallerApp.BackupRestore
             return res;
         }
 
+        public async Task<ON.Fragments.Generic.ServiceStatusResponse> BringOnlineAuth()
+        {
+            var client = new ON.Fragments.Generic.ServiceOpsInterface.ServiceOpsInterfaceClient(nameHelper.AuthenticationServiceChannel);
+            var res = await client.ServiceOperationAsync(new ON.Fragments.Generic.ServiceOperationRequest()
+            {
+                Operation = ON.Fragments.Generic.ServiceOperationRequest.Types.ServiceOperation.Online,
+            }, GetMetadata());
+
+            return res;
+        }
+
         private Metadata GetMetadata()
         {
             var data = new Metadata();
@@ -248,8 +258,10 @@ namespace InstallerApp.BackupRestore
         private string GenerateToken()
         {
             var jwtKey = keyHelper.DeriveEcJwtKey();
-            //var key = jwtKey.ToPrivateJsonWebKey();
-            var key = "eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjoiT29QN3dhcUdtLU1fYU43N1dGSlZlXzc4Y2loMUZEX09hVmp5eHp6Q19SbyIsIkRQIjpudWxsLCJEUSI6bnVsbCwiRSI6bnVsbCwiSyI6bnVsbCwiS2V5SWQiOiJmNjBiMjNkNy1hN2JjLTQyY2MtYTRiNC1lN2JmMjQ4NmJjODkiLCJLZXlPcHMiOltdLCJLaWQiOiJmNjBiMjNkNy1hN2JjLTQyY2MtYTRiNC1lN2JmMjQ4NmJjODkiLCJLdHkiOiJFQyIsIk4iOm51bGwsIk90aCI6bnVsbCwiUCI6bnVsbCwiUSI6bnVsbCwiUUkiOm51bGwsIlVzZSI6InNpZyIsIlgiOiJUM0JDOVBSU2RqYUhwRXhVcXpnVGkxa3lfam8wb1hIcy1tU2g3RGxFVkUwIiwiWDVjIjpbXSwiWDV0IjpudWxsLCJYNXRTMjU2IjpudWxsLCJYNXUiOm51bGwsIlkiOiIyOGY0S0tLSHJnd18zZnhKUmxfVzR4TGRybkVRdU9BY19nTDI3S01zQ1I4IiwiS2V5U2l6ZSI6MjU2LCJIYXNQcml2YXRlS2V5Ijp0cnVlLCJDcnlwdG9Qcm92aWRlckZhY3RvcnkiOnsiQ3J5cHRvUHJvdmlkZXJDYWNoZSI6e30sIkN1c3RvbUNyeXB0b1Byb3ZpZGVyIjpudWxsLCJDYWNoZVNpZ25hdHVyZVByb3ZpZGVycyI6dHJ1ZX19".DecodeJsonWebKey();
+            var key = jwtKey.ToPrivateJsonWebKey();
+            
+            // local dev key
+            //var key = "eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjoiT29QN3dhcUdtLU1fYU43N1dGSlZlXzc4Y2loMUZEX09hVmp5eHp6Q19SbyIsIkRQIjpudWxsLCJEUSI6bnVsbCwiRSI6bnVsbCwiSyI6bnVsbCwiS2V5SWQiOiJmNjBiMjNkNy1hN2JjLTQyY2MtYTRiNC1lN2JmMjQ4NmJjODkiLCJLZXlPcHMiOltdLCJLaWQiOiJmNjBiMjNkNy1hN2JjLTQyY2MtYTRiNC1lN2JmMjQ4NmJjODkiLCJLdHkiOiJFQyIsIk4iOm51bGwsIk90aCI6bnVsbCwiUCI6bnVsbCwiUSI6bnVsbCwiUUkiOm51bGwsIlVzZSI6InNpZyIsIlgiOiJUM0JDOVBSU2RqYUhwRXhVcXpnVGkxa3lfam8wb1hIcy1tU2g3RGxFVkUwIiwiWDVjIjpbXSwiWDV0IjpudWxsLCJYNXRTMjU2IjpudWxsLCJYNXUiOm51bGwsIlkiOiIyOGY0S0tLSHJnd18zZnhKUmxfVzR4TGRybkVRdU9BY19nTDI3S01zQ1I4IiwiS2V5U2l6ZSI6MjU2LCJIYXNQcml2YXRlS2V5Ijp0cnVlLCJDcnlwdG9Qcm92aWRlckZhY3RvcnkiOnsiQ3J5cHRvUHJvdmlkZXJDYWNoZSI6e30sIkN1c3RvbUNyeXB0b1Byb3ZpZGVyIjpudWxsLCJDYWNoZVNpZ25hdHVyZVByb3ZpZGVycyI6dHJ1ZX19".DecodeJsonWebKey();
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor

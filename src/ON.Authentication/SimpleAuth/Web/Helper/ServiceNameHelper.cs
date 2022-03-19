@@ -14,7 +14,7 @@ namespace ON.Authentication.SimpleAuth.Web.Helper
 
         public ServiceNameHelper(IConfiguration configuration, ILogger<ServiceNameHelper> logger)
         {
-            var uri = configuration.GetServiceUri("authservice");
+            var uri = configuration.GetServiceUri("authservice", "grpc");
 
             if (uri != null)
                 UserServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);

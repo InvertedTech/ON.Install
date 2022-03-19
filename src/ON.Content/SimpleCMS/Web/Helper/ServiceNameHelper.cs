@@ -13,7 +13,7 @@ namespace ON.Content.SimpleCMS.Web.Helper
 
         public ServiceNameHelper(IConfiguration configuration)
         {
-            var uri = configuration.GetServiceUri("cmsservice");
+            var uri = configuration.GetServiceUri("cmsservice", "grpc");
             ContentServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
         }
     }

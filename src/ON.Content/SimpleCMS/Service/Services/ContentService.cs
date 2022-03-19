@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
 using ON.Fragments.Content;
+using ON.Fragments.Generic;
 
 namespace ON.Content.SimpleCMS.Service
 {
@@ -27,26 +28,44 @@ namespace ON.Content.SimpleCMS.Service
         {
             var res = new GetAllContentResponse();
 
-            List<ContentRecord> list = new();
+            List<ContentListRecord> list = new();
             await foreach (var rec in dataProvider.GetAll())
-                list.Add(rec);
+            {
+                list.Add(new ContentListRecord()
+                {
+                    ContentID = rec.Public.ContentID,
+                    CreatedOnUTC = rec.Public.CreatedOnUTC,
+                    PublishedOnUTC = rec.Public.PublishedOnUTC,
+                    Title = rec.Public.Title,
+                    Subtitle = rec.Public.Subtitle,
+                    SubscriptionLevel = rec.Public.SubscriptionLevel,
+                });
+            }
 
-            res.Records.AddRange(list.OrderByDescending( r => r.Public.CreatedOnUTC));
+            res.Records.AddRange(list.OrderByDescending( r => r.CreatedOnUTC));
 
             return res;
         }
 
         public override async Task<GetContentResponse> GetContent(GetContentRequest request, ServerCallContext context)
         {
-            //var userToken = context.GetHttpContext().User as ONUser;
-            Guid contentId = new Guid(request.ContentID.ToByteArray());
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            Guid contentId = request.ContentID.ToGuid();
 
             if (contentId == Guid.Empty)
                 return new GetContentResponse();
 
+            var rec = await dataProvider.GetById(contentId);
+
+            if (userToken == null || !userToken.IsWriterOrHigher)
+            {
+                if ((userToken?.SubscriptionLevel ?? 0) < rec.Public.SubscriptionLevel)
+                    rec.Public.Body = "";
+            }
+
             return new GetContentResponse
             {
-                Content = await dataProvider.GetById(contentId)
+                Content = rec
             };
         }
 

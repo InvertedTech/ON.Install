@@ -13,7 +13,7 @@ namespace ON.Authorization.FakePayments.Web.Helper
 
         public ServiceNameHelper(IConfiguration configuration)
         {
-            var uri = configuration.GetServiceUri("fakepayservice");
+            var uri = configuration.GetServiceUri("fakepayservice", "grpc");
             PaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
         }
     }

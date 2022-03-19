@@ -9,12 +9,12 @@
 
 @foreach (var record in Model.Records)
 {
-    <i>@record.Public.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</i>
+    <i>@record.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</i>
     <h3>
-        <a href="/content/@(new Guid(record.Public.ContentID.Span).ToString())">@record.Public.Title</a>
-        @if (record.Public.SubscriptionLevel > 0 && Model.ShowLockStatus)
+        <a href="/content/@(record.ContentID)">@record.Title</a>
+        @if (record.SubscriptionLevel > 0 && Model.ShowLockStatus)
         {
-            if (record.Public.SubscriptionLevel > Model.UserSubscriptionLevel)
+            if (record.SubscriptionLevel > Model.UserSubscriptionLevel)
             {
                 <i class="bi-lock-fill" style="font-size: 1rem; color: cornflowerblue;" aria-label="Locked"></i>
             } else {
@@ -22,5 +22,5 @@
             }
         }
     </h3>
-    <pre>@record.Public.Subtitle</pre>
+    <pre>@record.Subtitle</pre>
 }

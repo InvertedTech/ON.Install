@@ -16,7 +16,7 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 
         public ServiceNameHelper(IConfiguration configuration, ILogger<ServiceNameHelper> logger)
         {
-            var uri = configuration.GetServiceUri("fakepayservice");
+            var uri = configuration.GetServiceUri("fakepayservice", "grpc");
             if (uri != null)
                 FakePaymentServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
 

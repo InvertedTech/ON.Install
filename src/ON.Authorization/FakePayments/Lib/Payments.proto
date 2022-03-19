@@ -2,11 +2,23 @@ syntax = "proto3";
 
 package ON.Authorization.FakePayments;
 
+import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 service PaymentsInterface {
-  rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse) {}
-  rpc ChangeOwnSubscriptionRecord (ChangeOwnSubscriptionRecordRequest) returns (ChangeOwnSubscriptionRecordResponse) {}
+  rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/fakepay/record"
+    };
+  }
+  rpc ChangeOwnSubscriptionRecord (ChangeOwnSubscriptionRecordRequest) returns (ChangeOwnSubscriptionRecordResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/fakepay/record"
+      body: "*"
+    };
+  }
 }
   
 // User claim's record

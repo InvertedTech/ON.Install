@@ -5,6 +5,7 @@ using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
 using ON.Crypto;
 using ON.Fragments.Content;
+using ON.Fragments.Generic;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -92,7 +93,7 @@ namespace ON.Content.SimpleCMS.Service.Services
 
                 await foreach (var r in requestStream.ReadAllAsync())
                 {
-                    Guid id = new Guid(r.Record.Data.Public.ContentID.Span);
+                    Guid id = r.Record.Data.Public.ContentID.ToGuid();
                     idsLoaded.Add(id);
 
                     try
@@ -121,7 +122,7 @@ namespace ON.Content.SimpleCMS.Service.Services
                 {
                     await foreach (var r in dataProvider.GetAll())
                     {
-                        Guid id = new Guid(r.Public.ContentID.Span);
+                        Guid id = r.Public.ContentID.ToGuid();
                         if (!idsLoaded.Contains(id))
                         {
                             await dataProvider.Delete(id);
