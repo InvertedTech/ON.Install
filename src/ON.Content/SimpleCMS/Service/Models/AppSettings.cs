@@ -7,6 +7,6 @@ namespace ON.Content.SimpleCMS.Service.Models
 {
     public class AppSettings
     {
-        public string DataStore { get; set; } = "./Debug/data";
+        public string DataStore { get; set; } = "/data";
     }
 }
