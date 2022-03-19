@@ -24,7 +24,7 @@ services:
       - SERVICE__FAKEPAYSERVICE__GRPC__HOST=fakepayservice
       - SERVICE__FAKEPAYSERVICE__GRPC__PORT=7003
     volumes:
-      - authdata:/data
+      - ../../src/tmpdata/auth:/data
   cmsservice:
     image: opennetwork/simplecms-service:linux-amd64
     expose:
@@ -39,7 +39,7 @@ services:
       - SERVICE__CMSSERVICE__API__PORT=80
       - SERVICE__CMSSERVICE__GRPC__PORT=7002
     volumes:
-      - cmsdata:/data
+      - ../../src/tmpdata/cms:/data
   fakepayservice:
     image: opennetwork/fakepayments-service:linux-amd64
     expose:
@@ -54,8 +54,4 @@ services:
       - SERVICE__FAKEPAYSERVICE__API__PORT=80
       - SERVICE__FAKEPAYSERVICE__GRPC__PORT=7003
     volumes:
-      - fakepaydata:/data
-volumes:
-  authdata:
-  cmsdata:
-  fakepaydata:
+      - ../../src/tmpdata/fakepay:/data
