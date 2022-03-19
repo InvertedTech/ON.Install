@@ -20,7 +20,28 @@ namespace ON.Authorization.Stripe.Web.Models
         public CurrentViewModel(uint level, AccountService acctService, bool isCancelled)
         {
             Level = level;
-            Name = acctService.Plans.OrderBy(t => t.Value).FirstOrDefault(t => t.Value >= level)?.Name ?? "";
+
+            switch (Level )
+            {
+                case 100:
+                    Name =  "Lord of the Manor";
+                    break;
+                case 50:
+                    Name = "The Best!";
+                    break;
+                case 20:
+                    Name = "Big Spender";
+                    break;
+                case 10:
+                    Name = "Awesome Member";
+                    break;
+                case 5:
+                    Name = "Member";
+                    break;
+                default:
+                    Name = "No Name";
+                    break;
+            }
             IsCancelled = isCancelled;
         }
 

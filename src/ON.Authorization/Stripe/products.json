@@ -1,0 +1,57 @@
+[
+  {
+    "id": "prod_L2laZULRNOi8oa",
+    "Name": "Lord of the Manor",
+    "Type": "service",
+    "Date (UTC)": "2022-01-27 22:02",
+    "Description": "",
+    "Statement Descriptor": "",
+    "Unit Label": "",
+    "Url": "https://buy.stripe.com/test_5kA2bo18HcTv8ZG3cc",
+    "Tax Code": ""
+  },
+  {
+    "id": "prod_L2laa1im1mIIBB",
+    "Name": "The Best!",
+    "Type": "service",
+    "Date (UTC)": "2022-01-27 22:02",
+    "Description": "",
+    "Statement Descriptor": "",
+    "Unit Label": "",
+    "Url": "https://buy.stripe.com/test_00g3fscRp7zb2BibIJ",
+    "Tax Code": ""
+  },
+  {
+    "id": "prod_L2la977ypYAeZf",
+    "Name": "Big spender",
+    "Type": "service",
+    "Date (UTC)": "2022-01-27 22:02",
+    "Description": "",
+    "Statement Descriptor": "",
+    "Unit Label": "",
+    "Url": "https://buy.stripe.com/test_5kAaHUg3B6v7dfW4gi",
+    "Tax Code": ""
+  },
+  {
+    "id": "prod_L2laK2pZiK6kPE",
+    "Name": "Awesome Member",
+    "Type": "service",
+    "Date (UTC)": "2022-01-27 22:02",
+    "Description": "",
+    "Statement Descriptor": "",
+    "Unit Label": "",
+    "Url": "https://buy.stripe.com/test_8wMbLY9FdaLndfWbIL",
+    "Tax Code": ""
+  },
+  {
+    "id": "prod_L2lawGNQLN2SpT",
+    "Name": "Member",
+    "Type": "service",
+    "Date (UTC)": "2022-01-27 22:02",
+    "Description": "",
+    "Statement Descriptor": "",
+    "Unit Label": "",
+    "Url": "https://buy.stripe.com/test_cN29DQ8B9bPr1xecMQ",
+    "Tax Code": ""
+  }
+]

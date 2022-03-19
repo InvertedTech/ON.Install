@@ -11,6 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authorization.Stripe.Ser
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authorization.Stripe.Web", "Web\ON.Authorization.Stripe.Web.csproj", "{99E80A9F-3652-4EC8-8FF8-5189986E07C0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StripeConfig", "StripeConfig", "{3614F8EE-53A3-4DBE-94C5-F627FCF9A309}"
+	ProjectSection(SolutionItems) = preProject
+		prices.json = prices.json
+		products.json = products.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

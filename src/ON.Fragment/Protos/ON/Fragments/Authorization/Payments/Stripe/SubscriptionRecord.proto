@@ -13,5 +13,6 @@ message SubscriptionRecord {
   google.protobuf.Timestamp PaidThruUTC = 5;
   google.protobuf.Timestamp RenewsOnUTC = 6;
   google.protobuf.Timestamp CanceledOnUTC = 7;
+  string CustomerId = 8;
   google.protobuf.Timestamp ChangedOnUTC = 100;
 }
