@@ -27,18 +27,22 @@ namespace ON.Authorization.Stripe.Service
         }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        // ---------------------
+        // Inject Dependencies
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<StripeClient>();
             services.AddGrpc();
             services.AddSingleton<ISubscriptionRecordProvider, FileSystemSubscriptionRecordProvider>();
-            services.AddSingleton<IPlanRecordProvider, FileSystemPlanRecordProvider>();
+            services.AddSingleton<IProductRecordProvider, FileSystemProductRecordProvider>();
 
             services.AddJwtAuthentication();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // ---------------------
+        // Endpoint Mapping
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.Map("/ping", (app1) => app1.Run(async context => {

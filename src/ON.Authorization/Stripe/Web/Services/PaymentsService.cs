@@ -59,14 +59,17 @@ namespace ON.Authorization.Stripe.Web.Services
             return reply.Record;
         }
 
-        public async Task<NewOwnSubscriptionResponse> NewSubscription(string subscriptionId)
+        public async Task<NewOwnSubscriptionResponse> NewSubscription(string subscriptionId, int price, string customerId)
         {
             if (!IsLoggedIn)
                 return null;
+            price /= 100;
 
             var req = new NewOwnSubscriptionRequest()
             {
-                SubscriptionId = subscriptionId
+                SubscriptionId = subscriptionId,
+                SubscriptionPrice = (uint)price,
+                CustomerId = customerId,
             };
 
             var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentsServiceChannel);
@@ -74,12 +77,43 @@ namespace ON.Authorization.Stripe.Web.Services
             return reply;
         }
 
+        public async Task<CreateBillingPortalResponse> CreatePortal(string customerId)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            var req = new CreateBillingPortalRequest()
+            {
+                CustomerId = customerId
+            };
+            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentsServiceChannel);
+            var reply = await client.CreateBillingPortalAsync(req, GetMetadata());
+
+            return reply;
+        }
+
+        // Fetch JWT Bearer token
         private Metadata GetMetadata()
         {
             var data = new Metadata();
             data.Add("Authorization", "Bearer " + User.JwtToken);
 
             return data;
+        }
+
+        public async Task<CheckoutSessionResponse> CreateCheckoutSession(string priceId)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            var req = new CheckoutSessionRequest()
+            {
+                PriceId = priceId
+            };
+            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentsServiceChannel);
+            var reply = await client.CreateCheckoutSessionAsync(req, GetMetadata());
+
+            return reply;
         }
     }
 }

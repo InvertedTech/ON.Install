@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.34.0" />
+    <PackageReference Include="Json.Net" Version="1.0.33" />
+    <PackageReference Include="Stripe.net" Version="39.89.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -13,8 +15,6 @@
     <ProjectReference Include="../../../ON.Fragment/ON.Fragment.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Clients\Models\" />
-  </ItemGroup>
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

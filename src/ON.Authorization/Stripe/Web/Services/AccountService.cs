@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Stripe;
 
 namespace ON.Authorization.Stripe.Web.Services
 {
@@ -18,7 +19,7 @@ namespace ON.Authorization.Stripe.Web.Services
         private readonly ServiceNameHelper nameHelper;
 
         public readonly string AccountId;
-        public readonly PlanRecord[] Plans;
+        public readonly ProductRecord[] Products;
 
         public AccountService(ServiceNameHelper nameHelper, ILogger<AccountService> logger)
         {
@@ -27,7 +28,7 @@ namespace ON.Authorization.Stripe.Web.Services
 
             var res = GetDetails();
             AccountId = res.ClientId;
-            Plans = res.Plans.Records.ToArray();
+            Products = res.Products.Records.ToArray();
         }
 
         private GetAccountDetailsResponse GetDetails()
