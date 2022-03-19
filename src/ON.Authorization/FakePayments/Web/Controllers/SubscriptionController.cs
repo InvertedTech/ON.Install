@@ -43,7 +43,7 @@ namespace ON.Authorization.FakePayments.Web.Controllers
 
             await paymentsService.ChangeCurrentSubscriptionLevel(vm.LevelCombined);
 
-            return Redirect("/settings/refreshtoken?url=/subscription/");
+            return Redirect("/settings/refreshtoken?url=/subscription/pick");
         }
     }
 }

@@ -31,7 +31,7 @@ ingress:
     - path: /subscription/stripe
       service: stripeweb
       preservePath: true
-    - path: /subscription
+    - path: /subscription/pick
       service: authweb
       preservePath: true
     - path: /register
@@ -45,6 +45,9 @@ ingress:
       preservePath: true
     - path: /api/cms
       service: cmsservice
+      preservePath: true
+    - path: /api/fakepay
+      service: fakepayservice
       preservePath: true
     - path: /
       service: cmsweb
@@ -95,7 +98,9 @@ services:
   - source: tmpdata/fakepay/
     target: /data
   bindings:
-  - port: 7003
+  - name: api
+  - name: grpc
+    port: 7003
 - name: paypalweb
   project: ON.Authorization/Paypal/Web/ON.Authorization.Paypal.Web.csproj
   env:

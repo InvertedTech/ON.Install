@@ -27,7 +27,7 @@ namespace ON.Authentication.SimpleAuth.Web.Controllers
             this.userService = userService;
         }
 
-        [HttpGet("")]
+        [HttpGet("pick")]
         public IActionResult Index()
         {
             var v = new IndexViewModel(userService.User);
