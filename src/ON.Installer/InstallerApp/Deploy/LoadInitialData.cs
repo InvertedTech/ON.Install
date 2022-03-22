@@ -29,7 +29,7 @@ namespace InstallerApp.Deploy
                 {
                     Public = new UserRecord.Types.PublicData()
                     {
-                        UserID = Guid.NewGuid().ToByteString(),
+                        UserID = Guid.NewGuid().ToString(),
                         UserName = "admin",
                         DisplayName = "Admin",
                         CreatedOnUTC = date,
