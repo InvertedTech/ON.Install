@@ -245,6 +245,9 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (record == null)
                 return new GetOtherUserResponse();
 
+            record.Private.PasswordHash = null;
+            record.Private.PasswordSalt = null;
+
             return new GetOtherUserResponse
             {
                 Record = record
@@ -260,9 +263,16 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (userToken == null)
                 return new GetOwnUserResponse();
 
+            var record = await dataProvider.GetById(userToken.Id);
+            if (record == null)
+                return new GetOwnUserResponse();
+
+            record.Private.PasswordHash = null;
+            record.Private.PasswordSalt = null;
+
             return new GetOwnUserResponse
             {
-                Record = await dataProvider.GetById(userToken.Id)
+                Record = record
             };
         }
 
