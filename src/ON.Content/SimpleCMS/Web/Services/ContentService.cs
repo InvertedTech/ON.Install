@@ -25,31 +25,19 @@ namespace ON.Content.SimpleCMS.Web.Services
             this.nameHelper = nameHelper;
         }
 
-        public async Task<SaveContentResponse> CreateContent(NewViewModel vm)
+        public async Task<CreateContentResponse> CreateContent(NewViewModel vm)
         {
-            var req = new SaveContentRequest
+            var req = new CreateContentRequest
             {
-                Content = new ContentRecord
-                {
-                    Public = new ContentRecord.Types.PublicData
-                    {
-                        ContentID = Guid.NewGuid().ToString(),
-                        Title = vm.Title,
-                        Subtitle = vm.Subtitle,
-                        Author = vm.Author,
-                        Body = vm.Body ?? "",
-                        CreatedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow),
-                        SubscriptionLevel = vm.Level
-                    },
-                    Private = new ContentRecord.Types.PrivateData
-                    {
-                        CreatedBy = User.Id.ToString()
-                    }
-                }
+                Title = vm.Title,
+                Subtitle = vm.Subtitle,
+                Author = vm.Author,
+                Body = vm.Body,
+                SubscriptionLevel = vm.Level,
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            var res = await client.SaveContentAsync(req, GetMetadata());
+            var res = await client.CreateContentAsync(req, GetMetadata());
 
             return res;
         }
@@ -57,7 +45,7 @@ namespace ON.Content.SimpleCMS.Web.Services
         public async Task<GetAllContentResponse> GetAll()
         {
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            var res = await client.GetAllContentAsync(new());
+            var res = await client.GetAllContentAsync(new(), GetMetadata());
 
             return res;
         }
@@ -70,7 +58,7 @@ namespace ON.Content.SimpleCMS.Web.Services
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            var res = await client.GetContentAsync(req);
+            var res = await client.GetContentAsync(req, GetMetadata());
 
             return res;
         }
@@ -85,16 +73,13 @@ namespace ON.Content.SimpleCMS.Web.Services
             if (rec == null)
                 return;
 
-            rec.Public.PublishedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
-            rec.Private.PublishedBy = User.Id.ToString();
-
-            var req = new SaveContentRequest
+            var req = new PublishContentRequest()
             {
-                Content = rec
+                ContentID = contentId.ToString(),
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            await client.SaveContentAsync(req, GetMetadata());
+            await client.PublishContentAsync(req, GetMetadata());
         }
 
         public async Task UnpublishContent(Guid contentId)
@@ -107,30 +92,29 @@ namespace ON.Content.SimpleCMS.Web.Services
             if (rec == null)
                 return;
 
-            rec.Public.PublishedOnUTC = null;
-            rec.Private.PublishedBy = User.Id.ToString();
-
-            var req = new SaveContentRequest
+            var req = new UnpublishContentRequest()
             {
-                Content = rec
+                ContentID = contentId.ToString(),
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            await client.SaveContentAsync(req, GetMetadata());
+            await client.UnpublishContentAsync(req, GetMetadata());
         }
 
-        public async Task<SaveContentResponse> UpdateContent(ContentRecord rec)
+        public async Task<ModifyContentResponse> UpdateContent(Guid contentId, EditViewModel vm)
         {
-            rec.Public.ModifiedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
-            rec.Private.ModifiedBy = User.Id.ToString();
-
-            var req = new SaveContentRequest
+            var req = new ModifyContentRequest
             {
-                Content = rec
+                ContentID = contentId.ToString(),
+                Title = vm.Title,
+                Subtitle = vm.Subtitle,
+                Author = vm.Author,
+                Body = vm.Body,
+                SubscriptionLevel = vm.Level,
             };
 
             var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
-            var res = await client.SaveContentAsync(req, GetMetadata());
+            var res = await client.ModifyContentAsync(req, GetMetadata());
 
             return res;
         }

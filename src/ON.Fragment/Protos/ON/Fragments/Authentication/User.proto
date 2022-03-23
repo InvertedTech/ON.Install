@@ -60,6 +60,14 @@ service UserInterface {
   }
 
   // Get User record
+  rpc GetAllUsers (GetAllUsersRequest) returns (GetAllUsersResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/admin/user"
+    };
+  }
+
+  // Get User record
   rpc GetOtherUser (GetOtherUserRequest) returns (GetOtherUserResponse)
   {
     option (google.api.http) = {
@@ -143,8 +151,10 @@ message ChangeOwnPasswordResponse {
 }
 
 message CreateUserRequest {
-  UserRecord Record = 1;
-  string Password = 2;
+  string UserName = 1;                // User name of the user
+  string Password = 2;                // Password of the user
+  string DisplayName = 3;             // Public display name of the user
+  repeated string Emails = 4;         // Private email(s) used for password resets
 }
   
 message CreateUserResponse {
@@ -171,6 +181,13 @@ message DisableEnableOtherUserResponse {
   }
 }
   
+message GetAllUsersRequest {
+}
+  
+message GetAllUsersResponse {
+  repeated UserRecord.PublicData Records = 1;
+}
+
 message GetOtherUserRequest {
   string UserID = 1;                   // Guid for the user
 }
@@ -187,7 +204,7 @@ message GetOwnUserResponse {
 }
 
 message ModifyOtherUserRequest {
-  string UserID = 1;                 // Guid for the user
+  string UserID = 1;                // Guid for the user
   string UserName = 2;              // User name of the user
   string DisplayName = 3;           // Public display name of the user
   repeated string Emails = 4;       // Private email(s) used for password resets

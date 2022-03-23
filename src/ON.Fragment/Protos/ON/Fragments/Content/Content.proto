@@ -8,6 +8,13 @@ import "Protos/ON/Fragments/Content/ContentRecord.proto";
 
 // Service for Content fragment interface
 service ContentInterface {
+  rpc CreateContent (CreateContentRequest) returns (CreateContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/content"
+      body: "*"
+    };
+  }
   rpc GetAllContent (GetAllContentRequest) returns (GetAllContentResponse)
   {
     option (google.api.http) = {
@@ -20,15 +27,39 @@ service ContentInterface {
       get: "/api/cms/content/{ContentID}"
     };
   }
-  rpc SaveContent (SaveContentRequest) returns (SaveContentResponse)
+  rpc ModifyContent (ModifyContentRequest) returns (ModifyContentResponse)
   {
     option (google.api.http) = {
-      post: "/api/cms/content"
+      post: "/api/cms/content/{ContentID}"
       body: "*"
+    };
+  }
+  rpc PublishContent (PublishContentRequest) returns (PublishContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/content/{ContentID}/publish"
+    };
+  }
+  rpc UnpublishContent (UnpublishContentRequest) returns (UnpublishContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/content/{ContentID}/unpublish"
     };
   }
 }
   
+message CreateContentRequest {
+    string Title = 1;
+    string Subtitle = 2;
+    string Author = 3;
+    string Body = 4;
+    uint32 SubscriptionLevel = 5;
+}
+  
+message CreateContentResponse {
+  ContentRecord.PublicData Content = 1;
+}
+
 message GetAllContentRequest {
 }
   
@@ -41,15 +72,20 @@ message GetContentRequest {
 }
   
 message GetContentResponse {
-  ContentRecord Content = 1;
+  ContentRecord.PublicData Content = 1;
 }
   
-message SaveContentRequest {
-  ContentRecord Content = 1;
+message ModifyContentRequest {
+    string ContentID = 1;                          // Guid for the content record
+    string Title = 2;
+    string Subtitle = 3;
+    string Author = 4;
+    string Body = 5;
+    uint32 SubscriptionLevel = 6;
 }
   
-message SaveContentResponse {
-  ContentRecord Content = 1;
+message ModifyContentResponse {
+  ContentRecord.PublicData Content = 1;
 }
 
 message ContentListRecord {
@@ -60,3 +96,20 @@ message ContentListRecord {
   string Subtitle = 5;
   uint32 SubscriptionLevel = 6;
 }
+
+message PublishContentRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message PublishContentResponse {
+  ContentRecord.PublicData Content = 1;
+}
+  
+message UnpublishContentRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message UnpublishContentResponse {
+  ContentRecord.PublicData Content = 1;
+}
+  

@@ -35,3 +35,27 @@ docker-compose up -d
 
 Navigate to:
 http://localhost:8002
+
+
+## To Update
+
+To update docker containers when needed...
+
+Run:
+
+```console
+cd ON.Install/dockercompose/services
+docker-compose down
+docker-compose pull
+docker-compose up -d
+
+cd ../../..
+
+cd ON.Install/dockercompose/web
+docker-compose down
+docker-compose pull
+docker-compose up -d
+
+cd ../../..
+
+```
