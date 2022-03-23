@@ -68,7 +68,7 @@ namespace ON.Content.SimpleCMS.Web.Controllers
 
             var res = await contentService.CreateContent(vm);
 
-            return Redirect("/content/" + res.Content.Public.ContentID);
+            return Redirect("/content/" + res.Content.ContentID);
         }
 
         [HttpGet("/content/{id}/edit")]
@@ -84,11 +84,11 @@ namespace ON.Content.SimpleCMS.Web.Controllers
 
             EditViewModel vm = new()
             {
-                Title = res.Content.Public.Title,
-                Subtitle = res.Content.Public.Subtitle,
-                Author = res.Content.Public.Author,
-                Body = res.Content.Public.Body,
-                Level = res.Content.Public.SubscriptionLevel,
+                Title = res.Content.Title,
+                Subtitle = res.Content.Subtitle,
+                Author = res.Content.Author,
+                Body = res.Content.Body,
+                Level = res.Content.SubscriptionLevel,
             };
 
             return View("Edit", vm);
@@ -113,16 +113,9 @@ namespace ON.Content.SimpleCMS.Web.Controllers
                 return View("New", vm);
             }
 
-            var rec = res.Content;
-            rec.Public.Title = vm.Title;
-            rec.Public.Subtitle = vm.Subtitle;
-            rec.Public.Author = vm.Author;
-            rec.Public.Body = vm.Body ?? "";
-            rec.Public.SubscriptionLevel = vm.Level;
+            var res2 = await contentService.UpdateContent(contentId, vm);
 
-            var res2 = await contentService.UpdateContent(rec);
-
-            return Redirect("/content/" + res2.Content.Public.ContentID);
+            return Redirect("/content/" + res2.Content.ContentID);
         }
 
         [Authorize(Roles = ONUser.ROLE_ADMIN + "," + ONUser.ROLE_PUBLISHER)]

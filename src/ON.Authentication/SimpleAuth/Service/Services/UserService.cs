@@ -1,3 +1,4 @@
+using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
@@ -84,8 +85,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ChangeOtherPasswordResponseErrorType.UnknownError };
 
                 byte[] salt = RandomNumberGenerator.GetBytes(16);
-                record.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
-                record.Private.PasswordHash = Google.Protobuf.ByteString.CopyFrom(ComputeSaltedHash(request.NewPassword, salt));
+                record.Private.PasswordSalt = ByteString.CopyFrom(salt);
+                record.Private.PasswordHash = ByteString.CopyFrom(ComputeSaltedHash(request.NewPassword, salt));
 
                 record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
 
@@ -119,8 +120,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ChangeOwnPasswordResponseErrorType.BadOldPassword };
 
                 byte[] salt = RandomNumberGenerator.GetBytes(16);
-                record.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
-                record.Private.PasswordHash = Google.Protobuf.ByteString.CopyFrom(ComputeSaltedHash(request.NewPassword, salt));
+                record.Private.PasswordSalt = ByteString.CopyFrom(salt);
+                record.Private.PasswordHash = ByteString.CopyFrom(ComputeSaltedHash(request.NewPassword, salt));
 
                 record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
 
@@ -143,16 +144,27 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     Error = CreateUserResponse.Types.CreateUserResponseErrorType.UnknownError
                 };
 
-            var user = request.Record;
-            if (user == null)
+            if (request == null)
                 return new CreateUserResponse()
                 {
                     Error = CreateUserResponse.Types.CreateUserResponseErrorType.UnknownError
                 };
 
+            var user = new UserRecord()
+            {
+                Public = new UserRecord.Types.PublicData()
+                {
+                    UserID = Guid.NewGuid().ToString(),
+                    UserName = request.UserName,
+                    DisplayName = request.DisplayName,
+                },
+                Private = new UserRecord.Types.PrivateData()
+            };
+            user.Private.Emails.AddRange(request.Emails);
+
             byte[] salt = RandomNumberGenerator.GetBytes(16);
-            user.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
-            user.Private.PasswordHash = Google.Protobuf.ByteString.CopyFrom(ComputeSaltedHash(request.Password, salt));
+            user.Private.PasswordSalt = ByteString.CopyFrom(salt);
+            user.Private.PasswordHash = ByteString.CopyFrom(ComputeSaltedHash(request.Password, salt));
             user.Public.CreatedOnUTC = user.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
 
             if (!IsValid(user))
@@ -161,7 +173,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     Error = CreateUserResponse.Types.CreateUserResponseErrorType.UnknownError
                 };
 
-            if (await dataProvider.Exists(request.Record.Public.UserName))
+            if (await dataProvider.Exists(user.Public.UserName))
                 return new CreateUserResponse
                 {
                     Error = CreateUserResponse.Types.CreateUserResponseErrorType.UserNameTaken
@@ -233,6 +245,25 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
+        public override async Task<GetAllUsersResponse> GetAllUsers(GetAllUsersRequest request, ServerCallContext context)
+        {
+            var ret = new GetAllUsersResponse();
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null || !(userToken.Roles.Contains(ONUser.ROLE_BACKUP) || userToken.Roles.Contains(ONUser.ROLE_ADMIN)))
+                    return new GetAllUsersResponse();
+
+                await foreach (var r in dataProvider.GetAll())
+                    ret.Records.Add(r.Public);
+            }
+            catch
+            {
+            }
+
+            return ret;
+        }
+
         public override async Task<GetOtherUserResponse> GetOtherUser(GetOtherUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -245,8 +276,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (record == null)
                 return new GetOtherUserResponse();
 
-            record.Private.PasswordHash = null;
-            record.Private.PasswordSalt = null;
+            record.Private.PasswordHash = ByteString.Empty;
+            record.Private.PasswordSalt = ByteString.Empty;
 
             return new GetOtherUserResponse
             {
@@ -267,8 +298,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (record == null)
                 return new GetOwnUserResponse();
 
-            record.Private.PasswordHash = null;
-            record.Private.PasswordSalt = null;
+            record.Private.PasswordHash = ByteString.Empty;
+            record.Private.PasswordSalt = ByteString.Empty;
 
             return new GetOwnUserResponse
             {
@@ -537,8 +568,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             record.Public.Roles.Add(ONUser.ROLE_ADMIN);
 
             byte[] salt = RandomNumberGenerator.GetBytes(16);
-            record.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
-            record.Private.PasswordHash = Google.Protobuf.ByteString.CopyFrom(ComputeSaltedHash("admin", salt));
+            record.Private.PasswordSalt = ByteString.CopyFrom(salt);
+            record.Private.PasswordHash = ByteString.CopyFrom(ComputeSaltedHash("admin", salt));
 
             await dataProvider.Create(record);
         }

@@ -1,33 +1,33 @@
-﻿@model ON.Fragments.Content.ContentRecord
+﻿@model ON.Fragments.Content.ContentRecord.Types.PublicData
 @using userHelper = ON.Authentication.ONUserHelper;
 @{
-    ViewData["Title"] = Model.Public.Title;
+    ViewData["Title"] = Model.Title;
 }
 
 @if (userHelper.MyUser?.IsWriterOrHigher ?? false)
 {
     <p>
-        <a class="btn btn-primary" href="/content/@(Model.Public.ContentID)/edit">Edit</a>
+        <a class="btn btn-primary" href="/content/@(Model.ContentID)/edit">Edit</a>
     </p>
     <br />
 }
 
 
-<h1>@Model.Public.Title</h1>
+<h1>@Model.Title</h1>
 
-<h5>@Model.Public.Subtitle</h5>
+<h5>@Model.Subtitle</h5>
 
-<em>By: @Model.Public.Author</em>
+<em>By: @Model.Author</em>
 
-@if (Model.Public.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
+@if (Model.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
 {
-    @Html.Raw(Model.Public.Body)
+    @Html.Raw(Model.Body)
 }
 else
 {
-    if (Model.Public.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    if (Model.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
     {
-        @Html.Raw(Model.Public.Body)
+        @Html.Raw(Model.Body)
     }
     else
     {

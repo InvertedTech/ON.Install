@@ -58,20 +58,12 @@ namespace ON.Authentication.SimpleAuth.Web.Services
         {
             var req = new CreateUserRequest
             {
+                UserName = vm.UserName,
+                DisplayName = vm.DisplayName,
                 Password = vm.Password,
-                Record = new UserRecord()
-                {
-                    Private = new UserRecord.Types.PrivateData(),
-                    Public = new UserRecord.Types.PublicData()
-                    {
-                        UserID = Guid.NewGuid().ToString(),
-                        UserName = vm.UserName,
-                        DisplayName = vm.DisplayName
-                    }
-                }
             };
 
-            req.Record.Private.Emails.Add(vm.Email);
+            req.Emails.Add(vm.Email);
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.CreateUserAsync(req);
