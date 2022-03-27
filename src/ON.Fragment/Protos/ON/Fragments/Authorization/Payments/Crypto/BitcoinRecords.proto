@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payments.Crypto;
+
+import "google/protobuf/timestamp.proto";
+
+// User claim's record
+message BitcoinSubscriptionRecord {
+  string UserID = 1; // Guid for the user
+  uint32 CurrentLevel = 2;
+  google.protobuf.Timestamp CreatedOnUTC = 3;
+}
+
+// User claim's record
+message BitcoinPaymentHistoryRecord {
+  string UserID = 1; // Guid for the user
+  string TransactionId = 2;
+  google.protobuf.Timestamp ConfirmedOnUTC = 3;
+  uint32 Satoshis = 4;
+  uint32 Level = 5;
+  uint32 SecondsPaid = 6;
+}
