@@ -23,7 +23,7 @@ resource "aws_instance" "vm1" {
   ami           = "ami-830c94e3"
   instance_type = "t2.micro"
   key_name = aws_key_pair.deployer.key_name
-  security_groups = ["onf_sg_ssh"]
+  security_groups = ["${var.prefix}-security-group"]
 
   tags = {
     Name = "${var.prefix}-ServerInstance"
@@ -37,7 +37,7 @@ resource "aws_key_pair" "deployer" {
 }
 
 resource "aws_security_group" "onf_sg_ssh" {
-  name = "${var.prefix}-security-group"
+  name = "onf-security-group"
 
   #Incoming traffic
   ingress {
