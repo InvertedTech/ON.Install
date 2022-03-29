@@ -23,7 +23,7 @@ resource "aws_instance" "vm1" {
   ami           = "ami-830c94e3"
   instance_type = "t2.micro"
   key_name = aws_key_pair.deployer.key_name
-  security_groups = ["cw-blog-3-sg-using-terraform"]
+  security_groups = ["onf_sg_ssh"]
 
   tags = {
     Name = "${var.prefix}-ServerInstance"
