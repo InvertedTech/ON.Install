@@ -157,7 +157,7 @@ resource "aws_security_group" "sg_ssh" {
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.vpc1.id
   cidr_block        = "10.20.20.0/26"
-  availability_zone = "us-east-2a"
+  availability_zone = "${var.location}b"
   tags = {
     "Name" = "${var.prefix}-private-1"
   }
