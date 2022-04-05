@@ -38,6 +38,7 @@ namespace ON.Authorization.Crypto.Service
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IBitcoinSubscriptionRecordProvider, FileSystemBitcoinSubscriptionRecordProvider>();
             services.AddSingleton<IBitcoinPaymentHistoryRecordProvider, FileSystemBitcoinPaymentHistoryRecordProvider>();
+            services.AddSingleton<IBitcoinServiceRecordProvider, FileSystemBitcoinServiceRecordProvider>();
 
             services.AddJwtAuthentication();
         }

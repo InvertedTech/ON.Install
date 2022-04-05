@@ -10,6 +10,8 @@ namespace ON.Crypto.Extra
     {
         private readonly ExtKey master;
 
+        private const string BITCOIN_RECEIVE_PATH = "49'/0'/0'/0";
+
         private const string KEYPATH_JWTKEY = "12021'/0'";
         private const string KEYPATH_SSHKEY = "12021'/1'";
         private const string KEYPATH_BACKUPKEY = "12021'/2'";
@@ -37,6 +39,11 @@ namespace ON.Crypto.Extra
                 Curve = ECCurve.NamedCurves.nistP256,
                 D = jwtKey.PrivateKey.ToBytes()
             });
+        }
+
+        public ExtKey DeriveBitcoinExtendPrivateKey()
+        {
+            return master.Derive(new KeyPath(BITCOIN_RECEIVE_PATH));
         }
 
         public ECDsa DeriveEcJwtKey(uint account = 0, uint keyNum = 0)

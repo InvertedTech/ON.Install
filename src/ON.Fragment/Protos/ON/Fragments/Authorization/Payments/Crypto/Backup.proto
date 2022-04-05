@@ -3,6 +3,7 @@ syntax = "proto3";
 package ON.Fragments.Authorization.Payments.Crypto;
 
 import "Protos/ON/Fragments/Authorization/Payments/Crypto/BitcoinRecords.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Crypto/BitcoinService.proto";
 
 // Service for Crypto backup fragment interface
 service BackupInterface {
@@ -32,7 +33,8 @@ message EncryptedUserBackupDataRecord {
 message RestoreAllDataRequest {
   oneof Request_oneof {
     RestoreMode Mode = 1;
-    UserBackupDataRecord Record = 10;
+    BitcoinServiceRecord ServiceRecord = 2;
+    UserBackupDataRecord UserRecord = 10;
   }
 
   enum RestoreMode {

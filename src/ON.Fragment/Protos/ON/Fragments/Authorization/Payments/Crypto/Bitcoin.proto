@@ -30,6 +30,13 @@ service BitcoinInterface {
       get: "/api/bitcoin/status"
     };
   }
+  rpc SetSubscriptionLevel (SetSubscriptionLevelRequest) returns (GetPaymentStatusResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/bitcoin/subscription"
+      body: "*"
+    };
+  }
 }
   
 message GetAdminBalanceRequest {
@@ -59,8 +66,10 @@ message GetPaymentStatusRequest {
 }
   
 message GetPaymentStatusResponse {
-  string BitcoinPaymentAddress = 1;
-  BitcoinSubscriptionRecord Subscription = 2;
-  BitcoinPaymentHistoryRecord LastPayment = 3;
+  BitcoinSubscriptionRecord Subscription = 1;
+  BitcoinPaymentHistoryRecord LastPayment = 2;
 }
-  
+
+message SetSubscriptionLevelRequest {
+  uint32 Level = 1;
+}

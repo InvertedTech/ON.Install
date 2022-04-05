@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.34.0" />
+    <PackageReference Include="NBitcoin" Version="6.0.18" />
+	<PackageReference Include="Grpc.AspNetCore" Version="2.34.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,14 +9,17 @@ message BitcoinSubscriptionRecord {
   string UserID = 1; // Guid for the user
   uint32 CurrentLevel = 2;
   google.protobuf.Timestamp CreatedOnUTC = 3;
+  int32 AddressNumber = 4; // Receive address number used to derive that actual address. using the path 49'/0'/0'/0/{AddressNumber}
+  string Address = 5;
 }
 
 // User claim's record
 message BitcoinPaymentHistoryRecord {
   string UserID = 1; // Guid for the user
   string TransactionId = 2;
-  google.protobuf.Timestamp ConfirmedOnUTC = 3;
-  uint32 Satoshis = 4;
-  uint32 Level = 5;
-  uint32 SecondsPaid = 6;
+  string Address = 3;
+  google.protobuf.Timestamp ConfirmedOnUTC = 4;
+  uint32 Satoshis = 5;
+  uint32 Level = 6;
+  uint32 SecondsPaid = 7;
 }
