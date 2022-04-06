@@ -11,5 +11,7 @@ namespace ON.Installer.Models
         public ServerModel Server { get; set; } = new();
         public CredentialsModel Credentials { get; set; } = new();
         public PaymentModel Payment { get; set; } = new();
+        public ProductSelectionModel ProductSelection { get; set; } = new();
+        public BusinessModel Business { get; set; } = new();
     }
 }

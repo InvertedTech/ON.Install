@@ -34,9 +34,14 @@ namespace InstallerApp.Terraform
             await Save("InstallerApp.Terraform.CreateServer.Digitalocean.", dir);
         }
 
-        public async Task SaveDeploySite(DirectoryInfo dir)
+        public async Task SaveDeployCMS(DirectoryInfo dir)
         {
-            await Save("InstallerApp.Terraform.DeploySite.", dir);
+            await Save("InstallerApp.Terraform.Deploy.CMS.", dir);
+        }
+
+        public async Task SaveDeployBusiness(DirectoryInfo dir)
+        {
+            await Save("InstallerApp.Terraform.Deploy.Business.", dir);
         }
 
         public async Task SaveInstallDocker(DirectoryInfo dir)

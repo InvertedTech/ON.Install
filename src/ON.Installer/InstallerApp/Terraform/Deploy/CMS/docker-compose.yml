@@ -1,0 +1,105 @@
+version: '3'
+services:
+  authweb:
+    image: opennetwork/simpleauth-web:linux-amd64
+    restart: always
+    depends_on:
+      - authservice
+      - fakepayservice
+    links:
+      - authservice
+      - fakepayservice
+    expose:
+      - "80"
+    environment:
+      - JWT_PUB_KEY=${JWTPUB}
+      - SUBSCRIPTION_TIERS=${SUBSCRIPTION_TIERS}
+      - WEBSITE_NAME=${WEBSITE_NAME}
+      - SERVICE__AUTHSERVICE__HOST=authservice
+      - SERVICE__AUTHSERVICE__PORT=80
+  authservice:
+    image: opennetwork/simpleauth-service:linux-amd64
+    restart: always
+    ports:
+      - "7001:80"
+    environment:
+      - JWT_PRIV_KEY=${JWTPRIV}
+      - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__FAKEPAYSERVICE__HOST=fakepayservice
+      - SERVICE__FAKEPAYSERVICE__PORT=80
+    volumes:
+      - authdata:/data
+  cmsweb:
+    image: opennetwork/simplecms-web:linux-amd64
+    restart: always
+    expose:
+      - "80"
+    depends_on:
+      - cmsservice
+    links:
+      - cmsservice
+    environment:
+      - JWT_PUB_KEY=${JWTPUB}
+      - WEBSITE_NAME=${WEBSITE_NAME}
+      - WEBSITE_DESC=${WEBSITE_DESC}
+      - SERVICE__CMSSERVICE__HOST=cmsservice
+      - SERVICE__CMSSERVICE__PORT=80
+  cmsservice:
+    image: opennetwork/simplecms-service:linux-amd64
+    restart: always
+    ports:
+      - "7002:80"
+    environment:
+      - JWT_PUB_KEY=${JWTPUB}
+    volumes:
+      - cmsdata:/data
+  fakepayweb:
+    image: opennetwork/fakepayments-web:linux-amd64
+    restart: always
+    expose:
+      - "80"
+    depends_on:
+      - fakepayservice
+    links:
+      - fakepayservice
+    environment:
+      - JWT_PUB_KEY=${JWTPUB}
+      - SUBSCRIPTION_TIERS=${SUBSCRIPTION_TIERS}
+      - SERVICE__FAKEPAYSERVICE__HOST=fakepayservice
+      - SERVICE__FAKEPAYSERVICE__PORT=80
+  fakepayservice:
+    image: opennetwork/fakepayments-service:linux-amd64
+    restart: always
+    ports:
+      - "7003:80"
+    environment:
+      - JWT_PUB_KEY=${JWTPUB}
+    volumes:
+      - fakepaydata:/data
+  grpc-lb:
+    image: opennetwork/grpc-lb:linux-amd64
+    restart: always
+    ports:
+      - "80:80"
+    links:
+      - authweb
+      - cmsweb
+      - fakepayweb
+    environment:
+      - DNSNAME=${DNSNAME}
+      - SERVICE__AUTHWEB__HOST=authweb
+      - SERVICE__AUTHWEB__PORT=80
+      - SERVICE__AUTHSERVICE__HOST=authservice
+      - SERVICE__AUTHSERVICE__PORT=80
+      - SERVICE__CMSWEB__HOST=cmsweb
+      - SERVICE__CMSWEB__PORT=80
+      - SERVICE__CMSSERVICE__HOST=cmsservice
+      - SERVICE__CMSSERVICE__PORT=80
+      - SERVICE__FAKEPAYWEB__HOST=fakepayweb
+      - SERVICE__FAKEPAYWEB__PORT=80
+      - SERVICE__FAKEPAYSERVICE__HOST=fakepayservice
+      - SERVICE__FAKEPAYSERVICE__PORT=80
+volumes:
+  authdata:
+  cmsdata:
+  fakepaydata:

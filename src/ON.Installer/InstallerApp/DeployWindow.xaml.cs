@@ -55,23 +55,40 @@ namespace InstallerApp
             if (!installDocker.IsCompletedSuccessfully)
                 return;
 
-            Task deploySite = Terraform.DeploySite.Runner.DeploySite(this);
-            await WaitOnTask(deploySite, txtDeploySite);
-            if (!deploySite.IsCompletedSuccessfully)
-                return;
+            if (MyModel.ProductSelection.Homepage == ProductSelectionModel.HomepageProducts.CMS)
+            {
+                Task deploySite = Terraform.Deploy.CMS.Runner.DeploySite(this);
+                await WaitOnTask(deploySite, txtDeploySite);
+                if (!deploySite.IsCompletedSuccessfully)
+                    return;
+            }
+            else
+            {
+                Task deploySite = Terraform.Deploy.Business.Runner.DeploySite(this);
+                await WaitOnTask(deploySite, txtDeploySite);
+                if (!deploySite.IsCompletedSuccessfully)
+                    return;
+            }
 
-            Task testSite = Deploy.DNSHelper.TestSite(this);
-            await WaitOnTask(testSite, txtTestSite);
-            if (!testSite.IsCompletedSuccessfully)
-                return;
+            if (MyModel.ProductSelection.Homepage == ProductSelectionModel.HomepageProducts.CMS)
+            {
+                Task testSite = Deploy.DNSHelper.TestSite(this);
+                await WaitOnTask(testSite, txtTestSite);
+                if (!testSite.IsCompletedSuccessfully)
+                    return;
+            }
 
 
             backup = new BackupRestoreServer(MainWindow.BackupLocation, new ServiceNameHelper(MyModel.Server.IP), keyHelper);
 
-            Task loadData = Deploy.LoadInitialData.Load(this);
-            await WaitOnTask(loadData, txtLoadData);
-            if (!loadData.IsCompletedSuccessfully)
-                return;
+
+            if (MyModel.ProductSelection.Homepage == ProductSelectionModel.HomepageProducts.CMS)
+            {
+                Task loadData = Deploy.LoadInitialData.Load(this);
+                await WaitOnTask(loadData, txtLoadData);
+                if (!loadData.IsCompletedSuccessfully)
+                    return;
+            }
 
             Task changeDns = Deploy.Godaddy.ChangeDNS(this);
             await WaitOnTask(changeDns, txtChangeDNS);

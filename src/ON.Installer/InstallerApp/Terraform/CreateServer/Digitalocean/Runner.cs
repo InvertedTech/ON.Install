@@ -25,9 +25,10 @@ namespace InstallerApp.Terraform.CreateServer.Digitalocean
             string prefix = "onf-" + window.MyModel.DNS.Name.Replace(".", "-");
 
             var ssh = window.keyHelper.DeriveEcSshKey();
-            string keyId = GetDigitalOceanKey(window, prefix);
+            var sshName = prefix;
+            string keyId = GetDigitalOceanKey(window, sshName);
             if (keyId == null)
-                keyId = await SetDigitalOceanKey(window, prefix, ssh.pubKey);
+                keyId = await SetDigitalOceanKey(window, sshName, ssh.pubKey);
 
             var envVars = new Dictionary<string, string>();
             envVars["prefix"] = prefix;
