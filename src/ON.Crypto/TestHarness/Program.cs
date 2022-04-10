@@ -7,7 +7,8 @@ namespace TestHarness
         static void Main(string[] args)
         {
             //EcdhTest.Test();
-            BitcoinAddressTest.Test();
+            //BitcoinAddressTest.Test2();
+            TorHiddenServicesTest.Test();
         }
     }
 }
