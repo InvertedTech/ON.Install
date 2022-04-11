@@ -199,9 +199,8 @@ namespace ON.Content.SimpleCMS.Service
             };
         }
 
-        public Task<UploadVideoRumbleResponse> RumbleUpload(UploadVideoRumbleRequest request, ServerCallContext context)
+        public Task<UploadVideoRumbleResponse> RumbleUpload(UploadVideoRumbleRequest request)
         {
-            var user = ONUserHelper.ParseUser(context.GetHttpContext());
             return null;
         }
     }
