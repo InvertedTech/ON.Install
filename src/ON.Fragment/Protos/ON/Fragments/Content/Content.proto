@@ -122,9 +122,9 @@ message UploadVideoRumbleRequest
 	int32 LicenseType = 3;
 	int32 ChannelId = 4;
 	string GUID = 5;
-	bytes Thumbnail = 6;
-	bytes Video = 7;
-	bytes ClosedCaptions = 8;
+	string Thumbnail = 6;
+	string Video = 7;
+	string ClosedCaptions = 8;
 }
 
 message UploadVideoRumbleResponse {
