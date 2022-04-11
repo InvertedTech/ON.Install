@@ -46,6 +46,8 @@ service ContentInterface {
       post: "/api/cms/content/{ContentID}/unpublish"
     };
   }
+
+  rpc UploadVideoRumble(UploadVideoRumbleRequest) returns (UploadVideoRumbleResponse) {}
 }
   
 message CreateContentRequest {
@@ -111,5 +113,25 @@ message UnpublishContentRequest {
   
 message UnpublishContentResponse {
   ContentRecord.PublicData Content = 1;
+}
+
+message UploadVideoRumbleRequest 
+{
+	string Title = 1;
+	string Description = 2;
+	int32 LicenseType = 3;
+	int32 ChannelId = 4;
+	string GUID = 5;
+	bytes Thumbnail = 6;
+	bytes Video = 7;
+	bytes ClosedCaptions = 8;
+}
+
+message UploadVideoRumbleResponse {
+	bool Success = 1;
+	repeated string Errors = 2;
+	string EmbedHtml = 3;
+	string VideoIdString = 4;
+	int32 VideoIdInt = 5;
 }
   
