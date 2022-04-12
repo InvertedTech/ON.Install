@@ -89,6 +89,7 @@ namespace InstallerApp
         {
             //await Terraform.CreateServer.Azure.Runner.CreateServerAzure(this);
             await Terraform.CreateServer.Digitalocean.Runner.CreateServeDigitalOcean(this);
+            //await Terraform.CreateServer.AWS.Runner.CreateServerAWS(this);
         }
 
         List<string> lines = new();
