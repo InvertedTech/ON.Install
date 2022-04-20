@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ON.Content.Video.Service.Data;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
 using ON.Content.Video.Service.Models;
+using Service.Services;
 
 namespace ON.Content.Video.Service
 {
@@ -66,9 +68,7 @@ namespace ON.Content.Video.Service
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<BackupService>();
-                endpoints.MapGrpcService<ContentService>();
-                endpoints.MapGrpcService<ServiceOpsService>();
+                endpoints.MapGrpcService<GreeterService>();
             });
         }
     }

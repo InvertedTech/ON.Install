@@ -16,4 +16,9 @@
     <PackageReference Include="Grpc.AspNetCore" Version="2.45.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ON.Authentication\Shared\ON.Authentication.Shared.csproj" />
+    <ProjectReference Include="..\..\..\ON.Fragment\ON.Fragment.csproj" />
+  </ItemGroup>
+
 </Project>
