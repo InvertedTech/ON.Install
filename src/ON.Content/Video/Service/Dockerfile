@@ -3,20 +3,21 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Service/Service.csproj", "Service/"]
-RUN dotnet restore "Service/Service.csproj"
-COPY . .
-WORKDIR "/src/Service"
-RUN dotnet build "Service.csproj" -c Release -o /app/build
+COPY ON.Authentication/Shared ON.Authentication/Shared
+COPY ON.Fragment ON.Fragment
+COPY ON.Crypto ON.Crypto
+RUN dotnet restore "ON.Content/Video/Service/ON.Content.Video.Service.csproj"
+WORKDIR "/src/ON.Contnet/Video/Service"
+RUN rm -f appsettings.Development.json
+RUN dotnet build "ON.Content.Video.Service.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Service.csproj" -c Release -o /app/publish
+RUN dotnet publish "ON.Content.Video.Service.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Service.dll"]
+ENTRYPOINT ["dotnet", "ON.Content.Video.Service.dll"]
