@@ -26,7 +26,8 @@ namespace ON.Content.Video.Service
                 PlatformVideoID = request.PlatformVideoID,
                 CreatedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow),
                 ModifiedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow),
-                Embed = "insert code"
+                Embed = "insert code",
+                VideoUrl = "insert URL"
             };
 
             logger.LogWarning($"***LinkVideo: {link}***");
@@ -36,7 +37,24 @@ namespace ON.Content.Video.Service
             {
                 Success = true,
                 Linkedvideo = link,
-                CreatedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow),
+            };
+        }
+
+        public override async Task<UnlinkVideoResponse> UnlinkVideo(UnlinkVideoRequest request, ServerCallContext context)
+        {
+            var linkPath = request.LinkGUID.ToGuid();
+            var videoLink = await dataProvider.GetById(linkPath);
+
+            if (videoLink == null) { return new UnlinkVideoResponse()
+            {
+                Success = false,
+            }; }
+
+            await dataProvider.Delete(videoLink.LinkGUID.ToGuid());
+
+            return new UnlinkVideoResponse()
+            {
+                Success = true
             };
         }
     }

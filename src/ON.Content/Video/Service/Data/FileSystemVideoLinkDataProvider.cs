@@ -34,9 +34,12 @@ namespace ON.Content.Video.Service.Data
             throw new NotImplementedException();
         }
 
-        public Task<VideoLink> GetById(Guid linkGuid)
+        public async Task<VideoLink> GetById(Guid linkGuid)
         {
-            throw new NotImplementedException();
+            var fd = GetVideoFilePath(linkGuid);
+            if (!fd.Exists) { return null; }
+
+            return VideoLink.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
         }
 
         public async Task Save(VideoLink video)
