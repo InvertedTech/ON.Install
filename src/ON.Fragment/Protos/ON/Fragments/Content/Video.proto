@@ -8,7 +8,6 @@ service VideoInterface {
 	rpc LinkVideo (LinkVideoRequest) returns (LinkVideoResponse);
 	rpc GetVideoLink (GetLinkRequest) returns (GetLinkResponse);
 	rpc GetAllVideoLinks (GetAllLinkRequest) returns (GetAllLinkResponse);
-	rpc SaveVideoLinks (SaveLinkRequest) returns (SaveLinkResponse);
 	rpc UnlinkVideo (UnlinkVideoRequest) returns (UnlinkVideoResponse);
 }
 
@@ -49,10 +48,6 @@ message GetLinkResponse {}
 message GetAllLinkRequest {}
 
 message GetAllLinkResponse {}
-
-message SaveLinkRequest {}
-
-message SaveLinkResponse {}
 
 message UnlinkVideoRequest {}
 
