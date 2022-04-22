@@ -19,14 +19,12 @@ enum HOST_PLATFORM {
 message LinkVideoRequest {
 	HOST_PLATFORM HostPlatform = 1;
 	string PlatformVideoID = 2;
-	google.protobuf.Timestamp CreatedOnUTC = 3;
 }
 
 message LinkVideoResponse {
 	bool Success = 1;
 	repeated string Errors = 2;
 	VideoLink Linkedvideo = 3;
-	google.protobuf.Timestamp CreatedOnUTC = 4;
 }
 
 message VideoLink {
@@ -49,6 +47,11 @@ message GetAllLinkRequest {}
 
 message GetAllLinkResponse {}
 
-message UnlinkVideoRequest {}
+message UnlinkVideoRequest {
+	string LinkGUID = 1;
+}
 
-message UnlinkVideoResponse {}
+message UnlinkVideoResponse {
+	bool Success = 1;
+	repeated string Errors = 2;
+}

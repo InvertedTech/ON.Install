@@ -17,9 +17,17 @@ namespace ON.Content.Video.Service.Data
             videoLinkDir = root.CreateSubdirectory("video");
         }
 
-        public Task<bool> Delete(Guid linkGuid) { throw new NotImplementedException(); }
+        public Task<bool> Delete(Guid linkGuid) { 
+            var fd = GetVideoFilePath(linkGuid);
+            var res = fd.Exists;
+            fd.Delete();
+            return Task.FromResult(res);
+        }
 
-        public Task<bool> Exists(Guid linkGuid) { throw new NotImplementedException(); }
+        public Task<bool> Exists(Guid linkGuid) {
+            var fd = GetVideoFilePath(linkGuid);
+            return Task.FromResult(fd.Exists);
+        }
 
         public IAsyncEnumerable<VideoLink> GetAll()
         {
