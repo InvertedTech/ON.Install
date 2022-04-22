@@ -16,21 +16,6 @@ enum HOST_PLATFORM {
 		YOUTUBE = 1;
 }
 
-message VideoLink {
-	string LinkGUID = 1;
-	HOST_PLATFORM HostPlatform = 2;
-	string PlatformVideoID = 3;
-	string VideoUrl = 4;
-	string Embed = 5;
-	google.protobuf.Timestamp CreatedOnUTC = 6;
-	google.protobuf.Timestamp ModifiedOnUTC = 7;
-}
-
-message VideoLinkLedger {
-	string UserId = 1;
-	repeated VideoLink VideoLinks = 2;
-}
-
 message LinkVideoRequest {
 	HOST_PLATFORM HostPlatform = 1;
 	string PlatformVideoID = 2;
@@ -40,6 +25,18 @@ message LinkVideoResponse {
 	bool Success = 1;
 	repeated string Errors = 2;
 	VideoLink Linkedvideo = 3;
+}
+
+message VideoLink {
+	
+
+	string LinkGUID = 1;
+	HOST_PLATFORM HostPlatform = 2;
+	string PlatformVideoID = 3;
+	string VideoUrl = 4;
+	string Embed = 5;
+	google.protobuf.Timestamp CreatedOnUTC = 6;
+	google.protobuf.Timestamp ModifiedOnUTC = 7;
 }
 
 message GetLinkRequest {}
