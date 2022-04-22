@@ -12,7 +12,6 @@ using ON.Content.Video.Service.Data;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
 using ON.Content.Video.Service.Models;
-using Service.Services;
 
 namespace ON.Content.Video.Service
 {
@@ -40,7 +39,7 @@ namespace ON.Content.Video.Service
             services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddSingleton<IContentDataProvider, FileSystemContentDataProvider>();
+            services.AddSingleton<IVideoLinkDataProvider, FileSystemVideoLinkDataProvider>();
 
             services.AddJwtAuthentication();
         }
@@ -68,7 +67,7 @@ namespace ON.Content.Video.Service
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<VideoService>();
             });
         }
     }

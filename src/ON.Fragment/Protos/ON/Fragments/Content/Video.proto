@@ -18,7 +18,7 @@ message LinkVideoRequest {
 }
 
 message LinkVideoResponse {
-	boolean Success = 1;
+	bool Success = 1;
 	repeated string Errors = 2;
 	VideoLink Linkedvideo = 3;
 	google.protobuf.Timestamp CreatedOnUTC = 4;
