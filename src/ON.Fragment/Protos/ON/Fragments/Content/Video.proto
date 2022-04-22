@@ -12,9 +12,15 @@ service VideoInterface {
 	rpc UnlinkVideo (UnlinkVideoRequest) returns (UnlinkVideoResponse);
 }
 
+enum HOST_PLATFORM {
+		RUMBLE = 0;
+		YOUTUBE = 1;
+}
+
 message LinkVideoRequest {
-	VideoLink NewVideoLink = 1;
-	google.protobuf.Timestamp CreatedOnUTC = 2;
+	HOST_PLATFORM HostPlatform = 1;
+	string PlatformVideoID = 2;
+	google.protobuf.Timestamp CreatedOnUTC = 3;
 }
 
 message LinkVideoResponse {
@@ -25,10 +31,7 @@ message LinkVideoResponse {
 }
 
 message VideoLink {
-	enum HOST_PLATFORM {
-		RUMBLE = 0;
-		YOUTUBE = 1;
-	}
+	
 
 	string LinkGUID = 1;
 	HOST_PLATFORM HostPlatform = 2;
@@ -37,12 +40,6 @@ message VideoLink {
 	string Embed = 5;
 	google.protobuf.Timestamp CreatedOnUTC = 6;
 	google.protobuf.Timestamp ModifiedOnUTC = 7;
-}
-
-message VideoLinkRecord {
-	repeated VideoLink LinkedVideos = 1;
-	google.protobuf.Timestamp CreatedOnUTC = 2;
-	google.protobuf.Timestamp ModifiedOnUTC = 3;
 }
 
 message GetLinkRequest {}

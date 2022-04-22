@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Google.Protobuf;
+using Microsoft.Extensions.Options;
 using ON.Content.Video.Service.Models;
 using ON.Fragments.Content;
+using ON.Fragments.Generic;
 
 namespace ON.Content.Video.Service.Data
 {
@@ -19,19 +21,27 @@ namespace ON.Content.Video.Service.Data
 
         public Task<bool> Exists(Guid linkGuid) { throw new NotImplementedException(); }
 
-        public IAsyncEnumerable<VideoLinkRecord> GetAll()
+        public IAsyncEnumerable<VideoLink> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<VideoLinkRecord> GetById(Guid linkGuid)
+        public Task<VideoLink> GetById(Guid linkGuid)
         {
             throw new NotImplementedException();
         }
 
-        public Task Save(VideoLinkRecord videoLinkRecord)
+        public async Task Save(VideoLink video)
         {
-            throw new NotImplementedException();
+            var linkGuid = video.LinkGUID.ToGuid();
+            var fd = GetVideoFilePath(linkGuid);
+            await File.WriteAllBytesAsync(fd.FullName, video.ToByteArray());
+        }
+
+        private FileInfo GetVideoFilePath(Guid videoGuid)
+        {
+            var name = videoGuid.ToString();
+            return new FileInfo(videoLinkDir.FullName + "/" + name);
         }
     }
 }
