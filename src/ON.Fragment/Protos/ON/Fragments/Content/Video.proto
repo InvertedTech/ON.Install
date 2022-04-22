@@ -1,0 +1,62 @@
+﻿syntax = "proto3";
+
+package ON.Fragments.Content;
+
+import "google/protobuf/timestamp.proto";
+
+service VideoInterface {
+	rpc LinkVideo (LinkVideoRequest) returns (LinkVideoResponse);
+	rpc GetVideoLink (GetLinkRequest) returns (GetLinkResponse);
+	rpc GetAllVideoLinks (GetAllLinkRequest) returns (GetAllLinkResponse);
+	rpc SaveVideoLinks (SaveLinkRequest) returns (SaveLinkResponse);
+	rpc UnlinkVideo (UnlinkVideoRequest) returns (UnlinkVideoResponse);
+}
+
+message LinkVideoRequest {
+	VideoLink NewVideoLink = 1;
+	google.protobuf.Timestamp CreatedOnUTC = 2;
+}
+
+message LinkVideoResponse {
+	boolean Success = 1;
+	repeated string Errors = 2;
+	VideoLink Linkedvideo = 3;
+	google.protobuf.Timestamp CreatedOnUTC = 4;
+}
+
+message VideoLink {
+	enum HOST_PLATFORM {
+		RUMBLE = 0;
+		YOUTUBE = 1;
+	}
+
+	string LinkGUID = 1;
+	HOST_PLATFORM HostPlatform = 2;
+	string PlatformVideoID = 3;
+	string VideoUrl = 4;
+	string Embed = 5;
+	google.protobuf.Timestamp CreatedOnUTC = 6;
+	google.protobuf.Timestamp ModifiedOnUTC = 7;
+}
+
+message VideoLinkRecord {
+	repeated VideoLink LinkedVideos = 1;
+	google.protobuf.Timestamp CreatedOnUTC = 2;
+	google.protobuf.Timestamp ModifiedOnUTC = 3;
+}
+
+message GetLinkRequest {}
+
+message GetLinkResponse {}
+
+message GetAllLinkRequest {}
+
+message GetAllLinkResponse {}
+
+message SaveLinkRequest {}
+
+message SaveLinkResponse {}
+
+message UnlinkVideoRequest {}
+
+message UnlinkVideoResponse {}
