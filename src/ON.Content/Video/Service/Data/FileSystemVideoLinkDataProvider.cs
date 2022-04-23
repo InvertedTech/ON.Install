@@ -19,17 +19,21 @@ namespace ON.Content.Video.Service.Data
             videoLinkLedger = new FileInfo(videoLinkDir.FullName + "/links");
         }
 
-        public Task<bool> Delete(Guid linkGuid) { 
-            var fd = GetVideoFilePath(linkGuid);
-            var res = fd.Exists;
-            try
+        public async Task<VideoLinkLedger> Delete(Guid linkGuid) {
+            var bytes = await File.ReadAllBytesAsync(videoLinkLedger.FullName);
+            var ledger = VideoLinkLedger.Parser.ParseFrom(bytes);
+            var linkedVideoList = ledger.VideoLinks;
+
+            foreach (var linkedVideo in linkedVideoList)
             {
-                fd.Delete();
-            } catch (Exception ex)
-            {
-                return Task.FromResult(false);
+                if (linkedVideo.LinkGUID.ToGuid() == linkGuid)
+                {
+                    ledger.VideoLinks.Remove(linkedVideo);
+                    await SaveAll(ledger);
+                }
             }
-            return Task.FromResult(res);
+
+            return ledger;
         }
 
         public Task<bool> Exists(Guid linkGuid) {

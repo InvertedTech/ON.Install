@@ -64,4 +64,5 @@ message UnlinkVideoRequest {
 message UnlinkVideoResponse {
 	bool Success = 1;
 	repeated string Errors = 2;
+	VideoLinkLedger Ledger = 3;
 }

@@ -72,7 +72,6 @@ namespace ON.Content.Video.Service
             return res;
         }
 
-        // TODO: GetVideoLink
         public override async Task<GetLinkResponse> GetVideoLink(GetLinkRequest request, ServerCallContext context)
         {
             VideoLink videoLink = await dataProvider.GetById(request.VideoGuid.ToGuid());
@@ -87,6 +86,19 @@ namespace ON.Content.Video.Service
             {
                 Success = true,
                 LinkedVideo = videoLink,
+            };
+        }
+
+        // TODO: Figure out the problem with why this doesn't return the proper values but still deletes
+        public override async Task<UnlinkVideoResponse> UnlinkVideo(UnlinkVideoRequest request, ServerCallContext context)
+        {
+            VideoLinkLedger ledger = await dataProvider.Delete(request.LinkGUID.ToGuid());
+
+
+            return new UnlinkVideoResponse()
+            {
+                Success = true,
+                Ledger = ledger
             };
         }
     }

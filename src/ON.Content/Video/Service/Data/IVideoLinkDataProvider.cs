@@ -6,7 +6,7 @@ namespace ON.Content.Video.Service.Data
     {
         Task<VideoLinkLedger> GetAll();
         Task<VideoLink> GetById(Guid linkGuid);
-        Task<bool> Delete(Guid linkGuid);
+        Task<VideoLinkLedger> Delete(Guid linkGuid);
         Task<bool> Exists(Guid linkGuid);
         Task SaveAll(VideoLinkLedger ledger);
     }
