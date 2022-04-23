@@ -9,18 +9,26 @@ namespace ON.Content.Video.Service.Data
     public class FileSystemVideoLinkDataProvider : IVideoLinkDataProvider
     {
         private readonly DirectoryInfo videoLinkDir;
+        private readonly FileInfo videoLinkLedger;
 
         public FileSystemVideoLinkDataProvider(IOptions<AppSettings> settings)
         {
             var root = new DirectoryInfo(settings.Value.DataStore);
             root.Create();
             videoLinkDir = root.CreateSubdirectory("video");
+            videoLinkLedger = new FileInfo(videoLinkDir.FullName + "/links");
         }
 
         public Task<bool> Delete(Guid linkGuid) { 
             var fd = GetVideoFilePath(linkGuid);
             var res = fd.Exists;
-            fd.Delete();
+            try
+            {
+                fd.Delete();
+            } catch (Exception ex)
+            {
+                return Task.FromResult(false);
+            }
             return Task.FromResult(res);
         }
 
@@ -29,9 +37,13 @@ namespace ON.Content.Video.Service.Data
             return Task.FromResult(fd.Exists);
         }
 
-        public IAsyncEnumerable<VideoLink> GetAll()
+        public async Task<VideoLinkLedger> GetAll()
         {
-            throw new NotImplementedException();
+            if (!videoLinkLedger.Exists) { return new VideoLinkLedger(); }
+
+            var bytes = await File.ReadAllBytesAsync(videoLinkLedger.FullName);
+
+            return VideoLinkLedger.Parser.ParseFrom(bytes);
         }
 
         public async Task<VideoLink> GetById(Guid linkGuid)
@@ -42,11 +54,9 @@ namespace ON.Content.Video.Service.Data
             return VideoLink.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
         }
 
-        public async Task Save(VideoLink video)
+        public async Task SaveAll(VideoLinkLedger ledger)
         {
-            var linkGuid = video.LinkGUID.ToGuid();
-            var fd = GetVideoFilePath(linkGuid);
-            await File.WriteAllBytesAsync(fd.FullName, video.ToByteArray());
+            await File.WriteAllBytesAsync(videoLinkLedger.FullName, ledger.ToByteArray());
         }
 
         private FileInfo GetVideoFilePath(Guid videoGuid)

@@ -27,8 +27,7 @@ message VideoLink {
 }
 
 message VideoLinkLedger {
-	string UserId = 1;
-	repeated VideoLink VideoLinks = 2;
+	repeated VideoLink VideoLinks = 1;
 }
 
 message LinkVideoRequest {
@@ -48,7 +47,9 @@ message GetLinkResponse {}
 
 message GetAllLinkRequest {}
 
-message GetAllLinkResponse {}
+message GetAllLinkResponse {
+	repeated VideoLink Links = 1;
+}
 
 message UnlinkVideoRequest {
 	string LinkGUID = 1;

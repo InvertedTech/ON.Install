@@ -21,7 +21,7 @@ namespace ON.Content.Video.Service
         {
             VideoLink link = new VideoLink
             {
-                LinkGUID = request.PlatformVideoID,
+                LinkGUID = Guid.NewGuid().ToString(),
                 HostPlatform = request.HostPlatform,
                 PlatformVideoID = request.PlatformVideoID,
                 CreatedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow),
@@ -30,32 +30,46 @@ namespace ON.Content.Video.Service
                 VideoUrl = "insert URL"
             };
 
-            logger.LogWarning($"***LinkVideo: {link}***");
-            await dataProvider.Save(link);
+            var ledger = await dataProvider.GetAll();
+
+            if (ledger == null)
+            {
+                ledger = new VideoLinkLedger();
+            }
+
+            ledger.VideoLinks.Add(link);
+
+            logger.LogWarning($"***LinkVideo: {ledger}***");
+            await dataProvider.SaveAll(ledger);
 
             return new LinkVideoResponse()
             {
                 Success = true,
-                Linkedvideo = link,
+                Linkedvideo = link
             };
         }
 
-        public override async Task<UnlinkVideoResponse> UnlinkVideo(UnlinkVideoRequest request, ServerCallContext context)
+        public override async Task<GetAllLinkResponse> GetAllVideoLinks(GetAllLinkRequest request, ServerCallContext context)
         {
-            var linkPath = request.LinkGUID.ToGuid();
-            var videoLink = await dataProvider.GetById(linkPath);
-
-            if (videoLink == null) { return new UnlinkVideoResponse()
+            VideoLinkLedger ledger = await dataProvider.GetAll();
+            List<VideoLink> videoLinks = new List<VideoLink>();
+            logger.LogWarning($"***{ledger}***");
+            foreach (var videoLink in ledger.VideoLinks)
             {
-                Success = false,
-            }; }
-
-            await dataProvider.Delete(videoLink.LinkGUID.ToGuid());
-
-            return new UnlinkVideoResponse()
-            {
-                Success = true
-            };
+                videoLinks.Add(new VideoLink()
+                {
+                    LinkGUID = videoLink.LinkGUID,
+                    HostPlatform = videoLink.HostPlatform,
+                    PlatformVideoID = videoLink.PlatformVideoID,
+                    VideoUrl = videoLink.VideoUrl,
+                    CreatedOnUTC = videoLink.CreatedOnUTC,
+                    ModifiedOnUTC = videoLink.ModifiedOnUTC,
+                    Embed = videoLink.Embed,
+                });
+            }
+            var res = new GetAllLinkResponse();
+            res.Links.AddRange(videoLinks.OrderByDescending(r => r.CreatedOnUTC));
+            return res;
         }
     }
 }
