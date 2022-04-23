@@ -71,5 +71,23 @@ namespace ON.Content.Video.Service
             res.Links.AddRange(videoLinks.OrderByDescending(r => r.CreatedOnUTC));
             return res;
         }
+
+        // TODO: GetVideoLink
+        public override async Task<GetLinkResponse> GetVideoLink(GetLinkRequest request, ServerCallContext context)
+        {
+            VideoLink videoLink = await dataProvider.GetById(request.VideoGuid.ToGuid());
+            logger.LogWarning($"***GETBYID: {videoLink} ***");
+
+
+            if (videoLink == null) { return new GetLinkResponse() { Success = false }; }
+
+            logger.LogWarning($"***GETBYID: {videoLink} ***");
+
+            return new GetLinkResponse()
+            {
+                Success = true,
+                LinkedVideo = videoLink,
+            };
+        }
     }
 }

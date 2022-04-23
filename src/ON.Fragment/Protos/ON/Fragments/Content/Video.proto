@@ -41,9 +41,15 @@ message LinkVideoResponse {
 	VideoLink Linkedvideo = 3;
 }
 
-message GetLinkRequest {}
+message GetLinkRequest {
+	string VideoGuid = 1;
+}
 
-message GetLinkResponse {}
+message GetLinkResponse {
+	bool Success = 1;
+	repeated string Errors = 2;
+	VideoLink LinkedVideo = 3;
+}
 
 message GetAllLinkRequest {}
 

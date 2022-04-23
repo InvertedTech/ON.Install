@@ -48,10 +48,19 @@ namespace ON.Content.Video.Service.Data
 
         public async Task<VideoLink> GetById(Guid linkGuid)
         {
-            var fd = GetVideoFilePath(linkGuid);
-            if (!fd.Exists) { return null; }
+            var bytes = await File.ReadAllBytesAsync(videoLinkLedger.FullName);
+            var ledger = VideoLinkLedger.Parser.ParseFrom(bytes);
 
-            return VideoLink.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
+            foreach(var entry in ledger.VideoLinks)
+            {
+                if (entry.LinkGUID.ToGuid() == linkGuid)
+                {
+                    return entry;
+                }
+            }
+
+            return new VideoLink();
+            
         }
 
         public async Task SaveAll(VideoLinkLedger ledger)
