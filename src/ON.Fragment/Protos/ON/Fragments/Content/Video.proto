@@ -3,12 +3,14 @@
 package ON.Fragments.Content;
 
 import "google/protobuf/timestamp.proto";
+import "Protos/ON/Fragments/Content/RumbleRequest.proto";
 
 service VideoInterface {
 	rpc LinkVideo (LinkVideoRequest) returns (LinkVideoResponse);
 	rpc GetVideoLink (GetLinkRequest) returns (GetLinkResponse);
 	rpc GetAllVideoLinks (GetAllLinkRequest) returns (GetAllLinkResponse);
 	rpc UnlinkVideo (UnlinkVideoRequest) returns (UnlinkVideoResponse);
+	rpc GetRumble (RumbleRequest) returns (RumbleResponse);
 }
 
 enum HOST_PLATFORM {

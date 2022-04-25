@@ -1,0 +1,51 @@
+﻿syntax = "proto3";
+
+package ON.Fragments.Content;
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+enum Language {
+	EN = 0;
+	FR = 1;
+	ES = 2;
+	JP = 3;
+	PTBR = 4;
+}
+
+enum Order {
+	NONE = 0;
+	DATE = 1;
+	VIEWS = 2;
+}
+
+message RequestCriteria {
+	uint32 Pg = 1;
+	Order Sort = 2;
+	uint32 SyndicationTier = 3;
+	uint32 Limit = 4;
+	string EditorPicks = 5;
+}
+
+message RumbleRequest {
+	string RequestType = 1;
+	Language Lang = 2;
+	string Query = 3;
+	uint32 Syndicated = 4;
+	RequestCriteria Criteria = 5;
+	oneof Channel {
+		string ChannelName = 6;
+		int32 ChannelId = 7;
+	}
+	oneof User {
+		string UserName = 8;
+		uint32 UserId = 9;
+	}
+	uint32 F_Id = 10;
+	string Ext = 11;
+}
+
+message RumbleResponse {
+	bool Success = 1;
+	repeated string Errors = 2;
+	google.protobuf.Struct Body = 3;
+}

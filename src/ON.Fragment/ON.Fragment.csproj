@@ -20,6 +20,7 @@
     <None Remove="Protos\ON\Fragments\Content\Backup.proto" />
     <None Remove="Protos\ON\Fragments\Content\Content.proto" />
     <None Remove="Protos\ON\Fragments\Content\ContentRecord.proto" />
+    <None Remove="Protos\ON\Fragments\Content\RumbleRequest.proto" />
     <None Remove="Protos\ON\Fragments\Content\Video.proto" />
     <None Remove="Protos\ON\Fragments\Generic\ServiceOps.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Paypal\Payments.proto" />
@@ -41,6 +42,7 @@
     <Protobuf Include="Protos\ON\Fragments\Content\ContentRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Content\Backup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Content.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Content\RumbleRequest.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Video.proto" />
     <Protobuf Include="Protos\ON\Fragments\Generic\ServiceOps.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Paypal\Payments.proto" />
