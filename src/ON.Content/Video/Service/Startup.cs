@@ -40,6 +40,7 @@ namespace ON.Content.Video.Service
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IVideoLinkDataProvider, FileSystemVideoLinkDataProvider>();
+            services.AddSingleton<IRumbleProvider, HttpRumbleProvider>();
 
             services.AddJwtAuthentication();
         }

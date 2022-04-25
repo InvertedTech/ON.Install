@@ -8,5 +8,7 @@ namespace ON.Content.Video.Service.Models
     public class AppSettings
     {
         public string DataStore { get; set; } = "/data";
+        public string RumbleToken { get; set; }
+        public string RumblePlatformToken { get; set; }
     }
 }

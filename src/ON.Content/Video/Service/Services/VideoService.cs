@@ -10,11 +10,13 @@ namespace ON.Content.Video.Service
     {
         private readonly ILogger<ServiceOpsService> logger;
         private readonly IVideoLinkDataProvider dataProvider;
+        private readonly IRumbleProvider rumbleProvider;
 
-        public VideoService(ILogger<ServiceOpsService> logger, IVideoLinkDataProvider dataProvider)
+        public VideoService(ILogger<ServiceOpsService> logger, IVideoLinkDataProvider dataProvider, IRumbleProvider rumbleProvider)
         {
             this.logger = logger;
             this.dataProvider = dataProvider;
+            this.rumbleProvider = rumbleProvider;
         }
 
         public override async Task<LinkVideoResponse> LinkVideo(LinkVideoRequest request, ServerCallContext context)
@@ -30,6 +32,9 @@ namespace ON.Content.Video.Service
                 VideoUrl = "insert URL"
             };
 
+            var res = await rumbleProvider.GetRumbleVideo("123");
+            logger.LogWarning($"***LinkVideo: {res.Content.ToString()}***");
+
             var ledger = await dataProvider.GetAll();
 
             if (ledger == null)
@@ -39,7 +44,7 @@ namespace ON.Content.Video.Service
 
             ledger.VideoLinks.Add(link);
 
-            logger.LogWarning($"***LinkVideo: {ledger}***");
+            
             await dataProvider.SaveAll(ledger);
 
             return new LinkVideoResponse()
