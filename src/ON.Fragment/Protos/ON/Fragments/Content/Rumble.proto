@@ -4,14 +4,6 @@ package ON.Fragments.Content;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
-enum Language {
-	EN = 0;
-	FR = 1;
-	ES = 2;
-	JP = 3;
-	PTBR = 4;
-}
-
 enum Order {
 	NONE = 0;
 	DATE = 1;
@@ -28,7 +20,7 @@ message RequestCriteria {
 
 message RumbleRequest {
 	string RequestType = 1;
-	Language Lang = 2;
+	string Language = 2;
 	string Query = 3;
 	uint32 Syndicated = 4;
 	RequestCriteria Criteria = 5;

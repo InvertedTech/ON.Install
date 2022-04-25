@@ -3,7 +3,7 @@
 package ON.Fragments.Content;
 
 import "google/protobuf/timestamp.proto";
-import "Protos/ON/Fragments/Content/RumbleRequest.proto";
+import "Protos/ON/Fragments/Content/Rumble.proto";
 
 service VideoInterface {
 	rpc LinkVideo (LinkVideoRequest) returns (LinkVideoResponse);

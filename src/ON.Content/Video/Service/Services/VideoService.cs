@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using ON.Content.Video.Service.Data;
+using ON.Content.Video.Service.Validators;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
 
@@ -11,12 +12,14 @@ namespace ON.Content.Video.Service
         private readonly ILogger<ServiceOpsService> logger;
         private readonly IVideoLinkDataProvider dataProvider;
         private readonly IRumbleProvider rumbleProvider;
+        private readonly RumbleValidator rumbleValidator;
 
         public VideoService(ILogger<ServiceOpsService> logger, IVideoLinkDataProvider dataProvider, IRumbleProvider rumbleProvider)
         {
             this.logger = logger;
             this.dataProvider = dataProvider;
             this.rumbleProvider = rumbleProvider;
+            this.rumbleValidator = new RumbleValidator();
         }
 
         public override async Task<LinkVideoResponse> LinkVideo(LinkVideoRequest request, ServerCallContext context)
@@ -44,7 +47,7 @@ namespace ON.Content.Video.Service
 
             ledger.VideoLinks.Add(link);
 
-            
+
             await dataProvider.SaveAll(ledger);
 
             return new LinkVideoResponse()
@@ -104,6 +107,19 @@ namespace ON.Content.Video.Service
             {
                 Success = true,
                 Ledger = ledger
+            };
+        }
+
+        public override async Task<RumbleResponse> GetRumble(RumbleRequest rumbleRequest, ServerCallContext context)
+        {
+            logger.LogWarning($"REQUEST: {rumbleRequest}");
+            var isValidRequest = await rumbleValidator.IsValidLanguageAsync(rumbleRequest.Language);
+            logger.LogWarning($"***VALIDATE REQUEST: {isValidRequest}");
+            if (!isValidRequest) { return new RumbleResponse() { Success = false }; }
+
+            return new RumbleResponse()
+            {
+                Success = true
             };
         }
     }
