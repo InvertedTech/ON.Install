@@ -51,12 +51,39 @@
 
         public async Task<bool> IsValidNumber(int number, int minRange, int maxRange)
         {
-            throw new NotImplementedException();
+            if (number >= minRange && number <= maxRange) { return true; }
+
+            await Task.Delay(1000);
+            return false;
         }
 
-        public async Task<bool> IsValidExtension(string extension) { throw new NotImplementedException(); }
+        public async Task<bool> IsValidExtension(string extension)
+        {
+            if (extension.ToLower() == "json" || extension.ToLower() == "mrss") { return true; }
+            
+            await Task.Delay(1000);
+            return false;
+        }
 
-        public async Task<bool> IsValidSort(string sort) { throw new NotImplementedException(); }
+        public async Task<bool> IsValidSort(string sort) 
+        { 
+            var tmp = sort.ToLower();
+            switch (tmp)
+            {
+                case "date":
+                    await Task.Delay(100);
+                    return true;
+                case "views":
+                    await Task.Delay(100);
+                    return true;
+                case "none":
+                    await Task.Delay(100);
+                    return true;
+                default:
+                    await Task.Delay(100);
+                    return false;
+            }
+        }
 
 
     }

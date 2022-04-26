@@ -113,7 +113,10 @@ namespace ON.Content.Video.Service
         public override async Task<RumbleResponse> GetRumble(RumbleRequest rumbleRequest, ServerCallContext context)
         {
             logger.LogWarning($"REQUEST: {rumbleRequest}");
-            var isValidRequest = await rumbleValidator.IsValidLanguageAsync(rumbleRequest.Language);
+            //var isValidLanguage = await rumbleValidator.IsValidLanguageAsync(rumbleRequest.Language);
+            //var isValidExtension = await rumbleValidator.IsValidExtension(rumbleRequest.Ext);
+            //var isValidSort = await rumbleValidator.IsValidSort(rumbleRequest.Criteria.Sort);
+            var isValidRequest = await rumbleValidator.IsValidNumber(((int)rumbleRequest.Syndicated), 0, 1);
             logger.LogWarning($"***VALIDATE REQUEST: {isValidRequest}");
             if (!isValidRequest) { return new RumbleResponse() { Success = false }; }
 

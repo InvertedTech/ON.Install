@@ -4,15 +4,9 @@ package ON.Fragments.Content;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
-enum Order {
-	NONE = 0;
-	DATE = 1;
-	VIEWS = 2;
-}
-
 message RequestCriteria {
 	uint32 Pg = 1;
-	Order Sort = 2;
+	string Sort = 2;
 	uint32 SyndicationTier = 3;
 	uint32 Limit = 4;
 	string EditorPicks = 5;
