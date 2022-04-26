@@ -15,6 +15,7 @@ message RequestCriteria {
 message RumbleRequest {
 	string RequestType = 1;
 	string Language = 2;
+	//repeated string Query = 3;
 	string Query = 3;
 	uint32 Syndicated = 4;
 	RequestCriteria Criteria = 5;
@@ -33,5 +34,6 @@ message RumbleRequest {
 message RumbleResponse {
 	bool Success = 1;
 	repeated string Errors = 2;
-	google.protobuf.Struct Body = 3;
+	//google.protobuf.Struct Body = 3;
+	string Body = 3;
 }

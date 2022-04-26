@@ -2,31 +2,39 @@
 using System.Net.Http;
 using RestSharp;
 using ON.Content.Video.Service.Models;
+using ON.Fragments.Content;
 
 namespace ON.Content.Video.Service.Data
 {
     public class HttpRumbleProvider : IRumbleProvider
     {
         private readonly AppSettings appSettings;
-        private HttpClient client;
+        private RestClient client;
         private readonly string RumbleUri;
         private readonly string token;
         public HttpRumbleProvider(IOptions<AppSettings> settings)
         {
             appSettings = settings.Value;
-            client = new HttpClient();
-            RumbleUri = "https://rumble.com/api/v0/Media.Item";
+            client = new RestClient();
+            RumbleUri = "https://rumble.com/api/v0/";
             token = appSettings.RumblePlatformToken;
         }
 
-        public async Task<HttpResponseMessage> GetRumbleVideo(string videoId)
+        public async Task<RestResponse> GetRumbleVideo(RumbleRequest rumbleRequest)
         {
-            var uri = RumbleUri + "/Media.Item?_p=" + token + "&fid=57567802";
+            var uri = RumbleUri + rumbleRequest.RequestType;
 
-            var request = new RestRequest(RumbleUri).AddParameter("access_token", token).AddParameter("fid", 57567802);
+            var request = new RestRequest(uri);
+            request.AddQueryParameter("_p", token);
 
-            HttpResponseMessage response = await client.GetAsync(uri);
-            return response;
+            if (rumbleRequest.RequestType == "Media.Item") {
+                request.AddQueryParameter("fid", rumbleRequest.FId);
+
+                var response = await client.GetAsync(request);
+                return response;
+            } else {
+                throw new NotImplementedException();
+            }
         }
     }
 }

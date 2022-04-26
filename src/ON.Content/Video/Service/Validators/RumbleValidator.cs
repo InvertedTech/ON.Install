@@ -8,28 +8,6 @@
         {
             ValidLanguages =  new string[] { "en", "fr", "es", "jp", "ptbr" };
         }
-        //private string[] Errors = new string[14];
-
-        //public async Task<ValidatorResponse> ValidateRequest(RumbleRequest request)
-        //{
-        //    string[] errors = new string[14];
-
-
-        //    if (errors.Length > 0)
-        //    {
-        //        return new ValidatorResponse
-        //        {
-        //            Errors = errors,
-        //            Success = false
-        //        };
-        //    } else
-        //    {
-        //        return new ValidatorResponse
-        //        {
-        //            Success = true,
-        //        };
-        //    }
-        //}
 
         public async Task<bool> IsValidLanguageAsync(string language)
         {
@@ -46,21 +24,23 @@
 
         public async Task<bool> IsValidQuery(string query)
         {
-            if (!query.Any(Char.IsWhiteSpace)) 
-            {
-                return true;
-            }
-            await Task.Delay(500);
+            // if (!query.Any(Char.IsWhiteSpace)) 
+            // {
+            //     return true;
+            // }
+            // await Task.Delay(500);
 
-            if (query.Contains("%20%"))
-            {
-                var tmp = query.Split("%20%");
-                // TODO: Write functioon to loop over tmp and calculate whether the last 4 chars are %20%
-                if (tmp[tmp.Length - 1] != "%20%" && tmp[tmp.Length] == "%20%") { return true; }
-            }
+            // if (query.Contains("%20%"))
+            // {
+            //     var tmp = query.Split("%20%");
+            //     // TODO: Write functioon to loop over tmp and calculate whether the last 4 chars are %20%
+            //     if (tmp[tmp.Length - 1] != "%20%" && tmp[tmp.Length] == "%20%") { return true; }
+            // }
 
-            await Task.Delay(500);
-            return false;
+            // await Task.Delay(500);
+            // return false;
+
+            throw new NotImplementedException();
         }
 
         public async Task<bool> IsValidNumber(int number, int minRange, int maxRange)
@@ -98,11 +78,15 @@
                     return false;
             }
         }
-    }
 
-    //public class ValidatorResponse
-    //{
-    //    public bool Success { get; set; } = false;
-    //    public string[] Errors { get; set; } = new string[14];
-    //}
+        public async Task<bool> IsValidMethod(string method) 
+        {
+            if (method == "Media.Item" || method == "Media.Search") {
+                await Task.Delay(1000);
+                return true;
+            }
+
+            return false;
+        }
+    }
 }

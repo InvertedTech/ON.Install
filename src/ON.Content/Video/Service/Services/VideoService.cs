@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.WellKnownTypes;
+using Google.Protobuf.Collections;
 using Grpc.Core;
 using ON.Content.Video.Service.Data;
 using ON.Content.Video.Service.Validators;
@@ -35,8 +36,8 @@ namespace ON.Content.Video.Service
                 VideoUrl = "insert URL"
             };
 
-            var res = await rumbleProvider.GetRumbleVideo("123");
-            logger.LogWarning($"***LinkVideo: {res.Content.ToString()}***");
+            //var res = await rumbleProvider.GetRumbleVideo("123");
+            //logger.LogWarning($"***LinkVideo: {res.Content.ToString()}***");
 
             var ledger = await dataProvider.GetAll();
 
@@ -117,13 +118,16 @@ namespace ON.Content.Video.Service
             //var isValidExtension = await rumbleValidator.IsValidExtension(rumbleRequest.Ext);
             //var isValidSort = await rumbleValidator.IsValidSort(rumbleRequest.Criteria.Sort);
             //var isValidSyndicated = await rumbleValidator.IsValidNumber(((int)rumbleRequest.Syndicated), 0, 1);
-            var isValidRequest = await rumbleValidator.IsValidQuery(rumbleRequest.Query);
-            logger.LogWarning($"***VALIDATE REQUEST: {isValidRequest}");
-            if (!isValidRequest) { return new RumbleResponse() { Success = false }; }
+            //var isValidRequest = await rumbleValidator.IsValidQuery(rumbleRequest.Query);
+            //logger.LogWarning($"***VALIDATE REQUEST: {isValidRequest}");
+            //if (!isValidRequest) { return new RumbleResponse() { Success = false }; }
 
+            var res = await rumbleProvider.GetRumbleVideo(rumbleRequest);
+            logger.LogWarning($"!^!^!^::::{res.Content}");
             return new RumbleResponse()
             {
-                Success = true
+                Success = true,
+                Body = res.Content,
             };
         }
     }

@@ -1,7 +1,10 @@
-﻿namespace ON.Content.Video.Service.Data
+﻿using ON.Fragments.Content;
+using RestSharp;
+
+namespace ON.Content.Video.Service.Data
 {
     public interface IRumbleProvider
     {
-        Task<HttpResponseMessage> GetRumbleVideo(string videoId);
+        Task<RestResponse> GetRumbleVideo(RumbleRequest rumbleRequest);
     }
 }
