@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "src\\ON.Content\\SimpleCMS"
+		},
+		{
+			"path": "src\\ON.Content\\Video"
+		},
+		{
+			"path": "src\\ON.Authentication"
+		},
+		{
+			"path": "src\\ON.Fragment"
+		}
+	]
+}
