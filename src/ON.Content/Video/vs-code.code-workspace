@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "..\\SimpleCMS"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\..\\ON.Authentication"
+		},
+		{
+			"path": "..\\..\\ON.Fragment"
+		}
+	]
+}
