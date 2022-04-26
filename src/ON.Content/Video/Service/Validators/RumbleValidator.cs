@@ -46,7 +46,21 @@
 
         public async Task<bool> IsValidQuery(string query)
         {
-            throw new NotImplementedException();
+            if (!query.Any(Char.IsWhiteSpace)) 
+            {
+                return true;
+            }
+            await Task.Delay(500);
+
+            if (query.Contains("%20%"))
+            {
+                var tmp = query.Split("%20%");
+                // TODO: Write functioon to loop over tmp and calculate whether the last 4 chars are %20%
+                if (tmp[tmp.Length - 1] != "%20%" && tmp[tmp.Length] == "%20%") { return true; }
+            }
+
+            await Task.Delay(500);
+            return false;
         }
 
         public async Task<bool> IsValidNumber(int number, int minRange, int maxRange)
@@ -84,8 +98,6 @@
                     return false;
             }
         }
-
-
     }
 
     //public class ValidatorResponse

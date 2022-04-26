@@ -116,7 +116,8 @@ namespace ON.Content.Video.Service
             //var isValidLanguage = await rumbleValidator.IsValidLanguageAsync(rumbleRequest.Language);
             //var isValidExtension = await rumbleValidator.IsValidExtension(rumbleRequest.Ext);
             //var isValidSort = await rumbleValidator.IsValidSort(rumbleRequest.Criteria.Sort);
-            var isValidRequest = await rumbleValidator.IsValidNumber(((int)rumbleRequest.Syndicated), 0, 1);
+            //var isValidSyndicated = await rumbleValidator.IsValidNumber(((int)rumbleRequest.Syndicated), 0, 1);
+            var isValidRequest = await rumbleValidator.IsValidQuery(rumbleRequest.Query);
             logger.LogWarning($"***VALIDATE REQUEST: {isValidRequest}");
             if (!isValidRequest) { return new RumbleResponse() { Success = false }; }
 
