@@ -33,6 +33,11 @@ namespace ON.Content.Video.Service.Data
                 var response = await client.GetAsync(request);
                 return response;
             } else {
+                if (rumbleRequest.RequestType == "Media.Search")
+                {
+                    throw new NotImplementedException();
+                }
+
                 throw new NotImplementedException();
             }
         }
