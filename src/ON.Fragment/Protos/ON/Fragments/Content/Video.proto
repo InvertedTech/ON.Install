@@ -5,66 +5,35 @@ package ON.Fragments.Content;
 import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Content/Rumble.proto";
 
+// TODO: Separate Rumble API methods to Rumble.proto
 service VideoInterface {
-	rpc LinkVideo (LinkVideoRequest) returns (LinkVideoResponse);
-	rpc GetVideoLink (GetLinkRequest) returns (GetLinkResponse);
-	rpc GetAllVideoLinks (GetAllLinkRequest) returns (GetAllLinkResponse);
-	rpc UnlinkVideo (UnlinkVideoRequest) returns (UnlinkVideoResponse);
-	rpc GetRumble (RumbleRequest) returns (RumbleResponse);
+	rpc RumbleChannelConnection(RumbleChannelRequest) returns (RumbleChannelResponse);		// Connect to a Rumble Channel	 (Rumble API Method: Media.Search)
+	rpc RumbleVideoLinkById(RumbleVideoIdRequest) returns (RumbleVideoResponse);			// Link A Video by its Video Id  (Rumble API Method: Media.Item)
+	rpc RumbleVideoLink(RumbleVideoRequest) returns (RumbleVideoResponse);					// Link A Video          		 (Rumble API Method: Media.Search)
+	rpc UpdateData(UpdateDataRequest) returns (DataResponse);
+	rpc RemoveData(RemoveDataRequest) returns (DataResponse);
+	rpc GetData(GetDataRequest) returns (DataResponse);
 }
 
-enum HOST_PLATFORM {
-		RUMBLE = 0;
-		YOUTUBE = 1;
+message VideoProviderData {
+	RumbleData Rumble = 1;
 }
 
-message VideoLink {
-	string LinkGUID = 1;
-	HOST_PLATFORM HostPlatform = 2;
-	string PlatformVideoID = 3;
-	string VideoUrl = 4;
-	string Embed = 5;
-	google.protobuf.Timestamp CreatedOnUTC = 6;
-	google.protobuf.Timestamp ModifiedOnUTC = 7;
+message GetDataRequest {
+	
 }
 
-message VideoLinkLedger {
-	repeated VideoLink VideoLinks = 1;
+message UpdateDataRequest {
+
 }
 
-message LinkVideoRequest {
-	HOST_PLATFORM HostPlatform = 1;
-	string PlatformVideoID = 2;
+message RemoveDataRequest {
+
 }
 
-message LinkVideoResponse {
+message DataResponse {
 	bool Success = 1;
-	repeated string Errors = 2;
-	VideoLink Linkedvideo = 3;
-}
-
-message GetLinkRequest {
-	string VideoGuid = 1;
-}
-
-message GetLinkResponse {
-	bool Success = 1;
-	repeated string Errors = 2;
-	VideoLink LinkedVideo = 3;
-}
-
-message GetAllLinkRequest {}
-
-message GetAllLinkResponse {
-	repeated VideoLink Links = 1;
-}
-
-message UnlinkVideoRequest {
-	string LinkGUID = 1;
-}
-
-message UnlinkVideoResponse {
-	bool Success = 1;
-	repeated string Errors = 2;
-	VideoLinkLedger Ledger = 3;
+	string Error = 2;
+	string Msg = 3;
+	VideoProviderData Data = 4;
 }

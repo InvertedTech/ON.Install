@@ -22,7 +22,7 @@
             return false;
         }
 
-        public async Task<bool> IsValidQuery(string query)
+        public async Task<bool> IsValidQuery(string[] query)
         {
             // if (!query.Any(Char.IsWhiteSpace)) 
             // {
