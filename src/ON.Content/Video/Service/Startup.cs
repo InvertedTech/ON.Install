@@ -66,6 +66,7 @@ namespace ON.Content.Video.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<VideoService>();
+                endpoints.MapGrpcService<RumbleService>();
             });
         }
     }
