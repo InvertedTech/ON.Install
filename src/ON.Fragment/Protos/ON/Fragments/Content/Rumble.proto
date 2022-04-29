@@ -4,16 +4,24 @@ package ON.Fragments.Content;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
+service RumbleInterface {
+	rpc RumbleChannelConnection(RumbleChannelRequest) returns (RumbleChannelResponse);		// Connect to a Rumble Channel	 (Rumble API Method: Media.Search)
+	rpc RumbleVideoLinkById(RumbleVideoIdRequest) returns (RumbleVideoResponse);			// Link A Video by its Video Id  (Rumble API Method: Media.Item)
+	rpc RumbleVideoLink(RumbleVideoRequest) returns (RumbleVideoResponse);					// Link A Video          		 (Rumble API Method: Media.Search)
+}
+
 message RumbleVideo {
-	string GUID = 1;
+	string Id = 1;
 	string Language = 2;
 	string Embed = 3;
 	string Title = 4;
-
+	string ChannelId = 5;
+	bool IsPrivate = 6;
 }
 
 message RumbleChannel {
-
+	string Id = 1;
+	repeated string VideoIds = 2;
 }
 
 message RumbleData {

@@ -5,11 +5,7 @@ package ON.Fragments.Content;
 import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Content/Rumble.proto";
 
-// TODO: Separate Rumble API methods to Rumble.proto
 service VideoInterface {
-	rpc RumbleChannelConnection(RumbleChannelRequest) returns (RumbleChannelResponse);		// Connect to a Rumble Channel	 (Rumble API Method: Media.Search)
-	rpc RumbleVideoLinkById(RumbleVideoIdRequest) returns (RumbleVideoResponse);			// Link A Video by its Video Id  (Rumble API Method: Media.Item)
-	rpc RumbleVideoLink(RumbleVideoRequest) returns (RumbleVideoResponse);					// Link A Video          		 (Rumble API Method: Media.Search)
 	rpc UpdateData(UpdateDataRequest) returns (DataResponse);
 	rpc RemoveData(RemoveDataRequest) returns (DataResponse);
 	rpc GetData(GetDataRequest) returns (DataResponse);
@@ -20,7 +16,10 @@ message VideoProviderData {
 }
 
 message GetDataRequest {
-	
+	message Options {
+		string Provider = 1;
+	}
+	string test2 = 1;
 }
 
 message UpdateDataRequest {

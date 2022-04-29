@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ON.Content.Video.Service.Data;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
 using ON.Content.Video.Service.Models;
@@ -39,8 +38,6 @@ namespace ON.Content.Video.Service
             services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddSingleton<IVideoLinkDataProvider, FileSystemVideoLinkDataProvider>();
-            services.AddSingleton<IRumbleProvider, HttpRumbleProvider>();
 
             services.AddJwtAuthentication();
         }
