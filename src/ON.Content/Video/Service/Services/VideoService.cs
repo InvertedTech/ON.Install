@@ -15,9 +15,21 @@ namespace ON.Content.Video.Service
             this.logger = logger;
         }
 
-        public Task<DataResponse> GetData(GetDataRequest request)
+        public async Task<DataResponse> GetData(GetDataRequest request)
         {
             throw new NotImplementedException();
         }
+
+        public async Task<DataResponse> UpdateData(UpdateDataRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<DataResponse> RemoveData(RemoveDataRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }
