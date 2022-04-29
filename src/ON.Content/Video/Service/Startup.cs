@@ -29,6 +29,7 @@ namespace ON.Content.Video.Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddGrpcHttpApi();
 
             services.AddSwaggerGen(c =>
@@ -36,8 +37,6 @@ namespace ON.Content.Video.Service
                 c.SwaggerDoc("video", new OpenApiInfo { Title = "Video API" });
             });
             services.AddGrpcSwagger();
-
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             services.AddJwtAuthentication();
         }
@@ -67,7 +66,14 @@ namespace ON.Content.Video.Service
             {
                 endpoints.MapGrpcService<VideoService>();
                 endpoints.MapGrpcService<RumbleService>();
+
+                endpoints.MapGet("/", async context =>
+                {
+                    await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+                });
             });
+
+
         }
     }
 }

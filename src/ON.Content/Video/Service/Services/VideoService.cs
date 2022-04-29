@@ -17,7 +17,8 @@ namespace ON.Content.Video.Service
 
         public async Task<DataResponse> GetData(GetDataRequest request)
         {
-            throw new NotImplementedException();
+            await Task.Delay(1000);
+            return new DataResponse();
         }
 
         public async Task<DataResponse> UpdateData(UpdateDataRequest request)

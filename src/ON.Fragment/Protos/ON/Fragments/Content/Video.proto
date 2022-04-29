@@ -19,15 +19,18 @@ message GetDataRequest {
 	message Options {
 		string Provider = 1;
 	}
-	string test2 = 1;
 }
 
 message UpdateDataRequest {
-
+	message Options {
+		string Provider = 1;
+	}
 }
 
 message RemoveDataRequest {
-
+	message Options {
+		string Provider = 1;
+	}
 }
 
 message DataResponse {
