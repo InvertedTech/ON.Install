@@ -5,16 +5,16 @@ using ON.Fragments.Content;
 
 namespace ON.Content.Video.Service.Data
 {
-    public class FileSystemRumbleDataProvider : IFileSystemRumbleProvider
+    public class FileSystemRumbleProvider : IFileSystemRumbleProvider
     {
         private readonly DirectoryInfo dataDir;
         private readonly FileInfo listFile;
 
-        public FileSystemRumbleDataProvider(IOptions<AppSettings> settings)
+        public FileSystemRumbleProvider(IOptions<AppSettings> settings)
         {
             var root = new DirectoryInfo(settings.Value.DataStore);
             root.Create();
-            dataDir = root.CreateSubdirectory("rumble");
+            dataDir = root.CreateSubdirectory("links");
             listFile = new FileInfo(dataDir.FullName + "/rumble-data");
         }
 

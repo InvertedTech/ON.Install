@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
+using ON.Content.Video.Service.Data;
 using ON.Content.Video.Service.Models;
 
 namespace ON.Content.Video.Service
@@ -31,6 +32,7 @@ namespace ON.Content.Video.Service
         {
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddGrpcHttpApi();
+            services.AddSingleton<IFileSystemRumbleProvider, FileSystemRumbleProvider>();
 
             services.AddSwaggerGen(c =>
             {

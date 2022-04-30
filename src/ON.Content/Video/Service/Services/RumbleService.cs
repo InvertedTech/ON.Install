@@ -5,7 +5,7 @@ using ON.Content.Video.Service.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-// Todo: Save channels
+// Todo: Add Authentication
 namespace ON.Content.Video.Service
 {
     public class RumbleService : RumbleInterface.RumbleInterfaceBase
@@ -13,9 +13,9 @@ namespace ON.Content.Video.Service
         private readonly ILogger<ServiceOpsService> logger;
         private HttpRumbleProvider httpRumble;
         private readonly IOptions<AppSettings> appSettings;
-        private readonly FileSystemRumbleDataProvider rumbleDataProvider;
+        private readonly IFileSystemRumbleProvider rumbleDataProvider;
 
-        public RumbleService(ILogger<ServiceOpsService> logger, IOptions<AppSettings> settings, FileSystemRumbleDataProvider dataProvider)
+        public RumbleService(ILogger<ServiceOpsService> logger, IOptions<AppSettings> settings, IFileSystemRumbleProvider dataProvider)
         {
             this.logger = logger;
             appSettings = settings;
@@ -23,35 +23,56 @@ namespace ON.Content.Video.Service
             rumbleDataProvider = dataProvider;
         }
 
-        public override async Task<RumbleData> ConnectToRumbleChannel(RumbleChannelRequest request, ServerCallContext context)
+        // TODO: Figure out the pagination
+        public override async Task<RumbleChannelResponse> GetRumbleChannel(RumbleChannelRequest request, ServerCallContext context)
         {
             RumbleData data = new RumbleData();
+
             var httpResponse = await httpRumble.MediaSearchRequest(request);
             var body = httpResponse.Content;
 
             if (body != null)
             {
-                var deserializedResponse = JsonConvert.DeserializeObject<ResponseMapping>(body);
-                Result[] results = deserializedResponse.results;
-                foreach (Result result in results)
+                try
                 {
-                    var video = new RumbleVideo
+                    var deserializedResponse = JsonConvert.DeserializeObject<ResponseMapping>(body);
+                    Result[] results = deserializedResponse.results;
+                    foreach (Result result in results)
                     {
-                        Id = result.fid,
-                        Embed = result.video.iframe,
-                        Title = result.title,
-                        IsPrivate = result.isprivate,
-                        Channel = request.ChannelId
+                        var video = new RumbleVideo
+                        {
+                            Id = result.fid,
+                            Embed = result.video.iframe,
+                            Title = result.title,
+                            IsPrivate = result.isprivate,
+                            Channel = request.ChannelId
+                        };
+
+                        data.Videos.Add(video);
+                    }
+
+                    await rumbleDataProvider.SaveData(data);
+                    return new RumbleChannelResponse
+                    {
+                        Success = true,
+                        Msg = "Rumble Channel found for " + request.ChannelId,
+                        Data = data
                     };
-
-                    data.Videos.Add(video);
+                } catch (Exception ex)
+                {
+                    return new RumbleChannelResponse
+                    {
+                        Success = false,
+                        Msg = "No Channel Found: " + ex.Message,
+                    };
                 }
-
-                await rumbleDataProvider.SaveData(data);
-                return data;
             }
 
-            return data;
+            return new RumbleChannelResponse
+            {
+                Success = false,
+                Msg = "Uknown Error Occured"
+            };
         } 
 
     }
