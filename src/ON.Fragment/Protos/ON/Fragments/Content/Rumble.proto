@@ -15,6 +15,7 @@ message RumbleVideo {
 	string Embed = 2;
 	string Title = 3;
 	bool IsPrivate = 4;
+	string Channel = 5;
 }
 
 message RumbleChannel {
@@ -23,8 +24,8 @@ message RumbleChannel {
 }
 
 message RumbleData {
-	repeated RumbleChannel Channels = 1;
-	//repeated RumbleVideo Videos = 2;
+	//repeated RumbleChannel Channels = 1;
+	repeated RumbleVideo Videos = 1;
 }
 
 message RumbleChannelRequest {
