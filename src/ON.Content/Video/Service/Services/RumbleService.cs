@@ -1,15 +1,11 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Google.Protobuf.Collections;
-using Grpc.Core;
+﻿using Grpc.Core;
 using ON.Fragments.Content;
-using ON.Fragments.Generic;
 using ON.Content.Video.Service.Data;
-using RestSharp;
 using ON.Content.Video.Service.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
+// Todo: Save channels
 namespace ON.Content.Video.Service
 {
     public class RumbleService : RumbleInterface.RumbleInterfaceBase
@@ -25,48 +21,64 @@ namespace ON.Content.Video.Service
             httpRumble = new HttpRumbleProvider(logger, appSettings);
         }
 
-        public override async Task<RumbleVideoResponse> RumbleVideoLinkById(RumbleVideoIdRequest request, ServerCallContext context)
+        public override async Task<RumbleChannelResponse> RumbleChannelConnection(RumbleChannelRequest request, ServerCallContext context)
         {
-            var res = await httpRumble.MediaItemRequest(request);
-
-            if (res.Content != null)
+            RumbleChannel channel = new RumbleChannel
             {
-                var json = JObject.Parse(res.Content);
-                var video = json.SelectToken("video");
-                var embed = video.SelectToken("iframe");
-                RumbleVideo rumbleVideo = new RumbleVideo()
+                Id = request.ChannelId,
+            };
+            var res = await httpRumble.MediaSearchRequest(request);
+            var json = res.Content;
+
+            if (json != null)
+            {
+                var deserial = JsonConvert.DeserializeObject<ResponseMapping>(json);
+                Result[] results = deserial.results;
+
+                foreach (var result in results)
                 {
-                    Id = request.Fid.ToString(),
-                    Language = "en",
-                    Embed = embed.ToString(),
-                    Title = json.SelectToken("title").ToString(),
-                    ChannelId = json.SelectToken("channel").ToString(),
-                    IsPrivate = ((bool)json.SelectToken("private"))
-                };
 
-                // TODO: Serialize rumbleVideo to protobuf
-
-                return new RumbleVideoResponse()
+                    var video = new RumbleVideo
+                    {
+                        Id = result.fid,
+                        Embed = result.video.iframe,
+                        Title = result.title,
+                        IsPrivate = result.isprivate,
+                    };
+                    channel.Videos.Add(video);
+                }
+                
+                return new RumbleChannelResponse
                 {
                     Success = true,
-                    Msg = "Video Found",
-                    Video = rumbleVideo
+                    Msg = "Channel Found",
+                    Channel = channel
                 };
+                
             }
 
-            return new RumbleVideoResponse()
+
+
+            return new RumbleChannelResponse
             {
                 Success = false,
-                Error = "err"
             };
         }
 
-        public async Task<RumbleVideoResponse> RumbleVideoLink(RumbleVideoIdRequest request)
-        {
-            await Task.Delay(100);
-            return new RumbleVideoResponse();
-        }
 
+    }
+
+    internal class ResponseMapping
+    {
+        public Result[] results { get; set; }
+    }
+
+    internal class Result
+    {
+        public string fid { get; set; }
+        public string title { get; set; }
+        public dynamic video { get; set; }
+        public bool isprivate { get; set; }
 
     }
 }

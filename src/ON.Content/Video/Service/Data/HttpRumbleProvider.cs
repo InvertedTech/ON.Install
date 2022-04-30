@@ -39,14 +39,39 @@ namespace ON.Content.Video.Service.Data
             req.AddObject(reqParams);
             RestResponse resp = await MakeHttpRequest(req);
 
-           var jsonString = JsonConvert.DeserializeObject(resp.Content);
-
             return resp;
         }
 
-        private async Task<RestResponse> MediaSearchRequest()
+        public async Task<RestResponse> MediaSearchRequest(RumbleVideoRequest request)
         {
-            throw new NotImplementedException();
+            var uri = RumbleUri + "/Media.Search?_p=" + appSettings.Value.RumblePlatformToken;
+            RestRequest req = new RestRequest(uri);
+            req.AddHeader("ContentType", "application/json");
+
+            var reqParams = new
+            {
+                lang = request.Lang,
+                syndicated = request.Syndicated,
+                channel = request.ChannelCase,
+                user = request.UserCase,
+                ext = request.Ext,
+                debug = request.Debug,
+                criteria = request.CriteriaCase
+            };
+            req.AddObject(reqParams);
+            RestResponse response = await MakeHttpRequest(req);
+
+            return response;
+        }
+
+        public async Task<RestResponse> MediaSearchRequest(RumbleChannelRequest request)
+        {
+            var uri = RumbleUri + "/Media.Search?_p=" + appSettings.Value.RumblePlatformToken;
+            var req = new RestRequest(uri);
+            req.AddHeader("ContentType", "application/json");
+            req.AddParameter("channel", request.ChannelId);
+            var response = await MakeHttpRequest(req);
+            return response;
         }
     }
 }
