@@ -5,9 +5,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
 service RumbleInterface {
-	rpc GetRumbleChannel (RumbleChannelRequest) returns (RumbleChannelResponse);		// Connect to a Rumble Channel	 (Rumble API Method: Media.Search)
-	//rpc RumbleVideoLinkById(RumbleVideoIdRequest) returns (RumbleVideoResponse);			// Link A Video by its Video Id  (Rumble API Method: Media.Item)
-	//rpc RumbleVideoLink(RumbleVideoRequest) returns (RumbleVideoResponse);					// Link A Video          		 (Rumble API Method: Media.Search)
+	rpc GetRumbleChannel (RumbleChannelRequest) returns (RumbleChannelResponse);		// Grab a Rumble Channel	 (Rumble API Method: Media.Search)
 }
 
 message RumbleVideo {
@@ -18,13 +16,7 @@ message RumbleVideo {
 	string Channel = 5;
 }
 
-message RumbleChannel {
-	string Id = 1;
-	repeated RumbleVideo Videos = 2;
-}
-
 message RumbleData {
-	//repeated RumbleChannel Channels = 1;
 	repeated RumbleVideo Videos = 1;
 }
 
@@ -36,41 +28,4 @@ message RumbleChannelResponse {
 	bool Success = 1;
 	string Msg = 2;
 	RumbleData Data = 3;
-}
-
-message RumbleVideoIdRequest {
-	uint32 fid = 1;
-}
-
-message RumbleVideoRequest {
-	string lang = 1;
-	uint32 syndicated = 2;
-
-	oneof channel {
-		string ChannelIdStr = 3;
-		uint32 ChannelIdNum = 4;
-	}
-
-	oneof user {
-		string UserIdStr = 5;
-		uint32 UserIdNum = 6;
-	}
-
-	bool ext = 7;
-	bool debug = 8;
-
-	oneof criteria {
-		uint32 pg = 20;
-		string sort = 21;
-		uint32 tier = 22;
-		uint32 limit = 23;
-		bool editorpicks = 24;
-	}
-}
-
-message RumbleVideoResponse {
-	bool Success = 1;
-	string Error = 2;
-	string Msg = 3;
-	RumbleVideo Video = 4;
 }

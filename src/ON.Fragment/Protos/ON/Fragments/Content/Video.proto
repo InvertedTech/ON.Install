@@ -6,9 +6,12 @@ import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Content/Rumble.proto";
 
 service VideoInterface {
-	rpc UpdateData(UpdateDataRequest) returns (DataResponse);
-	rpc RemoveData(RemoveDataRequest) returns (DataResponse);
 	rpc GetData(GetDataRequest) returns (DataResponse);
+}
+
+message RequestOpts {
+	string Provider = 1;
+	string FID = 2;
 }
 
 message VideoProviderData {
@@ -16,21 +19,7 @@ message VideoProviderData {
 }
 
 message GetDataRequest {
-	message Options {
-		string Provider = 1;
-	}
-}
-
-message UpdateDataRequest {
-	message Options {
-		string Provider = 1;
-	}
-}
-
-message RemoveDataRequest {
-	message Options {
-		string Provider = 1;
-	}
+	RequestOpts Options = 1;
 }
 
 message DataResponse {
