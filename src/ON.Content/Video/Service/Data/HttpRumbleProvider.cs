@@ -27,42 +27,42 @@ namespace ON.Content.Video.Service.Data
             return response;
         }
 
-        public async Task<RestResponse> MediaItemRequest(RumbleVideoIdRequest request)
-        {
-            var uri = RumbleUri + "/Media.Item?_p=" + appSettings.Value.RumblePlatformToken;
-            RestRequest req = new RestRequest(uri);
-            req.AddHeader("ContentType", "application/json");
-            var reqParams = new
-            {
-                fid = request.Fid,
-            };
-            req.AddObject(reqParams);
-            RestResponse resp = await MakeHttpRequest(req);
+        //public async Task<RestResponse> MediaItemRequest(RumbleVideoIdRequest request)
+        //{
+        //    var uri = RumbleUri + "/Media.Item?_p=" + appSettings.Value.RumblePlatformToken;
+        //    RestRequest req = new RestRequest(uri);
+        //    req.AddHeader("ContentType", "application/json");
+        //    var reqParams = new
+        //    {
+        //        fid = request.Fid,
+        //    };
+        //    req.AddObject(reqParams);
+        //    RestResponse resp = await MakeHttpRequest(req);
 
-            return resp;
-        }
+        //    return resp;
+        //}
 
-        public async Task<RestResponse> MediaSearchRequest(RumbleVideoRequest request)
-        {
-            var uri = RumbleUri + "/Media.Search?_p=" + appSettings.Value.RumblePlatformToken;
-            RestRequest req = new RestRequest(uri);
-            req.AddHeader("ContentType", "application/json");
+        //public async Task<RestResponse> MediaSearchRequest(RumbleVideoRequest request)
+        //{
+        //    var uri = RumbleUri + "/Media.Search?_p=" + appSettings.Value.RumblePlatformToken;
+        //    RestRequest req = new RestRequest(uri);
+        //    req.AddHeader("ContentType", "application/json");
 
-            var reqParams = new
-            {
-                lang = request.Lang,
-                syndicated = request.Syndicated,
-                channel = request.ChannelCase,
-                user = request.UserCase,
-                ext = request.Ext,
-                debug = request.Debug,
-                criteria = request.CriteriaCase
-            };
-            req.AddObject(reqParams);
-            RestResponse response = await MakeHttpRequest(req);
+        //    var reqParams = new
+        //    {
+        //        lang = request.Lang,
+        //        syndicated = request.Syndicated,
+        //        channel = request.ChannelCase,
+        //        user = request.UserCase,
+        //        ext = request.Ext,
+        //        debug = request.Debug,
+        //        criteria = request.CriteriaCase
+        //    };
+        //    req.AddObject(reqParams);
+        //    RestResponse response = await MakeHttpRequest(req);
 
-            return response;
-        }
+        //    return response;
+        //}
 
         public async Task<RestResponse> MediaSearchRequest(RumbleChannelRequest request)
         {
