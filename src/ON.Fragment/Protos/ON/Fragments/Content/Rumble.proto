@@ -5,7 +5,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
 service RumbleInterface {
-	rpc RumbleChannelConnection(RumbleChannelRequest) returns (RumbleChannelResponse);		// Connect to a Rumble Channel	 (Rumble API Method: Media.Search)
+	rpc ConnectToRumbleChannel (RumbleChannelRequest) returns (RumbleData);		// Connect to a Rumble Channel	 (Rumble API Method: Media.Search)
 	//rpc RumbleVideoLinkById(RumbleVideoIdRequest) returns (RumbleVideoResponse);			// Link A Video by its Video Id  (Rumble API Method: Media.Item)
 	//rpc RumbleVideoLink(RumbleVideoRequest) returns (RumbleVideoResponse);					// Link A Video          		 (Rumble API Method: Media.Search)
 }
@@ -34,9 +34,8 @@ message RumbleChannelRequest {
 
 message RumbleChannelResponse {
 	bool Success = 1;
-	string Error = 2;
-	string Msg = 3;
-	RumbleChannel Channel = 4;
+	string Msg = 2;
+	RumbleData Data = 3;
 }
 
 message RumbleVideoIdRequest {

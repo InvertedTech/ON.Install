@@ -13,58 +13,46 @@ namespace ON.Content.Video.Service
         private readonly ILogger<ServiceOpsService> logger;
         private HttpRumbleProvider httpRumble;
         private readonly IOptions<AppSettings> appSettings;
+        private readonly FileSystemRumbleDataProvider rumbleDataProvider;
 
-        public RumbleService(ILogger<ServiceOpsService> logger, IOptions<AppSettings> settings)
+        public RumbleService(ILogger<ServiceOpsService> logger, IOptions<AppSettings> settings, FileSystemRumbleDataProvider dataProvider)
         {
             this.logger = logger;
             appSettings = settings;
             httpRumble = new HttpRumbleProvider(logger, appSettings);
+            rumbleDataProvider = dataProvider;
         }
 
-        public override async Task<RumbleChannelResponse> RumbleChannelConnection(RumbleChannelRequest request, ServerCallContext context)
+        public override async Task<RumbleData> ConnectToRumbleChannel(RumbleChannelRequest request, ServerCallContext context)
         {
-            RumbleChannel channel = new RumbleChannel
-            {
-                Id = request.ChannelId,
-            };
-            var res = await httpRumble.MediaSearchRequest(request);
-            var json = res.Content;
+            RumbleData data = new RumbleData();
+            var httpResponse = await httpRumble.MediaSearchRequest(request);
+            var body = httpResponse.Content;
 
-            if (json != null)
+            if (body != null)
             {
-                var deserial = JsonConvert.DeserializeObject<ResponseMapping>(json);
-                Result[] results = deserial.results;
-
-                foreach (var result in results)
+                var deserializedResponse = JsonConvert.DeserializeObject<ResponseMapping>(body);
+                Result[] results = deserializedResponse.results;
+                foreach (Result result in results)
                 {
-
                     var video = new RumbleVideo
                     {
                         Id = result.fid,
                         Embed = result.video.iframe,
                         Title = result.title,
                         IsPrivate = result.isprivate,
+                        Channel = request.ChannelId
                     };
-                    channel.Videos.Add(video);
+
+                    data.Videos.Add(video);
                 }
-                
-                return new RumbleChannelResponse
-                {
-                    Success = true,
-                    Msg = "Channel Found",
-                    Channel = channel
-                };
-                
+
+                await rumbleDataProvider.SaveData(data);
+                return data;
             }
 
-
-
-            return new RumbleChannelResponse
-            {
-                Success = false,
-            };
-        }
-
+            return data;
+        } 
 
     }
 
