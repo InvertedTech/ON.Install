@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 // Todo: Error Handling
 // Todo: Change Save Path based on each channel
 // Todo: Handle Duplicates
+// Todo: Handle Date Range Filter
+// Todo: Refactor the internal classes to /Models
 namespace ON.Content.Video.Service
 {
     public class RumbleService : RumbleInterface.RumbleInterfaceBase
@@ -44,13 +46,13 @@ namespace ON.Content.Video.Service
                     if (criteria.pg < pagination.pages)
                     {
                         // Initiate the paginated request
-                        logger.LogWarning(body);
+                        //logger.LogWarning(body);
                         var totalPages = pagination.pages;
                         RumbleData tmpData = await GetAllResults(request, totalPages, httpRumble);
                         data.Videos.Add(tmpData.Videos);
 
-                        logger.LogWarning($"DATALEN::::{data.Videos.Count}");
-                        logger.LogWarning($"DATALENREQ::::{pagination.items}");
+                        //logger.LogWarning($"DATALEN::::{data.Videos.Count}");
+                        //logger.LogWarning($"DATALENREQ::::{pagination.items}");
 
                         await rumbleDataProvider.SaveData(data);
                         return new RumbleChannelResponse
@@ -100,6 +102,27 @@ namespace ON.Content.Video.Service
             {
                 Success = false,
                 Msg = "Uknown Error Occured"
+            };
+        }
+
+        public override async Task<StoredDataResponse> GetAllStoredData(EmptyRequest request, ServerCallContext context)
+        {
+            var data = await rumbleDataProvider.GetData();
+
+            if (data != null)
+            {
+                return new StoredDataResponse
+                {
+                    Success = true,
+                    Msg = "Stored Rumble Data Found",
+                    Data = data
+                };
+            }
+
+            return new StoredDataResponse
+            {
+                Success = false,
+                Msg = "Stored Rumble Data Not Found",
             };
         }
 

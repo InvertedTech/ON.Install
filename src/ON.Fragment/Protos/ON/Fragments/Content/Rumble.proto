@@ -3,9 +3,11 @@
 package ON.Fragments.Content;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/empty.proto";
 
 service RumbleInterface {
 	rpc GetRumbleChannel (RumbleChannelRequest) returns (RumbleChannelResponse);		// Grab a Rumble Channel	 (Rumble API Method: Media.Search)
+	rpc GetAllStoredData (EmptyRequest) returns (StoredDataResponse);
 }
 
 message RumbleVideo {
@@ -14,6 +16,17 @@ message RumbleVideo {
 	string Title = 3;
 	bool IsPrivate = 4;
 	string Channel = 5;
+}
+
+message EmptyRequest {}
+
+message StoredDataRequest {}
+
+message StoredDataResponse {
+	bool Success = 1;
+	string Msg = 2;
+	string Error = 3;
+	RumbleData Data = 4;
 }
 
 message RumbleData {
@@ -27,5 +40,6 @@ message RumbleChannelRequest {
 message RumbleChannelResponse {
 	bool Success = 1;
 	string Msg = 2;
-	RumbleData Data = 3;
+	string Error = 3;
+	RumbleData Data = 4;
 }
