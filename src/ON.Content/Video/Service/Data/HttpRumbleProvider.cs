@@ -73,5 +73,19 @@ namespace ON.Content.Video.Service.Data
             var response = await MakeHttpRequest(req);
             return response;
         }
+
+        public async Task<RestResponse> MediaSearchRequestPaginated(RumbleChannelRequest request, string pg)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var uri = RumbleUri + "/Media.Search?_p=" + appSettings.Value.RumblePlatformToken;
+            var req = new RestRequest(uri);
+            req.AddHeader("ContentType", "application/json");
+            req.AddParameter("channel", request.ChannelId.ToString());
+            req.AddParameter("criteria", "pg=" + pg);
+            var response = await MakeHttpRequest(req);
+            return response;
+        }
     }
 }

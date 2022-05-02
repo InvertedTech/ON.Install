@@ -6,6 +6,9 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 // Todo: Add Authentication
+// Todo: Error Handling
+// Todo: Change Save Path based on each channel
+// Todo: Handle Duplicates
 namespace ON.Content.Video.Service
 {
     public class RumbleService : RumbleInterface.RumbleInterfaceBase
@@ -22,8 +25,6 @@ namespace ON.Content.Video.Service
             httpRumble = new HttpRumbleProvider(logger, appSettings);
             rumbleDataProvider = dataProvider;
         }
-
-        // TODO: Figure out the pagination
         public override async Task<RumbleChannelResponse> GetRumbleChannel(RumbleChannelRequest request, ServerCallContext context)
         {
             RumbleData data = new RumbleData();
@@ -35,30 +36,57 @@ namespace ON.Content.Video.Service
             {
                 try
                 {
-                    var deserializedResponse = JsonConvert.DeserializeObject<ResponseMapping>(body);
-                    Result[] results = deserializedResponse.results;
-                    foreach (Result result in results)
+                    var deserialized = JsonConvert.DeserializeObject<ResponseMapping>(body);
+                    Paginate pagination = deserialized.paginate;
+                    Criteria criteria = deserialized.criteria;
+                    Result[] results = deserialized.results;
+
+                    if (criteria.pg < pagination.pages)
                     {
-                        var video = new RumbleVideo
+                        // Initiate the paginated request
+                        logger.LogWarning(body);
+                        var totalPages = pagination.pages;
+                        RumbleData tmpData = await GetAllResults(request, totalPages, httpRumble);
+                        data.Videos.Add(tmpData.Videos);
+
+                        logger.LogWarning($"DATALEN::::{data.Videos.Count}");
+                        logger.LogWarning($"DATALENREQ::::{pagination.items}");
+
+                        await rumbleDataProvider.SaveData(data);
+                        return new RumbleChannelResponse
                         {
-                            Id = result.fid,
-                            Embed = result.video.iframe,
-                            Title = result.title,
-                            IsPrivate = result.isprivate,
-                            Channel = request.ChannelId
+                            Success = true,
+                            Msg = "Got all data",
+                            Data = data
                         };
 
-                        data.Videos.Add(video);
                     }
-
-                    await rumbleDataProvider.SaveData(data);
-                    return new RumbleChannelResponse
+                    else
                     {
-                        Success = true,
-                        Msg = "Rumble Channel found for " + request.ChannelId,
-                        Data = data
-                    };
-                } catch (Exception ex)
+                        foreach (Result result in results)
+                        {
+                            var video = new RumbleVideo
+                            {
+                                Id = result.fid,
+                                Embed = result.video.iframe,
+                                Title = result.title,
+                                IsPrivate = result.isprivate,
+                                Channel = request.ChannelId
+                            };
+
+                            data.Videos.Add(video);
+                        }
+
+                        await rumbleDataProvider.SaveData(data);
+                        return new RumbleChannelResponse
+                        {
+                            Success = true,
+                            Msg = "Rumble Channel found for " + request.ChannelId,
+                            Data = data
+                        };
+                    }
+                }
+                catch (Exception ex)
                 {
                     return new RumbleChannelResponse
                     {
@@ -73,13 +101,61 @@ namespace ON.Content.Video.Service
                 Success = false,
                 Msg = "Uknown Error Occured"
             };
-        } 
+        }
+
+        private async Task<RumbleData> GetAllResults(RumbleChannelRequest request, int totalPages, HttpRumbleProvider rumble)
+        {
+            RumbleData data = new RumbleData();
+
+
+            for (int i = 1; i <= totalPages; i++)
+            {
+                var httpResponse = await rumble.MediaSearchRequestPaginated(request, i.ToString());
+                var body = httpResponse.Content;
+                var deserialized = JsonConvert.DeserializeObject<ResponseMapping>(body);
+                Result[] pgResults = deserialized.results;
+
+                foreach (Result result in pgResults)
+                {
+                    var video = new RumbleVideo
+                    {
+                        Id = result.fid,
+                        Embed = result.video.iframe,
+                        Title = result.title,
+                        IsPrivate = result.isprivate,
+                        Channel = request.ChannelId
+                    };
+
+                    data.Videos.Add(video);
+                }
+            }
+
+            return data;
+        }
 
     }
 
     internal class ResponseMapping
     {
         public Result[] results { get; set; }
+        public Paginate paginate { get; set; }
+        public Criteria criteria {  get; set; }
+    }
+
+    internal class Criteria
+    {
+        public bool ugc { get; set; }
+        public int pg { get; set; }
+        public bool sort { get; set; }
+        public int limit { get; set; }
+        public int days { get; set; }
+    }
+
+    internal class Paginate
+    {
+        public int current { get; set; }
+        public int pages { get; set; }
+        public int items { get; set; }
     }
 
     internal class Result
