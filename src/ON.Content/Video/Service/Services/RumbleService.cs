@@ -7,10 +7,10 @@ using Newtonsoft.Json;
 
 // Todo: Add Authentication
 // Todo: Error Handling
-// Todo: Change Save Path based on each channel
+// Todo: Rename project from Video to Rumble
 // Todo: Handle Duplicates
 // Todo: Handle Date Range Filter
-// Todo: Refactor the internal classes to /Models
+// Todo: Maybe Deserialize on the HttpRumbleProvider to return cleaner responses
 namespace ON.Content.Video.Service
 {
     public class RumbleService : RumbleInterface.RumbleInterfaceBase
@@ -126,6 +126,47 @@ namespace ON.Content.Video.Service
             };
         }
 
+        public override async Task<StoredDataResponse> GetStoredDataById(StoredDataRequest request, ServerCallContext context)
+        {
+            RumbleData data = await rumbleDataProvider.GetData();
+
+            if (data != null)
+            {
+                foreach (var item in data.Videos)
+                {
+                    if (item == null) {
+                        {
+                            return new StoredDataResponse
+                            {
+                                Success = false,
+                                Msg = "Stored Rumble Data Not Found",
+                            };
+                        } }
+
+                    if (item.Id == request.VideoId)
+                    {
+                        StoredDataResponse response = new StoredDataResponse
+                        {
+                            Success = true,
+                            Msg = "Stored Rumble Data Found",
+                            Data = new RumbleData()
+                        };
+
+                        response.Data.Videos.Add(item);
+
+                        return response;
+                    }
+                }
+                
+            }
+
+            return new StoredDataResponse
+            {
+                Success = false,
+                Msg = "Stored Rumble Data Not Found",
+            };
+        }
+
         private async Task<RumbleData> GetAllResults(RumbleChannelRequest request, int totalPages, HttpRumbleProvider rumble)
         {
             RumbleData data = new RumbleData();
@@ -155,38 +196,6 @@ namespace ON.Content.Video.Service
 
             return data;
         }
-
-    }
-
-    internal class ResponseMapping
-    {
-        public Result[] results { get; set; }
-        public Paginate paginate { get; set; }
-        public Criteria criteria {  get; set; }
-    }
-
-    internal class Criteria
-    {
-        public bool ugc { get; set; }
-        public int pg { get; set; }
-        public bool sort { get; set; }
-        public int limit { get; set; }
-        public int days { get; set; }
-    }
-
-    internal class Paginate
-    {
-        public int current { get; set; }
-        public int pages { get; set; }
-        public int items { get; set; }
-    }
-
-    internal class Result
-    {
-        public string fid { get; set; }
-        public string title { get; set; }
-        public dynamic video { get; set; }
-        public bool isprivate { get; set; }
 
     }
 }
