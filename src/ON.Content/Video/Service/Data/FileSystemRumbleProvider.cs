@@ -33,5 +33,20 @@ namespace ON.Content.Video.Service.Data
         {
             await File.WriteAllBytesAsync(listFile.FullName, data.ToByteArray());
         }
+
+        public async Task<bool> IsDuplicateVideo (string videoId)
+        {
+            RumbleData storedData = await GetData();
+
+            foreach(var item in storedData.Videos)
+            {
+                if (item.Id == videoId)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 // Todo: Add Authentication
 // Todo: Error Handling
 // Todo: Rename project from Video to Rumble
-// Todo: Handle Duplicates
 // Todo: Handle Date Range Filter
 // Todo: Maybe Deserialize on the HttpRumbleProvider to return cleaner responses
 namespace ON.Content.Video.Service
@@ -51,6 +50,20 @@ namespace ON.Content.Video.Service
                         RumbleData tmpData = await GetAllResults(request, totalPages, httpRumble);
                         data.Videos.Add(tmpData.Videos);
 
+                        foreach (RumbleVideo item in tmpData.Videos)
+                        {
+                            var isDuplicate = await rumbleDataProvider.IsDuplicateVideo(item.Id);
+
+                            if (isDuplicate)
+                            {
+                                logger.LogWarning($"%%%% Video Duplicate {isDuplicate}");
+                                continue;
+                            } else
+                            {
+                                data.Videos.Add(item);
+                            }
+                        }
+
                         //logger.LogWarning($"DATALEN::::{data.Videos.Count}");
                         //logger.LogWarning($"DATALENREQ::::{pagination.items}");
 
@@ -67,7 +80,15 @@ namespace ON.Content.Video.Service
                     {
                         foreach (Result result in results)
                         {
-                            var video = new RumbleVideo
+                            bool isDuplicate = await rumbleDataProvider.IsDuplicateVideo(result.fid);
+
+                            if (isDuplicate)
+                            {
+                                logger.LogWarning($"%%%% Video Duplicate {isDuplicate}");
+                              continue;
+                            } else
+                            {
+                                RumbleVideo video = new RumbleVideo
                             {
                                 Id = result.fid,
                                 Embed = result.video.iframe,
@@ -76,7 +97,11 @@ namespace ON.Content.Video.Service
                                 Channel = request.ChannelId
                             };
 
+                            
+
+                            
                             data.Videos.Add(video);
+                            }
                         }
 
                         await rumbleDataProvider.SaveData(data);

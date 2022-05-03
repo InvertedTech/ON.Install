@@ -6,5 +6,6 @@ namespace ON.Content.Video.Service.Models
     {
         Task<RumbleData> GetData();
         Task SaveData(RumbleData data);
+        Task<bool> IsDuplicateVideo(string videoId);
     }
 }
