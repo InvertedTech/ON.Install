@@ -4,6 +4,7 @@ using ON.Content.Video.Service.Data;
 using ON.Content.Video.Service.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using ON.Authentication;
 
 // Todo: Add Authentication
 // Todo: Error Handling
@@ -28,6 +29,10 @@ namespace ON.Content.Video.Service
         }
         public override async Task<RumbleChannelResponse> GetRumbleChannel(RumbleChannelRequest request, ServerCallContext context)
         {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null)
+                return new RumbleChannelResponse() { Error = "No user token specified" };
+
             RumbleData data = new RumbleData();
 
             var httpResponse = await httpRumble.MediaSearchRequest(request);
@@ -132,6 +137,10 @@ namespace ON.Content.Video.Service
 
         public override async Task<StoredDataResponse> GetAllStoredData(EmptyRequest request, ServerCallContext context)
         {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null)
+                return new StoredDataResponse() { Error = "No user token specified" };
+
             var data = await rumbleDataProvider.GetData();
 
             if (data != null)
@@ -153,6 +162,10 @@ namespace ON.Content.Video.Service
 
         public override async Task<StoredDataResponse> GetStoredDataById(StoredDataRequest request, ServerCallContext context)
         {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null)
+                return new StoredDataResponse() { Error = "No user token specified" };
+
             RumbleData data = await rumbleDataProvider.GetData();
 
             if (data != null)
