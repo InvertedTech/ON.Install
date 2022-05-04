@@ -9,8 +9,8 @@ WORKDIR /src
 COPY ON.Authentication/Shared ON.Authentication/Shared
 COPY ON.Fragment ON.Fragment
 COPY ON.Crypto ON.Crypto
-RUN dotnet restore "ON.Content/Video/Service/ON.Content.Rumble.Service.csproj"
-WORKDIR "/src/ON.Contnet/Video/Service"
+RUN dotnet restore "ON.Content/Video/Rumble/Service/ON.Content.Rumble.Service.csproj"
+WORKDIR "/src/ON.Contnet/Video/Rumble/Service"
 RUN rm -f appsettings.Development.json
 RUN dotnet build "ON.Content.Rumble.Service.csproj" -c Release -o /app/build
 

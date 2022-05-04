@@ -36,7 +36,7 @@ namespace ON.Content.Rumble.Service
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("video", new OpenApiInfo { Title = "Video API" });
+                c.SwaggerDoc("videorumble", new OpenApiInfo { Title = "Video API: Rumble Layer" });
             });
             services.AddGrpcSwagger();
 
@@ -56,8 +56,8 @@ namespace ON.Content.Rumble.Service
             });
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/api/video/swagger.json", "Video API");
-                c.RoutePrefix = "api/video";
+                c.SwaggerEndpoint("/api/video/rumble/swagger.json", "Video API");
+                c.RoutePrefix = "api/video/rumble";
             });
 
             app.UseRouting();
@@ -66,7 +66,6 @@ namespace ON.Content.Rumble.Service
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<VideoService>();
                 endpoints.MapGrpcService<RumbleService>();
 
                 endpoints.MapGet("/", async context =>
