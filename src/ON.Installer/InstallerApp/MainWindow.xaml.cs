@@ -212,10 +212,22 @@ namespace InstallerApp
                 frmMain.Source = new Uri("DNS.xaml", UriKind.RelativeOrAbsolute);
         }
 
+        private void btnProducts_Selected(object sender, RoutedEventArgs e)
+        {
+            if (frmMain != null)
+                frmMain.Source = new Uri("Products.xaml", UriKind.RelativeOrAbsolute);
+        }
+
         private void btnCMS_Selected(object sender, RoutedEventArgs e)
         {
             if (frmMain != null)
                 frmMain.Source = new Uri("CMS.xaml", UriKind.RelativeOrAbsolute);
+        }
+
+        private void btnBusiness_Selected(object sender, RoutedEventArgs e)
+        {
+            if (frmMain != null)
+                frmMain.Source = new Uri("Business.xaml", UriKind.RelativeOrAbsolute);
         }
 
         private void btnAuthentication_Selected(object sender, RoutedEventArgs e)

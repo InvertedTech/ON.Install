@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payments.Crypto;
+
+import "google/protobuf/timestamp.proto";
+
+// Service wide record
+message BitcoinServiceRecord {
+  int32 LastAddressUsed = 1;
+  google.protobuf.Timestamp ModifiedOnUTC = 2;
+}

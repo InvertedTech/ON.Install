@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payments.Crypto;
+
+import "Protos/ON/Fragments/Authorization/Payments/Crypto/BitcoinRecords.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Crypto/BitcoinService.proto";
+
+// Service for Crypto backup fragment interface
+service BackupInterface {
+  // Export a list of all data.
+  rpc BackupAllData (BackupAllDataRequest) returns (stream BackupAllDataResponse) {}
+
+  // Restore a list of all data.
+  rpc RestoreAllData (stream RestoreAllDataRequest) returns (RestoreAllDataResponse) {}
+}
+  
+message BackupAllDataRequest {
+  string ClientPublicJwk = 1;
+}
+
+message BackupAllDataResponse {
+  oneof Response_oneof {
+    string ServerPublicJwk = 1;
+    EncryptedUserBackupDataRecord EncryptedRecord = 10;
+  }
+}
+
+message EncryptedUserBackupDataRecord {
+  bytes EncryptionIV = 1;
+  bytes Data = 10;
+}
+
+message RestoreAllDataRequest {
+  oneof Request_oneof {
+    RestoreMode Mode = 1;
+    BitcoinServiceRecord ServiceRecord = 2;
+    UserBackupDataRecord UserRecord = 10;
+  }
+
+  enum RestoreMode {
+    Wipe = 0;         // Wipe entire user database and restore users.  Any new users will be deleted.
+    Overwrite = 1;    // Overwrite all records with corresponding record.  Will not delete new records not in list.
+    MissingOnly = 2;  // Only restore missing user records.  Will not overwrite user records that already exist.
+  }
+}
+
+message RestoreAllDataResponse {
+  int32 NumUsersRestored = 1;
+  int32 NumUsersSkipped = 2;
+  int32 NumUsersOverwriten = 3;
+  int32 NumUsersWiped = 4;
+}
+
+message UserBackupDataRecord {
+  bytes ExtraData = 1;   // Generic byte structure to save all application specific data for user
+  repeated BitcoinSubscriptionRecord SubscriptionRecords = 2; // Subscription Record
+  repeated BitcoinPaymentHistoryRecord HistoryRecords = 3;
+}

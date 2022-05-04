@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace InstallerApp.Terraform.DeploySite
+namespace InstallerApp.Terraform.Deploy.CMS
 {
     internal class Runner
     {
@@ -16,7 +16,7 @@ namespace InstallerApp.Terraform.DeploySite
         {
             await window.AddLine("--- Deploy Site ---");
 
-            var targetD = new DirectoryInfo($"{window.DeployRootD.FullName}/deploySite");
+            var targetD = new DirectoryInfo($"{window.DeployRootD.FullName}/deploy/cms");
             var terraD = new DirectoryInfo(targetD.FullName + "/.terraform");
             var varF = new FileInfo(targetD.FullName + "/variables.tf");
             var envF = new FileInfo(targetD.FullName + "/.env");
@@ -24,7 +24,7 @@ namespace InstallerApp.Terraform.DeploySite
             if (!targetD.Exists)
             {
                 targetD.Create();
-                await window.resHelper.SaveDeploySite(targetD);
+                await window.resHelper.SaveDeployCMS(targetD);
             }
 
             var ssh = window.keyHelper.DeriveEcSshKey();

@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payments.Crypto;
+
+import "google/api/annotations.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Crypto/BitcoinRecords.proto";
+
+service BitcoinInterface {
+  rpc CheckForPayment (CheckForPaymentRequest) returns (CheckForPaymentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/bitcoin/check"
+    };
+  }
+  rpc GetAdminBalance (GetAdminBalanceRequest) returns (GetAdminBalanceResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/bitcoin/admin/balance"
+    };
+  }
+  rpc GetHistoryRecords (GetHistoryRecordsRequest) returns (GetHistoryRecordsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/bitcoin/history"
+    };
+  }
+  rpc GetPaymentStatus (GetPaymentStatusRequest) returns (GetPaymentStatusResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/bitcoin/status"
+    };
+  }
+  rpc SetSubscriptionLevel (SetSubscriptionLevelRequest) returns (GetPaymentStatusResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/bitcoin/subscription"
+      body: "*"
+    };
+  }
+}
+  
+message GetAdminBalanceRequest {
+}
+  
+message GetAdminBalanceResponse {
+  uint32 Satoshis = 1;
+  float ValueUSD = 2;
+}
+
+message CheckForPaymentRequest {
+}
+  
+message CheckForPaymentResponse {
+  BitcoinPaymentHistoryRecord LastRecord = 1;
+  string Error = 2;
+}
+
+message GetHistoryRecordsRequest {
+}
+  
+message GetHistoryRecordsResponse {
+  repeated BitcoinPaymentHistoryRecord Records = 1;
+}
+
+message GetPaymentStatusRequest {
+}
+  
+message GetPaymentStatusResponse {
+  BitcoinSubscriptionRecord Subscription = 1;
+  BitcoinPaymentHistoryRecord LastPayment = 2;
+}
+
+message SetSubscriptionLevelRequest {
+  uint32 Level = 1;
+}
