@@ -36,6 +36,17 @@ message RumbleData {
 	repeated RumbleVideo Videos = 1;
 }
 
+message RumbleVideoRequest {
+
+}
+
+message RumbleVideoResponse {
+	bool Success = 1;
+	string Msg = 2;
+	string Error = 3;
+	RumbleVideo Video = 4;
+}
+
 message RumbleChannelRequest {
 	string ChannelId = 1;
 }

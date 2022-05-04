@@ -1,16 +1,15 @@
 ﻿using Grpc.Core;
 using ON.Fragments.Content;
-using ON.Content.Video.Service.Data;
-using ON.Content.Video.Service.Models;
+using ON.Content.Rumble.Service.Data;
+using ON.Content.Rumble.Service.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using ON.Authentication;
 
 // Todo: Error Handling
-// Todo: Rename project from Video to Rumble
 // Todo: Handle Date Range Filter
 // Todo: Maybe Deserialize on the HttpRumbleProvider to return cleaner responses
-namespace ON.Content.Video.Service
+namespace ON.Content.Rumble.Service
 {
     public class RumbleService : RumbleInterface.RumbleInterfaceBase
     {

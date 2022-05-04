@@ -1,9 +1,9 @@
 ﻿using Google.Protobuf;
 using Microsoft.Extensions.Options;
-using ON.Content.Video.Service.Models;
+using ON.Content.Rumble.Service.Models;
 using ON.Fragments.Content;
 
-namespace ON.Content.Video.Service.Data
+namespace ON.Content.Rumble.Service.Data
 {
     public class FileSystemRumbleProvider : IFileSystemRumbleProvider
     {

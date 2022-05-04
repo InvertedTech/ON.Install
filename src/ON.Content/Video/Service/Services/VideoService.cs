@@ -3,10 +3,10 @@ using Google.Protobuf.Collections;
 using Grpc.Core;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
-using ON.Content.Video.Service.Models;
+using ON.Content.Rumble.Service.Models;
 using Microsoft.Extensions.Options;
 
-namespace ON.Content.Video.Service
+namespace ON.Content.Rumble.Service
 {
     public class VideoService : VideoInterface.VideoInterfaceBase
     {

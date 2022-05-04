@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
 
-namespace ON.Content.Video.Service
+namespace ON.Content.Rumble.Service
 {
     public class Program
     {

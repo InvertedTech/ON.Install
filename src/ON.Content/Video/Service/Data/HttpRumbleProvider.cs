@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using ON.Content.Video.Service.Models;
+using ON.Content.Rumble.Service.Models;
 using ON.Fragments.Content;
 using RestSharp;
 using System.Text.Json;
 
-namespace ON.Content.Video.Service.Data
+namespace ON.Content.Rumble.Service.Data
 {
     public class HttpRumbleProvider
     {
@@ -40,28 +40,6 @@ namespace ON.Content.Video.Service.Data
         //    RestResponse resp = await MakeHttpRequest(req);
 
         //    return resp;
-        //}
-
-        //public async Task<RestResponse> MediaSearchRequest(RumbleVideoRequest request)
-        //{
-        //    var uri = RumbleUri + "/Media.Search?_p=" + appSettings.Value.RumblePlatformToken;
-        //    RestRequest req = new RestRequest(uri);
-        //    req.AddHeader("ContentType", "application/json");
-
-        //    var reqParams = new
-        //    {
-        //        lang = request.Lang,
-        //        syndicated = request.Syndicated,
-        //        channel = request.ChannelCase,
-        //        user = request.UserCase,
-        //        ext = request.Ext,
-        //        debug = request.Debug,
-        //        criteria = request.CriteriaCase
-        //    };
-        //    req.AddObject(reqParams);
-        //    RestResponse response = await MakeHttpRequest(req);
-
-        //    return response;
         //}
 
         public async Task<RestResponse> MediaSearchRequest(RumbleChannelRequest request)

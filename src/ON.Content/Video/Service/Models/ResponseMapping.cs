@@ -1,4 +1,4 @@
-﻿namespace ON.Content.Video.Service.Models
+﻿namespace ON.Content.Rumble.Service.Models
 {
     public class ResponseMapping
     {

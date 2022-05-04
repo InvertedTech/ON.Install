@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ON.Content.Video.Service.Models
+namespace ON.Content.Rumble.Service.Models
 {
     public class AppSettings
     {

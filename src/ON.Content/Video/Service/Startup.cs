@@ -10,10 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
-using ON.Content.Video.Service.Data;
-using ON.Content.Video.Service.Models;
+using ON.Content.Rumble.Service.Data;
+using ON.Content.Rumble.Service.Models;
 
-namespace ON.Content.Video.Service
+namespace ON.Content.Rumble.Service
 {
     public class Startup
     {

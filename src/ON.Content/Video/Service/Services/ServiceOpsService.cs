@@ -6,7 +6,7 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using ON.Fragments.Generic;
 
-namespace ON.Content.Video.Service
+namespace ON.Content.Rumble.Service
 {
     public class ServiceOpsService : ServiceOpsInterface.ServiceOpsInterfaceBase
     {

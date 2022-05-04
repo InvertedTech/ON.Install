@@ -1,6 +1,6 @@
 ﻿using ON.Fragments.Content;
 
-namespace ON.Content.Video.Service.Models
+namespace ON.Content.Rumble.Service.Models
 {
     public interface IFileSystemRumbleProvider
     {
