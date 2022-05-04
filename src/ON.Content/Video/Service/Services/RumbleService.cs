@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using ON.Authentication;
 
-// Todo: Add Authentication
 // Todo: Error Handling
 // Todo: Rename project from Video to Rumble
 // Todo: Handle Date Range Filter
@@ -32,6 +31,7 @@ namespace ON.Content.Video.Service
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
                 return new RumbleChannelResponse() { Error = "No user token specified" };
+            if (!userToken.IsWriterOrHigher) { return new RumbleChannelResponse() { Error = "Access Denied, Wrong Permissions" }; }
 
             RumbleData data = new RumbleData();
 
@@ -140,6 +140,7 @@ namespace ON.Content.Video.Service
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
                 return new StoredDataResponse() { Error = "No user token specified" };
+            if (!userToken.IsWriterOrHigher) { return new StoredDataResponse() { Error = "Access Denied, Wrong Permissions" }; }
 
             var data = await rumbleDataProvider.GetData();
 
@@ -165,6 +166,7 @@ namespace ON.Content.Video.Service
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
                 return new StoredDataResponse() { Error = "No user token specified" };
+            if (!userToken.IsWriterOrHigher) { return new StoredDataResponse() { Error = "Access Denied, Wrong Permissions" }; }
 
             RumbleData data = await rumbleDataProvider.GetData();
 
