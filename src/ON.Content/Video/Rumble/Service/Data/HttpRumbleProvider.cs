@@ -23,24 +23,33 @@ namespace ON.Content.Rumble.Service.Data
         {
             var client = new RestClient();
             var response = await client.GetAsync(request);
-            
             return response;
         }
 
-        //public async Task<RestResponse> MediaItemRequest(RumbleVideoIdRequest request)
-        //{
-        //    var uri = RumbleUri + "/Media.Item?_p=" + appSettings.Value.RumblePlatformToken;
-        //    RestRequest req = new RestRequest(uri);
-        //    req.AddHeader("ContentType", "application/json");
-        //    var reqParams = new
-        //    {
-        //        fid = request.Fid,
-        //    };
-        //    req.AddObject(reqParams);
-        //    RestResponse resp = await MakeHttpRequest(req);
+        private Result MapResponse(RestResponse response)
+        {
+            if (response.Content == null) { return null; }
+            var responseMapping = JsonConvert.DeserializeObject<Result>(response.Content);
 
-        //    return resp;
-        //}
+            if (responseMapping == null) { return null; }
+
+            return responseMapping;
+        }
+
+        public async Task<Result> MediaItemRequest(RumbleVideoRequest request)
+        {
+            var uri = RumbleUri + "/Media.Item?_p=" + appSettings.Value.RumblePlatformToken;
+            RestRequest req = new RestRequest(uri);
+            req.AddHeader("ContentType", "application/json");
+            var reqParams = new
+            {
+                fid = request.VideoId,
+            };
+            req.AddObject(reqParams);
+            RestResponse resp = await MakeHttpRequest(req);
+            var responseMap = MapResponse(resp);
+            return responseMap;
+        }
 
         public async Task<RestResponse> MediaSearchRequest(RumbleChannelRequest request)
         {

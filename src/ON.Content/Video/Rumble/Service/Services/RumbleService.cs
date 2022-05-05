@@ -206,6 +206,40 @@ namespace ON.Content.Rumble.Service
             };
         }
 
+        public override async Task<RumbleVideoResponse> GetRumbleVideo(RumbleVideoRequest request, ServerCallContext context)
+        {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null)
+                return new RumbleVideoResponse() { Error = "No user token specified" };
+            if (!userToken.IsWriterOrHigher) { return new RumbleVideoResponse() { Error = "Access Denied, Wrong Permissions" }; }
+
+            var response = await httpRumble.MediaItemRequest(request);
+            
+            if (response != null)
+            {
+                RumbleVideo video = new RumbleVideo
+                {
+                    Id = response.fid,
+                    Embed = response.video.iframe,
+                    Title = response.title,
+                    IsPrivate = response.isprivate,
+                };
+
+                return new RumbleVideoResponse
+                {
+                    Success = true,
+                    Msg = "Video Found",
+                    Video = video
+                };
+            }
+
+            return new RumbleVideoResponse()
+            {
+                Success = false,
+                Msg = "Stored Rumble Data Not Found",
+            };
+        }
+
         private async Task<RumbleData> GetAllResults(RumbleChannelRequest request, int totalPages, HttpRumbleProvider rumble)
         {
             RumbleData data = new RumbleData();

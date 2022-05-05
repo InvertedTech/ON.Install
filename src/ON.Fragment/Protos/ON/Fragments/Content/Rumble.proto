@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 
 service RumbleInterface {
 	rpc GetRumbleChannel (RumbleChannelRequest) returns (RumbleChannelResponse);		// Grab a Rumble Channel	 (Rumble API Method: Media.Search)
+	rpc GetRumbleVideo (RumbleVideoRequest) returns (RumbleVideoResponse);				// Grab a Rumble Channel	 (Rumble API Method: Media.Item)
 	rpc GetAllStoredData (EmptyRequest) returns (StoredDataResponse);
 	rpc GetStoredDataById (StoredDataRequest) returns (StoredDataResponse);
 }
@@ -37,7 +38,7 @@ message RumbleData {
 }
 
 message RumbleVideoRequest {
-
+	string VideoId = 1;
 }
 
 message RumbleVideoResponse {
