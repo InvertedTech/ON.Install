@@ -18,6 +18,7 @@ message RumbleVideo {
 	string Title = 3;
 	bool IsPrivate = 4;
 	string Channel = 5;
+	string UploadDate = 6;
 }
 
 message EmptyRequest {}

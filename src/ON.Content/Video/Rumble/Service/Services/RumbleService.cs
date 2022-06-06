@@ -27,10 +27,10 @@ namespace ON.Content.Rumble.Service
         }
         public override async Task<RumbleChannelResponse> GetRumbleChannel(RumbleChannelRequest request, ServerCallContext context)
         {
-            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-            if (userToken == null)
-                return new RumbleChannelResponse() { Error = "No user token specified" };
-            if (!userToken.IsWriterOrHigher) { return new RumbleChannelResponse() { Error = "Access Denied, Wrong Permissions" }; }
+            //var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            //if (userToken == null)
+            //    return new RumbleChannelResponse() { Error = "No user token specified" };
+            //if (!userToken.IsWriterOrHigher) { return new RumbleChannelResponse() { Error = "Access Denied, Wrong Permissions" }; }
 
             RumbleData data = new RumbleData();
 
@@ -49,7 +49,6 @@ namespace ON.Content.Rumble.Service
                     if (criteria.pg < pagination.pages)
                     {
                         // Initiate the paginated request
-                        //logger.LogWarning(body);
                         var totalPages = pagination.pages;
                         RumbleData tmpData = await GetAllResults(request, totalPages, httpRumble);
                         data.Videos.Add(tmpData.Videos);
@@ -60,7 +59,7 @@ namespace ON.Content.Rumble.Service
 
                             if (isDuplicate)
                             {
-                                logger.LogWarning($"%%%% Video Duplicate {isDuplicate}");
+                                //logger.LogWarning($"%%%% Video Duplicate {isDuplicate}");
                                 continue;
                             } else
                             {
@@ -98,8 +97,10 @@ namespace ON.Content.Rumble.Service
                                 Embed = result.video.iframe,
                                 Title = result.title,
                                 IsPrivate = result.isprivate,
-                                Channel = request.ChannelId
-                            };
+                                Channel = request.ChannelId,
+                                UploadDate = result.uploadDate,
+
+                                };
 
                             
 
@@ -223,6 +224,8 @@ namespace ON.Content.Rumble.Service
                     Embed = response.video.iframe,
                     Title = response.title,
                     IsPrivate = response.isprivate,
+                    UploadDate = response.uploadDate,
+
                 };
 
                 return new RumbleVideoResponse
@@ -254,13 +257,16 @@ namespace ON.Content.Rumble.Service
 
                 foreach (Result result in pgResults)
                 {
+                    logger.LogWarning($"{result.uploadDate}");
+
                     var video = new RumbleVideo
                     {
                         Id = result.fid,
                         Embed = result.video.iframe,
                         Title = result.title,
                         IsPrivate = result.isprivate,
-                        Channel = request.ChannelId
+                        Channel = request.ChannelId,
+                        UploadDate = result.uploadDate,
                     };
 
                     data.Videos.Add(video);

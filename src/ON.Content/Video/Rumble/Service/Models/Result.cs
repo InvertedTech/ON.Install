@@ -7,5 +7,7 @@
         public dynamic video { get; set; }
         public bool isprivate { get; set; }
 
+        public string uploadDate { get; set; }
+
     }
 }
