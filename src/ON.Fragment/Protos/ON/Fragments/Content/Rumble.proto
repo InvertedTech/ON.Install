@@ -49,8 +49,14 @@ message RumbleVideoResponse {
 	RumbleVideo Video = 4;
 }
 
+message DateFilter {
+	string BeginDate = 1;
+	string EndDate = 2;
+}
+
 message RumbleChannelRequest {
 	string ChannelId = 1;
+	DateFilter dates = 2;
 }
 
 message RumbleChannelResponse {

@@ -5,6 +5,8 @@ using ON.Content.Rumble.Service.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using ON.Authentication;
+using System.Globalization;
+using ON.Content.Video.Rumble.Service.Models;
 
 // Todo: Error Handling
 // Todo: Handle Date Range Filter
@@ -33,6 +35,8 @@ namespace ON.Content.Rumble.Service
             //if (!userToken.IsWriterOrHigher) { return new RumbleChannelResponse() { Error = "Access Denied, Wrong Permissions" }; }
 
             RumbleData data = new RumbleData();
+             
+            
 
             var httpResponse = await httpRumble.MediaSearchRequest(request);
             var body = httpResponse.Content;
@@ -247,34 +251,83 @@ namespace ON.Content.Rumble.Service
         {
             RumbleData data = new RumbleData();
 
-
-            for (int i = 1; i <= totalPages; i++)
+            if (request.Dates != null)
             {
-                var httpResponse = await rumble.MediaSearchRequestPaginated(request, i.ToString());
-                var body = httpResponse.Content;
-                var deserialized = JsonConvert.DeserializeObject<ResponseMapping>(body);
-                Result[] pgResults = deserialized.results;
-
-                foreach (Result result in pgResults)
+                for (int i = 1; i <= totalPages; i++)
                 {
-                    logger.LogWarning($"{result.uploadDate}");
+                    var httpResponse = await rumble.MediaSearchRequestPaginated(request, i.ToString());
+                    var body = httpResponse.Content;
+                    var deserialized = JsonConvert.DeserializeObject<ResponseMapping>(body);
+                    Result[] pgResults = deserialized.results;
 
-                    var video = new RumbleVideo
+                    foreach (Result result in pgResults)
                     {
-                        Id = result.fid,
-                        Embed = result.video.iframe,
-                        Title = result.title,
-                        IsPrivate = result.isprivate,
-                        Channel = request.ChannelId,
-                        UploadDate = result.uploadDate,
-                    };
+                        var date = DateTime.Parse(result.uploadDate);
 
-                    data.Videos.Add(video);
+                        var isInRange = CompareDatetimes(result.uploadDate, request.Dates.BeginDate, request.Dates.EndDate);
+
+                        if (isInRange)
+                        {
+                            var video = new RumbleVideo
+                            {
+                                Id = result.fid,
+                                Embed = result.video.iframe,
+                                Title = result.title,
+                                IsPrivate = result.isprivate,
+                                Channel = request.ChannelId,
+                                UploadDate = DateTime.Parse(result.uploadDate).ToString(),
+                            };
+
+                            data.Videos.Add(video);
+                        }
+                    }
                 }
+
+                return data;
+
+            } else
+            {
+                for (int i = 1; i <= totalPages; i++)
+                {
+                    var httpResponse = await rumble.MediaSearchRequestPaginated(request, i.ToString());
+                    var body = httpResponse.Content;
+                    var deserialized = JsonConvert.DeserializeObject<ResponseMapping>(body);
+                    Result[] pgResults = deserialized.results;
+
+                    foreach (Result result in pgResults)
+                    {
+
+                        var video = new RumbleVideo
+                        {
+                            Id = result.fid,
+                            Embed = result.video.iframe,
+                            Title = result.title,
+                            IsPrivate = result.isprivate,
+                            Channel = request.ChannelId,
+                            UploadDate = result.uploadDate,
+                        };
+
+                        data.Videos.Add(video);
+                    }
+                }
+
+                return data;
             }
 
-            return data;
+
+            
+        }
+
+        private bool CompareDatetimes(string uploadDate, string beginDate, string endDate)
+        {
+            DateTime start = DateTime.Parse(uploadDate).ToUniversalTime();
+            DateTime end = DateTime.Parse(endDate).ToUniversalTime();
+            DateTime uploaded = DateTime.Parse(uploadDate).ToUniversalTime();
+            DateRange range = new DateRange(start, end);
+
+            return range.Includes(uploaded);
         }
 
     }
+
 }
