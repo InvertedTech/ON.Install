@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payments.ParallelEconomy;
+
+import "Protos/ON/Fragments/Authorization/Payments/ParallelEconomy/PlanRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payments/ParallelEconomy/SubscriptionRecord.proto";
+
+service PaymentsInterface {
+  rpc CancelOwnSubscription (CancelOwnSubscriptionRequest) returns (CancelOwnSubscriptionResponse) {}
+  rpc GetAccountDetails (GetAccountDetailsRequest) returns (GetAccountDetailsResponse) {}
+  rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse) {}
+  rpc NewOwnSubscription (NewOwnSubscriptionRequest) returns (NewOwnSubscriptionResponse) {}
+  rpc StartNewSubscription (StartNewSubscriptionRequest) returns (StartNewSubscriptionResponse) {}
+}
+  
+message CancelOwnSubscriptionRequest {
+  string Reason = 1;
+}
+  
+message CancelOwnSubscriptionResponse {
+  SubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
+message GetAccountDetailsRequest {
+}
+  
+message GetAccountDetailsResponse {
+  PlanList Plans = 1;
+  bool IsTest = 2;
+}
+  
+message GetOwnSubscriptionRecordRequest {
+}
+  
+message GetOwnSubscriptionRecordResponse {
+  SubscriptionRecord Record = 1;
+}
+
+message NewOwnSubscriptionRequest {
+  string TransactionId = 1;
+}
+  
+message NewOwnSubscriptionResponse {
+  SubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
+message StartNewSubscriptionRequest {
+  uint32 Level = 1;
+}
+  
+message StartNewSubscriptionResponse {
+  string ClientToken = 1;
+  string Error = 2;
+}

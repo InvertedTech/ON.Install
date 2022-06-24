@@ -14,6 +14,10 @@
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Crypto\Bitcoin.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Crypto\BitcoinRecords.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Crypto\BitcoinService.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\Backup.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\Payments.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\PlanRecord.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\SubscriptionRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\Backup.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\Payments.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\ProductRecord.proto" />
@@ -36,6 +40,10 @@
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Crypto\BitcoinService.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Crypto\Bitcoin.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Crypto\BitcoinRecords.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\Backup.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\Payments.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\PlanRecord.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\SubscriptionRecord.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Stripe\Backup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Stripe\Payments.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Stripe\ProductRecord.proto" />
