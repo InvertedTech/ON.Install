@@ -24,6 +24,9 @@
     <None Remove="Protos\ON\Fragments\Content\Backup.proto" />
     <None Remove="Protos\ON\Fragments\Content\Content.proto" />
     <None Remove="Protos\ON\Fragments\Content\ContentRecord.proto" />
+    <None Remove="Protos\ON\Fragments\CreatorDashboard\Subscribers\Ban.proto" />
+    <None Remove="Protos\ON\Fragments\CreatorDashboard\Subscribers\Manage.proto" />
+    <None Remove="Protos\ON\Fragments\CreatorDashboard\Subscribers\Mute.proto" />
     <None Remove="Protos\ON\Fragments\Generic\ServiceOps.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Paypal\Payments.proto" />
   </ItemGroup>
@@ -48,6 +51,9 @@
     <Protobuf Include="Protos\ON\Fragments\Content\ContentRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Content\Backup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Content.proto" />
+    <Protobuf Include="Protos\ON\Fragments\CreatorDashboard\Subscribers\Ban.proto" />
+    <Protobuf Include="Protos\ON\Fragments\CreatorDashboard\Subscribers\Manage.proto" />
+    <Protobuf Include="Protos\ON\Fragments\CreatorDashboard\Subscribers\Mute.proto" />
     <Protobuf Include="Protos\ON\Fragments\Generic\ServiceOps.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Paypal\Payments.proto" />
   </ItemGroup>

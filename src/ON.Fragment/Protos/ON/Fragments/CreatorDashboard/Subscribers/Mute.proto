@@ -1,0 +1,20 @@
+﻿syntax = "proto3";
+
+package ON.Fragments.CreatorDashboard.Subscribers;
+
+message MuteRequest {
+	string userId = 1;
+	string length = 2;
+}
+
+message MuteResponse {
+	string message = 1;
+}
+
+message UnmuteRequest {
+	string userId = 1;
+}
+
+message UnmuteResponse {
+	string message = 1;
+} 

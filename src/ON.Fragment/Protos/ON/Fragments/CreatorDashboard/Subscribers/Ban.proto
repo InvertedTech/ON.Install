@@ -1,0 +1,40 @@
+﻿syntax = "proto3";
+
+package ON.Fragments.CreatorDashboard.Subscribers;
+
+import "google/protobuf/timestamp.proto";
+
+message Ban {
+	boolean isValid = 1;
+	string userId = 2;
+	google.protobuf.Timestamp dateBanned = 3;
+	google.protobuf.Timestamp validUntil = 4;
+	string reason = 5;
+	string message = 6;
+	string length = 7;
+	string bannedBy = 8;
+	string unbannedBy = 9;
+}
+
+message BanRequest {
+	string userId = 1;
+	string reason = 2;
+	string message = 3;
+	string length = 4;
+	string bannedBy = 5;
+}
+
+message BanResponse {
+	string message = 1;
+	Ban ban = 2;
+}
+
+message UnbanRequest {
+	string userId = 1;
+	string unbannedBy = 2;
+}
+
+message UnbanResponse {
+	string message = 1;
+	Ban ban = 2;
+}
