@@ -8,7 +8,9 @@ import "Protos/ON/Fragments/CreatorDashboard/Subscribers/Ban.proto";
 service ManageInterface {
 	rpc MuteSubscriber (MuteRequest) returns (MuteResponse) {}
 	rpc UnmuteSubscriber (UnmuteRequest) returns (UnmuteResponse) {}
+	rpc GetMuteList (GetMuteListRequest) returns (GetMuteListResponse) {}
 	rpc BanSubscriber (BanRequest) returns (BanResponse) {}
 	rpc UnbanSubscriber (UnbanRequest) returns (UnbanResponse) {}
+	rpc GetBanList (GetBanListRequest) returns (GetBanListResponse) {}
 }
 

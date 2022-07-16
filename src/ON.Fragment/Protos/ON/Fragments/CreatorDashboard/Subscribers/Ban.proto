@@ -5,36 +5,49 @@ package ON.Fragments.CreatorDashboard.Subscribers;
 import "google/protobuf/timestamp.proto";
 
 message Ban {
-	boolean isValid = 1;
-	string userId = 2;
-	google.protobuf.Timestamp dateBanned = 3;
-	google.protobuf.Timestamp validUntil = 4;
-	string reason = 5;
-	string message = 6;
-	string length = 7;
-	string bannedBy = 8;
-	string unbannedBy = 9;
+	string Id = 1;
+	bool IsValid = 2;
+	string UserId = 3;
+	string Reason = 4;
+	string Message = 5;
+	string Length = 6;
+	string BannedBy = 7;
+	string UnbannedBy = 8;
+	google.protobuf.Timestamp DateBanned = 9;
+	google.protobuf.Timestamp ValidUntil = 10;
+	google.protobuf.Timestamp DateUnbanned = 11;
+}
+
+message BanList {
+	repeated Ban Bans = 1;
+}
+
+message GetBanListRequest {}
+
+message GetBanListResponse {
+	BanList BanList = 1;
 }
 
 message BanRequest {
-	string userId = 1;
-	string reason = 2;
-	string message = 3;
-	string length = 4;
-	string bannedBy = 5;
+	string UserId = 1;
+	string Reason = 2;
+	string Message = 3;
+	string Length = 4;
+	string BannedBy = 5;
 }
 
 message BanResponse {
-	string message = 1;
-	Ban ban = 2;
+	string Message = 1;
+	Ban Ban = 2;
 }
 
 message UnbanRequest {
-	string userId = 1;
-	string unbannedBy = 2;
+	string BanId = 1;
+	string UserId = 2;
+	string UnbannedBy = 3;
 }
 
 message UnbanResponse {
-	string message = 1;
-	Ban ban = 2;
+	string Message = 1;
+	Ban Ban = 2;
 }
