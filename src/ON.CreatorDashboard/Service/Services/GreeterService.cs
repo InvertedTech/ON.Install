@@ -1,7 +1,7 @@
 using Grpc.Core;
 using Service;
 
-namespace Service.Services
+namespace ON.CreatorDashboard.Service.Services
 {
     public class GreeterService : Greeter.GreeterBase
     {
