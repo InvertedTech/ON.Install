@@ -44,6 +44,7 @@ namespace ON.CreatorDashboard.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<GreeterService>();
+                endpoints.MapGrpcService<SubscribersService>();
 
                 endpoints.MapGet("/", async context =>
                 {
