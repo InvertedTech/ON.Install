@@ -3,6 +3,7 @@
 package ON.Fragments.CreatorDashboard.Subscribers;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
 
 message Ban {
 	string Id = 1;
@@ -14,7 +15,7 @@ message Ban {
 	string BannedBy = 7;
 	string UnbannedBy = 8;
 	google.protobuf.Timestamp DateBanned = 9;
-	google.protobuf.Timestamp ValidUntil = 10;
+	google.protobuf.Duration DurationBanned = 10;
 	google.protobuf.Timestamp DateUnbanned = 11;
 }
 
