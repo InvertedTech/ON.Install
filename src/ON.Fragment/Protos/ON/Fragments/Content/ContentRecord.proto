@@ -18,13 +18,33 @@ message ContentRecord {
     string Body = 9;
     repeated string AssetIds = 10;
     uint32 SubscriptionLevel = 11;
+    ContentType ContentType = 12;
+    string Body = 21;
   }
+
   message PrivateData {
     string CreatedBy = 1;
     string ModifiedBy = 2;
     string PublishedBy = 3;
+
+    string OldContentID = 21;
   }
 
   PublicData Public = 1;
   PrivateData Private = 2;
+
+  enum ContentType {
+    Article = 0;
+    Video = 1;
+    Audio = 2;
+    Images = 3;
+  }
+}
+
+message PrivateData {
+  string CreatedBy = 1;
+  string ModifiedBy = 2;
+  string PublishedBy = 3;
+
+  string OldContentID = 21;
 }
