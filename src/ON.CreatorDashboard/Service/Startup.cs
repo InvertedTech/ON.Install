@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ON.CreatorDashboard.Service.Models;
+using ON.CreatorDashboard.Service.Interfaces;
 using ON.CreatorDashboard.Service.Services;
 using ON.Authentication;
 
@@ -29,6 +30,8 @@ namespace ON.CreatorDashboard.Service
         {
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddGrpc();
+            services.AddSingleton<IMuteListProvider, FileSystemMuteListProvider>();
+            services.AddSingleton<IBanListProvider, FileSystemBanListProvider>();
             services.AddJwtAuthentication();
         }
 
