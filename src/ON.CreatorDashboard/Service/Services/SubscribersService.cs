@@ -22,6 +22,11 @@ namespace ON.CreatorDashboard.Service
             this.banListProvider = banListProvider;
         }
 
+        public override Task<GetMuteListResponse> GetMuteList(GetMuteListRequest req, ServerCallContext context)
+        {
+            return null;
+        }
+
         public override Task<MuteResponse> MuteSubscriber(MuteRequest req
             , ServerCallContext context)
         {
@@ -29,6 +34,11 @@ namespace ON.CreatorDashboard.Service
         }
 
         public override Task<UnmuteResponse> UnmuteSubscriber(UnmuteRequest req, ServerCallContext context)
+        {
+            return null;
+        }
+
+        public override Task<GetBanListResponse> GetBanList(GetBanListRequest req, ServerCallContext context)
         {
             return null;
         }
