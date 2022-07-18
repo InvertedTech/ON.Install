@@ -2,9 +2,11 @@
 
 package ON.Fragments.CreatorDashboard.Settings;
 
-import "Protos/ON/Fragments/CreatorDashboard/Settings/ModerationSettings.proto";
+import "Protos/ON/Fragments/CreatorDashboard/Settings/CreatorSettings.proto";
 
-service SettingsManagerInterface {
-	rpc SetModerationSettings (SetModerationSettingsRequest) returns (SetModerationSettingsResponse) {}
-	rpc GetModerationSettings (GetModerationSettingsRequest) returns (GetModerationSettingsResponse) {}
+service SettingsManagerInterface 
+{
+	rpc GetCreatorSettings (GetSettingsRequest) returns (SettingsResponse) {}
+	rpc EditCreatorSettings (EditSettingsRequest) returns (SettingsResponse) {}
+	rpc RestoreDefaultSettings (RestoreSettingsRequest) returns (SettingsResponse) {}
 }

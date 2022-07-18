@@ -1,0 +1,15 @@
+﻿syntax = "proto3";
+
+package ON.Fragments.CreatorDashboard.Settings;
+
+message CreatorSettings {}
+
+message GetSettingsRequest {}
+
+message EditSettingsRequest {}
+
+message RestoreSettingsRequest {}
+
+message SettingsResponse {
+	CreatorSettings settings = 1;
+}

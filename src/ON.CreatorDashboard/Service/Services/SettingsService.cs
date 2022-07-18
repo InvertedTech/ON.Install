@@ -19,12 +19,17 @@ namespace ON.CreatorDashboard.Service.Services
             this.settings = settings;
         }
 
-        public override Task<SetModerationSettingsResponse> SetModerationSettings(SetModerationSettingsRequest req, ServerCallContext context)
+        public override Task<SettingsResponse> GetCreatorSettings(GetSettingsRequest req, ServerCallContext context) 
         {
             return null;
         }
 
-        public override Task<GetModerationSettingsResponse> GetModerationSettings(GetModerationSettingsRequest req, ServerCallContext context)
+        public override Task<SettingsResponse> EditCreatorSettings(EditSettingsRequest req, ServerCallContext context) 
+        {
+            return null;
+        }
+
+        public override Task<SettingsResponse> RestoreDefaultSettings(RestoreSettingsRequest req, ServerCallContext context)
         {
             return null;
         }
