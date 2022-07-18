@@ -1,0 +1,10 @@
+﻿syntax = "proto3";
+
+package ON.Fragments.CreatorDashboard.Settings;
+
+import "Protos/ON/Fragments/CreatorDashboard/Settings/ModerationSettings.proto";
+
+service SettingsManagerInterface {
+	rpc SetModerationSettings (SetModerationSettingsRequest) returns (SetModerationSettingsResponse) {}
+	rpc GetModerationSettings (GetModerationSettingsRequest) returns (GetModerationSettingsResponse) {}
+}

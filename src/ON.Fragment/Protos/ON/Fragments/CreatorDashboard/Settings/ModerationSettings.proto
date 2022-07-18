@@ -1,0 +1,21 @@
+﻿syntax = "proto3";
+
+package ON.Fragments.CreatorDashboard.Settings;
+
+message ModerationSettings {}
+
+message SetModerationSettingsRequest {
+	ModerationSettings modSettings = 1;
+}
+
+message SetModerationSettingsResponse {
+	ModerationSettings modSettings = 1;
+}
+
+message GetModerationSettingsRequest {
+	ModerationSettings modSettings = 1;
+}
+
+message GetModerationSettingsResponse {
+	ModerationSettings modSettings = 1;
+}
