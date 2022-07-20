@@ -90,6 +90,7 @@ namespace ON.CreatorDashboard.Service
         public override async Task<GetBanListResponse> GetBanList(GetBanListRequest req, ServerCallContext context)
         {
             var banList = await this.banListProvider.GetAll();
+            logger.LogWarning($"mutes: {banList}");
             return new GetBanListResponse()
             {
                 BanList = banList,
