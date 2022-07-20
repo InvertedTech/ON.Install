@@ -15,7 +15,7 @@ namespace ON.CreatorDashboard.Service.Models
             var root = new DirectoryInfo(settings.Value.DataStore);
             root.Create();
             dataDir = root.CreateSubdirectory("server");
-            listFile = new FileInfo(dataDir.FullName + "/mutes");
+            listFile = new FileInfo(dataDir.FullName + "/bans");
         }
 
         public async Task<BanList> GetAll()
@@ -24,8 +24,8 @@ namespace ON.CreatorDashboard.Service.Models
                 return new BanList();
 
             var bytes = await File.ReadAllBytesAsync(listFile.FullName);
-
-            return BanList.Parser.ParseFrom(bytes);
+            BanList list = BanList.Parser.ParseFrom(bytes);
+            return list;
         }
 
         public async Task SaveAll(BanList list)

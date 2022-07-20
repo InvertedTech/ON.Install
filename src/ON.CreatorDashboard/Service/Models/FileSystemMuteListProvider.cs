@@ -24,8 +24,8 @@ namespace ON.CreatorDashboard.Service.Models
                 return new MuteList();
             
             var bytes = await File.ReadAllBytesAsync(listFile.FullName);
-
-            return MuteList.Parser.ParseFrom(bytes);
+            MuteList list = MuteList.Parser.ParseFrom(bytes);
+            return list;
         }
 
         public async Task SaveAll(MuteList list)
