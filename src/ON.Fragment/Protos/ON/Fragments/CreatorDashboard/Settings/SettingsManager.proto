@@ -6,7 +6,7 @@ import "Protos/ON/Fragments/CreatorDashboard/Settings/CreatorSettings.proto";
 
 service SettingsManagerInterface 
 {
-	rpc GetCreatorSettings (GetSettingsRequest) returns (SettingsResponse) {}
-	rpc EditCreatorSettings (EditSettingsRequest) returns (SettingsResponse) {}
-	rpc RestoreDefaultSettings (RestoreSettingsRequest) returns (SettingsResponse) {}
+	rpc GetCreatorSettings () returns (SettingsResponse) {}
+	rpc EditCreatorSettings () returns (SettingsResponse) {}
+	rpc RestoreDefaultSettings () returns (SettingsResponse) {}
 }

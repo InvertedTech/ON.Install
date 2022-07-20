@@ -1,5 +1,0 @@
-﻿syntax = "proto3";
-
-package ON.Fragments.CreatorDashboard.Settings;
-
-message ModerationSettings {}
