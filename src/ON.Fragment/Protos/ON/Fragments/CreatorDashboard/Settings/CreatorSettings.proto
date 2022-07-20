@@ -9,7 +9,7 @@ message CreatorSettings {
 	string BanMessage = 2;									// Reason for ban
 	repeated google.protobuf.Duration BanDurations = 3;		// List of durations for bans
 	repeated google.protobuf.Duration MuteDurations = 4;	// List of durations for mutes
-	boolean AllowUnpaidComments = 5;						// Can unsubbed users create comments?
+	bool AllowUnpaidComments = 5;						// Can unsubbed users create comments?
 }
 
 message SettingsResponse {
