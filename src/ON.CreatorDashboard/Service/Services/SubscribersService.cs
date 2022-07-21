@@ -7,7 +7,6 @@ using ON.CreatorDashboard.Service.Interfaces;
 
 namespace ON.CreatorDashboard.Service
 {
-    // TODO: Ban Lists are not reading
     public class SubscribersService : SubscriberInterface.SubscriberInterfaceBase
     {
         private readonly ILogger<SubscribersService> logger;
@@ -38,6 +37,26 @@ namespace ON.CreatorDashboard.Service
             return mute;
         }
 
+        private Mute? IsMuted(MuteList list, string userId)
+        {
+            foreach (Mute mute in list.Mutes)
+            {
+                if (mute.UserId == userId) { return mute; }
+            }
+
+            return null;
+        }
+
+        private Ban? IsBanned(BanList list, string userId)
+        {
+            foreach (Ban ban in list.Bans)
+            {
+                if (ban.UserId == userId) { return ban; }
+            }
+
+            return null;
+        }
+
         private Ban CreateBan(BanRequest req)
         {
             Ban ban = new Ban()
@@ -56,7 +75,8 @@ namespace ON.CreatorDashboard.Service
         public override async Task<GetMuteListResponse> GetMuteList(GetMuteListRequest req, ServerCallContext context)
         {
             var muteList = await this.muteListProvider.GetAll();
-            logger.LogWarning($"mutes: {muteList}");
+            // logger.LogWarning($"mutes: {muteList}");
+
             return new GetMuteListResponse()
             {
                 MuteList = muteList,
@@ -66,13 +86,23 @@ namespace ON.CreatorDashboard.Service
         public override async Task<MuteResponse> MuteSubscriber(MuteRequest req
             , ServerCallContext context)
         {
-            Mute mute = this.CreateMute(req);
             var muteList = await this.muteListProvider.GetAll();
 
             // Check if user is already muted
+            var mutedUser = IsMuted(muteList, req.UserId);
+            if (mutedUser != null)
+            {
+                return new MuteResponse()
+                {
+                    Message = "User already muted",
+                    Mute = mutedUser
+                };
+            }
+
+            
             // If not already muted, save mute list
+            Mute mute = this.CreateMute(req);
             muteList.Mutes.Add(mute);
-            logger.LogWarning($"mutes: {muteList}");
             await this.muteListProvider.SaveAll(muteList);
 
             return new MuteResponse()
@@ -90,7 +120,8 @@ namespace ON.CreatorDashboard.Service
         public override async Task<GetBanListResponse> GetBanList(GetBanListRequest req, ServerCallContext context)
         {
             var banList = await this.banListProvider.GetAll();
-            logger.LogWarning($"mutes: {banList}");
+            // logger.LogWarning($"mutes: {banList}");
+
             return new GetBanListResponse()
             {
                 BanList = banList,
@@ -99,11 +130,21 @@ namespace ON.CreatorDashboard.Service
 
         public override async Task<BanResponse> BanSubscriber(BanRequest req, ServerCallContext context)
         {
-            Ban ban = this.CreateBan(req);
             var banList = await this.banListProvider.GetAll();
 
             // Check if user is already banned
+            var bannedUser = IsBanned(banList, req.UserId);
+            if (bannedUser != null)
+            {
+                return new BanResponse()
+                {
+                    Message = "User already banned",
+                    Ban = bannedUser,
+                };
+            }
+
             // If not already banned, save ban list
+            Ban ban = this.CreateBan(req);
             banList.Bans.Add(ban);
             await this.banListProvider.SaveAll(banList);
 
