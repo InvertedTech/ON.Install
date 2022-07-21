@@ -23,7 +23,7 @@ namespace ON.CreatorDashboard.Service
             this.banListProvider = banListProvider;
         }
 
-        // TODO: Fix date and set duration
+        // TODO: set duration
         private Mute CreateMute(MuteRequest req) 
         {
             Mute mute = new Mute()
@@ -34,9 +34,9 @@ namespace ON.CreatorDashboard.Service
                 Message = req.Message,
                 MutedBy = req.MutedBy,
                 Reason = req.Reason,
-                DateMuted = new Timestamp()
+                DateMuted = TimeExtensions.ToTimestamp(DateTime.Now.ToUniversalTime())
             };
-
+            logger.LogWarning($"{mute.DateMuted.ToDateTime()}");
             return mute;
         }
 
@@ -50,7 +50,7 @@ namespace ON.CreatorDashboard.Service
             return null;
         }
 
-        // TODO: Fix date and set duration
+        // TODO: set duration
         private Ban CreateBan(BanRequest req)
         {
             Ban ban = new Ban()
@@ -60,7 +60,7 @@ namespace ON.CreatorDashboard.Service
                 Message = req.Message,
                 BannedBy = req.BannedBy,
                 Reason = req.Reason,
-                DateBanned = new Timestamp()
+                DateBanned = TimeExtensions.ToTimestamp(DateTime.Now.ToUniversalTime())
             };
 
             return ban;
