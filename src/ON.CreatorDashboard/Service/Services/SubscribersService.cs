@@ -138,9 +138,8 @@ namespace ON.CreatorDashboard.Service
             muteList.Mutes.RemoveAt(mutedIndex);
 
             // Set updated fields and save
-            unmutedUser.DateUnmuted = new Google.Protobuf.WellKnownTypes.Timestamp();
+            unmutedUser.DateUnmuted = TimeExtensions.ToTimestamp(DateTime.Now.ToUniversalTime());
             unmutedUser.UnmutedBy = req.UnmutedBy;
-            unmutedUser.DurationMuted = mutedUser.DateUnmuted - mutedUser.DateMuted;
             unmutedUser.IsValid = false;
             muteList.Mutes.Add(unmutedUser);
             await this.muteListProvider.SaveAll(muteList);
@@ -191,9 +190,38 @@ namespace ON.CreatorDashboard.Service
             };
         }
 
-        public override Task<UnbanResponse> UnbanSubscriber(UnbanRequest req, ServerCallContext context)
+        public override async Task<UnbanResponse> UnbanSubscriber(UnbanRequest req, ServerCallContext context)
         {
-            return null;
+            var banList = await this.banListProvider.GetAll();
+            var bannedUser = IsBanned(banList, req.UserId);
+            if (bannedUser == null)
+            {
+                return new UnbanResponse()
+                {
+                    Message = "User not found",
+                    Ban = new  Ban()
+                };
+            }
+
+            // save the index
+            var bannedIndex = banList.Bans.IndexOf(bannedUser);
+
+            // Save a copy of the banned user then remove the old record
+            var unbannedUser = banList.Bans[bannedIndex];
+            banList.Bans.RemoveAt(bannedIndex);
+
+            // Set updated fields and save
+            unbannedUser.DateUnbanned = TimeExtensions.ToTimestamp(DateTime.Now.ToUniversalTime());
+            unbannedUser.UnbannedBy = req.UnbannedBy;
+            unbannedUser.IsValid = false;
+            banList.Bans.Add(unbannedUser);
+            await this.banListProvider.SaveAll(banList);
+
+            return new UnbanResponse()
+            {
+                Message = "Unbanned User",
+                Ban = unbannedUser
+            };
         }
     }
 }
