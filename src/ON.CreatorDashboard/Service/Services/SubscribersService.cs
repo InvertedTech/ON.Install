@@ -1,5 +1,6 @@
 ﻿using Grpc.Core;
 using Microsoft.Extensions.Logging;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Options;
 using ON.Fragments.CreatorDashboard.Subscribers;
 using ON.CreatorDashboard.Service.Models;
@@ -22,16 +23,18 @@ namespace ON.CreatorDashboard.Service
             this.banListProvider = banListProvider;
         }
 
+        // TODO: Fix date and set duration
         private Mute CreateMute(MuteRequest req) 
         {
             Mute mute = new Mute()
             {
                 UserId = req.UserId,
+                IsValid = true,
                 Length = req.Length,
                 Message = req.Message,
                 MutedBy = req.MutedBy,
                 Reason = req.Reason,
-                DateMuted = new Google.Protobuf.WellKnownTypes.Timestamp()
+                DateMuted = new Timestamp()
             };
 
             return mute;
@@ -47,6 +50,22 @@ namespace ON.CreatorDashboard.Service
             return null;
         }
 
+        // TODO: Fix date and set duration
+        private Ban CreateBan(BanRequest req)
+        {
+            Ban ban = new Ban()
+            {
+                UserId = req.UserId,
+                Length = req.Length,
+                Message = req.Message,
+                BannedBy = req.BannedBy,
+                Reason = req.Reason,
+                DateBanned = new Timestamp()
+            };
+
+            return ban;
+        }
+
         private Ban? IsBanned(BanList list, string userId)
         {
             foreach (Ban ban in list.Bans)
@@ -57,21 +76,7 @@ namespace ON.CreatorDashboard.Service
             return null;
         }
 
-        private Ban CreateBan(BanRequest req)
-        {
-            Ban ban = new Ban()
-            {
-                UserId = req.UserId,
-                Length = req.Length,
-                Message = req.Message,
-                BannedBy = req.BannedBy,
-                Reason = req.Reason,
-                DateBanned = new Google.Protobuf.WellKnownTypes.Timestamp()
-            };
-
-            return ban;
-        }
-
+        // IDEA: Add options object to return only valid mutes or invalid mutes, or both
         public override async Task<GetMuteListResponse> GetMuteList(GetMuteListRequest req, ServerCallContext context)
         {
             var muteList = await this.muteListProvider.GetAll();
@@ -112,11 +117,42 @@ namespace ON.CreatorDashboard.Service
             };
         }
 
-        public override Task<UnmuteResponse> UnmuteSubscriber(UnmuteRequest req, ServerCallContext context)
+        public override async Task<UnmuteResponse> UnmuteSubscriber(UnmuteRequest req, ServerCallContext context)
         {
-            return null;
+            var muteList = await this.muteListProvider.GetAll();
+            var mutedUser = IsMuted(muteList, req.UserId);
+            if (mutedUser == null)
+            {
+                return new UnmuteResponse()
+                {
+                    Message = "User not found",
+                    Mute = new Mute()
+                };
+            }
+
+            // Save the index
+            var mutedIndex = muteList.Mutes.IndexOf(mutedUser);
+
+            // Save a copy of the muted user then remove the old record
+            var unmutedUser = muteList.Mutes[mutedIndex];
+            muteList.Mutes.RemoveAt(mutedIndex);
+
+            // Set updated fields and save
+            unmutedUser.DateUnmuted = new Google.Protobuf.WellKnownTypes.Timestamp();
+            unmutedUser.UnmutedBy = req.UnmutedBy;
+            unmutedUser.DurationMuted = mutedUser.DateUnmuted - mutedUser.DateMuted;
+            unmutedUser.IsValid = false;
+            muteList.Mutes.Add(unmutedUser);
+            await this.muteListProvider.SaveAll(muteList);
+
+            return new UnmuteResponse()
+            {
+                Message = "Unmuted User",
+                Mute = unmutedUser
+            };
         }
 
+        // IDEA: Add options object to return only valid bans or invalid bans, or both
         public override async Task<GetBanListResponse> GetBanList(GetBanListRequest req, ServerCallContext context)
         {
             var banList = await this.banListProvider.GetAll();
