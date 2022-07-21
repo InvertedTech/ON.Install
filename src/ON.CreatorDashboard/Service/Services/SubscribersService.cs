@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using ON.Fragments.CreatorDashboard.Subscribers;
 using ON.CreatorDashboard.Service.Models;
 using ON.CreatorDashboard.Service.Interfaces;
+using ON.CreatorDashboard.Service.Utils;
 
 namespace ON.CreatorDashboard.Service
 {
@@ -23,9 +24,11 @@ namespace ON.CreatorDashboard.Service
             this.banListProvider = banListProvider;
         }
 
-        // TODO: set duration
         private Mute CreateMute(MuteRequest req) 
         {
+            var dateMuted = DateTime.Now.ToUniversalTime();
+
+
             Mute mute = new Mute()
             {
                 UserId = req.UserId,
@@ -34,9 +37,10 @@ namespace ON.CreatorDashboard.Service
                 Message = req.Message,
                 MutedBy = req.MutedBy,
                 Reason = req.Reason,
-                DateMuted = TimeExtensions.ToTimestamp(DateTime.Now.ToUniversalTime())
+                DateMuted = TimeExtensions.ToTimestamp(dateMuted),
+                DurationMuted = TimeExtensions.ToDuration(TimeUtils.TimeSpanFromString(dateMuted, req.Length))
             };
-            logger.LogWarning($"{mute.DateMuted.ToDateTime()}");
+
             return mute;
         }
 
@@ -50,9 +54,10 @@ namespace ON.CreatorDashboard.Service
             return null;
         }
 
-        // TODO: set duration
         private Ban CreateBan(BanRequest req)
         {
+            var dateBanned = DateTime.Now.ToUniversalTime();
+
             Ban ban = new Ban()
             {
                 UserId = req.UserId,
@@ -60,8 +65,10 @@ namespace ON.CreatorDashboard.Service
                 Message = req.Message,
                 BannedBy = req.BannedBy,
                 Reason = req.Reason,
-                DateBanned = TimeExtensions.ToTimestamp(DateTime.Now.ToUniversalTime())
+                DateBanned = TimeExtensions.ToTimestamp(dateBanned),
+                DurationBanned = TimeExtensions.ToDuration(TimeUtils.TimeSpanFromString(dateBanned, req.Length))
             };
+            // logger.LogWarning($"{ban.DateBanned.ToDateTime() + ban.DurationBanned.ToTimeSpan()}");
 
             return ban;
         }
