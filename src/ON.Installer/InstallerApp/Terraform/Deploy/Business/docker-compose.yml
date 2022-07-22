@@ -1,0 +1,9 @@
+version: '3'
+services:
+  authweb:
+    image: advplyr/on-business
+    restart: always
+    ports:
+      - "80:3000"
+    volumes:
+      - ./data:/data

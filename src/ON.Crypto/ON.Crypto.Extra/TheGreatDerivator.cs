@@ -10,9 +10,13 @@ namespace ON.Crypto.Extra
     {
         private readonly ExtKey master;
 
+        private const string BITCOIN_RECEIVE_PATH = "49'/0'/0'/0";
+        private const string FLOCOIN_RECEIVE_PATH = "44'/216'/0'/0";
+
         private const string KEYPATH_JWTKEY = "12021'/0'";
         private const string KEYPATH_SSHKEY = "12021'/1'";
         private const string KEYPATH_BACKUPKEY = "12021'/2'";
+        private const string KEYPATH_TORKEY = "12021'/3'";
 
         public TheGreatDerivator(string mnemoWords, string passphrase = null)
         {
@@ -39,6 +43,16 @@ namespace ON.Crypto.Extra
             });
         }
 
+        public ExtKey DeriveBitcoinExtendPrivateKey()
+        {
+            return master.Derive(new KeyPath(BITCOIN_RECEIVE_PATH));
+        }
+
+        public ExtKey DeriveFlocoinExtendPrivateKey()
+        {
+            return master.Derive(new KeyPath(FLOCOIN_RECEIVE_PATH));
+        }
+
         public ECDsa DeriveEcJwtKey(uint account = 0, uint keyNum = 0)
         {
             var jwtKey = master.Derive(new KeyPath($"{KEYPATH_JWTKEY}/{account}'/{keyNum}'"));
@@ -61,6 +75,62 @@ namespace ON.Crypto.Extra
             });
 
             return (GenerateSshPrivFile(eckey), GenerateSshPubLine(eckey));
+        }
+
+        public (string privEncodedKey, string pubOnionName) DeriveTorV3Key(uint account = 0, uint keyNum = 0)
+        {
+            var sshKey = master.Derive(new KeyPath($"{KEYPATH_TORKEY}/{account}'/{keyNum}'"));
+
+            var privBytes = sshKey.PrivateKey.ToBytes();
+            //var eckey = ECDsa.Create(new ECParameters()
+            //{
+            //    Curve = CustomCurves.Ed25519,
+            //    D = privBytes
+            //});
+            //var pubBytesOld = eckey.ExportParameters(false).Q.X;
+
+            var pubBytes = new byte[32];
+            Org.BouncyCastle.Math.EC.Rfc8032.Ed25519.GeneratePublicKey(privBytes, 0, pubBytes, 0);
+
+
+            return (GenerateOnionPrivateKeyString(privBytes), GenerateOnionAddress(pubBytes));
+        }
+
+        private string GenerateOnionAddress(in byte[] pubBytes)
+        {
+            byte versionByte = (byte)3;
+
+            var checksumStrBytes = Encoding.ASCII.GetBytes(".onion checksum");
+            var checksumIntermediate = new byte[15 + 33];
+            Buffer.BlockCopy(checksumStrBytes, 0, checksumIntermediate, 0, 15);
+            Buffer.BlockCopy(pubBytes, 0, checksumIntermediate, 15, 32);
+            checksumIntermediate[checksumIntermediate.Length - 1] = versionByte;
+            var checksumHashed = Sha3_256.HashIt(checksumIntermediate);
+
+            var pubBytes35 = new byte[35];
+            Buffer.BlockCopy(pubBytes, 0, pubBytes35, 0, 32);
+            pubBytes35[32] = checksumHashed[0];
+            pubBytes35[33] = checksumHashed[1];
+            pubBytes35[34] = versionByte;
+
+            return Albireo.Base32.Base32.Encode(pubBytes35).ToLower() + ".onion";
+        }
+
+        private string GenerateOnionPrivateKeyString(in byte[] privBytes)
+        {
+            using SHA512 sha256Hash = SHA512.Create();
+            var privBytesHashed = sha256Hash.ComputeHash(privBytes);
+            privBytesHashed[0] &= 248;
+            privBytesHashed[31] &= 127;
+            privBytesHashed[31] |= 64;
+
+            string headerString = "== ed25519v1-secret: type0 ==\0\0\0";
+            var headerBytes = Encoding.ASCII.GetBytes(headerString);
+            var bytesOut = new byte[96];
+            Buffer.BlockCopy(headerBytes, 0, bytesOut, 0, 32);
+            Buffer.BlockCopy(privBytesHashed, 0, bytesOut, 32, 64);
+
+            return Convert.ToBase64String(bytesOut);
         }
 
         private static string GenerateSshPrivFile(ECDsa key)

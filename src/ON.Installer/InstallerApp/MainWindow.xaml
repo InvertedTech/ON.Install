@@ -42,7 +42,9 @@
                     <TreeViewItem Name="btnPersonalization" Header="Personalization" Selected="btnPersonalization_Click" IsSelected="True" />
                     <TreeViewItem Name="btnDNS" Header="DNS" Selected="btnDNS_Click" />
                     <TreeViewItem Header="Products" IsExpanded="True">
+                        <TreeViewItem Name="btnProducts" Header="Product Selection" Selected="btnProducts_Selected" />
                         <TreeViewItem Name="btnCMS" Header="CMS" Selected="btnCMS_Selected" />
+                        <TreeViewItem Name="btnBusiness" Header="Small Business" Selected="btnBusiness_Selected" />
                         <TreeViewItem Name="btnAuthentication" Header="Authentication" Selected="btnAuthentication_Selected" />
                         <TreeViewItem Name="btnPayments" Header="Payments" Selected="btnPayments_Selected" />
                         <TreeViewItem Name="btnMicroblog" Header="Microblog" Selected="btnMicroblog_Selected" />
