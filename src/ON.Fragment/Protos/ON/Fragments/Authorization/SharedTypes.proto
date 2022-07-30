@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization;
+
+message SubscriptionTier {
+    string Name = 1;
+    string Description = 2;
+    string Color = 3;
+    float Amount = 4;
+}

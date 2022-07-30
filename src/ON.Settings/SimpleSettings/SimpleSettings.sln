@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Fragment", "..\..\ON.Fragment\ON.Fragment.csproj", "{7631D242-042D-457F-B74B-E3936E93C0A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{44A252C9-6F6F-4BCB-A57C-63AB903A081A}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		tye.yaml = tye.yaml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Crypto", "..\..\ON.Crypto\ON.Crypto\ON.Crypto.csproj", "{9B13587B-0494-4D76-9E4B-C3400BD5850D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Settings.Shared", "..\Shared\ON.Settings.Shared.csproj", "{57443BD4-7BF6-4651-980C-7202CBAF3C73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Settings.SimpleSettings.Service", "Service\ON.Settings.SimpleSettings.Service.csproj", "{D8F38E10-4824-46A5-81B4-B983BD2947A4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authentication.Shared", "..\..\ON.Authentication\Shared\ON.Authentication.Shared.csproj", "{AC8B2620-7634-4E15-BA34-DF8B73057FA7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7631D242-042D-457F-B74B-E3936E93C0A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7631D242-042D-457F-B74B-E3936E93C0A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7631D242-042D-457F-B74B-E3936E93C0A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7631D242-042D-457F-B74B-E3936E93C0A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B13587B-0494-4D76-9E4B-C3400BD5850D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B13587B-0494-4D76-9E4B-C3400BD5850D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B13587B-0494-4D76-9E4B-C3400BD5850D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B13587B-0494-4D76-9E4B-C3400BD5850D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57443BD4-7BF6-4651-980C-7202CBAF3C73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57443BD4-7BF6-4651-980C-7202CBAF3C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57443BD4-7BF6-4651-980C-7202CBAF3C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57443BD4-7BF6-4651-980C-7202CBAF3C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8F38E10-4824-46A5-81B4-B983BD2947A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8F38E10-4824-46A5-81B4-B983BD2947A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8F38E10-4824-46A5-81B4-B983BD2947A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8F38E10-4824-46A5-81B4-B983BD2947A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC8B2620-7634-4E15-BA34-DF8B73057FA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC8B2620-7634-4E15-BA34-DF8B73057FA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC8B2620-7634-4E15-BA34-DF8B73057FA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC8B2620-7634-4E15-BA34-DF8B73057FA7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C79AA2E0-433D-4986-974E-17B0FD71DA50}
+	EndGlobalSection
+EndGlobal

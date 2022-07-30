@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package ON.Fragments.Comments;
+
+enum CommentOrder {
+    Liked = 0;
+    Older = 1;
+    Newest = 2;
+}
+
+message CommentRestrictionMinimum {
+    CommentRestrictionMinimumEnum Minimum = 1;
+    float Level = 2;
+}
+
+enum CommentRestrictionMinimumEnum {
+    Anonymous = 0;
+    Subscriber = 1;
+    PaidSubscriber = 2;
+    None = 3;
+}

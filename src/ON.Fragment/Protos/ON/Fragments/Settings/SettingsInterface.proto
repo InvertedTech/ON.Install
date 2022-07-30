@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package ON.Fragments.Settings;
+
+import "google/api/annotations.proto";
+import "Protos/ON/Fragments/Settings/SettingsRecord.proto";
+
+// Service for Settings service fragment interface
+service SettingsInterface {
+  // Get public settings data
+  rpc GetPublicData (GetPublicDataRequest) returns (GetPublicDataResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/settings"
+    };
+  }
+
+  // Get all settings data
+  rpc GetAllData (GetAllDataRequest) returns (GetAllDataResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/settings/all"
+    };
+  }
+
+  // Modify Personalization public data
+  rpc ModifyPersonalizationPublicData (ModifyPersonalizationPublicDataRequest) returns (ModifyPersonalizationPublicDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/personalization/public"
+      body: "*"
+    };
+  }
+
+  // Modify Subscription public data
+  rpc ModifySubscriptionPublicData (ModifySubscriptionPublicDataRequest) returns (ModifySubscriptionPublicDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/subscription/public"
+      body: "*"
+    };
+  }
+
+  // Modify Subscription private data
+  rpc ModifySubscriptionPrivateData (ModifySubscriptionPrivateDataRequest) returns (ModifySubscriptionPrivateDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/subscription/private"
+      body: "*"
+    };
+  }
+
+  // Modify Comments public data
+  rpc ModifyCommentsPublicData (ModifyCommentsPublicDataRequest) returns (ModifyCommentsPublicDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/comments/public"
+      body: "*"
+    };
+  }
+
+  // Modify Comments private data
+  rpc ModifyCommentsPrivateData (ModifyCommentsPrivateDataRequest) returns (ModifyCommentsPrivateDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/comments/private"
+      body: "*"
+    };
+  }
+}
+
+message GetPublicDataRequest {
+}
+
+message GetPublicDataResponse {
+  SettingsRecord.PublicData Data = 1;
+}
+
+message GetAllDataRequest {
+}
+
+message GetAllDataResponse {
+  SettingsRecord Data = 1;
+}
+
+enum ModifyResponseErrorType {
+  NoError = 0;
+  UnknownError = -1;
+}
+
+message ModifyPersonalizationPublicDataRequest {
+  PersonalizationPublicRecord Data = 1;
+}
+
+message ModifyPersonalizationPublicDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifySubscriptionPublicDataRequest {
+  SubscriptionPublicRecord Data = 1;
+}
+
+message ModifySubscriptionPublicDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifySubscriptionPrivateDataRequest {
+  SubscriptionPrivateRecord Data = 1;
+}
+
+message ModifySubscriptionPrivateDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyCommentsPublicDataRequest {
+  CommentsPublicRecord Data = 1;
+}
+
+message ModifyCommentsPublicDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyCommentsPrivateDataRequest {
+  CommentsPrivateRecord Data = 1;
+}
+
+message ModifyCommentsPrivateDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
