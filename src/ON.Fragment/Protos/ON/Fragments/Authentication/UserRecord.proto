@@ -15,6 +15,7 @@ message UserRecord {
     google.protobuf.Timestamp CreatedOnUTC = 10;   // UTC timestamp when user was created
     google.protobuf.Timestamp ModifiedOnUTC = 11;  // UTC timestamp when user record was last modified
     google.protobuf.Timestamp DisabledOnUTC = 12;  // UTC timestamp when user was disabled, null = not disabled
+    bytes ProfileImagePNG = 20;         // Profile image saved as a PNG
   }
   message PrivateData {
     bytes PasswordHash = 1;     // Password hash bytes

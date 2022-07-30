@@ -19,7 +19,6 @@ message ContentRecord {
     repeated string AssetIds = 10;
     uint32 SubscriptionLevel = 11;
     ContentType ContentType = 12;
-    string Body = 21;
   }
 
   message PrivateData {

@@ -25,11 +25,29 @@ service UserInterface {
     };
   }
 
+  // Change another user's Profile Iamge.  Can take in multipe image type and will convert to PNG.
+  rpc ChangeOtherProfileImage (ChangeOtherProfileImageRequest) returns (ChangeOtherProfileImageResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/profileimage"
+      body: "*"
+    };
+  }
+
   // Change user's own password.  Requires user to know their current password.
   rpc ChangeOwnPassword (ChangeOwnPasswordRequest) returns (ChangeOwnPasswordResponse)
   {
     option (google.api.http) = {
       post: "/api/auth/password"
+      body: "*"
+    };
+  }
+
+  // Change user's own Profile Image.  Can take in multipe image type and will convert to PNG.
+  rpc ChangeOwnProfileImage (ChangeOwnProfileImageRequest) returns (ChangeOwnProfileImageResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/profileimage"
       body: "*"
     };
   }
@@ -130,7 +148,24 @@ message ChangeOtherPasswordResponse {
   enum ChangeOtherPasswordResponseErrorType {
     NoError = 0;
     UnknownError = -1;
+    UserNotFound = 1;
     BadNewPassword = 2;
+  }
+}
+  
+message ChangeOtherProfileImageRequest {
+  string UserID = 1;                   // Guid for the user
+  bytes ProfileImage = 2;
+}
+  
+message ChangeOtherProfileImageResponse {
+  ChangeOtherProfileImageResponseErrorType Error = 1;
+
+  enum ChangeOtherProfileImageResponseErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    UserNotFound = 1;
+    BadFormat = 2;
   }
 }
   
@@ -147,6 +182,20 @@ message ChangeOwnPasswordResponse {
     UnknownError = -1;
     BadOldPassword = 1;
     BadNewPassword = 2;
+  }
+}
+
+message ChangeOwnProfileImageRequest {
+  bytes ProfileImage = 1;
+}
+  
+message ChangeOwnProfileImageResponse {
+  ChangeOwnProfileImageResponseErrorType Error = 1;
+
+  enum ChangeOwnProfileImageResponseErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    BadFormat = 1;
   }
 }
 

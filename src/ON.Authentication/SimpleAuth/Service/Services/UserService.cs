@@ -8,9 +8,11 @@ using ON.Authentication.SimpleAuth.Service.Helpers;
 using ON.Fragments.Authentication;
 using ON.Fragments.Authorization;
 using ON.Fragments.Generic;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -82,7 +84,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 var record = await dataProvider.GetById(request.UserID.ToGuid());
                 if (record == null)
-                    return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ChangeOtherPasswordResponseErrorType.UnknownError };
+                    return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ChangeOtherPasswordResponseErrorType.UserNotFound };
 
                 byte[] salt = RandomNumberGenerator.GetBytes(16);
                 record.Private.PasswordSalt = ByteString.CopyFrom(salt);
@@ -97,6 +99,63 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             catch
             {
                 return new ChangeOtherPasswordResponse { Error = ChangeOtherPasswordResponse.Types.ChangeOtherPasswordResponseErrorType.UnknownError };
+            }
+        }
+
+        public override async Task<ChangeOtherProfileImageResponse> ChangeOtherProfileImage(ChangeOtherProfileImageRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new ChangeOtherProfileImageResponse { Error = ChangeOtherProfileImageResponse.Types.ChangeOtherProfileImageResponseErrorType.UnknownError };
+
+            try
+            {
+                if (!await AmIReallyAdmin(context))
+                    return new ChangeOtherProfileImageResponse { Error = ChangeOtherProfileImageResponse.Types.ChangeOtherProfileImageResponseErrorType.UnknownError };
+
+                var record = await dataProvider.GetById(request.UserID.ToGuid());
+                if (record == null)
+                    return new ChangeOtherProfileImageResponse { Error = ChangeOtherProfileImageResponse.Types.ChangeOtherProfileImageResponseErrorType.UnknownError };
+
+                if (request?.ProfileImage == null || request.ProfileImage.IsEmpty)
+                    return new ChangeOtherProfileImageResponse { Error = ChangeOtherProfileImageResponse.Types.ChangeOtherProfileImageResponseErrorType.BadFormat };
+
+
+
+                using var ms = new MemoryStream();
+                ms.Write(request.ProfileImage.ToArray());
+                ms.Position = 0;
+                using var image = SKBitmap.Decode(ms);
+
+                if (image == null)
+                    return new ChangeOtherProfileImageResponse { Error = ChangeOtherProfileImageResponse.Types.ChangeOtherProfileImageResponseErrorType.BadFormat };
+
+                var newInfo = image.Info;
+                newInfo.Width = 200;
+                newInfo.Height = 200;
+                using var newImage = image.Resize(newInfo, SKFilterQuality.Medium);
+
+
+                using MemoryStream memStream = new MemoryStream();
+                using SKManagedWStream wstream = new SKManagedWStream(memStream);
+
+                newImage.Encode(wstream, SKEncodedImageFormat.Png, 50);
+
+                record.Public.ProfileImagePNG = ByteString.CopyFrom(memStream.ToArray());
+
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+
+                await dataProvider.Save(record);
+
+
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+
+                await dataProvider.Save(record);
+
+                return new ChangeOtherProfileImageResponse { Error = ChangeOtherProfileImageResponse.Types.ChangeOtherProfileImageResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new ChangeOtherProfileImageResponse { Error = ChangeOtherProfileImageResponse.Types.ChangeOtherProfileImageResponseErrorType.BadFormat };
             }
         }
 
@@ -132,6 +191,54 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             catch
             {
                 return new ChangeOwnPasswordResponse { Error = ChangeOwnPasswordResponse.Types.ChangeOwnPasswordResponseErrorType.UnknownError };
+            }
+        }
+
+        public override async Task<ChangeOwnProfileImageResponse> ChangeOwnProfileImage(ChangeOwnProfileImageRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new ChangeOwnProfileImageResponse { Error = ChangeOwnProfileImageResponse.Types.ChangeOwnProfileImageResponseErrorType.UnknownError };
+
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new ChangeOwnProfileImageResponse { Error = ChangeOwnProfileImageResponse.Types.ChangeOwnProfileImageResponseErrorType.UnknownError };
+
+                var record = await dataProvider.GetById(userToken.Id);
+                if (record == null)
+                    return new ChangeOwnProfileImageResponse { Error = ChangeOwnProfileImageResponse.Types.ChangeOwnProfileImageResponseErrorType.UnknownError };
+
+                using var ms = new MemoryStream();
+                ms.Write(request.ProfileImage.ToArray());
+                ms.Position = 0;
+                using var image = SKBitmap.Decode(ms);
+
+                if (image == null)
+                    return new ChangeOwnProfileImageResponse { Error = ChangeOwnProfileImageResponse.Types.ChangeOwnProfileImageResponseErrorType.BadFormat };
+
+                var newInfo = image.Info;
+                newInfo.Width = 200;
+                newInfo.Height = 200;
+                using var newImage = image.Resize(newInfo, SKFilterQuality.Medium);
+
+
+                using MemoryStream memStream = new MemoryStream();
+                using SKManagedWStream wstream = new SKManagedWStream(memStream);
+
+                newImage.Encode(wstream, SKEncodedImageFormat.Png, 50);
+
+                record.Public.ProfileImagePNG = ByteString.CopyFrom(memStream.ToArray());
+
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+
+                await dataProvider.Save(record);
+
+                return new ChangeOwnProfileImageResponse { Error = ChangeOwnProfileImageResponse.Types.ChangeOwnProfileImageResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new ChangeOwnProfileImageResponse { Error = ChangeOwnProfileImageResponse.Types.ChangeOwnProfileImageResponseErrorType.BadFormat };
             }
         }
 
