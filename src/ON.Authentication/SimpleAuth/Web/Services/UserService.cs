@@ -158,10 +158,14 @@ namespace ON.Authentication.SimpleAuth.Web.Services
 
             if (vm.IsAdmin)
                 req.Roles.Add(ONUser.ROLE_ADMIN);
-            if (vm.IsPublisher)
-                req.Roles.Add(ONUser.ROLE_PUBLISHER);
-            if (vm.IsWriter)
-                req.Roles.Add(ONUser.ROLE_WRITER);
+            if (vm.IsContentPublisher)
+                req.Roles.Add(ONUser.ROLE_CONTENT_PUBLISHER);
+            if (vm.IsContentWriter)
+                req.Roles.Add(ONUser.ROLE_CONTENT_WRITER);
+            if (vm.IsCommentModerator)
+                req.Roles.Add(ONUser.ROLE_COMMENT_MODERATOR);
+            if (vm.IsCommentAppelateJudge)
+                req.Roles.Add(ONUser.ROLE_COMMENT_APPELLATE_JUDGE);
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.ModifyOtherUserAsync(req, GetMetadata());

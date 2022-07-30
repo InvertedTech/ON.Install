@@ -27,7 +27,7 @@
             <td>
                 @if (record.PublishedOnUTC != null)
                 {
-                    @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER))
+                    @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_CONTENT_PUBLISHER))
                     {
                         <a href="/content/@(record.ContentID)/unpublish">Published</a>
                     }
@@ -38,7 +38,7 @@
                 }
                 else
                 {
-                    @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER))
+                    @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_CONTENT_PUBLISHER))
                     {
                         <a href="/content/@(record.ContentID)/publish">Not Published</a>
                     }
