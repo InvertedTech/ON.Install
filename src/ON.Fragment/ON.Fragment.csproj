@@ -5,6 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\ParallelEconomySettings.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\Paypal\PaypalSettings.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\StripeSettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Comments\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Content\SharedTypes.proto" />
@@ -39,6 +42,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\ParallelEconomySettings.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Paypal\PaypalSettings.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Stripe\StripeSettings.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Comments\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Content\SharedTypes.proto" GrpcServices="None" />

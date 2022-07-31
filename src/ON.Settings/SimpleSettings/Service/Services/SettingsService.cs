@@ -44,10 +44,16 @@ namespace ON.Settings.SimpleSettings.Service.Services
         {
             var record = await dataProvider.Get();
 
-            return new GetAllDataResponse()
-            {
-                Data = record
-            };
+            return new() { Data = record };
+        }
+
+        public override async Task<GetAllNewerDataResponse> GetAllNewerData(GetAllNewerDataRequest request, ServerCallContext context)
+        {
+            var record = await dataProvider.Get();
+            if (record.Public.VersionNum == request.VersionNum)
+                record = null;
+
+            return new() { Data = record };
         }
 
         [AllowAnonymous]
@@ -55,10 +61,17 @@ namespace ON.Settings.SimpleSettings.Service.Services
         {
             var record = await dataProvider.Get();
 
-            return new GetPublicDataResponse()
-            {
-                Data = record.Public
-            };
+            return new() { Data = record.Public };
+        }
+
+        [AllowAnonymous]
+        public override async Task<GetPublicNewerDataResponse> GetPublicNewerData(GetPublicNewerDataRequest request, ServerCallContext context)
+        {
+            var record = await dataProvider.Get();
+            if (record.Public.VersionNum == request.VersionNum)
+                record.Public = null;
+
+            return new() { Data = record.Public };
         }
 
         public override async Task<ModifyCommentsPrivateDataResponse> ModifyCommentsPrivateData(ModifyCommentsPrivateDataRequest request, ServerCallContext context)
@@ -66,7 +79,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             try
             {
                 if (request.Data == null)
-                    return new ModifyCommentsPrivateDataResponse() { Error = ModifyResponseErrorType.UnknownError };
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
 
                 var record = await dataProvider.Get();
                 record.Private.Comments = request.Data;
@@ -76,11 +89,11 @@ namespace ON.Settings.SimpleSettings.Service.Services
 
                 await dataProvider.Save(record);
 
-                return new ModifyCommentsPrivateDataResponse() { Error = ModifyResponseErrorType.NoError };
+                return new() { Error = ModifyResponseErrorType.NoError };
             }
             catch
             {
-                return new ModifyCommentsPrivateDataResponse() { Error = ModifyResponseErrorType.UnknownError };
+                return new() { Error = ModifyResponseErrorType.UnknownError };
             }
         }
 
@@ -89,7 +102,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             try
             {
                 if (request.Data == null)
-                    return new ModifyCommentsPublicDataResponse() { Error = ModifyResponseErrorType.UnknownError };
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
 
                 var record = await dataProvider.Get();
                 record.Public.Comments = request.Data;
@@ -99,11 +112,11 @@ namespace ON.Settings.SimpleSettings.Service.Services
 
                 await dataProvider.Save(record);
 
-                return new ModifyCommentsPublicDataResponse() { Error = ModifyResponseErrorType.NoError };
+                return new() { Error = ModifyResponseErrorType.NoError };
             }
             catch
             {
-                return new ModifyCommentsPublicDataResponse() { Error = ModifyResponseErrorType.UnknownError };
+                return new() { Error = ModifyResponseErrorType.UnknownError };
             }
         }
 
@@ -112,7 +125,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             try
             {
                 if (request.Data == null)
-                    return new ModifyPersonalizationPublicDataResponse() { Error = ModifyResponseErrorType.UnknownError };
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
 
                 var record = await dataProvider.Get();
                 record.Public.Personalization = request.Data;
@@ -122,11 +135,34 @@ namespace ON.Settings.SimpleSettings.Service.Services
 
                 await dataProvider.Save(record);
 
-                return new ModifyPersonalizationPublicDataResponse() { Error = ModifyResponseErrorType.NoError };
+                return new() { Error = ModifyResponseErrorType.NoError };
             }
             catch
             {
-                return new ModifyPersonalizationPublicDataResponse() { Error = ModifyResponseErrorType.UnknownError };
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        public override async Task<ModifyPersonalizationPrivateDataResponse> ModifyPersonalizationPrivateData(ModifyPersonalizationPrivateDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var record = await dataProvider.Get();
+                record.Private.Personalization = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
             }
         }
 
@@ -135,7 +171,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             try
             {
                 if (request.Data == null)
-                    return new ModifySubscriptionPrivateDataResponse() { Error = ModifyResponseErrorType.UnknownError };
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
 
                 var record = await dataProvider.Get();
                 record.Private.Subscription = request.Data;
@@ -145,11 +181,11 @@ namespace ON.Settings.SimpleSettings.Service.Services
 
                 await dataProvider.Save(record);
 
-                return new ModifySubscriptionPrivateDataResponse() { Error = ModifyResponseErrorType.NoError };
+                return new() { Error = ModifyResponseErrorType.NoError };
             }
             catch
             {
-                return new ModifySubscriptionPrivateDataResponse() { Error = ModifyResponseErrorType.UnknownError };
+                return new() { Error = ModifyResponseErrorType.UnknownError };
             }
         }
 
@@ -158,7 +194,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             try
             {
                 if (request.Data == null)
-                    return new ModifySubscriptionPublicDataResponse() { Error = ModifyResponseErrorType.UnknownError };
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
 
                 var record = await dataProvider.Get();
                 record.Public.Subscription = request.Data;
@@ -168,11 +204,11 @@ namespace ON.Settings.SimpleSettings.Service.Services
 
                 await dataProvider.Save(record);
 
-                return new ModifySubscriptionPublicDataResponse() { Error = ModifyResponseErrorType.NoError };
+                return new() { Error = ModifyResponseErrorType.NoError };
             }
             catch
             {
-                return new ModifySubscriptionPublicDataResponse() { Error = ModifyResponseErrorType.UnknownError };
+                return new() { Error = ModifyResponseErrorType.UnknownError };
             }
         }
 
@@ -217,6 +253,18 @@ namespace ON.Settings.SimpleSettings.Service.Services
                     },
                     Subscription = new SubscriptionPrivateRecord()
                     {
+                        ParallelEconomy = new()
+                        {
+                            Enabled = false,
+                        },
+                        Stripe = new()
+                        {
+                            Enabled = false,
+                        },
+                        Paypal = new()
+                        {
+                            Enabled = false,
+                        }
                     },
                 }
             };

@@ -4,6 +4,9 @@ package ON.Fragments.Settings;
 
 import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Authorization/SharedTypes.proto";
+import "Protos/ON/Fragments/Authorization/Payments/ParallelEconomy/ParallelEconomySettings.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Stripe/StripeSettings.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Paypal/PaypalSettings.proto";
 import "Protos/ON/Fragments/Content/SharedTypes.proto";
 import "Protos/ON/Fragments/Comments/SharedTypes.proto";
 
@@ -17,6 +20,7 @@ message SettingsRecord {
     CommentsPublicRecord Comments = 12;
   }
   message PrivateData {
+    PersonalizationPrivateRecord Personalization = 10;
     SubscriptionPrivateRecord Subscription = 11;
     CommentsPrivateRecord Comments = 12;
   }
@@ -34,12 +38,17 @@ message PersonalizationPublicRecord {
     bytes HeaderImage = 11;
 }
 
+message PersonalizationPrivateRecord {
+}
+
 message SubscriptionPublicRecord {
     repeated ON.Fragments.Authorization.SubscriptionTier Tiers = 1;
 }
 
 message SubscriptionPrivateRecord {
-
+    ON.Fragments.Authorization.Payments.ParallelEconomy.ParallelEconomySettings ParallelEconomy = 1;
+    ON.Fragments.Authorization.Payments.Stripe.StripeSettings Stripe = 2;
+    ON.Fragments.Authorization.Payments.Paypal.PaypalSettings Paypal = 3;
 }
 
 message CommentsPublicRecord {

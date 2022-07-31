@@ -69,7 +69,7 @@ namespace ON.Settings.SimpleSettings.Service
 
             app.UseRouting();
 
-            app.UseJwtAuthentication();
+            app.UseJwtApiAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

@@ -62,6 +62,14 @@ namespace ON.Authentication
             app.UseAuthorization();
         }
 
+        public static void UseJwtApiAuthentication(this IApplicationBuilder app)
+        {
+            app.UseMiddleware<JwtCookieToBearerMiddleware>();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+        }
+
         public static JsonWebKey GetPrivateKey()
         {
             return GetKeyFromEnvVar(JWT_PRIVATE_KEY_ENVIRONMENT_NAME);

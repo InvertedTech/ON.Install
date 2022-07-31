@@ -27,6 +27,7 @@ namespace ON.Settings.SimpleSettings.Service.Data
         {
             dataFile.Delete();
             await File.WriteAllTextAsync(dataFile.FullName, "");
+            dataFile.Refresh();
         }
 
         public async Task<SettingsRecord> Get()
@@ -48,6 +49,7 @@ namespace ON.Settings.SimpleSettings.Service.Data
         public async Task Save(SettingsRecord record)
         {
             await File.AppendAllTextAsync(dataFile.FullName, Convert.ToBase64String(record.ToByteArray()) + "\n");
+            dataFile.Refresh();
         }
     }
 }

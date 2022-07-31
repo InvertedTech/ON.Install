@@ -11,7 +11,15 @@ service SettingsInterface {
   rpc GetPublicData (GetPublicDataRequest) returns (GetPublicDataResponse)
   {
     option (google.api.http) = {
-      get: "/api/settings"
+      get: "/api/settings/public"
+    };
+  }
+
+  // Get public settings data
+  rpc GetPublicNewerData (GetPublicNewerDataRequest) returns (GetPublicNewerDataResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/settings/public/newer/{VersionNum}"
     };
   }
 
@@ -23,11 +31,28 @@ service SettingsInterface {
     };
   }
 
+  // Get all settings data
+  rpc GetAllNewerData (GetAllNewerDataRequest) returns (GetAllNewerDataResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/settings/all/newer/{VersionNum}"
+    };
+  }
+
   // Modify Personalization public data
   rpc ModifyPersonalizationPublicData (ModifyPersonalizationPublicDataRequest) returns (ModifyPersonalizationPublicDataResponse)
   {
     option (google.api.http) = {
       post: "/api/settings/personalization/public"
+      body: "*"
+    };
+  }
+
+  // Modify Personalization private data
+  rpc ModifyPersonalizationPrivateData (ModifyPersonalizationPrivateDataRequest) returns (ModifyPersonalizationPrivateDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/personalization/private"
       body: "*"
     };
   }
@@ -76,10 +101,26 @@ message GetPublicDataResponse {
   SettingsRecord.PublicData Data = 1;
 }
 
+message GetPublicNewerDataRequest {
+  uint32 VersionNum = 1;
+}
+
+message GetPublicNewerDataResponse {
+  SettingsRecord.PublicData Data = 1;
+}
+
 message GetAllDataRequest {
 }
 
 message GetAllDataResponse {
+  SettingsRecord Data = 1;
+}
+
+message GetAllNewerDataRequest {
+  uint32 VersionNum = 1;
+}
+
+message GetAllNewerDataResponse {
   SettingsRecord Data = 1;
 }
 
@@ -93,6 +134,14 @@ message ModifyPersonalizationPublicDataRequest {
 }
 
 message ModifyPersonalizationPublicDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyPersonalizationPrivateDataRequest {
+  PersonalizationPrivateRecord Data = 1;
+}
+
+message ModifyPersonalizationPrivateDataResponse {
   ModifyResponseErrorType Error = 1;
 }
 
