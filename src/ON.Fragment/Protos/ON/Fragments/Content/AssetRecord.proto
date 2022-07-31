@@ -14,7 +14,9 @@ message AssetRecord {
     string Title = 5;
     string Caption = 6;
     string URL = 7;
-    bytes Data = 8;
+    string MimeType = 8;
+    AssetType AssetType = 9;
+    bytes Data = 10;
   }
   message PrivateData {
   }
@@ -22,7 +24,7 @@ message AssetRecord {
   PublicData Public = 1;
   PrivateData Private = 2;
 
-  enum RecordType {
+  enum AssetType {
     Image = 0;
   }
 }

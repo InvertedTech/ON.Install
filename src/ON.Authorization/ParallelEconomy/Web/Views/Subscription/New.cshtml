@@ -1,0 +1,46 @@
+﻿@using ON.Authorization.ParallelEconomy.Web.Services
+@model NewViewModel
+@{
+    ViewData["Title"] = "Membership";
+}
+
+<h1>Subscription Details</h1>
+<br />
+
+<div id="payment">
+  <!-- Elements will create input elements here -->
+</div>
+
+@section head
+{
+    @if (Model.IsTest)
+    {
+        <script src="https://js.sandbox.fortis.tech/commercejs-v1.0.0.min.js"></script>
+    }
+    else
+    {
+        <script src="https://js.fortis.tech/commercejs-v1.0.0.min.js"></script>
+    }
+}
+
+@section scripts
+{
+    <script>
+        var elements = new Commerce.elements('@(Model.ClientToken)');
+        elements.create({
+            container: '#payment',
+            theme: 'default'
+        });
+
+        elements.on('done', (result) => {
+            console.log(result);
+            console.log(result.data.status_code);
+            if(result.data.status_code === 101){
+                location.href = '/subscription/paralleleconomy/new?tranId=' + result.data.id;
+            } else {
+                alert("An error occured while processing payment");
+                //location.href = '/subscription/pick';
+            }
+        });
+    </script>
+}

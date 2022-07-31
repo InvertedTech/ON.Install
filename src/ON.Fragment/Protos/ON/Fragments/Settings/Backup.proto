@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package ON.Fragments.Settings;
+
+import "Protos/ON/Fragments/Settings/SettingsRecord.proto";
+
+// Service for Settings backup fragment interface
+service BackupInterface {
+  // Export a list of all data.
+  rpc BackupData (BackupDataRequest) returns (stream BackupDataResponse) {}
+
+  // Restore a list of all data.
+  rpc RestoreData (stream RestoreDataRequest) returns (RestoreDataResponse) {}
+}
+  
+message BackupDataRequest {
+  string ClientPublicJwk = 1;
+}
+
+message BackupDataResponse {
+  oneof Response_oneof {
+    string ServerPublicJwk = 1;
+    EncryptedBackupDataRecord EncryptedRecord = 10;
+  }
+}
+
+message EncryptedBackupDataRecord {
+  bytes EncryptionIV = 1;
+  uint32 VersionNum = 2;
+  bytes Data = 10;
+}
+
+message RestoreDataRequest {
+  SettingsRecord Record = 10;
+}
+
+message RestoreDataResponse {
+  int32 NumVersionsRestored = 1;
+}

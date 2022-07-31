@@ -19,8 +19,10 @@ namespace ON.Authentication.SimpleAuth.Web.Models.Admin
             Email = user.Private.Emails.FirstOrDefault();
 
             IsAdmin = user.Public.Roles.Contains(ONUser.ROLE_ADMIN);
-            IsPublisher = user.Public.Roles.Contains(ONUser.ROLE_PUBLISHER);
-            IsWriter = user.Public.Roles.Contains(ONUser.ROLE_WRITER);
+            IsContentPublisher = user.Public.Roles.Contains(ONUser.ROLE_CONTENT_PUBLISHER);
+            IsContentWriter = user.Public.Roles.Contains(ONUser.ROLE_CONTENT_WRITER);
+            IsCommentModerator = user.Public.Roles.Contains(ONUser.ROLE_COMMENT_MODERATOR);
+            IsCommentAppelateJudge = user.Public.Roles.Contains(ONUser.ROLE_COMMENT_APPELLATE_JUDGE);
         }
 
         [Display(Name = "User Name")]
@@ -40,11 +42,17 @@ namespace ON.Authentication.SimpleAuth.Web.Models.Admin
         [Display(Name = "Admin")]
         public bool IsAdmin { get; set; }
 
-        [Display(Name = "Publisher")]
-        public bool IsPublisher { get; set; }
+        [Display(Name = "Content Publisher")]
+        public bool IsContentPublisher { get; set; }
 
-        [Display(Name = "Writer")]
-        public bool IsWriter { get; set; }
+        [Display(Name = "Content Writer")]
+        public bool IsContentWriter { get; set; }
+
+        [Display(Name = "Comment Moderator")]
+        public bool IsCommentModerator { get; set; }
+
+        [Display(Name = "Comment Appelate Judge")]
+        public bool IsCommentAppelateJudge { get; set; }
 
         public string ErrorMessage { get; set; }
         public string SuccessMessage { get; set; }

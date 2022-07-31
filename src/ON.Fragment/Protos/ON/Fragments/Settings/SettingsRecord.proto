@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package ON.Fragments.Settings;
+
+import "google/protobuf/timestamp.proto";
+import "Protos/ON/Fragments/Authorization/SharedTypes.proto";
+import "Protos/ON/Fragments/Authorization/Payments/ParallelEconomy/ParallelEconomySettings.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Stripe/StripeSettings.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Paypal/PaypalSettings.proto";
+import "Protos/ON/Fragments/Content/SharedTypes.proto";
+import "Protos/ON/Fragments/Comments/SharedTypes.proto";
+
+// User authentication data
+message SettingsRecord {
+  message PublicData {
+    uint32 VersionNum = 1;                            // Version of settings
+    google.protobuf.Timestamp ModifiedOnUTC = 2;      // UTC timestamp when settings record was last modified
+    PersonalizationPublicRecord Personalization = 10;
+    SubscriptionPublicRecord Subscription = 11;
+    CommentsPublicRecord Comments = 12;
+  }
+  message PrivateData {
+    PersonalizationPrivateRecord Personalization = 10;
+    SubscriptionPrivateRecord Subscription = 11;
+    CommentsPrivateRecord Comments = 12;
+  }
+
+  PublicData Public = 1;
+  PrivateData Private = 2;
+}
+
+message PersonalizationPublicRecord {
+    string Title = 1;
+    string MetaDescription = 2;
+    bool DefaultToDarkMode = 3;
+    ON.Fragments.Content.LayoutEnum DefaultLayout = 4;
+    bytes ProfileImage = 10;
+    bytes HeaderImage = 11;
+}
+
+message PersonalizationPrivateRecord {
+}
+
+message SubscriptionPublicRecord {
+    repeated ON.Fragments.Authorization.SubscriptionTier Tiers = 1;
+}
+
+message SubscriptionPrivateRecord {
+    ON.Fragments.Authorization.Payments.ParallelEconomy.ParallelEconomySettings ParallelEconomy = 1;
+    ON.Fragments.Authorization.Payments.Stripe.StripeSettings Stripe = 2;
+    ON.Fragments.Authorization.Payments.Paypal.PaypalSettings Paypal = 3;
+}
+
+message CommentsPublicRecord {
+    bool AllowLinks = 1;
+    ON.Fragments.Comments.CommentOrder DefaultOrder = 2;
+    ON.Fragments.Comments.CommentRestrictionMinimum DefaultRestriction = 3;
+    bool ExplicitModeEnabled = 4;
+}
+
+message CommentsPrivateRecord {
+    repeated string BlackList = 1;
+}
+
