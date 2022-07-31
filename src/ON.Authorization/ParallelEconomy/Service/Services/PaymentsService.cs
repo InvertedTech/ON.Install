@@ -41,11 +41,11 @@ namespace ON.Authorization.ParallelEconomy.Service
                 if (record == null)
                     return new CancelOwnSubscriptionResponse() { Error = "Record not found" };
 
-                SubscriptionModel sub = await client.GetSubscription(record.SubscriptionId);
-                if (sub == null)
+                var res = await client.GetSubscription(record.SubscriptionId);
+                if (res == null)
                     return new CancelOwnSubscriptionResponse() { Error = "SubscriptionId not valid" };
 
-                if (sub.status == "ACTIVE")
+                if (res.Data.Status == FortisAPI.Standard.Models.StatusEnum.Active)
                 {
                     var canceled = await client.CancelSubscription(record.SubscriptionId, request.Reason ?? "None");
                     if (!canceled)

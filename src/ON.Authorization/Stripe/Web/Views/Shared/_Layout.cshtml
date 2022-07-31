@@ -26,7 +26,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/subscription">Manage Subscription</a>
                                 <a class="dropdown-item" href="/settings">User Profile</a>
-                                @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_PUBLISHER) || User.IsInRole(ONUser.ROLE_WRITER))
+                                @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_CONTENT_PUBLISHER) || User.IsInRole(ONUser.ROLE_CONTENT_WRITER))
                                 {
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="/content/manage">Manage Articles</a>
