@@ -14,7 +14,7 @@ using ON.Content.SimpleCMS.Web.Services;
 
 namespace ON.Content.SimpleCMS.Web.Controllers
 {
-    [Authorize(Roles = ONUser.ROLE_ADMIN + "," + ONUser.ROLE_CONTENT_PUBLISHER + "," + ONUser.ROLE_CONTENT_WRITER)]
+    [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
     public class ContentController : Controller
     {
         private readonly ILogger<HomeController> logger;
@@ -37,16 +37,16 @@ namespace ON.Content.SimpleCMS.Web.Controllers
                 return NotFound();
 
             var res = await contentService.GetContent(contentId);
-            if (res?.Content == null)
+            if (res == null)
                 return NotFound();
 
-            return View("View", res.Content);
+            return View("View", res);
         }
 
         [HttpGet("/content/manage")]
         public async Task<IActionResult> Manage()
         {
-            return View("Manage", new ManageViewModel((await contentService.GetAll()).Records));
+            return View("Manage", new ManageViewModel(await contentService.GetAllAdmin()));
         }
 
         [HttpGet("/content/new")]
@@ -68,7 +68,7 @@ namespace ON.Content.SimpleCMS.Web.Controllers
 
             var res = await contentService.CreateContent(vm);
 
-            return Redirect("/content/" + res.Content.ContentID);
+            return Redirect("/content/" + res.Public.ContentID);
         }
 
         [HttpGet("/content/{id}/edit")]
@@ -78,17 +78,17 @@ namespace ON.Content.SimpleCMS.Web.Controllers
             if (!Guid.TryParse(id, out contentId))
                 return NotFound();
 
-            var res = await contentService.GetContent(contentId);
-            if (res?.Content == null)
+            var res = await contentService.GetContentAdmin(contentId);
+            if (res == null)
                 return NotFound();
 
             EditViewModel vm = new()
             {
-                Title = res.Content.Title,
-                Subtitle = res.Content.Subtitle,
-                Author = res.Content.Author,
-                Body = res.Content.Body,
-                Level = res.Content.SubscriptionLevel,
+                Title = res.Public.Data.Title,
+                Subtitle = res.Public.Data.Description,
+                Author = res.Public.Data.Author,
+                Body = res.Public.Data.Written.HtmlBody,
+                Level = res.Public.Data.SubscriptionLevel,
             };
 
             return View("Edit", vm);
@@ -101,8 +101,8 @@ namespace ON.Content.SimpleCMS.Web.Controllers
             if (!Guid.TryParse(id, out contentId))
                 return NotFound();
 
-            var res = await contentService.GetContent(contentId);
-            if (res?.Content == null)
+            var res = await contentService.GetContentAdmin(contentId);
+            if (res == null)
                 return NotFound();
 
             vm.ErrorMessage = vm.SuccessMessage = "";
@@ -115,29 +115,29 @@ namespace ON.Content.SimpleCMS.Web.Controllers
 
             var res2 = await contentService.UpdateContent(contentId, vm);
 
-            return Redirect("/content/" + res2.Content.ContentID);
+            return Redirect("/content/" + res2.Public.ContentID);
         }
 
-        [Authorize(Roles = ONUser.ROLE_ADMIN + "," + ONUser.ROLE_CONTENT_PUBLISHER)]
+        [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
         [HttpGet("/content/{id}/publish")]
         public async Task<IActionResult> Publish(string id)
         {
             Guid contentId;
             if (!Guid.TryParse(id, out contentId))
-                return NotFound();
+                return Redirect("/content/manage");
 
             await contentService.PublishContent(contentId);
 
             return Redirect("/content/manage");
         }
 
-        [Authorize(Roles = ONUser.ROLE_ADMIN + "," + ONUser.ROLE_CONTENT_PUBLISHER)]
+        [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
         [HttpGet("/content/{id}/unpublish")]
         public async Task<IActionResult> Unpublish(string id)
         {
             Guid contentId;
             if (!Guid.TryParse(id, out contentId))
-                return NotFound();
+                return Redirect("/content/manage");
 
             await contentService.UnpublishContent(contentId);
 

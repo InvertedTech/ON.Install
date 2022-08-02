@@ -25,7 +25,7 @@
             </td>
             <td>@record.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</td>
             <td>
-                @if (record.PublishedOnUTC != null)
+                @if (record.PublishOnUTC != null)
                 {
                     @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_CONTENT_PUBLISHER))
                     {

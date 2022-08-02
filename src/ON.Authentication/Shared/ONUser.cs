@@ -16,6 +16,8 @@ namespace ON.Authentication
         public const string ROLE_CONTENT_WRITER = "con_writer";
         public const string ROLE_COMMENT_MODERATOR = "com_mod";
         public const string ROLE_COMMENT_APPELLATE_JUDGE = "com_appellate";
+        public const string ROLE_CAN_CREATE_CONTENT = ROLE_ADMIN + "," + ROLE_CONTENT_PUBLISHER + "," + ROLE_CONTENT_WRITER;
+        public const string ROLE_CAN_PUBLISH = ROLE_ADMIN + "," + ROLE_CONTENT_PUBLISHER;
 
         public Guid Id { get; set; } = Guid.Empty;
         public const string IdType = "Id";
@@ -42,6 +44,9 @@ namespace ON.Authentication
         public bool IsPublisherOrHigher { get => IsPublisher || IsAdmin; }
         public bool IsWriter { get => IsInRole(ROLE_CONTENT_WRITER); }
         public bool IsWriterOrHigher { get => IsWriter || IsPublisherOrHigher; }
+
+        public bool CanPublish { get => IsPublisherOrHigher; }
+        public bool CanCreateContent { get => IsWriterOrHigher; }
 
         public List<Claim> ExtraClaims { get; private set; } = new List<Claim>();
 

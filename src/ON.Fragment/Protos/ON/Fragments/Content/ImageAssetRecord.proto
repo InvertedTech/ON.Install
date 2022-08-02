@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package ON.Fragments.Content;
+
+import "google/protobuf/timestamp.proto";
+
+// Asset record data
+message ImageAssetRecord {
+  ImageAssetPublicRecord Public = 1;
+  ImageAssetPrivateRecord Private = 2;
+}
+
+message ImageAssetPublicRecord {
+  string AssetID = 1;                          // Guid for the asset record
+  google.protobuf.Timestamp CreatedOnUTC = 2;  // UTC timestamp when asset was created
+  google.protobuf.Timestamp ModifiedOnUTC = 3; // UTC timestamp when asset record was last modified
+
+  ImageAssetPublicData Data = 21;
+}
+
+message ImageAssetPrivateRecord {
+  string CreatedBy = 2;
+  string ModifiedBy = 3;
+
+  ImageAssetPrivateData Data = 21;
+}
+
+message ImageAssetPublicData {
+  string Title = 1;
+  string Caption = 2;
+  string URL = 3;
+  string MimeType = 4;
+  uint32 Height = 5;
+  uint32 Width = 6;
+
+  bytes Data = 20;
+}
+
+message ImageAssetPrivateData {
+  string OldContentID = 51;
+}
+

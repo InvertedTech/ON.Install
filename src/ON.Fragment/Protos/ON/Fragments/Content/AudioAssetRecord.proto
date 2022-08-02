@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package ON.Fragments.Content;
+
+import "google/protobuf/timestamp.proto";
+
+// Asset record data
+message AudioAssetRecord {
+  AudioAssetPublicRecord Public = 1;
+  AudioAssetPrivateRecord Private = 2;
+}
+
+message AudioAssetPublicRecord {
+  string AssetID = 1;                          // Guid for the asset record
+  google.protobuf.Timestamp CreatedOnUTC = 2;  // UTC timestamp when asset was created
+  google.protobuf.Timestamp ModifiedOnUTC = 3; // UTC timestamp when asset record was last modified
+
+  AudioAssetPublicData Data = 21;
+}
+
+message AudioAssetPrivateRecord {
+  string CreatedBy = 2;
+  string ModifiedBy = 3;
+
+  AudioAssetPrivateData Data = 21;
+}
+
+message AudioAssetPublicData {
+  string Title = 1;
+  string Caption = 2;
+  string URL = 3;
+  string MimeType = 4;
+  uint32 LengthSeconds = 5;
+
+  bytes Data = 20;
+}
+
+message AudioAssetPrivateData {
+  string OldContentID = 51;
+}
+

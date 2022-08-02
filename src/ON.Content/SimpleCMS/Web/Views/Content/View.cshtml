@@ -1,7 +1,7 @@
-﻿@model ON.Fragments.Content.ContentRecord.Types.PublicData
+﻿@model ON.Fragments.Content.ContentPublicRecord
 @using userHelper = ON.Authentication.ONUserHelper;
 @{
-    ViewData["Title"] = Model.Title;
+    ViewData["Title"] = Model.Data.Title;
 }
 
 @if (userHelper.MyUser?.IsWriterOrHigher ?? false)
@@ -13,21 +13,21 @@
 }
 
 
-<h1>@Model.Title</h1>
+<h1>@Model.Data.Title</h1>
 
-<h5>@Model.Subtitle</h5>
+<h5>@Model.Data.Description</h5>
 
-<em>By: @Model.Author</em>
+<em>By: @Model.Data.Author</em>
 
-@if (Model.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
+@if (Model.Data.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
 {
-    @Html.Raw(Model.Body)
+    @Html.Raw(Model.Data.Written.HtmlBody)
 }
 else
 {
-    if (Model.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    if (Model.Data.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
     {
-        @Html.Raw(Model.Body)
+        @Html.Raw(Model.Data.Written.HtmlBody)
     }
     else
     {

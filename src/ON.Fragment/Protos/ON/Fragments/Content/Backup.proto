@@ -40,7 +40,7 @@ message EncryptedContentBackupDataRecord {
 message ExportContentRequest {}
 
 message ExportContentResponse {
-  ContentRecord.PublicData ContentRecord = 1;
+  ContentPublicRecord ContentRecord = 1;
 }
 
 message RestoreAllDataRequest {

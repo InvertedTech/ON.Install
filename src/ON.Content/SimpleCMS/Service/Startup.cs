@@ -64,7 +64,7 @@ namespace ON.Content.SimpleCMS.Service
 
             app.UseRouting();
 
-            app.UseJwtAuthentication();
+            app.UseJwtApiAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

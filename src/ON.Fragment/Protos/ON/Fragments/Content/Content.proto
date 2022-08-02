@@ -11,7 +11,7 @@ service ContentInterface {
   rpc CreateContent (CreateContentRequest) returns (CreateContentResponse)
   {
     option (google.api.http) = {
-      post: "/api/cms/content"
+      post: "/api/cms/admin/content"
       body: "*"
     };
   }
@@ -21,43 +21,52 @@ service ContentInterface {
       get: "/api/cms/content"
     };
   }
+  rpc GetAllContentAdmin (GetAllContentAdminRequest) returns (GetAllContentAdminResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/admin/content"
+    };
+  }
   rpc GetContent (GetContentRequest) returns (GetContentResponse)
   {
     option (google.api.http) = {
       get: "/api/cms/content/{ContentID}"
     };
   }
+  rpc GetContentAdmin (GetContentAdminRequest) returns (GetContentAdminResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/admin/content/{ContentID}"
+    };
+  }
   rpc ModifyContent (ModifyContentRequest) returns (ModifyContentResponse)
   {
     option (google.api.http) = {
-      post: "/api/cms/content/{ContentID}"
+      post: "/api/cms/admin/content/{ContentID}"
       body: "*"
     };
   }
   rpc PublishContent (PublishContentRequest) returns (PublishContentResponse)
   {
     option (google.api.http) = {
-      post: "/api/cms/content/{ContentID}/publish"
+      post: "/api/cms/admin/content/{ContentID}/publish"
     };
   }
   rpc UnpublishContent (UnpublishContentRequest) returns (UnpublishContentResponse)
   {
     option (google.api.http) = {
-      post: "/api/cms/content/{ContentID}/unpublish"
+      post: "/api/cms/admin/content/{ContentID}/unpublish"
     };
   }
 }
   
 message CreateContentRequest {
-    string Title = 1;
-    string Subtitle = 2;
-    string Author = 3;
-    string Body = 4;
-    uint32 SubscriptionLevel = 5;
+  ContentPublicData Public = 1;
+  ContentPrivateData Private = 2;
 }
   
 message CreateContentResponse {
-  ContentRecord.PublicData Content = 1;
+  ContentRecord Record = 1;
 }
 
 message GetAllContentRequest {
@@ -67,42 +76,56 @@ message GetAllContentResponse {
   repeated ContentListRecord Records = 1;
 }
   
+message GetAllContentAdminRequest {
+}
+  
+message GetAllContentAdminResponse {
+  repeated ContentListRecord Records = 1;
+}
+  
 message GetContentRequest {
   string ContentID = 1;   // Guid for the content record
 }
   
 message GetContentResponse {
-  ContentRecord.PublicData Content = 1;
+  ContentPublicRecord Record = 1;
+}
+  
+message GetContentAdminRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message GetContentAdminResponse {
+  ContentRecord Record = 1;
 }
   
 message ModifyContentRequest {
-    string ContentID = 1;                          // Guid for the content record
-    string Title = 2;
-    string Subtitle = 3;
-    string Author = 4;
-    string Body = 5;
-    uint32 SubscriptionLevel = 6;
+  string ContentID = 1;   // Guid for the content record
+  ContentPublicData Public = 2;
+  ContentPrivateData Private = 3;
 }
   
 message ModifyContentResponse {
-  ContentRecord.PublicData Content = 1;
+  ContentRecord Record = 1;
 }
 
 message ContentListRecord {
-  string ContentID = 1;                          // Guid for the content record
+  string ContentID = 1;                         // Guid for the content record
   google.protobuf.Timestamp CreatedOnUTC = 2;   // UTC timestamp when content was created
-  google.protobuf.Timestamp PublishedOnUTC = 3; // UTC timestamp when content was published
+  google.protobuf.Timestamp PublishOnUTC = 3; // UTC timestamp when content was published
   string Title = 4;
-  string Subtitle = 5;
+  string Description = 5;
   uint32 SubscriptionLevel = 6;
+  ContentType ContentType = 21;
 }
 
 message PublishContentRequest {
   string ContentID = 1;   // Guid for the content record
+  google.protobuf.Timestamp PublishOnUTC = 3; // UTC timestamp when content was published
 }
   
 message PublishContentResponse {
-  ContentRecord.PublicData Content = 1;
+  ContentRecord Record = 1;
 }
   
 message UnpublishContentRequest {
@@ -110,6 +133,13 @@ message UnpublishContentRequest {
 }
   
 message UnpublishContentResponse {
-  ContentRecord.PublicData Content = 1;
+  ContentRecord Record = 1;
 }
   
+enum ContentType {
+  None = 0;
+  Audio = 1;
+  Picture = 2;
+  Video = 3;
+  Written = 4;
+}

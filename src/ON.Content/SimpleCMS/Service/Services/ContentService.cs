@@ -13,6 +13,7 @@ using ON.Fragments.Generic;
 
 namespace ON.Content.SimpleCMS.Service
 {
+    [Authorize]
     public class ContentService : ContentInterface.ContentInterfaceBase
     {
         private readonly ILogger<ServiceOpsService> logger;
@@ -24,65 +25,48 @@ namespace ON.Content.SimpleCMS.Service
             this.dataProvider = dataProvider;
         }
 
+        [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
         public override async Task<CreateContentResponse> CreateContent(CreateContentRequest request, ServerCallContext context)
         {
+            if (!IsValid(request.Public, request.Private))
+                return new();
+
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
             if (user == null)
-                return new CreateContentResponse();
+                return new();
 
-            if (!(user.IsAdmin || user.IsPublisher || user.IsWriter))
-                return new CreateContentResponse();
-
-            var content = new ContentRecord
+            var record = new ContentRecord
             {
-                Public = new ContentRecord.Types.PublicData
+                Public = new()
                 {
                     ContentID = Guid.NewGuid().ToString(),
-                    Title = request.Title,
-                    Subtitle = request.Subtitle,
-                    Author = request.Author,
-                    Body = request.Body ?? "",
                     CreatedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow),
-                    SubscriptionLevel = request.SubscriptionLevel
+                    Data = request.Public,
                 },
-                Private = new ContentRecord.Types.PrivateData
+                Private = new()
                 {
-                    CreatedBy = user.Id.ToString()
-                }
+                    CreatedBy = user.Id.ToString(),
+                    Data = request.Private,
+                },
             };
 
-            await dataProvider.Save(content);
+            await dataProvider.Save(record);
 
-            return new CreateContentResponse()
-            {
-                Content = content.Public
-            };
+            return new() { Record = record };
         }
 
+        [AllowAnonymous]
         public override async Task<GetAllContentResponse> GetAllContent(GetAllContentRequest request, ServerCallContext context)
         {
-            bool hideUnpublished = false;
-            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-            if (userToken == null || !userToken.IsWriterOrHigher)
-                hideUnpublished = true;
-
             var res = new GetAllContentResponse();
 
             List<ContentListRecord> list = new();
             await foreach (var rec in dataProvider.GetAll())
             {
-                if (hideUnpublished && rec.Public.PublishedOnUTC == null)
+                if (!CanShowInList(rec, null))
                     continue;
 
-                list.Add(new ContentListRecord()
-                {
-                    ContentID = rec.Public.ContentID,
-                    CreatedOnUTC = rec.Public.CreatedOnUTC,
-                    PublishedOnUTC = rec.Public.PublishedOnUTC,
-                    Title = rec.Public.Title,
-                    Subtitle = rec.Public.Subtitle,
-                    SubscriptionLevel = rec.Public.SubscriptionLevel,
-                });
+                list.Add(rec.Public.ToContentListRecord());
             }
 
             res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC));
@@ -90,113 +74,231 @@ namespace ON.Content.SimpleCMS.Service
             return res;
         }
 
+        [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
+        public override async Task<GetAllContentAdminResponse> GetAllContentAdmin(GetAllContentAdminRequest request, ServerCallContext context)
+        {
+            List<ContentListRecord> list = new();
+            await foreach (var rec in dataProvider.GetAll())
+                list.Add(rec.Public.ToContentListRecord());
+
+            var res = new GetAllContentAdminResponse();
+            res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC));
+
+            return res;
+        }
+
+        [AllowAnonymous]
         public override async Task<GetContentResponse> GetContent(GetContentRequest request, ServerCallContext context)
         {
-            bool hideUnpublished = false;
-            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-            if (userToken == null || !userToken.IsWriterOrHigher)
-                hideUnpublished = true;
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
 
             Guid contentId = request.ContentID.ToGuid();
-
             if (contentId == Guid.Empty)
                 return new GetContentResponse();
 
             var rec = await dataProvider.GetById(contentId);
+            if (rec == null)
+                return new();
 
-            if (hideUnpublished)
-            {
-                if (rec.Public.PublishedOnUTC == null)
-                    return new GetContentResponse();
+            if (!CanShowInList(rec, user))
+                return new();
 
-                if ((userToken?.SubscriptionLevel ?? 0) < rec.Public.SubscriptionLevel)
-                    rec.Public.Body = "";
-            }
+            if (!CanShowContent(rec, user))
+                rec.Public.Data.ClearContentDataOneof();
 
-            return new GetContentResponse
-            {
-                Content = rec.Public
-            };
+            return new() { Record = rec.Public };
         }
 
+        [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
+        public override async Task<GetContentAdminResponse> GetContentAdmin(GetContentAdminRequest request, ServerCallContext context)
+        {
+            Guid contentId = request.ContentID.ToGuid();
+            if (contentId == Guid.Empty)
+                return new();
+
+            var rec = await dataProvider.GetById(contentId);
+            if (rec == null)
+                return new();
+
+            return new() { Record = rec };
+        }
+
+        [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
         public override async Task<ModifyContentResponse> ModifyContent(ModifyContentRequest request, ServerCallContext context)
         {
-            var user = ONUserHelper.ParseUser(context.GetHttpContext());
-            if (user == null)
-                return new ModifyContentResponse();
+            if (!IsValid(request.Public, request.Private))
+                return new();
 
-            if (!(user.IsAdmin || user.IsPublisher || user.IsWriter))
-                return new ModifyContentResponse();
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
 
             var contentId = request.ContentID.ToGuid();
             var record = await dataProvider.GetById(contentId);
             if (record == null)
-                return new ModifyContentResponse();
+                return new();
 
-            record.Public.Title = request.Title;
-            record.Public.Subtitle = request.Subtitle;
-            record.Public.Author = request.Author;
-            record.Public.Body = request.Body;
-            record.Public.SubscriptionLevel = request.SubscriptionLevel;
+            record.Public.Data = request.Public;
+            record.Private.Data = request.Private;
             record.Public.ModifiedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
             record.Private.ModifiedBy = user.Id.ToString();
 
             await dataProvider.Save(record);
 
-            return new ModifyContentResponse()
-            {
-                Content = record.Public
-            };
+            return new() { Record = record };
         }
 
+        [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
         public override async Task<PublishContentResponse> PublishContent(PublishContentRequest request, ServerCallContext context)
         {
-            var user = ONUserHelper.ParseUser(context.GetHttpContext());
-            if (user == null)
-                return new PublishContentResponse();
+            if (request.PublishOnUTC == null)
+                return new();
 
-            if (!(user.IsAdmin || user.IsPublisher))
-                return new PublishContentResponse();
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
 
             var contentId = request.ContentID.ToGuid();
             var record = await dataProvider.GetById(contentId);
             if (record == null)
-                return new PublishContentResponse();
+                return new();
 
-            record.Public.PublishedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
+            record.Public.PublishOnUTC = request.PublishOnUTC;
             record.Private.PublishedBy = user.Id.ToString();
 
             await dataProvider.Save(record);
 
-            return new PublishContentResponse()
-            {
-                Content = record.Public
-            };
+            return new() { Record = record };
         }
 
+        [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
         public override async Task<UnpublishContentResponse> UnpublishContent(UnpublishContentRequest request, ServerCallContext context)
         {
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
-            if (user == null)
-                return new UnpublishContentResponse();
-
-            if (!(user.IsAdmin || user.IsPublisher))
-                return new UnpublishContentResponse();
 
             var contentId = request.ContentID.ToGuid();
             var record = await dataProvider.GetById(contentId);
             if (record == null)
-                return new UnpublishContentResponse();
+                return new();
 
-            record.Public.PublishedOnUTC = null;
+            record.Public.PublishOnUTC = null;
             record.Private.PublishedBy = user.Id.ToString();
 
             await dataProvider.Save(record);
 
-            return new UnpublishContentResponse()
+            return new() { Record = record };
+        }
+
+        private bool CanShowContent(ContentRecord rec, ONUser user)
+        {
+            if (user.IsWriterOrHigher)
+                return true;
+
+            if (!CanShowInList(rec, user))
+                return false;
+
+            var recLevel = rec.Public.Data.SubscriptionLevel;
+            if (recLevel > (user?.SubscriptionLevel ?? 0))
+                return false;
+
+            return true;
+        }
+
+        private bool CanShowInList(ContentRecord rec, ONUser user)
+        {
+            if (user?.CanCreateContent ?? false)
+                return true;
+
+            if (rec.Public.PublishOnUTC == null || rec.Public.PublishOnUTC > Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow))
+                return false;
+
+            return true;
+        }
+
+        private bool IsValid(ContentPublicData pubData, ContentPrivateData privData)
+        {
+            if (pubData == null)
+                return false;
+            if (privData == null)
+                return false;
+            if (string.IsNullOrWhiteSpace(pubData.Title))
+                return false;
+
+            switch (pubData.ContentDataOneofCase)
             {
-                Content = record.Public
-            };
+                case ContentPublicData.ContentDataOneofOneofCase.Audio:
+                    if (!IsValid(pubData.Audio, privData.Audio))
+                        return false;
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Picture:
+                    if (!IsValid(pubData.Picture, privData.Picture))
+                        return false;
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Video:
+                    if (!IsValid(pubData.Video, privData.Video))
+                        return false;
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Written:
+                    if (!IsValid(pubData.Written, privData.Written))
+                        return false;
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
+        }
+
+        private bool IsValid(AudioContentPublicData pubData, AudioContentPrivateData privData)
+        {
+            if (privData == null)
+                return false;
+
+            if (!IsValidAssetId(pubData.AudioAssetID))
+                return false;
+
+            return true;
+        }
+
+        private bool IsValid(PictureContentPublicData pubData, PictureContentPrivateData privData)
+        {
+            if (privData == null)
+                return false;
+
+            if (pubData.ImageAssetIDs == null)
+                return false;
+
+            foreach (var id in pubData.ImageAssetIDs)
+                if (!IsValidAssetId(id))
+                    return false;
+
+            return true;
+        }
+
+        private bool IsValid(VideoContentPublicData pubData, VideoContentPrivateData privData)
+        {
+            if (privData == null)
+                return false;
+
+            if (string.IsNullOrWhiteSpace(pubData.RumbleVideoId) && string.IsNullOrWhiteSpace(pubData.YoutubeVideoId))
+                return false;
+
+            return true;
+        }
+
+        private bool IsValid(WrittenContentPublicData pubData, WrittenContentPrivateData privData)
+        {
+            if (privData == null)
+                return false;
+
+            if (string.IsNullOrWhiteSpace(pubData.HtmlBody))
+                return false;
+
+            return true;
+        }
+
+        public bool IsValidAssetId(string idStr)
+        {
+            if (string.IsNullOrWhiteSpace(idStr))
+                return false;
+
+            return true;
         }
     }
 }
