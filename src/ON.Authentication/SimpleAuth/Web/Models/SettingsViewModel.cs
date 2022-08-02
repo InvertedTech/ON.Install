@@ -11,11 +11,11 @@ namespace ON.Authentication.SimpleAuth.Web.Models
     {
         public SettingsViewModel() { }
 
-        public SettingsViewModel(UserRecord user)
+        public SettingsViewModel(UserNormalRecord user)
         {
-            UserName = user.Public.UserName;
-            DisplayName = user.Public.DisplayName;
-            Email = user.Private.Emails.FirstOrDefault();
+            UserName = user.Public.Data.UserName;
+            DisplayName = user.Public.Data.DisplayName;
+            Email = user.Private.Data.Emails.FirstOrDefault();
         }
 
         [Display(Name = "User Name")]

@@ -1,5 +1,6 @@
 using Google.Protobuf;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using ON.Authentication.SimpleAuth.Service.Data;
 using ON.Authentication.SimpleAuth.Service.Helpers;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace ON.Authentication.SimpleAuth.Service.Services
 {
+    [Authorize(Roles = ONUser.ROLE_BACKUP)]
     public class BackupService : BackupInterface.BackupInterfaceBase
     {
         private readonly IUserDataProvider dataProvider;
@@ -59,6 +61,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
+        [AllowAnonymous]
         public override async Task ExportUsers(ExportUsersRequest request, IServerStreamWriter<ExportUsersResponse> responseStream, ServerCallContext context)
         {
             try
@@ -68,7 +71,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return;
 
                 await foreach (var r in dataProvider.GetAll())
-                    await responseStream.WriteAsync(new ExportUsersResponse() { UserRecord = r.Public });
+                    await responseStream.WriteAsync(new ExportUsersResponse() { UserRecord = r.Normal.Public });
             }
             catch
             {
@@ -109,7 +112,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 await foreach (var r in requestStream.ReadAllAsync())
                 {
-                    Guid id = r.Record.Data.Public.UserID.ToGuid();
+                    Guid id = r.Record.Data.Normal.Public.UserID.ToGuid();
                     idsLoaded.Add(id);
 
                     try
@@ -138,7 +141,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 {
                     await foreach (var r in dataProvider.GetAll())
                     {
-                        Guid id = r.Public.UserID.ToGuid();
+                        Guid id = r.Normal.Public.UserID.ToGuid();
                         if (!idsLoaded.Contains(id))
                         {
                             await dataProvider.Delete(id);

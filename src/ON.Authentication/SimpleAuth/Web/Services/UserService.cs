@@ -71,7 +71,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             return reply;
         }
 
-        public async Task<UserRecord> GetCurrentUser()
+        public async Task<UserNormalRecord> GetCurrentUser()
         {
             if (!IsLoggedIn)
                 return null;
@@ -87,7 +87,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             return reply.Record;
         }
 
-        public async Task<UserRecord> GetOtherUser(Guid userId)
+        public async Task<UserNormalRecord> GetOtherUser(Guid userId)
         {
             if (!IsLoggedIn)
                 return null;
@@ -103,7 +103,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             return reply.Record;
         }
 
-        public async Task<UserRecord.Types.PublicData[]> GetUserList()
+        public async Task<IEnumerable<UserNormalRecord>> GetUserList()
         {
             if (!IsLoggedIn)
                 return null;
@@ -114,17 +114,17 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             if (!User.IsAdmin)
                 return null;
 
-            var list = new List<UserRecord.Types.PublicData>();
+            var list = new List<UserNormalRecord>();
 
-            var client = new BackupInterface.BackupInterfaceClient(nameHelper.UserServiceChannel);
-            using var call = client.ExportUsers(new ExportUsersRequest(), GetMetadata());
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            using var call = client.GetAllUsers(new(), GetMetadata());
 
             await foreach (var r in call.ResponseStream.ReadAllAsync())
             {
-                list.Add(r.UserRecord);
+                list.Add(r.Record);
             }
 
-            return list.ToArray();
+            return list;
         }
 
         public async Task<ModifyOwnUserResponse> ModifyCurrentUser(SettingsViewModel vm)
@@ -132,11 +132,17 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             if (!IsLoggedIn)
                 return null;
 
+            var res = await GetCurrentUser();
+            res.Public.Data.DisplayName = vm.DisplayName;
+            res.Private.Data.Emails.Clear();
+            res.Private.Data.Emails.Add(vm.Email);
+
             var req = new ModifyOwnUserRequest()
             {
-                DisplayName = vm.DisplayName,
+                UserID = res.Public.UserID,
+                Public = res.Public.Data,
+                Private = res.Private.Data,
             };
-            req.Emails.Add(vm.Email);
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.ModifyOwnUserAsync(req, GetMetadata());
@@ -148,27 +154,45 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             if (!IsLoggedIn)
                 return null;
 
+            var res = await GetOtherUser(userId);
+            res.Public.Data.UserName = vm.UserName;
+            res.Public.Data.DisplayName = vm.DisplayName;
+            res.Private.Data.Emails.Clear();
+            res.Private.Data.Emails.Add(vm.Email);
+
             var req = new ModifyOtherUserRequest()
             {
-                UserID = userId.ToString(),
-                UserName = vm.UserName,
-                DisplayName = vm.DisplayName,
+                UserID = res.Public.UserID,
+                Public = res.Public.Data,
+                Private = res.Private.Data,
             };
-            req.Emails.Add(vm.Email);
-
-            if (vm.IsAdmin)
-                req.Roles.Add(ONUser.ROLE_ADMIN);
-            if (vm.IsContentPublisher)
-                req.Roles.Add(ONUser.ROLE_CONTENT_PUBLISHER);
-            if (vm.IsContentWriter)
-                req.Roles.Add(ONUser.ROLE_CONTENT_WRITER);
-            if (vm.IsCommentModerator)
-                req.Roles.Add(ONUser.ROLE_COMMENT_MODERATOR);
-            if (vm.IsCommentAppelateJudge)
-                req.Roles.Add(ONUser.ROLE_COMMENT_APPELLATE_JUDGE);
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.ModifyOtherUserAsync(req, GetMetadata());
+            if (reply.Error != "")
+                return reply;
+
+            List<string> roles = new();
+
+            if (vm.IsAdmin)
+                roles.Add(ONUser.ROLE_ADMIN);
+            if (vm.IsContentPublisher)
+                roles.Add(ONUser.ROLE_CONTENT_PUBLISHER);
+            if (vm.IsContentWriter)
+                roles.Add(ONUser.ROLE_CONTENT_WRITER);
+            if (vm.IsCommentModerator)
+                roles.Add(ONUser.ROLE_COMMENT_MODERATOR);
+            if (vm.IsCommentAppelateJudge)
+                roles.Add(ONUser.ROLE_COMMENT_APPELLATE_JUDGE);
+
+            var req2 = new ModifyOtherUserRolesRequest()
+            {
+                UserID = res.Public.UserID,
+            };
+            req2.Roles.AddRange(roles);
+
+            var reply2 = await client.ModifyOtherUserRolesAsync(req2, GetMetadata());
+
             return reply;
         }
 

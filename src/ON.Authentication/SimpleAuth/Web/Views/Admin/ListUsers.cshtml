@@ -18,14 +18,14 @@
         @foreach (var u in Model.UserRecords)
         {
             <tr>
-                <th scope="row"><a href="/auth/admin/@(u.UserIDGuid.ToString())">@(u.UserName)</a></th>
+                <th scope="row"><a href="/auth/admin/@(u.UserIDGuid.ToString())">@(u.Public.Data.UserName)</a></th>
                 <td>
-                    @if (u.DisabledOnUTC != null)
+                    @if (u.Public.DisabledOnUTC != null)
                     {
                         <i class="bi-x-octagon-fill" style="font-size: 1rem; color: cornflowerblue;" aria-label="Disabled"></i>
                     }
                 </td>
-                <td>@(string.Join(',', u.Roles))</td>
+                <td>@(string.Join(',', u.Private.Roles))</td>
             </tr>
         }
     </tbody>

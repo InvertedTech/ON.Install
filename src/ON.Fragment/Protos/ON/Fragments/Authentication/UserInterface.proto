@@ -77,8 +77,8 @@ service UserInterface {
     };
   }
 
-  // Get User record
-  rpc GetAllUsers (GetAllUsersRequest) returns (GetAllUsersResponse)
+  // Get All User records
+  rpc GetAllUsers (GetAllUsersRequest) returns (stream GetAllUsersResponse)
   {
     option (google.api.http) = {
       get: "/api/auth/admin/user"
@@ -106,6 +106,15 @@ service UserInterface {
   {
     option (google.api.http) = {
       post: "/api/auth/admin/user"
+      body: "*"
+    };
+  }
+
+  // Modify User record
+  rpc ModifyOtherUserRoles (ModifyOtherUserRolesRequest) returns (ModifyOtherUserRolesResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/user/roles"
       body: "*"
     };
   }
@@ -234,7 +243,7 @@ message GetAllUsersRequest {
 }
   
 message GetAllUsersResponse {
-  repeated UserRecord.PublicData Records = 1;
+  UserNormalRecord Record = 1;
 }
 
 message GetOtherUserRequest {
@@ -242,32 +251,39 @@ message GetOtherUserRequest {
 }
   
 message GetOtherUserResponse {
-  UserRecord Record = 1;
+  UserNormalRecord Record = 1;
 }
 
 message GetOwnUserRequest {
 }
   
 message GetOwnUserResponse {
-  UserRecord Record = 1;
+  UserNormalRecord Record = 1;
 }
 
 message ModifyOtherUserRequest {
-  string UserID = 1;                // Guid for the user
-  string UserName = 2;              // User name of the user
-  string DisplayName = 3;           // Public display name of the user
-  repeated string Emails = 4;       // Private email(s) used for password resets
-  repeated string Roles = 5;        // Roles for the user
+  string UserID = 1;         // Guid for the user
+  UserPublicData Public = 2;
+  UserPrivateData Private = 3;
 }
   
 message ModifyOtherUserResponse {
   string Error = 1;
 }
 
+message ModifyOtherUserRolesRequest {
+  string UserID = 1;         // Guid for the user
+  repeated string Roles = 2; // Roles for the user
+}
+  
+message ModifyOtherUserRolesResponse {
+  string Error = 1;
+}
+
 message ModifyOwnUserRequest {
-  string DisplayName = 1;           // Public display name of the user
-  repeated string Emails = 2;       // Private email(s) used for password resets
-  repeated string Identities = 3;   // Public identities associated with the user ex: user@domain.com
+  string UserID = 1;         // Guid for the user
+  UserPublicData Public = 2;
+  UserPrivateData Private = 3;
 }
   
 message ModifyOwnUserResponse {

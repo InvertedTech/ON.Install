@@ -31,7 +31,7 @@ namespace ON.Authentication.SimpleAuth.Web.Controllers
         {
             var v = new ListUsersViewModel
             {
-                UserRecords = await userService.GetUserList()
+                UserRecords = (await userService.GetUserList()).ToArray(),
             };
 
             return View(v);

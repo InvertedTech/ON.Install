@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\ON\Fragments\Authentication\UserInterface.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\ParallelEconomySettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Paypal\PaypalSettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\StripeSettings.proto" />
@@ -17,7 +18,6 @@
     <None Remove="Protos\ON\Fragments\Settings\SettingsInterface.proto" />
     <None Remove="Protos\ON\Fragments\Settings\SettingsRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authentication\Backup.proto" />
-    <None Remove="Protos\ON\Fragments\Authentication\User.proto" />
     <None Remove="Protos\ON\Fragments\Authentication\UserRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Backup.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Claims.proto" />
@@ -58,7 +58,7 @@
     <Protobuf Include="Protos\ON\Fragments\Settings\Backup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Settings\SettingsInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Settings\SettingsRecord.proto" GrpcServices="None" />
-    <Protobuf Include="Protos\ON\Fragments\Authentication\User.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authentication\UserInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authentication\Backup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authentication\UserRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Crypto\Backup.proto" />

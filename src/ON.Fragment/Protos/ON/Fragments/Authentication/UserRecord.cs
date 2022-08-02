@@ -10,16 +10,28 @@ namespace ON.Fragments.Authentication
 {
     public sealed partial class UserRecord : pb::IMessage<UserRecord>
     {
-        public static partial class Types
+        public Guid UserIDGuid
         {
-            public sealed partial class PublicData : pb::IMessage<PublicData>
-            {
-                public Guid UserIDGuid 
-                {
-                    get => UserID.ToGuid();
-                    set => UserID = value.ToString();
-                }
-            }
+            get => Normal.Public.UserIDGuid;
+            set => Normal.Public.UserIDGuid = value;
+        }
+    }
+
+    public sealed partial class UserNormalRecord : pb::IMessage<UserNormalRecord>
+    {
+        public Guid UserIDGuid
+        {
+            get => Public.UserIDGuid;
+            set => Public.UserIDGuid = value;
+        }
+    }
+
+    public sealed partial class UserPublicRecord : pb::IMessage<UserPublicRecord>
+    {
+        public Guid UserIDGuid
+        {
+            get => UserID.ToGuid();
+            set => UserID = value.ToString();
         }
     }
 }

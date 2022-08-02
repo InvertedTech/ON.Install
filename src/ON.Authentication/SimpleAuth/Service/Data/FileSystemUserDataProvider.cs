@@ -39,9 +39,9 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         public async Task<bool> Create(UserRecord user)
         {
-            var id = user.Public.UserID.ToGuid();
+            var id = user.UserIDGuid;
             var fd = GetDataFilePath(id);
-            var fi = GetIndexFilePath(user.Public.UserName);
+            var fi = GetIndexFilePath(user.Normal.Public.Data.UserName);
 
             if (fi.Exists || fd.Exists)
                 return false;
@@ -62,7 +62,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             var rec = UserRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
             fd.Delete();
 
-            var fi = GetIndexFilePath(rec.Public.UserName);
+            var fi = GetIndexFilePath(rec.Normal.Public.Data.UserName);
             if (fi.Exists)
                 fi.Delete();
 
@@ -112,7 +112,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         public async Task Save(UserRecord user)
         {
-            var id = user.Public.UserID.ToGuid();
+            var id = user.UserIDGuid;
             var fd = GetDataFilePath(id);
             await File.WriteAllBytesAsync(fd.FullName, user.ToByteArray());
         }
@@ -123,8 +123,8 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
             await foreach(var user in GetAll())
             {
-                var id = user.Public.UserID.ToGuid();
-                var fi = GetIndexFilePath(user.Public.UserName);
+                var id = user.UserIDGuid;
+                var fi = GetIndexFilePath(user.Normal.Public.Data.UserName);
 
                 await File.WriteAllTextAsync(fi.FullName, id.ToString());
             }

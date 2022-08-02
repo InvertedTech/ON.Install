@@ -70,7 +70,7 @@ namespace ON.Authentication.SimpleAuth.Service
 
             app.UseRouting();
 
-            app.UseJwtAuthentication();
+            app.UseJwtApiAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
