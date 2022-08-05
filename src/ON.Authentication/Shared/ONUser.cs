@@ -9,6 +9,7 @@ namespace ON.Authentication
 {
     public class ONUser : ClaimsPrincipal
     {
+        public const string ROLE_OWNER = "owner";
         public const string ROLE_ADMIN = "admin";
         public const string ROLE_BACKUP = "backup";
         public const string ROLE_OPS = "ops";
@@ -16,8 +17,9 @@ namespace ON.Authentication
         public const string ROLE_CONTENT_WRITER = "con_writer";
         public const string ROLE_COMMENT_MODERATOR = "com_mod";
         public const string ROLE_COMMENT_APPELLATE_JUDGE = "com_appellate";
-        public const string ROLE_CAN_CREATE_CONTENT = ROLE_ADMIN + "," + ROLE_CONTENT_PUBLISHER + "," + ROLE_CONTENT_WRITER;
-        public const string ROLE_CAN_PUBLISH = ROLE_ADMIN + "," + ROLE_CONTENT_PUBLISHER;
+        public const string ROLE_CAN_CREATE_CONTENT = ROLE_CAN_PUBLISH + "," + ROLE_CONTENT_WRITER;
+        public const string ROLE_CAN_PUBLISH = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_CONTENT_PUBLISHER;
+        public const string ROLE_IS_ADMIN_OR_OWNER = ROLE_OWNER + "," + ROLE_ADMIN;
 
         public Guid Id { get; set; } = Guid.Empty;
         public const string IdType = "Id";
@@ -39,9 +41,13 @@ namespace ON.Authentication
 
         public List<string> Roles { get; private set; } = new List<string>();
         public const string RolesType = ClaimTypes.Role;
+
+        public bool IsBackup { get => IsInRole(ROLE_BACKUP); }
+        public bool IsOwner { get => IsInRole(ROLE_OWNER); }
         public bool IsAdmin { get => IsInRole(ROLE_ADMIN); }
+        public bool IsAdminOrHigher { get => IsAdmin || IsOwner; }
         public bool IsPublisher { get => IsInRole(ROLE_CONTENT_PUBLISHER); }
-        public bool IsPublisherOrHigher { get => IsPublisher || IsAdmin; }
+        public bool IsPublisherOrHigher { get => IsPublisher || IsAdminOrHigher; }
         public bool IsWriter { get => IsInRole(ROLE_CONTENT_WRITER); }
         public bool IsWriterOrHigher { get => IsWriter || IsPublisherOrHigher; }
 

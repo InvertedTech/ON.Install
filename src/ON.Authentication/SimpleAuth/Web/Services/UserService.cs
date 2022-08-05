@@ -95,7 +95,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             if (nameHelper.UserServiceChannel == null)
                 return null;
 
-            if (!User.IsAdmin)
+            if (!User.IsAdminOrHigher)
                 return null;
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
@@ -111,7 +111,7 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             if (nameHelper.UserServiceChannel == null)
                 return null;
 
-            if (!User.IsAdmin)
+            if (!User.IsAdminOrHigher)
                 return null;
 
             var list = new List<UserNormalRecord>();
@@ -174,6 +174,8 @@ namespace ON.Authentication.SimpleAuth.Web.Services
 
             List<string> roles = new();
 
+            if (vm.IsOwner)
+                roles.Add(ONUser.ROLE_OWNER);
             if (vm.IsAdmin)
                 roles.Add(ONUser.ROLE_ADMIN);
             if (vm.IsContentPublisher)

@@ -23,7 +23,7 @@ using ON.Fragments.Settings;
 
 namespace ON.Settings.SimpleSettings.Service.Services
 {
-    [Authorize(Roles = ONUser.ROLE_ADMIN)]
+    [Authorize(Roles = ONUser.ROLE_OWNER)]
     public class SettingsService : SettingsInterface.SettingsInterfaceBase
     {
         private readonly OfflineHelper offlineHelper;
@@ -40,20 +40,58 @@ namespace ON.Settings.SimpleSettings.Service.Services
             EnsureStockSettings().Wait();
         }
 
-        public override async Task<GetAllDataResponse> GetAllData(GetAllDataRequest request, ServerCallContext context)
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<GetAdminDataResponse> GetAdminData(GetAdminDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
 
-            return new() { Data = record };
+            return new()
+            {
+                Public = record.Public,
+                Private = record.Private,
+            };
         }
 
-        public override async Task<GetAllNewerDataResponse> GetAllNewerData(GetAllNewerDataRequest request, ServerCallContext context)
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<GetAdminNewerDataResponse> GetAdminNewerData(GetAdminNewerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
             if (record.Public.VersionNum == request.VersionNum)
                 record = null;
 
-            return new() { Data = record };
+            return new()
+            {
+                Public = record.Public,
+                Private = record.Private,
+            };
+        }
+
+        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        public override async Task<GetOwnerDataResponse> GetOwnerData(GetOwnerDataRequest request, ServerCallContext context)
+        {
+            var record = await dataProvider.Get();
+
+            return new()
+            {
+                Public = record.Public,
+                Private = record.Private,
+                Owner = record.Owner,
+            };
+        }
+
+        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        public override async Task<GetOwnerNewerDataResponse> GetOwnerNewerData(GetOwnerNewerDataRequest request, ServerCallContext context)
+        {
+            var record = await dataProvider.Get();
+            if (record.Public.VersionNum == request.VersionNum)
+                record = null;
+
+            return new()
+            {
+                Public = record.Public,
+                Private = record.Private,
+                Owner = record.Owner,
+            };
         }
 
         [AllowAnonymous]
@@ -61,7 +99,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
         {
             var record = await dataProvider.Get();
 
-            return new() { Data = record.Public };
+            return new() { Public = record.Public };
         }
 
         [AllowAnonymous]
@@ -71,9 +109,37 @@ namespace ON.Settings.SimpleSettings.Service.Services
             if (record.Public.VersionNum == request.VersionNum)
                 record.Public = null;
 
-            return new() { Data = record.Public };
+            return new() { Public = record.Public };
         }
 
+        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        public override async Task<ModifyCommentsOwnerDataResponse> ModifyCommentsOwnerData(ModifyCommentsOwnerDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Owner.Comments = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<ModifyCommentsPrivateDataResponse> ModifyCommentsPrivateData(ModifyCommentsPrivateDataRequest request, ServerCallContext context)
         {
             try
@@ -81,11 +147,14 @@ namespace ON.Settings.SimpleSettings.Service.Services
                 if (request.Data == null)
                     return new() { Error = ModifyResponseErrorType.UnknownError };
 
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
                 var record = await dataProvider.Get();
                 record.Private.Comments = request.Data;
 
                 record.Public.VersionNum++;
                 record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
 
                 await dataProvider.Save(record);
 
@@ -97,6 +166,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<ModifyCommentsPublicDataResponse> ModifyCommentsPublicData(ModifyCommentsPublicDataRequest request, ServerCallContext context)
         {
             try
@@ -104,11 +174,14 @@ namespace ON.Settings.SimpleSettings.Service.Services
                 if (request.Data == null)
                     return new() { Error = ModifyResponseErrorType.UnknownError };
 
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
                 var record = await dataProvider.Get();
                 record.Public.Comments = request.Data;
 
                 record.Public.VersionNum++;
                 record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
 
                 await dataProvider.Save(record);
 
@@ -120,18 +193,22 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        public override async Task<ModifyPersonalizationPublicDataResponse> ModifyPersonalizationPublicData(ModifyPersonalizationPublicDataRequest request, ServerCallContext context)
+        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        public override async Task<ModifyPersonalizationOwnerDataResponse> ModifyPersonalizationOwnerData(ModifyPersonalizationOwnerDataRequest request, ServerCallContext context)
         {
             try
             {
                 if (request.Data == null)
                     return new() { Error = ModifyResponseErrorType.UnknownError };
 
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
                 var record = await dataProvider.Get();
-                record.Public.Personalization = request.Data;
+                record.Owner.Personalization = request.Data;
 
                 record.Public.VersionNum++;
                 record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
 
                 await dataProvider.Save(record);
 
@@ -143,6 +220,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<ModifyPersonalizationPrivateDataResponse> ModifyPersonalizationPrivateData(ModifyPersonalizationPrivateDataRequest request, ServerCallContext context)
         {
             try
@@ -150,11 +228,14 @@ namespace ON.Settings.SimpleSettings.Service.Services
                 if (request.Data == null)
                     return new() { Error = ModifyResponseErrorType.UnknownError };
 
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
                 var record = await dataProvider.Get();
                 record.Private.Personalization = request.Data;
 
                 record.Public.VersionNum++;
                 record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
 
                 await dataProvider.Save(record);
 
@@ -166,6 +247,61 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<ModifyPersonalizationPublicDataResponse> ModifyPersonalizationPublicData(ModifyPersonalizationPublicDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Public.Personalization = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        public override async Task<ModifySubscriptionOwnerDataResponse> ModifySubscriptionOwnerData(ModifySubscriptionOwnerDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Owner.Subscription = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<ModifySubscriptionPrivateDataResponse> ModifySubscriptionPrivateData(ModifySubscriptionPrivateDataRequest request, ServerCallContext context)
         {
             try
@@ -173,11 +309,14 @@ namespace ON.Settings.SimpleSettings.Service.Services
                 if (request.Data == null)
                     return new() { Error = ModifyResponseErrorType.UnknownError };
 
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
                 var record = await dataProvider.Get();
                 record.Private.Subscription = request.Data;
 
                 record.Public.VersionNum++;
                 record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
 
                 await dataProvider.Save(record);
 
@@ -189,6 +328,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<ModifySubscriptionPublicDataResponse> ModifySubscriptionPublicData(ModifySubscriptionPublicDataRequest request, ServerCallContext context)
         {
             try
@@ -196,11 +336,14 @@ namespace ON.Settings.SimpleSettings.Service.Services
                 if (request.Data == null)
                     return new() { Error = ModifyResponseErrorType.UnknownError };
 
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
                 var record = await dataProvider.Get();
                 record.Public.Subscription = request.Data;
 
                 record.Public.VersionNum++;
                 record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
 
                 await dataProvider.Save(record);
 
@@ -221,37 +364,42 @@ namespace ON.Settings.SimpleSettings.Service.Services
 
             var record = new SettingsRecord()
             {
-                Public = new SettingsRecord.Types.PublicData()
+                Public = new()
                 {
                     VersionNum = 1,
                     ModifiedOnUTC = date,
-                    Comments = new CommentsPublicRecord()
+                    Comments = new()
                     {
                         AllowLinks = false,
                         ExplicitModeEnabled = true,
                         DefaultOrder = Fragments.Comments.CommentOrder.Liked,
-                        DefaultRestriction = new Fragments.Comments.CommentRestrictionMinimum()
+                        DefaultRestriction = new()
                         {
                             Minimum = Fragments.Comments.CommentRestrictionMinimumEnum.Subscriber,
                         },
                     },
-                    Personalization = new PersonalizationPublicRecord()
+                    Personalization = new()
                     {
                         Title = "Creator Site",
                         MetaDescription = "My site description",
                         DefaultLayout = Fragments.Content.LayoutEnum.List,
                         DefaultToDarkMode = true,
                     },
-                    Subscription = new SubscriptionPublicRecord()
+                    Subscription = new()
                     {
                     },
                 },
-                Private = new SettingsRecord.Types.PrivateData()
+                Private = new()
                 {
-                    Comments = new CommentsPrivateRecord()
-                    {
-                    },
-                    Subscription = new SubscriptionPrivateRecord()
+                    Comments = new() { },
+                    Personalization = new() { },
+                    Subscription = new() { },
+                },
+                Owner = new()
+                {
+                    Comments = new() { },
+                    Personalization = new() { },
+                    Subscription = new()
                     {
                         ParallelEconomy = new()
                         {

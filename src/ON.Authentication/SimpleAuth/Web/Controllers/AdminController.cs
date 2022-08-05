@@ -13,7 +13,7 @@ using ON.Authentication.SimpleAuth.Web.Services;
 
 namespace ON.Authentication.SimpleAuth.Web.Controllers
 {
-    [Authorize(Roles = ONUser.ROLE_ADMIN)]
+    [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
     [Route("auth/admin")]
     public class AdminController : Controller
     {

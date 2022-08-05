@@ -72,7 +72,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             };
         }
 
-        [Authorize(Roles = ONUser.ROLE_ADMIN)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<ChangeOtherPasswordResponse> ChangeOtherPassword(ChangeOtherPasswordRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -106,7 +106,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_ADMIN)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<ChangeOtherProfileImageResponse> ChangeOtherProfileImage(ChangeOtherProfileImageRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -320,7 +320,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             };
         }
 
-        [Authorize(Roles = ONUser.ROLE_ADMIN)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<DisableEnableOtherUserResponse> DisableOtherUser(DisableEnableOtherUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -349,7 +349,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_ADMIN)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<DisableEnableOtherUserResponse> EnableOtherUser(DisableEnableOtherUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -378,7 +378,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_ADMIN)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task GetAllUsers(GetAllUsersRequest request, IServerStreamWriter<GetAllUsersResponse> responseStream, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -399,7 +399,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_ADMIN)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<GetOtherUserResponse> GetOtherUser(GetOtherUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -427,7 +427,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return new() { Record = record?.Normal };
         }
 
-        [Authorize(Roles = ONUser.ROLE_ADMIN)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<ModifyOtherUserResponse> ModifyOtherUser(ModifyOtherUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -473,7 +473,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_ADMIN)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<ModifyOtherUserRolesResponse> ModifyOtherUserRoles(ModifyOtherUserRolesRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -586,7 +586,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (record == null)
                 return false;
 
-            if (!record.Normal.Private.Roles.Contains(ONUser.ROLE_ADMIN))
+            var roles = record.Normal.Private.Roles;
+            if (!(roles.Contains(ONUser.ROLE_OWNER) || roles.Contains(ONUser.ROLE_ADMIN)))
                 return false;
 
             return true;
@@ -722,7 +723,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 Server = new(),
             };
 
-            record.Normal.Private.Roles.Add(ONUser.ROLE_ADMIN);
+            record.Normal.Private.Roles.Add(ONUser.ROLE_OWNER);
 
             byte[] salt = RandomNumberGenerator.GetBytes(16);
             record.Server.PasswordSalt = ByteString.CopyFrom(salt);

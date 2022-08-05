@@ -18,6 +18,7 @@ namespace ON.Authentication.SimpleAuth.Web.Models.Admin
             DisplayName = user.Public.Data.DisplayName;
             Email = user.Private.Data.Emails.FirstOrDefault();
 
+            IsOwner = user.Private.Roles.Contains(ONUser.ROLE_OWNER);
             IsAdmin = user.Private.Roles.Contains(ONUser.ROLE_ADMIN);
             IsContentPublisher = user.Private.Roles.Contains(ONUser.ROLE_CONTENT_PUBLISHER);
             IsContentWriter = user.Private.Roles.Contains(ONUser.ROLE_CONTENT_WRITER);
@@ -38,6 +39,9 @@ namespace ON.Authentication.SimpleAuth.Web.Models.Admin
 
         [Required, DataType(DataType.EmailAddress), EmailAddress]
         public string Email { get; set; }
+
+        [Display(Name = "Owner")]
+        public bool IsOwner { get; set; }
 
         [Display(Name = "Admin")]
         public bool IsAdmin { get; set; }

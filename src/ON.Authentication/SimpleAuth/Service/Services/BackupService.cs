@@ -67,7 +67,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !(userToken.Roles.Contains(ONUser.ROLE_BACKUP) || userToken.Roles.Contains(ONUser.ROLE_ADMIN)))
+                if (userToken == null || !(userToken.IsBackup || userToken.IsAdminOrHigher))
                     return;
 
                 await foreach (var r in dataProvider.GetAll())
