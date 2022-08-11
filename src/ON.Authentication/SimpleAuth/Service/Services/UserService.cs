@@ -68,7 +68,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
             return new AuthenticateUserResponse()
             {
-                BearerToken = GenerateToken(user.Normal, otherClaims)
+                BearerToken = GenerateToken(user.Normal, otherClaims),
+                UserRecord = user.Normal,
             };
         }
 
@@ -445,23 +446,26 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return new() { Error = "User not found" };
 
 
-                if (!IsUserNameValid(request.Public.UserName))
+                if (!IsUserNameValid(request.UserName))
                     return new() { Error = "User Name not valid" };
 
-                if (!IsDisplayNameValid(request.Public.DisplayName))
+                if (!IsDisplayNameValid(request.DisplayName))
                     return new() { Error = "Display Name not valid" };
 
-                if (record.Normal.Public.Data.UserName != request.Public.UserName)
+                if (record.Normal.Public.Data.UserName != request.UserName)
                 {
-                    if (!await dataProvider.ChangeLogin(record.Normal.Public.Data.UserName, request.Public.UserName, userId))
+                    if (!await dataProvider.ChangeLogin(record.Normal.Public.Data.UserName, request.UserName, userId))
                         return new ModifyOtherUserResponse() { Error = "User Name taken" };
+
+                    record.Normal.Public.Data.UserName = request.UserName;
                 }
 
                 record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
-                record.Normal.Public.Data = request.Public;
+                record.Normal.Public.Data.DisplayName = request.DisplayName;
 
                 record.Normal.Private.ModifiedBy = userToken.Id.ToString();
-                record.Normal.Private.Data = request.Private;
+                record.Normal.Private.Data.Emails.Clear();
+                record.Normal.Private.Data.Emails.AddRange(request.Emails);
 
                 await dataProvider.Save(record);
 
@@ -522,14 +526,12 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 if (record == null)
                     return new ModifyOwnUserResponse() { Error = "User not found" };
 
-                if (record.Normal.Public.Data.UserName != request.Public.UserName)
-                    return new ModifyOwnUserResponse() { Error = "You cannot change your user name." };
-
-                if (!IsDisplayNameValid(request.Public.DisplayName))
+                if (!IsDisplayNameValid(request.DisplayName))
                     return new ModifyOwnUserResponse() { Error = "Display Name not valid" };
 
-                record.Normal.Public.Data = request.Public;
-                record.Normal.Private.Data = request.Private;
+                record.Normal.Public.Data.DisplayName = request.DisplayName;
+                record.Normal.Private.Data.Emails.Clear();
+                record.Normal.Private.Data.Emails.AddRange(request.Emails);
 
                 record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.Normal.Private.ModifiedBy = userToken.Id.ToString();

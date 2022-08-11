@@ -144,6 +144,7 @@ message AuthenticateUserRequest {
   
 message AuthenticateUserResponse {
   string BearerToken = 1;
+  UserNormalRecord UserRecord = 2;
 }
   
 message ChangeOtherPasswordRequest {
@@ -262,9 +263,10 @@ message GetOwnUserResponse {
 }
 
 message ModifyOtherUserRequest {
-  string UserID = 1;         // Guid for the user
-  UserPublicData Public = 2;
-  UserPrivateData Private = 3;
+  string UserID = 1;          // Guid for the user
+  string UserName = 2;        // User name of the user
+  string DisplayName = 3;     // Public display name of the user
+  repeated string Emails = 4; // Private email(s) used for password resets
 }
   
 message ModifyOtherUserResponse {
@@ -281,9 +283,9 @@ message ModifyOtherUserRolesResponse {
 }
 
 message ModifyOwnUserRequest {
-  string UserID = 1;         // Guid for the user
-  UserPublicData Public = 2;
-  UserPrivateData Private = 3;
+  string UserID = 1;          // Guid for the user
+  string DisplayName = 2;     // Public display name of the user
+  repeated string Emails = 3; // Private email(s) used for password resets
 }
   
 message ModifyOwnUserResponse {

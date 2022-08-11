@@ -133,16 +133,14 @@ namespace ON.Authentication.SimpleAuth.Web.Services
                 return null;
 
             var res = await GetCurrentUser();
-            res.Public.Data.DisplayName = vm.DisplayName;
-            res.Private.Data.Emails.Clear();
-            res.Private.Data.Emails.Add(vm.Email);
 
             var req = new ModifyOwnUserRequest()
             {
                 UserID = res.Public.UserID,
-                Public = res.Public.Data,
-                Private = res.Private.Data,
+                DisplayName = vm.DisplayName,
             };
+
+            req.Emails.Add(vm.Email);
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.ModifyOwnUserAsync(req, GetMetadata());
@@ -155,17 +153,15 @@ namespace ON.Authentication.SimpleAuth.Web.Services
                 return null;
 
             var res = await GetOtherUser(userId);
-            res.Public.Data.UserName = vm.UserName;
-            res.Public.Data.DisplayName = vm.DisplayName;
-            res.Private.Data.Emails.Clear();
-            res.Private.Data.Emails.Add(vm.Email);
 
             var req = new ModifyOtherUserRequest()
             {
                 UserID = res.Public.UserID,
-                Public = res.Public.Data,
-                Private = res.Private.Data,
+                UserName = vm.UserName,
+                DisplayName = vm.DisplayName,
             };
+            req.Emails.Clear();
+            req.Emails.Add(vm.Email);
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.ModifyOtherUserAsync(req, GetMetadata());
