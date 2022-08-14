@@ -50,6 +50,7 @@ service ContentInterface {
   {
     option (google.api.http) = {
       post: "/api/cms/admin/content/{ContentID}/publish"
+      body: "*"
     };
   }
   rpc UnpublishContent (UnpublishContentRequest) returns (UnpublishContentResponse)
