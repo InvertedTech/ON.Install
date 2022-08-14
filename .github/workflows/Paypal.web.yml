@@ -6,6 +6,9 @@ on:
     - main
     paths:
     - 'src/ON.Authorization/Paypal/Web/**'
+    - 'src/ON.Authentication/Shared/**'
+    - 'src/ON.Crypto/ON.Crypto/**'
+    - 'src/ON.Fragment/**'
     - '.github/workflows/**'
 
 jobs:
