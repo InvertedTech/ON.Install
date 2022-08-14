@@ -16,10 +16,10 @@ namespace ON.Content.SimpleCMS.Service
     [Authorize]
     public class ContentService : ContentInterface.ContentInterfaceBase
     {
-        private readonly ILogger<ServiceOpsService> logger;
+        private readonly ILogger logger;
         private readonly IContentDataProvider dataProvider;
 
-        public ContentService(ILogger<ServiceOpsService> logger, IContentDataProvider dataProvider)
+        public ContentService(ILogger<ContentService> logger, IContentDataProvider dataProvider)
         {
             this.logger = logger;
             this.dataProvider = dataProvider;
