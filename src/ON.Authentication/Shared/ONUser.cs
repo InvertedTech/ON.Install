@@ -17,6 +17,8 @@ namespace ON.Authentication
         public const string ROLE_CONTENT_WRITER = "con_writer";
         public const string ROLE_COMMENT_MODERATOR = "com_mod";
         public const string ROLE_COMMENT_APPELLATE_JUDGE = "com_appellate";
+
+        public const string ROLE_CAN_BACKUP = ROLE_OWNER + "," + ROLE_BACKUP;
         public const string ROLE_CAN_CREATE_CONTENT = ROLE_CAN_PUBLISH + "," + ROLE_CONTENT_WRITER;
         public const string ROLE_CAN_PUBLISH = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_CONTENT_PUBLISHER;
         public const string ROLE_IS_ADMIN_OR_OWNER = ROLE_OWNER + "," + ROLE_ADMIN;

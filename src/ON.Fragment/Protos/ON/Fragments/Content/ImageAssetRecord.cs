@@ -8,6 +8,14 @@ using pb = global::Google.Protobuf;
 
 namespace ON.Fragments.Content
 {
+    public sealed partial class ImageAssetRecord : pb::IMessage<ImageAssetRecord>
+    {
+        public Guid AssetIDGuid
+        {
+            get => Public.AssetIDGuid;
+        }
+    }
+
     public sealed partial class ImageAssetPublicRecord : pb::IMessage<ImageAssetPublicRecord>
     {
         public Guid AssetIDGuid

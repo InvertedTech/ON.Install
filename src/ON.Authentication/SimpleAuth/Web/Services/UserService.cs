@@ -117,12 +117,10 @@ namespace ON.Authentication.SimpleAuth.Web.Services
             var list = new List<UserNormalRecord>();
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
-            using var call = client.GetAllUsers(new(), GetMetadata());
+            var res = await client.GetAllUsersAsync(new(), GetMetadata());
 
-            await foreach (var r in call.ResponseStream.ReadAllAsync())
-            {
-                list.Add(r.Record);
-            }
+            foreach (var r in res.Records)
+                list.Add(r);
 
             return list;
         }

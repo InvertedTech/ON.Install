@@ -36,6 +36,9 @@ message ContentPublicData {
   string URL = 4;
   string FeaturedImageAssetID = 6;
   uint32 SubscriptionLevel = 7;
+  string ChannelId = 8;
+  string CategoryId = 9;
+  repeated string Tags = 10;
 
   oneof ContentData_oneof {
 	  AudioContentPublicData Audio = 20;

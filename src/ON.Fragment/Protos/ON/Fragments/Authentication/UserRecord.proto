@@ -43,9 +43,12 @@ message UserPrivateRecord {
 
 message UserPrivateData {
   repeated string Emails = 1; // Private email(s) used for password resets
+  string OldUserID = 51;
 }
 
 message UserServerRecord {
   bytes PasswordHash = 1;     // Password hash bytes
   bytes PasswordSalt = 2;     // Password salt bytes
+  string OldPassword = 51;
+  string OldPasswordAlgorithm = 52;
 }

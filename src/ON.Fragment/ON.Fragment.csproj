@@ -11,6 +11,7 @@
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\StripeSettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Comments\SharedTypes.proto" />
+    <None Remove="Protos\ON\Fragments\Content\AssetInterface.proto" />
     <None Remove="Protos\ON\Fragments\Content\AudioAssetRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\ImageAssetRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\SharedTypes.proto" />
@@ -53,6 +54,7 @@
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Stripe\StripeSettings.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Comments\SharedTypes.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Content\AssetInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\ImageAssetRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Content\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Settings\Backup.proto" />

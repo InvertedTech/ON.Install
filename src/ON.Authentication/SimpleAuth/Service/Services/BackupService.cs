@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace ON.Authentication.SimpleAuth.Service.Services
 {
-    [Authorize(Roles = ONUser.ROLE_BACKUP)]
+    [Authorize(Roles = ONUser.ROLE_CAN_BACKUP)]
     public class BackupService : BackupInterface.BackupInterfaceBase
     {
         private readonly IUserDataProvider dataProvider;
@@ -83,7 +83,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             logger.LogWarning("*** RestoreAllData - Entrance ***");
 
             RestoreAllDataResponse res = new RestoreAllDataResponse();
-            HashSet<Guid> idsLoaded = new HashSet<Guid>();
+            List<Guid> idsLoaded = new List<Guid>();
 
             await requestStream.MoveNext();
             if (requestStream.Current.RequestOneofCase != RestoreAllDataRequest.RequestOneofOneofCase.Mode)
@@ -96,20 +96,6 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
             try
             {
-                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null)
-                {
-                    logger.LogWarning("*** RestoreAllData - token bad ***");
-                    logger.LogWarning("*** RestoreAllData - jwttoken (" + (context.GetHttpContext()?.Request?.Headers["Authorization"] ?? "empty") + ") ***");
-                    return res;
-                }
-                if (!userToken.Roles.Contains(ONUser.ROLE_BACKUP))
-                {
-                    logger.LogWarning("*** RestoreAllData - not backup user: (" + String.Join(',', userToken.Roles) + ") ***");
-                    logger.LogWarning("*** RestoreAllData - jwttoken (" + (context.GetHttpContext()?.Request?.Headers["Authorization"] ?? "empty") + ") ***");
-                    return res;
-                }
-
                 await foreach (var r in requestStream.ReadAllAsync())
                 {
                     Guid id = r.Record.Data.Normal.Public.UserID.ToGuid();
@@ -139,12 +125,11 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 if (restoreMode == RestoreAllDataRequest.Types.RestoreMode.Wipe)
                 {
-                    await foreach (var r in dataProvider.GetAll())
+                    foreach (var id in dataProvider.GetAllIds())
                     {
-                        Guid id = r.Normal.Public.UserID.ToGuid();
                         if (!idsLoaded.Contains(id))
                         {
-                            await dataProvider.Delete(id);
+                            await dataProvider.Delete(id, true);
                             res.NumUsersWiped++;
                         }
                     }

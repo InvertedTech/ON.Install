@@ -78,7 +78,7 @@ service UserInterface {
   }
 
   // Get All User records
-  rpc GetAllUsers (GetAllUsersRequest) returns (stream GetAllUsersResponse)
+  rpc GetAllUsers (GetAllUsersRequest) returns (GetAllUsersResponse)
   {
     option (google.api.http) = {
       get: "/api/auth/admin/user"
@@ -244,7 +244,7 @@ message GetAllUsersRequest {
 }
   
 message GetAllUsersResponse {
-  UserNormalRecord Record = 1;
+  repeated UserNormalRecord Records = 1;
 }
 
 message GetOtherUserRequest {

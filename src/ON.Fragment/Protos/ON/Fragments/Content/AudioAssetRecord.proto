@@ -10,6 +10,11 @@ message AudioAssetRecord {
   AudioAssetPrivateRecord Private = 2;
 }
 
+message AudioAssetData {
+  AudioAssetPublicData Public = 1;
+  AudioAssetPrivateData Private = 2;
+}
+
 message AudioAssetPublicRecord {
   string AssetID = 1;                          // Guid for the asset record
   google.protobuf.Timestamp CreatedOnUTC = 2;  // UTC timestamp when asset was created
@@ -36,6 +41,6 @@ message AudioAssetPublicData {
 }
 
 message AudioAssetPrivateData {
-  string OldContentID = 51;
+  string OldAssetID = 51;
 }
 

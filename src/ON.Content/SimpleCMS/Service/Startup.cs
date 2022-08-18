@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,15 +32,23 @@ namespace ON.Content.SimpleCMS.Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddGrpcHttpApi();
-
-            services.AddSwaggerGen(c =>
+            services.AddGrpc(options =>
             {
-                c.SwaggerDoc("cms", new OpenApiInfo { Title = "SimpleCMS API" });
+                // options.EnableDetailedErrors = true;
+                options.MaxReceiveMessageSize = null;
+                options.MaxSendMessageSize = null;
             });
-            services.AddGrpcSwagger();
+
+            //services.AddGrpcHttpApi();
+
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("cms", new OpenApiInfo { Title = "SimpleCMS API" });
+            //});
+            //services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.AddSingleton<IAssetDataProvider, FileSystemAssetDataProvider>();
             services.AddSingleton<IContentDataProvider, FileSystemContentDataProvider>();
 
             services.AddJwtAuthentication();
@@ -52,15 +61,15 @@ namespace ON.Content.SimpleCMS.Service
                 await context.Response.BodyWriter.WriteAsync(PONG_RESPONSE);
             }));
 
-            app.UseSwagger(c =>
-            {
-                c.RouteTemplate = "api/{documentName}/swagger.json";
-            });
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/api/cms/swagger.json", "SimpleCMS API");
-                c.RoutePrefix = "api/cms";
-            });
+            //app.UseSwagger(c =>
+            //{
+            //    c.RouteTemplate = "api/{documentName}/swagger.json";
+            //});
+            //app.UseSwaggerUI(c =>
+            //{
+            //    c.SwaggerEndpoint("/api/cms/swagger.json", "SimpleCMS API");
+            //    c.RoutePrefix = "api/cms";
+            //});
 
             app.UseRouting();
 
@@ -68,6 +77,7 @@ namespace ON.Content.SimpleCMS.Service
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGrpcService<AssetService>();
                 endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ContentService>();
                 endpoints.MapGrpcService<ServiceOpsService>();

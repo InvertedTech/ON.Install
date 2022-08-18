@@ -10,6 +10,11 @@ message ImageAssetRecord {
   ImageAssetPrivateRecord Private = 2;
 }
 
+message ImageAssetData {
+  ImageAssetPublicData Public = 1;
+  ImageAssetPrivateData Private = 2;
+}
+
 message ImageAssetPublicRecord {
   string AssetID = 1;                          // Guid for the asset record
   google.protobuf.Timestamp CreatedOnUTC = 2;  // UTC timestamp when asset was created
@@ -37,6 +42,6 @@ message ImageAssetPublicData {
 }
 
 message ImageAssetPrivateData {
-  string OldContentID = 51;
+  string OldAssetID = 51;
 }
 

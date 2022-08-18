@@ -23,6 +23,7 @@ message SettingsPublicData {
   PersonalizationPublicRecord Personalization = 10;
   SubscriptionPublicRecord Subscription = 11;
   CommentsPublicRecord Comments = 12;
+  CMSPublicRecord CMS = 13;
 }
 
 message SettingsPrivateData {
@@ -30,19 +31,20 @@ message SettingsPrivateData {
   PersonalizationPrivateRecord Personalization = 10;
   SubscriptionPrivateRecord Subscription = 11;
   CommentsPrivateRecord Comments = 12;
+  CMSPrivateRecord CMS = 13;
 }
 
 message SettingsOwnerData {
   PersonalizationOwnerRecord Personalization = 10;
   SubscriptionOwnerRecord Subscription = 11;
   CommentsOwnerRecord Comments = 12;
+  CMSOwnerRecord CMS = 13;
 }
 
 message PersonalizationPublicRecord {
   string Title = 1;
   string MetaDescription = 2;
   bool DefaultToDarkMode = 3;
-  ON.Fragments.Content.LayoutEnum DefaultLayout = 4;
   bytes ProfileImage = 10;
   bytes HeaderImage = 11;
 }
@@ -80,3 +82,27 @@ message CommentsPrivateRecord {
 message CommentsOwnerRecord {
 }
 
+message CMSPublicRecord {
+  ON.Fragments.Content.LayoutEnum DefaultLayout = 1;
+  repeated ChannelRecord Channels = 2;
+  repeated CategoryRecord Categories = 3;
+}
+
+message CMSPrivateRecord {
+}
+
+message CMSOwnerRecord {
+}
+
+message ChannelRecord {
+  string ChannelId = 1;
+  string ParentChannelId = 2;
+  string DisplayName = 3;
+  string UrlStub = 4;
+}
+
+message CategoryRecord {
+  string CategoryId = 1;
+  string DisplayName = 2;
+  string UrlStub = 3;
+}

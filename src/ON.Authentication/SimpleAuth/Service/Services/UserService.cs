@@ -43,7 +43,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
             if (Program.IsDevelopment)
             {
-                EnsureDevAdminLogin().Wait();
+                EnsureDevOwnerLogin().Wait();
             }
         }
 
@@ -380,24 +380,26 @@ namespace ON.Authentication.SimpleAuth.Service.Services
         }
 
         [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
-        public override async Task GetAllUsers(GetAllUsersRequest request, IServerStreamWriter<GetAllUsersResponse> responseStream, ServerCallContext context)
+        public override async Task<GetAllUsersResponse> GetAllUsers(GetAllUsersRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
-                return;
+                return new();
 
             var ret = new GetAllUsersResponse();
             try
             {
                 if (!await AmIReallyAdmin(context))
-                    return;
+                    return ret;
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
 
                 await foreach (var r in dataProvider.GetAll())
-                    await responseStream.WriteAsync(new GetAllUsersResponse() { Record = r.Normal });
+                    ret.Records.Add(r.Normal);
             }
             catch
             {
             }
+
+            return ret;
         }
 
         [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
@@ -692,9 +694,9 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return tokenHandler.WriteToken(token);
         }
 
-        private async Task EnsureDevAdminLogin()
+        private async Task EnsureDevOwnerLogin()
         {
-            if (await dataProvider.Exists("admin"))
+            if (await dataProvider.Exists("owner"))
                 return;
 
             var date = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
@@ -711,8 +713,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                         ModifiedOnUTC = date,
                         Data = new()
                         {
-                            UserName = "admin",
-                            DisplayName = "Admin",
+                            UserName = "owner",
+                            DisplayName = "Owner",
                         }
                     },
                     Private = new()
@@ -729,7 +731,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
             byte[] salt = RandomNumberGenerator.GetBytes(16);
             record.Server.PasswordSalt = ByteString.CopyFrom(salt);
-            record.Server.PasswordHash = ByteString.CopyFrom(ComputeSaltedHash("admin", salt));
+            record.Server.PasswordHash = ByteString.CopyFrom(ComputeSaltedHash("owner", salt));
 
             await dataProvider.Create(record);
         }

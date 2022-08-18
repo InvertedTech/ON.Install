@@ -382,12 +382,15 @@ namespace ON.Settings.SimpleSettings.Service.Services
                     {
                         Title = "Creator Site",
                         MetaDescription = "My site description",
-                        DefaultLayout = Fragments.Content.LayoutEnum.List,
                         DefaultToDarkMode = true,
                     },
                     Subscription = new()
                     {
                     },
+                    CMS = new()
+                    {
+                        DefaultLayout = Fragments.Content.LayoutEnum.List,
+                    }
                 },
                 Private = new()
                 {

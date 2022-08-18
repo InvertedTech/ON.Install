@@ -1,6 +1,8 @@
 ﻿using Google.Protobuf;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ON.Authentication.SimpleAuth.Service.Models;
+using ON.Authentication.SimpleAuth.Service.Services;
 using ON.Fragments.Authentication;
 using ON.Fragments.Generic;
 using System;
@@ -15,9 +17,12 @@ namespace ON.Authentication.SimpleAuth.Service.Data
     {
         private readonly DirectoryInfo dataDir;
         private readonly DirectoryInfo indexDir;
+        private readonly ILogger logger;
 
-        public FileSystemUserDataProvider(IOptions<AppSettings> settings)
+        public FileSystemUserDataProvider(IOptions<AppSettings> settings, ILogger<FileSystemUserDataProvider> logger)
         {
+            this.logger = logger;
+
             var root = new DirectoryInfo(settings.Value.DataStore);
             root.Create();
             dataDir = root.CreateSubdirectory("data");
@@ -53,7 +58,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             return true;
         }
 
-        public async Task<bool> Delete(Guid userId)
+        public async Task<bool> Delete(Guid userId, bool fastDelete = false)
         {
             var fd = GetDataFilePath(userId);
             if (!fd.Exists)
@@ -62,9 +67,16 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             var rec = UserRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
             fd.Delete();
 
-            var fi = GetIndexFilePath(rec.Normal.Public.Data.UserName);
-            if (fi.Exists)
-                fi.Delete();
+            if (fastDelete)
+                return true;
+
+            try
+            {
+                var fi = GetIndexFilePath(rec.Normal.Public.Data.UserName);
+                if (fi.Exists)
+                    fi.Delete();
+            }
+            catch { }
 
             return true;
         }
@@ -85,6 +97,11 @@ namespace ON.Authentication.SimpleAuth.Service.Data
         {
             foreach (var fd in GetAllDataFiles())
                 yield return UserRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
+        }
+
+        public Guid[] GetAllIds()
+        {
+            return GetAllDataFiles().Select(f => Guid.Parse(f.Name)).ToArray();
         }
 
         public async Task<UserRecord> GetById(Guid userId)
@@ -123,10 +140,17 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
             await foreach(var user in GetAll())
             {
-                var id = user.UserIDGuid;
-                var fi = GetIndexFilePath(user.Normal.Public.Data.UserName);
+                try
+                {
+                    var id = user.UserIDGuid;
+                    var fi = GetIndexFilePath(user.Normal.Public.Data.UserName);
 
-                await File.WriteAllTextAsync(fi.FullName, id.ToString());
+                    await File.WriteAllTextAsync(fi.FullName, id.ToString());
+                }
+                catch
+                {
+                    logger.LogError($"Error Reindexing UserName: `{user.Normal.Public.Data.UserName}`");
+                }
             }
         }
 
