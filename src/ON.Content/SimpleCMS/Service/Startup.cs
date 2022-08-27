@@ -39,13 +39,13 @@ namespace ON.Content.SimpleCMS.Service
                 options.MaxSendMessageSize = null;
             });
 
-            //services.AddGrpcHttpApi();
+            services.AddGrpcHttpApi();
 
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc("cms", new OpenApiInfo { Title = "SimpleCMS API" });
-            //});
-            //services.AddGrpcSwagger();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("cms", new OpenApiInfo { Title = "SimpleCMS API" });
+            });
+            services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IAssetDataProvider, FileSystemAssetDataProvider>();
@@ -61,15 +61,15 @@ namespace ON.Content.SimpleCMS.Service
                 await context.Response.BodyWriter.WriteAsync(PONG_RESPONSE);
             }));
 
-            //app.UseSwagger(c =>
-            //{
-            //    c.RouteTemplate = "api/{documentName}/swagger.json";
-            //});
-            //app.UseSwaggerUI(c =>
-            //{
-            //    c.SwaggerEndpoint("/api/cms/swagger.json", "SimpleCMS API");
-            //    c.RoutePrefix = "api/cms";
-            //});
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "api/{documentName}/swagger.json";
+            });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/api/cms/swagger.json", "SimpleCMS API");
+                c.RoutePrefix = "api/cms";
+            });
 
             app.UseRouting();
 
