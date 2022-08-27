@@ -99,10 +99,15 @@ message ChannelRecord {
   string ParentChannelId = 2;
   string DisplayName = 3;
   string UrlStub = 4;
+
+  string OldChannelId = 1001;
 }
 
 message CategoryRecord {
   string CategoryId = 1;
-  string DisplayName = 2;
-  string UrlStub = 3;
+  string ParentCategoryId = 2;
+  string DisplayName = 3;
+  string UrlStub = 4;
+
+  string OldCategoryId = 1001;
 }
