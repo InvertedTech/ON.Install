@@ -55,6 +55,8 @@ namespace ON.Fragments.Content
                 Title = Data.Title,
                 Description = Data.Description,
                 SubscriptionLevel = Data.SubscriptionLevel,
+                URL = Data.URL,
+                FeaturedImageAssetID = Data.FeaturedImageAssetID,
                 ContentType = Data.GetContentType(),
             };
         }
