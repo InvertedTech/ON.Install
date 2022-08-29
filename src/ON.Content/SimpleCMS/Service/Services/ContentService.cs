@@ -58,6 +58,17 @@ namespace ON.Content.SimpleCMS.Service
         [AllowAnonymous]
         public override async Task<GetAllContentResponse> GetAllContent(GetAllContentRequest request, ServerCallContext context)
         {
+            var searchCatId = request.CategoryId;
+            var searchChanId = request.ChannelId;
+            var searchTag = request.Tag;
+
+            if (string.IsNullOrWhiteSpace(searchCatId))
+                searchCatId = null;
+            if (string.IsNullOrWhiteSpace(searchChanId))
+                searchChanId = null;
+            if (string.IsNullOrWhiteSpace(searchTag))
+                searchTag = null;
+
             var res = new GetAllContentResponse();
 
             List<ContentListRecord> list = new();
@@ -66,10 +77,33 @@ namespace ON.Content.SimpleCMS.Service
                 if (!CanShowInList(rec, null))
                     continue;
 
+                if (searchCatId != null)
+                    if (!rec.Public.Data.CategoryIds.Contains(searchCatId))
+                        continue;
+
+                if (searchChanId != null)
+                    if (!rec.Public.Data.ChannelIds.Contains(searchChanId))
+                        continue;
+
+                if (searchTag != null)
+                    if (!rec.Public.Data.Tags.Contains(searchTag))
+                        continue;
+
                 list.Add(rec.Public.ToContentListRecord());
             }
 
             res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC));
+            res.PageTotalItems = (uint)res.Records.Count;
+
+            if (request.PageSize > 0)
+            {
+                var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
+                res.Records.Clear();
+                res.Records.AddRange(page);
+            }
+
+            res.PageOffsetStart = request.PageOffset;
+            res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
 
             return res;
         }
