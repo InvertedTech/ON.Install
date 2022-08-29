@@ -73,9 +73,10 @@ message CreateContentResponse {
 message GetAllContentRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
-  string CategoryId = 11;
-  string ChannelId = 12;
-  string Tag = 13;
+  ContentType ContentType = 11;
+  string CategoryId = 12;
+  string ChannelId = 13;
+  string Tag = 14;
 }
   
 message GetAllContentResponse {

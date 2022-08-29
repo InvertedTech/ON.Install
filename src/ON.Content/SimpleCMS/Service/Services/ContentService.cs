@@ -89,7 +89,15 @@ namespace ON.Content.SimpleCMS.Service
                     if (!rec.Public.Data.Tags.Contains(searchTag))
                         continue;
 
-                list.Add(rec.Public.ToContentListRecord());
+                var listRec = rec.Public.ToContentListRecord();
+
+                if (request.ContentType != ContentType.None)
+                {
+                    if (listRec.ContentType != request.ContentType)
+                        continue;
+                }
+
+                list.Add(listRec);
             }
 
             res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC));
