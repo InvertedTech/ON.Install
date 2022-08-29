@@ -113,6 +113,87 @@ namespace ON.Settings.SimpleSettings.Service.Services
         }
 
         [Authorize(Roles = ONUser.ROLE_OWNER)]
+        public override async Task<ModifyCMSOwnerDataResponse> ModifyCMSOwnerData(ModifyCMSOwnerDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Owner.CMS = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<ModifyCMSPrivateDataResponse> ModifyCMSPrivateData(ModifyCMSPrivateDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Private.CMS = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<ModifyCMSPublicDataResponse> ModifyCMSPublicData(ModifyCMSPublicDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Public.CMS = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_OWNER)]
         public override async Task<ModifyCommentsOwnerDataResponse> ModifyCommentsOwnerData(ModifyCommentsOwnerDataRequest request, ServerCallContext context)
         {
             try

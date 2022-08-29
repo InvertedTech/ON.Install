@@ -55,6 +55,33 @@ service SettingsInterface {
     };
   }
 
+  // Modify CMS public data
+  rpc ModifyCMSPublicData (ModifyCMSPublicDataRequest) returns (ModifyCMSPublicDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/cms/public"
+      body: "*"
+    };
+  }
+
+  // Modify CMS private data
+  rpc ModifyCMSPrivateData (ModifyCMSPrivateDataRequest) returns (ModifyCMSPrivateDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/cms/private"
+      body: "*"
+    };
+  }
+
+  // Modify CMS owner data
+  rpc ModifyCMSOwnerData (ModifyCMSOwnerDataRequest) returns (ModifyCMSOwnerDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/cms/owner"
+      body: "*"
+    };
+  }
+
   // Modify Personalization public data
   rpc ModifyPersonalizationPublicData (ModifyPersonalizationPublicDataRequest) returns (ModifyPersonalizationPublicDataResponse)
   {
@@ -191,6 +218,31 @@ message GetOwnerNewerDataResponse {
 enum ModifyResponseErrorType {
   NoError = 0;
   UnknownError = -1;
+}
+
+
+message ModifyCMSPublicDataRequest {
+  CMSPublicRecord Data = 1;
+}
+
+message ModifyCMSPublicDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyCMSPrivateDataRequest {
+  CMSPrivateRecord Data = 1;
+}
+
+message ModifyCMSPrivateDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyCMSOwnerDataRequest {
+  CMSOwnerRecord Data = 1;
+}
+
+message ModifyCMSOwnerDataResponse {
+  ModifyResponseErrorType Error = 1;
 }
 
 message ModifyPersonalizationPublicDataRequest {
