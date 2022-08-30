@@ -101,6 +101,14 @@ service UserInterface {
     };
   }
 
+  // Get All User records
+  rpc GetUserIdList (GetUserIdListRequest) returns (GetUserIdListResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/user/ids"
+    };
+  }
+
   // Modify User record
   rpc ModifyOtherUser (ModifyOtherUserRequest) returns (ModifyOtherUserResponse)
   {
@@ -241,10 +249,15 @@ message DisableEnableOtherUserResponse {
 }
   
 message GetAllUsersRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
 }
   
 message GetAllUsersResponse {
   repeated UserNormalRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
 }
 
 message GetOtherUserRequest {
@@ -260,6 +273,20 @@ message GetOwnUserRequest {
   
 message GetOwnUserResponse {
   UserNormalRecord Record = 1;
+}
+
+message GetUserIdListRequest {
+
+}
+
+message GetUserIdListResponse {
+  repeated UserIdRecord Records = 1;
+}
+
+message UserIdRecord {
+  string UserID = 1;                   // Guid for the user
+  string DisplayName = 2;
+  string UserName = 3;
 }
 
 message ModifyOtherUserRequest {

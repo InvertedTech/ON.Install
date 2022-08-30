@@ -7,6 +7,7 @@ using ON.Authentication.SimpleAuth.Service.Data;
 using ON.Authentication.SimpleAuth.Service.Helpers;
 using ON.Fragments.Authentication;
 using ON.Fragments.Authorization;
+using ON.Fragments.Content;
 using ON.Fragments.Generic;
 using SkiaSharp;
 using System;
@@ -385,6 +386,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (offlineHelper.IsOffline)
                 return new();
 
+            List<UserNormalRecord> list = new();
+
             var ret = new GetAllUsersResponse();
             try
             {
@@ -393,11 +396,25 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
 
                 await foreach (var r in dataProvider.GetAll())
-                    ret.Records.Add(r.Normal);
+                    list.Add(r.Normal);
             }
             catch
             {
             }
+
+            ret.Records.AddRange(list.OrderByDescending(r => r.Public.Data.UserName));
+            ret.PageTotalItems = (uint)ret.Records.Count;
+
+            if (request.PageSize > 0)
+            {
+                var page = ret.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
+                ret.Records.Clear();
+                ret.Records.AddRange(page);
+            }
+
+            ret.PageOffsetStart = request.PageOffset;
+            ret.PageOffsetEnd = ret.PageOffsetStart + (uint)ret.Records.Count;
+
 
             return ret;
         }
@@ -428,6 +445,27 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             var record = await dataProvider.GetById(userToken.Id);
 
             return new() { Record = record?.Normal };
+        }
+
+        [AllowAnonymous]
+        public async override Task<GetUserIdListResponse> GetUserIdList(GetUserIdListRequest request, ServerCallContext context)
+        {
+            var ret = new GetUserIdListResponse();
+            try
+            {
+                await foreach (var r in dataProvider.GetAll())
+                    ret.Records.Add(new UserIdRecord()
+                    {
+                        UserID = r.Normal.Public.UserID,
+                        DisplayName = r.Normal.Public.Data.DisplayName,
+                        UserName = r.Normal.Public.Data.UserName,
+                    });
+            }
+            catch
+            {
+            }
+
+            return ret;
         }
 
         [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
