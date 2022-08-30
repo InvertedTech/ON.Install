@@ -56,9 +56,13 @@ namespace ON.Fragments.Content
                 Description = Data.Description,
                 SubscriptionLevel = Data.SubscriptionLevel,
                 URL = Data.URL,
+                Author = Data.Author,
                 FeaturedImageAssetID = Data.FeaturedImageAssetID,
                 ContentType = Data.GetContentType(),
             };
+
+            rec.CategoryIds.AddRange(Data.CategoryIds);
+            rec.ChannelIds.AddRange(Data.ChannelIds);
 
             if (rec.ContentType == ContentType.Video)
             {

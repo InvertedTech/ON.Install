@@ -127,9 +127,12 @@ message ContentListRecord {
   string Description = 5;
   uint32 SubscriptionLevel = 6;
   string URL = 7;
-  string FeaturedImageAssetID = 8;
-  bool IsLiveStream = 9;
-  bool IsLive = 10;
+  string Author = 8;
+  string FeaturedImageAssetID = 9;
+  repeated string CategoryIds = 10;
+  repeated string ChannelIds = 11;
+  bool IsLiveStream = 12;
+  bool IsLive = 13;
   ContentType ContentType = 21;
 }
 
