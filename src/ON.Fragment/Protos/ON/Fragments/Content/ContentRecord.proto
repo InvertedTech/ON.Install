@@ -75,7 +75,8 @@ message PictureContentPrivateData {
 
 message VideoContentPublicData {
   string HtmlBody = 1;
-  bool IsLive = 2;
+  bool IsLiveStream = 2;
+  bool IsLive = 3;
   string RumbleVideoId = 11;
   string YoutubeVideoId = 12;
 }
