@@ -128,6 +128,8 @@ message ContentListRecord {
   uint32 SubscriptionLevel = 6;
   string URL = 7;
   string FeaturedImageAssetID = 8;
+  bool IsLiveStream = 9;
+  bool IsLive = 10;
   ContentType ContentType = 21;
 }
 

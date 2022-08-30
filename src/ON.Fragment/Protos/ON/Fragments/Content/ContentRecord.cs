@@ -47,7 +47,7 @@ namespace ON.Fragments.Content
 
         public ContentListRecord ToContentListRecord()
         {
-            return new()
+            var rec = new ContentListRecord()
             {
                 ContentID = ContentID,
                 CreatedOnUTC = CreatedOnUTC,
@@ -59,6 +59,14 @@ namespace ON.Fragments.Content
                 FeaturedImageAssetID = Data.FeaturedImageAssetID,
                 ContentType = Data.GetContentType(),
             };
+
+            if (rec.ContentType == ContentType.Video)
+            {
+                rec.IsLiveStream = Data.Video.IsLiveStream;
+                rec.IsLive = Data.Video.IsLive;
+            }
+
+            return rec;
         }
     }
 }
