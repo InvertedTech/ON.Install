@@ -36,9 +36,6 @@ service AssetInterface {
   }
   rpc GetListOfOldContentIDs (GetListOfOldContentIDsRequest) returns (stream GetListOfOldContentIDsResponse)
   {
-    option (google.api.http) = {
-      get: "/api/cms/admin/asset/old/"
-    };
   }
 }
   
@@ -83,7 +80,6 @@ message GetAssetByOldContentIDResponse {
 }
 
 message GetListOfOldContentIDsRequest {
-  string OldAssetID = 1;
 }
   
 message GetListOfOldContentIDsResponse {

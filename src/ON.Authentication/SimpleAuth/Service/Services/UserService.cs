@@ -419,6 +419,25 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return ret;
         }
 
+        public override async Task GetListOfOldUserIDs(GetListOfOldUserIDsRequest request, IServerStreamWriter<GetListOfOldUserIDsResponse> responseStream, ServerCallContext context)
+        {
+            try
+            {
+                await foreach (var r in dataProvider.GetAll())
+                {
+                    await responseStream.WriteAsync(new()
+                    {
+                        UserID = r.Normal.Public.UserID,
+                        OldUserID = r.Normal.Private.Data.OldUserID,
+                        ModifiedOnUTC = r.Normal.Public.ModifiedOnUTC,
+                    });
+                }
+            }
+            catch
+            {
+            }
+        }
+
         [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<GetOtherUserResponse> GetOtherUser(GetOtherUserRequest request, ServerCallContext context)
         {

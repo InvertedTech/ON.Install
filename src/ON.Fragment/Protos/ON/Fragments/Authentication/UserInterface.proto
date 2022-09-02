@@ -3,6 +3,7 @@ syntax = "proto3";
 package ON.Fragments.Authentication;
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Authentication/UserRecord.proto";
 
 // Service for Authentication user fragment interface
@@ -83,6 +84,10 @@ service UserInterface {
     option (google.api.http) = {
       get: "/api/auth/admin/user"
     };
+  }
+
+  rpc GetListOfOldUserIDs (GetListOfOldUserIDsRequest) returns (stream GetListOfOldUserIDsResponse)
+  {
   }
 
   // Get User record
@@ -247,7 +252,7 @@ message DisableEnableOtherUserResponse {
     UnknownError = -1;
   }
 }
-  
+
 message GetAllUsersRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
@@ -258,6 +263,15 @@ message GetAllUsersResponse {
   uint32 PageOffsetStart = 11;
   uint32 PageOffsetEnd = 12;
   uint32 PageTotalItems = 13;
+}
+
+message GetListOfOldUserIDsRequest {
+}
+  
+message GetListOfOldUserIDsResponse {
+  string UserID = 1;
+  string OldUserID = 2;
+  google.protobuf.Timestamp ModifiedOnUTC = 3;
 }
 
 message GetOtherUserRequest {
