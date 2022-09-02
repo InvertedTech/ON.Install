@@ -48,7 +48,7 @@ namespace ON.Content.SimpleCMS.Service
                     return new();
             }
 
-            return new() {  };
+            return new() { };
         }
 
         private async Task<CreateAssetResponse> CreateImage(ImageAssetData image, ONUser user)
@@ -142,20 +142,22 @@ namespace ON.Content.SimpleCMS.Service
                     switch (r.AssetRecordOneofCase)
                     {
                         case AssetRecord.AssetRecordOneofOneofCase.Audio:
-                            await responseStream.WriteAsync(new()
-                            {
-                                AssetID = r.Audio.Public.AssetID,
-                                OldAssetID = r.Audio.Private.Data.OldAssetID,
-                                ModifiedOnUTC = r.Audio.Public.ModifiedOnUTC,
-                            });
+                            if (r.Audio.Private.Data.OldAssetID != "")
+                                await responseStream.WriteAsync(new()
+                                {
+                                    AssetID = r.Audio.Public.AssetID,
+                                    OldAssetID = r.Audio.Private.Data.OldAssetID,
+                                    ModifiedOnUTC = r.Audio.Public.ModifiedOnUTC,
+                                });
                             break;
                         case AssetRecord.AssetRecordOneofOneofCase.Image:
-                            await responseStream.WriteAsync(new()
-                            {
-                                AssetID = r.Image.Public.AssetID,
-                                OldAssetID = r.Image.Private.Data.OldAssetID,
-                                ModifiedOnUTC = r.Image.Public.ModifiedOnUTC,
-                            });
+                            if (r.Image.Private.Data.OldAssetID != "")
+                                await responseStream.WriteAsync(new()
+                                {
+                                    AssetID = r.Image.Public.AssetID,
+                                    OldAssetID = r.Image.Private.Data.OldAssetID,
+                                    ModifiedOnUTC = r.Image.Public.ModifiedOnUTC,
+                                });
                             break;
                     }
                 }

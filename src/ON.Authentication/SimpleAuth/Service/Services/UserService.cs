@@ -432,12 +432,13 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             {
                 await foreach (var r in dataProvider.GetAll())
                 {
-                    await responseStream.WriteAsync(new()
-                    {
-                        UserID = r.Normal.Public.UserID,
-                        OldUserID = r.Normal.Private.Data.OldUserID,
-                        ModifiedOnUTC = r.Normal.Public.ModifiedOnUTC,
-                    });
+                    if (r.Normal.Private.Data.OldUserID != "")
+                        await responseStream.WriteAsync(new()
+                        {
+                            UserID = r.Normal.Public.UserID,
+                            OldUserID = r.Normal.Private.Data.OldUserID,
+                            ModifiedOnUTC = r.Normal.Public.ModifiedOnUTC,
+                        });
                 }
             }
             catch
