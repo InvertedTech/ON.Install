@@ -419,8 +419,15 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return ret;
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task GetListOfOldUserIDs(GetListOfOldUserIDsRequest request, IServerStreamWriter<GetListOfOldUserIDsResponse> responseStream, ServerCallContext context)
         {
+            if (offlineHelper.IsOffline)
+                return;
+
+            if (!await AmIReallyAdmin(context))
+                return;
+
             try
             {
                 await foreach (var r in dataProvider.GetAll())

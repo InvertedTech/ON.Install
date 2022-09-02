@@ -118,6 +118,7 @@ namespace ON.Content.SimpleCMS.Service
             return new() { Record = rec };
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public async override Task<GetAssetByOldContentIDResponse> GetAssetByOldContentID(GetAssetByOldContentIDRequest request, ServerCallContext context)
         {
             var oldId = request.OldAssetID;
@@ -131,6 +132,7 @@ namespace ON.Content.SimpleCMS.Service
             return new() { Record = rec };
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public async override Task GetListOfOldContentIDs(GetListOfOldContentIDsRequest request, IServerStreamWriter<GetListOfOldContentIDsResponse> responseStream, ServerCallContext context)
         {
             try
