@@ -49,7 +49,8 @@ namespace ON.Content.SimpleCMS.Service
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IAssetDataProvider, FileSystemAssetDataProvider>();
-            services.AddSingleton<IContentDataProvider, FileSystemContentDataProvider>();
+            services.AddSingleton<IContentDataProvider, MemCachedFileSystemContentDataProvider>();
+            services.AddSingleton<FileSystemContentDataProvider>();
 
             services.AddJwtAuthentication();
         }
