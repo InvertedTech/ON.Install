@@ -494,7 +494,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 if (record.Normal.Public.Data.UserName != request.UserName)
                 {
-                    if (!await dataProvider.ChangeLogin(record.Normal.Public.Data.UserName, request.UserName, userId))
+                    if (!await dataProvider.ChangeLoginIndex(record.Normal.Public.Data.UserName, request.UserName, userId))
                         return new ModifyOtherUserResponse() { Error = "User Name taken" };
 
                     record.Normal.Public.Data.UserName = request.UserName;

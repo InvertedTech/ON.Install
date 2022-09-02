@@ -129,7 +129,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     {
                         if (!idsLoaded.Contains(id))
                         {
-                            await dataProvider.Delete(id, true);
+                            await dataProvider.Delete(id);
                             res.NumUsersWiped++;
                         }
                     }
@@ -140,10 +140,6 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 logger.LogWarning("*** RestoreAllData - ERROR ***");
                 logger.LogWarning($"*** RestoreAllData - ERROR: {ex.Message} ***");
             }
-
-            logger.LogWarning("*** RestoreAllData - Start Reindex ***");
-
-            await dataProvider.ReindexAll();
 
             logger.LogWarning("*** RestoreAllData - Exit ***");
 
