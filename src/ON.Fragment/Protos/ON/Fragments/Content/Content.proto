@@ -15,6 +15,12 @@ service ContentInterface {
       body: "*"
     };
   }
+  rpc DeleteContent (DeleteContentRequest) returns (DeleteContentResponse)
+  {
+    option (google.api.http) = {
+      delete: "/api/cms/admin/content/{ContentID}"
+    };
+  }
   rpc GetAllContent (GetAllContentRequest) returns (GetAllContentResponse)
   {
     option (google.api.http) = {
@@ -53,6 +59,12 @@ service ContentInterface {
       body: "*"
     };
   }
+  rpc UndeleteContent (UndeleteContentRequest) returns (UndeleteContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/content/{ContentID}/undelete"
+    };
+  }
   rpc UnpublishContent (UnpublishContentRequest) returns (UnpublishContentResponse)
   {
     option (google.api.http) = {
@@ -70,6 +82,14 @@ message CreateContentResponse {
   ContentRecord Record = 1;
 }
 
+message DeleteContentRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message DeleteContentResponse {
+  ContentRecord Record = 1;
+}
+  
 message GetAllContentRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
@@ -87,10 +107,20 @@ message GetAllContentResponse {
 }
   
 message GetAllContentAdminRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  ContentType ContentType = 11;
+  string CategoryId = 12;
+  string ChannelId = 13;
+  string Tag = 14;
+  bool Deleted = 21;
 }
   
 message GetAllContentAdminResponse {
   repeated ContentListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
 }
   
 message GetContentRequest {
@@ -142,6 +172,14 @@ message PublishContentRequest {
 }
   
 message PublishContentResponse {
+  ContentRecord Record = 1;
+}
+  
+message UndeleteContentRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message UndeleteContentResponse {
   ContentRecord Record = 1;
 }
   

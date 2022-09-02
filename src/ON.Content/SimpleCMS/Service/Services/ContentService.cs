@@ -55,6 +55,24 @@ namespace ON.Content.SimpleCMS.Service
             return new() { Record = record };
         }
 
+        [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
+        public override async Task<DeleteContentResponse> DeleteContent(DeleteContentRequest request, ServerCallContext context)
+        {
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+
+            var contentId = request.ContentID.ToGuid();
+            var record = await dataProvider.GetById(contentId);
+            if (record == null)
+                return new();
+
+            record.Public.DeletedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
+            record.Private.DeletedBy = user.Id.ToString();
+
+            await dataProvider.Save(record);
+
+            return new() { Record = record };
+        }
+
         [AllowAnonymous]
         public override async Task<GetAllContentResponse> GetAllContent(GetAllContentRequest request, ServerCallContext context)
         {
@@ -100,7 +118,7 @@ namespace ON.Content.SimpleCMS.Service
                 list.Add(listRec);
             }
 
-            res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC));
+            res.Records.AddRange(list.OrderByDescending(r => r.PublishOnUTC));
             res.PageTotalItems = (uint)res.Records.Count;
 
             if (request.PageSize > 0)
@@ -119,12 +137,68 @@ namespace ON.Content.SimpleCMS.Service
         [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
         public override async Task<GetAllContentAdminResponse> GetAllContentAdmin(GetAllContentAdminRequest request, ServerCallContext context)
         {
-            List<ContentListRecord> list = new();
-            await foreach (var rec in dataProvider.GetAll())
-                list.Add(rec.Public.ToContentListRecord());
+            var searchCatId = request.CategoryId;
+            var searchChanId = request.ChannelId;
+            var searchTag = request.Tag;
+
+            if (string.IsNullOrWhiteSpace(searchCatId))
+                searchCatId = null;
+            if (string.IsNullOrWhiteSpace(searchChanId))
+                searchChanId = null;
+            if (string.IsNullOrWhiteSpace(searchTag))
+                searchTag = null;
 
             var res = new GetAllContentAdminResponse();
+
+            List<ContentListRecord> list = new();
+            await foreach (var rec in dataProvider.GetAll())
+            {
+                if (request.Deleted)
+                {
+                    if (rec.Public.DeletedOnUTC == null)
+                        continue;
+                }
+                else
+                {
+                    if (rec.Public.DeletedOnUTC != null)
+                        continue;
+                }
+
+                if (searchCatId != null)
+                    if (!rec.Public.Data.CategoryIds.Contains(searchCatId))
+                        continue;
+
+                if (searchChanId != null)
+                    if (!rec.Public.Data.ChannelIds.Contains(searchChanId))
+                        continue;
+
+                if (searchTag != null)
+                    if (!rec.Public.Data.Tags.Contains(searchTag))
+                        continue;
+
+                var listRec = rec.Public.ToContentListRecord();
+
+                if (request.ContentType != ContentType.None)
+                {
+                    if (listRec.ContentType != request.ContentType)
+                        continue;
+                }
+
+                list.Add(listRec);
+            }
+
             res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC));
+            res.PageTotalItems = (uint)res.Records.Count;
+
+            if (request.PageSize > 0)
+            {
+                var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
+                res.Records.Clear();
+                res.Records.AddRange(page);
+            }
+
+            res.PageOffsetStart = request.PageOffset;
+            res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
 
             return res;
         }
@@ -210,6 +284,24 @@ namespace ON.Content.SimpleCMS.Service
         }
 
         [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
+        public override async Task<UndeleteContentResponse> UndeleteContent(UndeleteContentRequest request, ServerCallContext context)
+        {
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+
+            var contentId = request.ContentID.ToGuid();
+            var record = await dataProvider.GetById(contentId);
+            if (record == null)
+                return new();
+
+            record.Public.DeletedOnUTC = null;
+            record.Private.DeletedBy = user.Id.ToString();
+
+            await dataProvider.Save(record);
+
+            return new() { Record = record };
+        }
+
+        [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
         public override async Task<UnpublishContentResponse> UnpublishContent(UnpublishContentRequest request, ServerCallContext context)
         {
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
@@ -244,6 +336,9 @@ namespace ON.Content.SimpleCMS.Service
 
         private bool CanShowInList(ContentRecord rec, ONUser user)
         {
+            if (rec.Public.DeletedOnUTC != null)
+                return false;
+
             if (user?.CanCreateContent ?? false)
                 return true;
 
