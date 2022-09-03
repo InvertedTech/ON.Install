@@ -10,6 +10,7 @@ namespace ON.Content.SimpleCMS.Service.Data
     {
         IAsyncEnumerable<ContentRecord> GetAll();
         Task<ContentRecord> GetById(Guid contentId);
+        Task<ContentRecord> GetByURL(string url);
         Task<bool> Delete(Guid contentId);
         Task<bool> Exists(Guid contentId);
         Task Save(ContentRecord content);

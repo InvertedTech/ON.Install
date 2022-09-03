@@ -225,6 +225,28 @@ namespace ON.Content.SimpleCMS.Service
             return new() { Record = rec.Public };
         }
 
+        [AllowAnonymous]
+        public override async Task<GetContentByUrlResponse> GetContentByUrl(GetContentByUrlRequest request, ServerCallContext context)
+        {
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+
+            string contentUrl = request.ContentUrl;
+            if (string.IsNullOrWhiteSpace(contentUrl))
+                return new();
+
+            var rec = await dataProvider.GetByURL(contentUrl);
+            if (rec == null)
+                return new();
+
+            if (!CanShowInList(rec, user))
+                return new();
+
+            if (!CanShowContent(rec, user))
+                rec.Public.Data.ClearContentDataOneof();
+
+            return new() { Record = rec.Public };
+        }
+
         [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
         public override async Task<GetContentAdminResponse> GetContentAdmin(GetContentAdminRequest request, ServerCallContext context)
         {

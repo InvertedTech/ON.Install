@@ -53,6 +53,11 @@ namespace ON.Content.SimpleCMS.Service.Data
             return Task.FromResult((ContentRecord)null);
         }
 
+        public Task<ContentRecord> GetByURL(string url)
+        {
+            return Task.FromResult(cache.Values.FirstOrDefault(r => r.Public.Data.URL == url));
+        }
+
         public async Task Save(ContentRecord content)
         {
             await dataProvider.Save(content);

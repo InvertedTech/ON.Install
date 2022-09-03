@@ -53,6 +53,17 @@ namespace ON.Content.SimpleCMS.Service.Data
             return ContentRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
         }
 
+        public async Task<ContentRecord> GetByURL(string url)
+        {
+            await foreach(var rec in GetAll())
+            {
+                if (rec.Public.Data.URL == url)
+                    return rec;
+            }
+
+            return null;
+        }
+
         public async Task Save(ContentRecord content)
         {
             var id = content.Public.ContentID.ToGuid();

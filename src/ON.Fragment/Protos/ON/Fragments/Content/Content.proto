@@ -39,6 +39,12 @@ service ContentInterface {
       get: "/api/cms/content/{ContentID}"
     };
   }
+  rpc GetContentByUrl (GetContentByUrlRequest) returns (GetContentByUrlResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/content/url"
+    };
+  }
   rpc GetContentAdmin (GetContentAdminRequest) returns (GetContentAdminResponse)
   {
     option (google.api.http) = {
@@ -128,6 +134,14 @@ message GetContentRequest {
 }
   
 message GetContentResponse {
+  ContentPublicRecord Record = 1;
+}
+  
+message GetContentByUrlRequest {
+  string ContentUrl = 1;
+}
+  
+message GetContentByUrlResponse {
   ContentPublicRecord Record = 1;
 }
   
