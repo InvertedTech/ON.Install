@@ -460,6 +460,17 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return new() { Record = record?.Normal };
         }
 
+        [AllowAnonymous]
+        public override async Task<GetOtherPublicUserResponse> GetOtherPublicUser(GetOtherPublicUserRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            var record = await dataProvider.GetById(request.UserID.ToGuid());
+
+            return new() { Record = record?.Normal.Public };
+        }
+
         public override async Task<GetOwnUserResponse> GetOwnUser(GetOwnUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)

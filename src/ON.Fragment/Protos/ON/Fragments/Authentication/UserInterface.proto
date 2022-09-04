@@ -98,6 +98,14 @@ service UserInterface {
     };
   }
 
+  // Get User public record
+  rpc GetOtherPublicUser (GetOtherPublicUserRequest) returns (GetOtherPublicUserResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/user/{UserID}"
+    };
+  }
+
   // Get User record
   rpc GetOwnUser (GetOwnUserRequest) returns (GetOwnUserResponse)
   {
@@ -280,6 +288,14 @@ message GetOtherUserRequest {
   
 message GetOtherUserResponse {
   UserNormalRecord Record = 1;
+}
+
+message GetOtherPublicUserRequest {
+  string UserID = 1;                   // Guid for the user
+}
+  
+message GetOtherPublicUserResponse {
+  UserPublicRecord Record = 1;
 }
 
 message GetOwnUserRequest {
