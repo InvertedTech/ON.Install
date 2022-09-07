@@ -95,6 +95,14 @@ namespace ON.Content.SimpleCMS.Service
                 if (!CanShowInList(rec, null))
                     continue;
 
+                if (request.SubscriptionSearch != null)
+                {
+                    if (rec.Public.Data.SubscriptionLevel < request.SubscriptionSearch.MinimumLevel)
+                        continue;
+                    if (rec.Public.Data.SubscriptionLevel > request.SubscriptionSearch.MaximumLevel)
+                        continue;
+                }
+
                 if (searchCatId != null)
                     if (!rec.Public.Data.CategoryIds.Contains(searchCatId))
                         continue;
@@ -161,6 +169,14 @@ namespace ON.Content.SimpleCMS.Service
                 else
                 {
                     if (rec.Public.DeletedOnUTC != null)
+                        continue;
+                }
+
+                if (request.SubscriptionSearch != null)
+                {
+                    if (rec.Public.Data.SubscriptionLevel < request.SubscriptionSearch.MinimumLevel)
+                        continue;
+                    if (rec.Public.Data.SubscriptionLevel > request.SubscriptionSearch.MaximumLevel)
                         continue;
                 }
 

@@ -99,6 +99,7 @@ message DeleteContentResponse {
 message GetAllContentRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
+  SubscriptionLevelSearch SubscriptionSearch = 10;
   ContentType ContentType = 11;
   string CategoryId = 12;
   string ChannelId = 13;
@@ -115,6 +116,7 @@ message GetAllContentResponse {
 message GetAllContentAdminRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
+  SubscriptionLevelSearch SubscriptionSearch = 10;
   ContentType ContentType = 11;
   string CategoryId = 12;
   string ChannelId = 13;
@@ -212,3 +214,9 @@ enum ContentType {
   Video = 3;
   Written = 4;
 }
+
+message SubscriptionLevelSearch {
+  uint32 MinimumLevel = 1;
+  uint32 MaximumLevel = 2;
+}
+  
