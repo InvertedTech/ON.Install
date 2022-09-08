@@ -42,20 +42,20 @@ namespace ON.Content.SimpleCMS.Service.Data
 
         public IAsyncEnumerable<ContentRecord> GetAll()
         {
-            return cache.Values.ToAsyncEnumerable();
+            return cache.Values.Select(v => v?.Clone()).ToAsyncEnumerable();
         }
 
         public Task<ContentRecord> GetById(Guid contentId)
         {
             if (cache.TryGetValue(contentId, out var record))
-                return Task.FromResult(record);
+                return Task.FromResult(record?.Clone());
 
             return Task.FromResult((ContentRecord)null);
         }
 
         public Task<ContentRecord> GetByURL(string url)
         {
-            return Task.FromResult(cache.Values.FirstOrDefault(r => r.Public.Data.URL == url));
+            return Task.FromResult(cache.Values.FirstOrDefault(r => r.Public.Data.URL == url)?.Clone());
         }
 
         public async Task Save(ContentRecord content)
