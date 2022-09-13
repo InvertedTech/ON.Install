@@ -112,7 +112,7 @@ namespace ON.Content.SimpleCMS.Service
                         continue;
 
                 if (searchTag != null)
-                    if (!rec.Public.Data.Tags.Contains(searchTag))
+                    if (!rec.Public.Data.Tags.Select(t => t.ToLower()).Contains(searchTag.ToLower()))
                         continue;
 
                 var listRec = rec.Public.ToContentListRecord();
@@ -189,7 +189,7 @@ namespace ON.Content.SimpleCMS.Service
                         continue;
 
                 if (searchTag != null)
-                    if (!rec.Public.Data.Tags.Contains(searchTag))
+                    if (!rec.Public.Data.Tags.Select(t => t.ToLower()).Contains(searchTag.ToLower()))
                         continue;
 
                 var listRec = rec.Public.ToContentListRecord();
@@ -275,6 +275,24 @@ namespace ON.Content.SimpleCMS.Service
                 return new();
 
             return new() { Record = rec };
+        }
+
+        [AllowAnonymous]
+        public override async Task<GetRecentTagsResponse> GetRecentTags(GetRecentTagsRequest request, ServerCallContext context)
+        {
+            int num = Math.Min((int)request.NumTags, 100);
+
+            List<string> allTags = new();
+            await foreach (var rec in dataProvider.GetAll())
+            {
+                allTags.AddRange(rec.Public.Data.Tags.Where(t => !allTags.Contains(t)));
+                if (allTags.Count > num)
+                    break;
+            }
+
+            var res = new GetRecentTagsResponse();
+            res.Tags.AddRange(allTags.Take(num));
+            return res;
         }
 
         [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]

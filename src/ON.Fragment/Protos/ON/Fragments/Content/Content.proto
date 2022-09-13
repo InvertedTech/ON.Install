@@ -51,6 +51,12 @@ service ContentInterface {
       get: "/api/cms/admin/content/{ContentID}"
     };
   }
+  rpc GetRecentTags (GetRecentTagsRequest) returns (GetRecentTagsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/tags/recent"
+    };
+  }
   rpc ModifyContent (ModifyContentRequest) returns (ModifyContentResponse)
   {
     option (google.api.http) = {
@@ -153,6 +159,14 @@ message GetContentAdminRequest {
   
 message GetContentAdminResponse {
   ContentRecord Record = 1;
+}
+
+message GetRecentTagsRequest {
+  uint32 NumTags = 1;
+}
+  
+message GetRecentTagsResponse {
+  repeated string Tags = 1;
 }
   
 message ModifyContentRequest {
