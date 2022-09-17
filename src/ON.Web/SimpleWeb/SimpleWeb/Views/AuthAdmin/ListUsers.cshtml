@@ -1,0 +1,32 @@
+﻿@model ON.SimpleWeb.Models.Auth.Admin.ListUsersViewModel
+@{
+    ViewData["Title"] = "User List";
+}
+
+<h1>User List</h1>
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">UserName</th>
+            <th scope="col">Disabled</th>
+            <th scope="col">Roles</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model.UserRecords)
+        {
+            <tr>
+                <th scope="row"><a href="/auth/admin/@(u.UserIDGuid.ToString())">@(u.Public.Data.UserName)</a></th>
+                <td>
+                    @if (u.Public.DisabledOnUTC != null)
+                    {
+                        <i class="bi-x-octagon-fill" style="font-size: 1rem; color: cornflowerblue;" aria-label="Disabled"></i>
+                    }
+                </td>
+                <td>@(string.Join(',', u.Private.Roles))</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,91 @@
+﻿@model ON.SimpleWeb.Models.CMS.NewViewModel
+@{
+    ViewData["Title"] = "New Article";
+}
+
+<h1>Create new article</h1>
+<br />
+
+@if (!string.IsNullOrEmpty(Model?.ErrorMessage))
+{
+    <h2 style="color: red;">@Model.ErrorMessage</h2>
+}
+
+@if (!string.IsNullOrEmpty(Model?.SuccessMessage))
+{
+    <h2 style="color: green;">@Model.SuccessMessage</h2>
+}
+
+<form method="post" class="needs-validation" novalidate>
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input class="form-control" asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Subtitle"></label>
+        <input class="form-control" asp-for="Subtitle" />
+        <span asp-validation-for="Subtitle"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Level"></label>
+        <select class="form-control" asp-for="Level" asp-items="ON.SimpleWeb.Models.Auth.Subscription.CurrencyLevel.SelectListItems">
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Author"></label>
+        <input class="form-control" asp-for="Author" />
+        <span asp-validation-for="Author"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Body"></label>
+        <textarea rows="5" class="form-control" id="HtmlBodyPart_Html" asp-for="Body"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section head
+{
+    <link rel="stylesheet" href="/lib/trumbowyg/ui/trumbowyg.min.css">
+    <link rel="stylesheet" href="/lib/trumbowyg/plugins/colors/ui/trumbowyg.colors.min.css">
+    <link rel="stylesheet" href="/lib/trumbowyg/plugins/emoji/ui/trumbowyg.emoji.min.css">
+}
+
+@section scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="//rawcdn.githack.com/RickStrahl/jquery-resizable/0.35/dist/jquery-resizable.min.js"></script>
+
+    <script src="/lib/trumbowyg/trumbowyg.min.js"></script>
+    <script src="/lib/trumbowyg/plugins/cleanpaste/trumbowyg.cleanpaste.min.js"></script>
+    <script src="/lib/trumbowyg/plugins/colors/trumbowyg.colors.min.js"></script>
+    <script src="/lib/trumbowyg/plugins/emoji/trumbowyg.emoji.min.js"></script>
+    <script src="/lib/trumbowyg/plugins/fontfamily/trumbowyg.fontfamily.min.js"></script>
+    <script src="/lib/trumbowyg/plugins/fontsize/trumbowyg.fontsize.min.js"></script>
+    <script src="/lib/trumbowyg/plugins/pasteembed/trumbowyg.pasteembed.min.js"></script>
+    <script src="/lib/trumbowyg/plugins/pasteimage/trumbowyg.pasteimage.min.js"></script>
+    <script src="/lib/trumbowyg/plugins/resizimg/trumbowyg.resizimg.min.js"></script>
+
+    <script type="text/javascript">
+        $('#HtmlBodyPart_Html').trumbowyg({
+            btns: [
+                ['viewHTML'],
+                ['undo', 'redo'], // Only supported in Blink browsers
+                ['formatting'],
+                ['strong', 'em', 'del'],
+                ['fontfamily', 'fontsize', 'foreColor', 'backColor'],
+                ['superscript', 'subscript'],
+                ['link'],
+                ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+                ['unorderedList', 'orderedList'],
+                ['horizontalRule'],
+                ['removeformat'],
+                ['emoji'],
+                ['fullscreen']
+            ],
+            tagsToRemove: ['script', 'link']
+        });
+    </script>
+}
