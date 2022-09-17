@@ -1,0 +1,72 @@
+﻿@using ON.SimpleWeb.Models.Subscription.Stripe
+@using ON.SimpleWeb.Services.Stripe
+@model CurrentViewModel
+@inject AccountService acct;
+@{
+    ViewData["Title"] = "Membership";
+}
+
+@if (Model != null)
+{
+    <h1>My Subscription</h1>
+    <br />
+    <span>$@(Model.Level) - @(Model.Name)</span>
+
+    @if (Model.IsCancelled)
+    {
+        <span style="color: red">Cancelled</span><br /><br />
+    }
+    else
+    {
+        <form action="/subscription/stripe/create-customer-portal" method="POST">
+                              
+
+            <input type="hidden" name="" value="" />
+            <button type="submit">Manage my subscription</button>
+        </form>
+    }
+}
+
+@if (Model == null || Model.IsCancelled)
+{
+    <br />
+        <form action="/subscription/stripe/create-customer-portal" method="POST">
+                              
+
+            <input type="hidden" name="" value="" />
+            <button type="submit">Manage my subscription</button>
+        </form>
+    <br />
+    <h1>Sign up for membership</h1>
+    <br />
+
+    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+        @foreach (var plan in acct.Products)
+        {
+            <div class="col">
+                <div class="card mb-4 rounded-3 shadow-sm">
+                    <div class="card-header py-3">
+                        <h4 class="my-0 fw-normal">@(plan.Name)</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="column">
+                            <h1 class="card-title pricing-card-title">@(plan.Price)<small class="text-muted fw-light">/mo</small></h1>
+
+                            <form action="/subscription/stripe/create-checkout-session" method="POST">
+                              <!-- Note: If using PHP set the action to /create-checkout-session.php -->
+
+                              <input type="hidden" name="PriceId" value="@(plan.PriceId)" />
+                              <button type="submit">Checkout</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section scripts
+{
+
+}

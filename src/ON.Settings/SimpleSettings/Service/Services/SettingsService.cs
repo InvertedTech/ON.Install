@@ -23,7 +23,7 @@ using ON.Fragments.Settings;
 
 namespace ON.Settings.SimpleSettings.Service.Services
 {
-    [Authorize(Roles = ONUser.ROLE_OWNER)]
+    [Authorize(Roles = ONUser.ROLE_IS_OWNER_OR_SERVICE)]
     public class SettingsService : SettingsInterface.SettingsInterfaceBase
     {
         private readonly OfflineHelper offlineHelper;
@@ -40,7 +40,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             EnsureStockSettings().Wait();
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
         public override async Task<GetAdminDataResponse> GetAdminData(GetAdminDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
@@ -52,7 +52,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             };
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
         public override async Task<GetAdminNewerDataResponse> GetAdminNewerData(GetAdminNewerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
@@ -66,7 +66,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             };
         }
 
-        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_OWNER_OR_SERVICE)]
         public override async Task<GetOwnerDataResponse> GetOwnerData(GetOwnerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
@@ -79,7 +79,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             };
         }
 
-        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_OWNER_OR_SERVICE)]
         public override async Task<GetOwnerNewerDataResponse> GetOwnerNewerData(GetOwnerNewerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
@@ -112,7 +112,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             return new() { Public = record.Public };
         }
 
-        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_OWNER_OR_SERVICE)]
         public override async Task<ModifyCMSOwnerDataResponse> ModifyCMSOwnerData(ModifyCMSOwnerDataRequest request, ServerCallContext context)
         {
             try
@@ -139,7 +139,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
         public override async Task<ModifyCMSPrivateDataResponse> ModifyCMSPrivateData(ModifyCMSPrivateDataRequest request, ServerCallContext context)
         {
             try
@@ -166,7 +166,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
         public override async Task<ModifyCMSPublicDataResponse> ModifyCMSPublicData(ModifyCMSPublicDataRequest request, ServerCallContext context)
         {
             try
@@ -193,7 +193,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_OWNER_OR_SERVICE)]
         public override async Task<ModifyCommentsOwnerDataResponse> ModifyCommentsOwnerData(ModifyCommentsOwnerDataRequest request, ServerCallContext context)
         {
             try
@@ -220,7 +220,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
         public override async Task<ModifyCommentsPrivateDataResponse> ModifyCommentsPrivateData(ModifyCommentsPrivateDataRequest request, ServerCallContext context)
         {
             try
@@ -247,7 +247,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
         public override async Task<ModifyCommentsPublicDataResponse> ModifyCommentsPublicData(ModifyCommentsPublicDataRequest request, ServerCallContext context)
         {
             try
@@ -274,7 +274,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_OWNER_OR_SERVICE)]
         public override async Task<ModifyPersonalizationOwnerDataResponse> ModifyPersonalizationOwnerData(ModifyPersonalizationOwnerDataRequest request, ServerCallContext context)
         {
             try
@@ -301,7 +301,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
         public override async Task<ModifyPersonalizationPrivateDataResponse> ModifyPersonalizationPrivateData(ModifyPersonalizationPrivateDataRequest request, ServerCallContext context)
         {
             try
@@ -328,7 +328,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
         public override async Task<ModifyPersonalizationPublicDataResponse> ModifyPersonalizationPublicData(ModifyPersonalizationPublicDataRequest request, ServerCallContext context)
         {
             try
@@ -355,7 +355,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_OWNER_OR_SERVICE)]
         public override async Task<ModifySubscriptionOwnerDataResponse> ModifySubscriptionOwnerData(ModifySubscriptionOwnerDataRequest request, ServerCallContext context)
         {
             try
@@ -382,7 +382,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
         public override async Task<ModifySubscriptionPrivateDataResponse> ModifySubscriptionPrivateData(ModifySubscriptionPrivateDataRequest request, ServerCallContext context)
         {
             try
@@ -409,7 +409,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
             }
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
         public override async Task<ModifySubscriptionPublicDataResponse> ModifySubscriptionPublicData(ModifySubscriptionPublicDataRequest request, ServerCallContext context)
         {
             try

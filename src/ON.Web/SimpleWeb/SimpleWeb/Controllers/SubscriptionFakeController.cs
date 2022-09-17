@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
-using ON.SimpleWeb.Models.Subscriptions.Fake;
+using ON.SimpleWeb.Models.Subscription.Fake;
 using ON.SimpleWeb.Services;
 
 namespace ON.SimpleWeb.Controllers
@@ -17,11 +17,11 @@ namespace ON.SimpleWeb.Controllers
     [Route("/subscription/fake")]
     public class SubscriptionFakeController : Controller
     {
-        private readonly ILogger<SubscriptionController> logger;
+        private readonly ILogger<SubscriptionMainController> logger;
         private readonly FakePaymentsService paymentsService;
         private readonly ONUserHelper userHelper;
 
-        public SubscriptionFakeController(ILogger<SubscriptionController> logger, FakePaymentsService paymentsService, ONUserHelper userHelper)
+        public SubscriptionFakeController(ILogger<SubscriptionMainController> logger, FakePaymentsService paymentsService, ONUserHelper userHelper)
         {
             this.logger = logger;
             this.paymentsService = paymentsService;

@@ -1,12 +1,8 @@
 ﻿using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
-using ON.Authorization.FakePayments;
-using ON.Fragments.Authorization;
+using ON.Fragments.Authorization.Payments.Fake;
 using ON.SimpleWeb.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ON.SimpleWeb.Services

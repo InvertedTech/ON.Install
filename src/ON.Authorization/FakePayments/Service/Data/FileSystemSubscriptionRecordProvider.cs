@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using ON.Authorization.FakePayments.Service.Models;
 using ON.Fragments.Authorization;
+using ON.Fragments.Authorization.Payments.Fake;
 using System;
 using System.Collections.Generic;
 using System.IO;

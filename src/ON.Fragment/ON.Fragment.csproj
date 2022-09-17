@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\ON\Fragments\Authentication\ServiceInterface.proto" />
     <None Remove="Protos\ON\Fragments\Authentication\UserInterface.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payments\Fake\Payments.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\ParallelEconomySettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Paypal\PaypalSettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payments\Stripe\StripeSettings.proto" />
@@ -49,6 +51,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="Protos\ON\Fragments\Authentication\ServiceInterface.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Fake\Payments.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\ParallelEconomy\ParallelEconomySettings.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Paypal\PaypalSettings.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payments\Stripe\StripeSettings.proto" GrpcServices="None" />

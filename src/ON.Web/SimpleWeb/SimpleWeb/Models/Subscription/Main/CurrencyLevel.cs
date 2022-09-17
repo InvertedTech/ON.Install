@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 
-namespace ON.SimpleWeb.Models.Auth.Subscription
+namespace ON.SimpleWeb.Models.Subscription.Main
 {
     public class CurrencyLevel
     {

@@ -76,6 +76,7 @@ namespace ON.Authentication.SimpleAuth.Service
             {
                 endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
+                endpoints.MapGrpcService<ServiceService>();
                 endpoints.MapGrpcService<UserService>();
             });
         }

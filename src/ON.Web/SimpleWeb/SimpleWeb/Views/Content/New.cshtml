@@ -1,4 +1,5 @@
-﻿@model ON.SimpleWeb.Models.CMS.NewViewModel
+﻿@using ON.SimpleWeb.Models.Subscription.Main
+@model ON.SimpleWeb.Models.CMS.NewViewModel
 @{
     ViewData["Title"] = "New Article";
 }
@@ -29,7 +30,7 @@
     </div>
     <div class="form-group">
         <label asp-for="Level"></label>
-        <select class="form-control" asp-for="Level" asp-items="ON.SimpleWeb.Models.Auth.Subscription.CurrencyLevel.SelectListItems">
+        <select class="form-control" asp-for="Level" asp-items="CurrencyLevel.SelectListItems">
         </select>
     </div>
     <div class="form-group">

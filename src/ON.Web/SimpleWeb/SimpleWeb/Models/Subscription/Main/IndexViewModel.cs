@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ON.SimpleWeb.Models.Auth.Subscription
+namespace ON.SimpleWeb.Models.Subscription.Main
 {
     public class IndexViewModel
     {

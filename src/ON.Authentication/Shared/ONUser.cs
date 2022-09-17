@@ -13,6 +13,7 @@ namespace ON.Authentication
         public const string ROLE_ADMIN = "admin";
         public const string ROLE_BACKUP = "backup";
         public const string ROLE_OPS = "ops";
+        public const string ROLE_SERVICE = "service";
         public const string ROLE_CONTENT_PUBLISHER = "con_publisher";
         public const string ROLE_CONTENT_WRITER = "con_writer";
         public const string ROLE_COMMENT_MODERATOR = "com_mod";
@@ -22,6 +23,8 @@ namespace ON.Authentication
         public const string ROLE_CAN_CREATE_CONTENT = ROLE_CAN_PUBLISH + "," + ROLE_CONTENT_WRITER;
         public const string ROLE_CAN_PUBLISH = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_CONTENT_PUBLISHER;
         public const string ROLE_IS_ADMIN_OR_OWNER = ROLE_OWNER + "," + ROLE_ADMIN;
+        public const string ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_SERVICE;
+        public const string ROLE_IS_OWNER_OR_SERVICE = ROLE_OWNER + "," + ROLE_SERVICE;
 
         public Guid Id { get; set; } = Guid.Empty;
         public const string IdType = "Id";

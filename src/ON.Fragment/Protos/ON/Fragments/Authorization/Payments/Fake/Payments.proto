@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ON.Authorization.FakePayments;
+package ON.Fragments.Authorization.Payments.Fake;
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";

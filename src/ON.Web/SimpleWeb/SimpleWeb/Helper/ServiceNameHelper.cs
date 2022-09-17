@@ -14,6 +14,9 @@ namespace ON.SimpleWeb.Helper
         public readonly Channel SettingsServiceChannel;
         public readonly Channel UserServiceChannel;
         public readonly Channel FakePaymentsServiceChannel;
+        public readonly Channel PaypalPaymentsServiceChannel;
+        public readonly Channel StripePaymentsServiceChannel;
+        public readonly Channel PEPaymentsServiceChannel;
 
         public ServiceNameHelper(IConfiguration configuration)
         {
@@ -38,6 +41,18 @@ namespace ON.SimpleWeb.Helper
             uri = configuration.GetServiceUri("fakepayservice", "grpc");
             if (uri != null)
                 FakePaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+
+            uri = configuration.GetServiceUri("paypalservice", "grpc");
+            if (uri != null)
+                PaypalPaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+
+            uri = configuration.GetServiceUri("stripeservice", "grpc");
+            if (uri != null)
+                StripePaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+
+            uri = configuration.GetServiceUri("peservice", "grpc");
+            if (uri != null)
+                PEPaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
         }
     }
 }

@@ -3,36 +3,35 @@ using ON.SimpleWeb.Helper;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
+using System.IO.Pipelines;
+using ON.Authentication;
+using Grpc.Core;
 
 namespace ON.SimpleWeb.Services
 {
     public class SettingsService
     {
         private readonly ServiceNameHelper nameHelper;
+        private readonly ONUserHelper userHelper;
+
         private SettingsPublicData publicData = null;
+        private SettingsPrivateData privateData = null;
+        private SettingsOwnerData ownerData = null;
 
-        public Lazy<ChannelRecord> CastCastle;
-        public Lazy<ChannelRecord> ChickenCity;
-        public Lazy<ChannelRecord> PopCultureCrisis;
-        public Lazy<ChannelRecord> InvertedWorld;
-        public Lazy<ChannelRecord> Timcast;
-        public Lazy<ChannelRecord> TimcastIrl;
-        public Lazy<ChannelRecord> TimcastPool;
-
-        public SettingsService(ServiceNameHelper nameHelper)
+        public SettingsService(ServiceNameHelper nameHelper, ONUserHelper userHelper)
         {
             this.nameHelper = nameHelper;
-
-            CastCastle = new Lazy<ChannelRecord>(() => GetChannelBySlug("cast-castle").Result);
-            ChickenCity = new Lazy<ChannelRecord>(() => GetChannelBySlug("chicken-city").Result);
-            PopCultureCrisis = new Lazy<ChannelRecord>(() => GetChannelBySlug("pop-culture-crisis").Result);
-            InvertedWorld = new Lazy<ChannelRecord>(() => GetChannelBySlug("tales-from-the-inverted-world").Result);
-            Timcast = new Lazy<ChannelRecord>(() => GetChannelBySlug("timcast").Result);
-            TimcastIrl = new Lazy<ChannelRecord>(() => GetChannelBySlug("timcast-irl").Result);
-            TimcastPool = new Lazy<ChannelRecord>(() => GetChannelBySlug("tim-pool").Result);
+            this.userHelper = userHelper;
         }
 
-        public async Task<SettingsPublicData> GetSettings()
+        public void Flush()
+        {
+            publicData = null;
+            privateData = null;
+            ownerData = null;
+        }
+
+        public async Task<SettingsPublicData> GetPublicSettings()
         {
             if (publicData != null)
                 return publicData;
@@ -45,32 +44,69 @@ namespace ON.SimpleWeb.Services
             return publicData;
         }
 
+        public async Task<SettingsPrivateData> GetPrivateSettings()
+        {
+            if (privateData != null)
+                return privateData;
+
+            var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
+            var res = await client.GetAdminDataAsync(new());
+
+            publicData = res.Public;
+            privateData = res.Private;
+
+            return privateData;
+        }
+
+        public async Task<SettingsOwnerData> GetOwnerSettings()
+        {
+            if (ownerData != null)
+                return ownerData;
+
+            var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
+            var res = await client.GetOwnerDataAsync(new());
+
+            publicData = res.Public;
+            privateData = res.Private;
+            ownerData = res.Owner;
+
+            return ownerData;
+        }
+
         public async Task<CategoryRecord> GetCategoryById(string id)
         {
-            var settings = await GetSettings();
+            var settings = await GetPublicSettings();
 
             return settings.CMS.Categories.FirstOrDefault(c => c.CategoryId == id);
         }
 
         public async Task<CategoryRecord> GetCategoryBySlug(string slug)
         {
-            var settings = await GetSettings();
+            var settings = await GetPublicSettings();
 
             return settings.CMS.Categories.FirstOrDefault(c => c.UrlStub == slug);
         }
 
         public async Task<ChannelRecord> GetChannelById(string id)
         {
-            var settings = await GetSettings();
+            var settings = await GetPublicSettings();
 
             return settings.CMS.Channels.FirstOrDefault(c => c.ChannelId == id);
         }
 
         public async Task<ChannelRecord> GetChannelBySlug(string slug)
         {
-            var settings = await GetSettings();
+            var settings = await GetPublicSettings();
 
             return settings.CMS.Channels.FirstOrDefault(c => c.UrlStub == slug);
+        }
+
+        private Metadata GetMetadata()
+        {
+            var data = new Metadata();
+            data.Add("Authorization", "Bearer " + userHelper.MyUser.JwtToken);
+
+            return data;
         }
     }
 }

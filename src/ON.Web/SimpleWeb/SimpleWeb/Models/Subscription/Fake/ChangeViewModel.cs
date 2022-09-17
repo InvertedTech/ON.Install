@@ -2,14 +2,14 @@
 using ON.Authentication;
 using ON.Fragments.Authentication;
 using ON.Fragments.Content;
-using ON.SimpleWeb.Models.Auth.Subscription;
+using ON.SimpleWeb.Models.Subscription.Main;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ON.SimpleWeb.Models.Subscriptions.Fake
+namespace ON.SimpleWeb.Models.Subscription.Fake
 {
     public class ChangeViewModel
     {
