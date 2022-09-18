@@ -1,5 +1,4 @@
-﻿using ON.Authentication;
-using ON.Fragments.Authentication;
+﻿using ON.Fragments.Authentication;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,14 +7,9 @@ using System.Threading.Tasks;
 
 namespace ON.SimpleWeb.Models.CMS
 {
-    public class NewViewModel
+    public class EditWrittenViewModel
     {
-        public NewViewModel() { }
-
-        public NewViewModel(ONUser user)
-        {
-            Author = user.DisplayName;
-        }
+        public EditWrittenViewModel() { }
 
         [Required]
         [Display(Name = "Title")]

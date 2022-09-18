@@ -1,0 +1,12 @@
+﻿@using ON.Fragments.Settings
+@model SubscriptionOwnerRecord
+
+<li class="list-group-item">
+    <h2>Owner Settings</h2>
+
+    <ul class="list-group">
+        @await Html.PartialAsync("SubscriptionOwnerPE", Model.ParallelEconomy)
+        @await Html.PartialAsync("SubscriptionOwnerStripe", Model.Stripe)
+        @await Html.PartialAsync("SubscriptionOwnerPaypal", Model.Paypal)
+    </ul>
+</li>

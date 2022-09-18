@@ -1,4 +1,5 @@
-﻿using ON.Fragments.Authentication;
+﻿using ON.Authentication;
+using ON.Fragments.Authentication;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,9 +8,14 @@ using System.Threading.Tasks;
 
 namespace ON.SimpleWeb.Models.CMS
 {
-    public class EditViewModel
+    public class NewVideoViewModel
     {
-        public EditViewModel() { }
+        public NewVideoViewModel() { }
+
+        public NewVideoViewModel(ONUser user)
+        {
+            Author = user.DisplayName;
+        }
 
         [Required]
         [Display(Name = "Title")]
@@ -29,6 +35,14 @@ namespace ON.SimpleWeb.Models.CMS
         [Display(Name = "Author")]
         [StringLength(100, ErrorMessage = "{0} length must be less than {1}.")]
         public string Author { get; set; }
+
+        [Display(Name = "Rumble Video Id")]
+        [StringLength(100, ErrorMessage = "{0} length must be less than {1}.")]
+        public string RumbleVideoId { get; set; }
+
+        [Display(Name = "Youtube Video Id")]
+        [StringLength(100, ErrorMessage = "{0} length must be less than {1}.")]
+        public string YoutubeVideoId { get; set; }
 
         [Display(Name = "Body")]
         public string Body { get; set; }

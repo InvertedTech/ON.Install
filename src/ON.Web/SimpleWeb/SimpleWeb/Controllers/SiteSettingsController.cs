@@ -8,6 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
+using ON.Fragments.Authorization;
+using ON.Fragments.Authorization.Payments.ParallelEconomy;
+using ON.Fragments.Authorization.Payments.Paypal;
+using ON.Fragments.Authorization.Payments.Stripe;
+using ON.Fragments.Settings;
 using ON.SimpleWeb.Models;
 using ON.SimpleWeb.Models.Auth;
 using ON.SimpleWeb.Models.CMS;
@@ -22,59 +27,163 @@ namespace ON.SimpleWeb.Controllers
     {
         private readonly ILogger logger;
         private readonly SettingsService settings;
+        private readonly ONUserHelper userHelper;
 
-        public SiteSettingsController(ILogger<SiteSettingsController> logger, SettingsService settings)
+        public SiteSettingsController(ILogger<SiteSettingsController> logger, SettingsService settings, ONUserHelper userHelper)
         {
             this.logger = logger;
             this.settings = settings;
+            this.userHelper = userHelper;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string errorMsg = "", string successMsg = "")
         {
-            var vm = await IndexViewModel.Load(settings);
+            var vm = await IndexViewModel.Load(settings, userHelper.MyUser);
+            vm.ErrorMessage = errorMsg;
+            vm.SuccessMessage = successMsg;
 
             return View(vm);
         }
 
         [HttpPost("personalization/public")]
-        public async Task<IActionResult> SettingsPost(SettingsViewModel vm)
+        public async Task<IActionResult> ModifyPersonalizationPublic(PersonalizationPublicRecord vm)
         {
-            vm.ErrorMessage = vm.SuccessMessage = "";
-            if (!ModelState.IsValid)
-            {
-                vm.ErrorMessage = ModelState.Values.FirstOrDefault(v => v.ValidationState == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid)
-                                        ?.Errors?.FirstOrDefault()?.ErrorMessage;
-                return View("Settings", vm);
-            }
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
 
-            var res = await userService.ModifyCurrentUser(vm);
-            if (!string.IsNullOrEmpty(res.Error))
-            {
-                vm.ErrorMessage = res.Error;
-                return View("Settings", vm);
-            }
+            var data = await settings.GetPublicData();
+            var record = data.Personalization;
 
-            if (!string.IsNullOrEmpty(res.BearerToken))
-            {
-                Response.Cookies.Append(JwtExtensions.JWT_COOKIE_NAME, res.BearerToken, new CookieOptions()
-                {
-                    HttpOnly = true,
-                    Expires = DateTimeOffset.UtcNow.AddDays(21)
-                });
-            }
+            record.Title = vm.Title;
+            record.MetaDescription = vm.MetaDescription;
+            record.DefaultToDarkMode = vm.DefaultToDarkMode;
 
+            var res = await settings.Modify(record, userHelper.MyUser);
 
-            var user = await userService.GetCurrentUser();
-            if (user == null)
-                return RedirectToAction(nameof(Error));
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
 
-            vm = new SettingsViewModel(user)
-            {
-                SuccessMessage = "Settings updated Successfully"
-            };
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
 
-            return View("Settings", vm);
+        [HttpPost("subscription/public/tier/add")]
+        public async Task<IActionResult> SubscriptionTierAdd(SubscriptionTier vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            if (!IsValid(vm))
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            vm.Color = "#000000";
+
+            var data = await settings.GetPublicData();
+            var record = data.Subscription;
+
+            var tier = record.Tiers.FirstOrDefault(t => t.Amount == vm.Amount);
+            if (tier != null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            record.Tiers.Add(vm);
+
+            var res = await settings.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
+        [HttpPost("subscription/public/tier/delete")]
+        public async Task<IActionResult> SubscriptionTierDelete(SubscriptionTier vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = await settings.GetPublicData();
+            var record = data.Subscription;
+
+            var tier = record.Tiers.FirstOrDefault(t => t.Amount == vm.Amount);
+            if (tier == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+            record.Tiers.Remove(tier);
+
+            var res = await settings.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
+        [HttpPost("subscription/owner/paypal")]
+        public async Task<IActionResult> ModifySubscriptionOwnerPaypal(PaypalSettings vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = await settings.GetOwnerData();
+            var record = data.Subscription;
+
+            record.Paypal = vm;
+
+            var res = await settings.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
+        [HttpPost("subscription/owner/pe")]
+        public async Task<IActionResult> ModifySubscriptionOwnerPE(ParallelEconomySettings vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = await settings.GetOwnerData();
+            var record = data.Subscription;
+
+            record.ParallelEconomy = vm;
+
+            var res = await settings.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
+        [HttpPost("subscription/owner/stripe")]
+        public async Task<IActionResult> ModifySubscriptionOwnerStripe(StripeSettings vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = await settings.GetOwnerData();
+            var record = data.Subscription;
+
+            record.Stripe = vm;
+
+            var res = await settings.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
+        private bool IsValid(SubscriptionTier vm)
+        {
+            if (vm.Amount < 1)
+                return false;
+            if (string.IsNullOrWhiteSpace(vm.Name))
+                return false;
+            if (string.IsNullOrWhiteSpace(vm.Description))
+                return false;
+
+            return true;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,10 +1,10 @@
 ﻿@using ON.SimpleWeb.Models.Subscription.Main
-@model ON.SimpleWeb.Models.CMS.EditViewModel
+@model ON.SimpleWeb.Models.CMS.NewWrittenViewModel
 @{
-    ViewData["Title"] = "Edit: " + Model.Title;
+    ViewData["Title"] = "New Article";
 }
 
-<h1>Edit article</h1>
+<h1>Create new article</h1>
 <br />
 
 @if (!string.IsNullOrEmpty(Model?.ErrorMessage))
@@ -41,11 +41,10 @@
     <div class="form-group">
         <label asp-for="Body"></label>
         <textarea rows="5" class="form-control" id="HtmlBodyPart_Html" asp-for="Body"></textarea>
-        <span class="hint">The body of the content item.</span>
     </div>
-    <button type="submit" class="btn btn-primary">Update</button>
-</form>
 
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
 
 @section head
 {
@@ -90,5 +89,4 @@
             tagsToRemove: ['script', 'link']
         });
     </script>
-
 }

@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
+using ON.Fragments.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace ON.SimpleWeb.Helper
         public readonly Channel PaypalPaymentsServiceChannel;
         public readonly Channel StripePaymentsServiceChannel;
         public readonly Channel PEPaymentsServiceChannel;
+
+        public readonly string ServiceToken;
 
         public ServiceNameHelper(IConfiguration configuration)
         {
@@ -53,6 +56,16 @@ namespace ON.SimpleWeb.Helper
             uri = configuration.GetServiceUri("peservice", "grpc");
             if (uri != null)
                 PEPaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+
+            ServiceToken = GetServiceToken().Result;
+        }
+
+        private async Task<string> GetServiceToken()
+        {
+            var client = new ServiceInterface.ServiceInterfaceClient(UserServiceChannel);
+            var reply = await client.AuthenticateServiceAsync(new());
+
+            return reply.BearerToken;
         }
     }
 }

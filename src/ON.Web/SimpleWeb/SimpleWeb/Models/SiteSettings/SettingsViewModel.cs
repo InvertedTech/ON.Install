@@ -1,4 +1,5 @@
-﻿using ON.Fragments.Settings;
+﻿using ON.Authentication;
+using ON.Fragments.Settings;
 using ON.SimpleWeb.Services;
 using System.Threading.Tasks;
 
@@ -15,14 +16,21 @@ namespace ON.SimpleWeb.Models.SiteSettings
 
         public IndexViewModel() { }
 
-        public static async Task<IndexViewModel> Load(SettingsService service)
+        public static async Task<IndexViewModel> Load(SettingsService service, ONUser user)
         {
-            return new()
+            if (!user.IsAdminOrHigher)
+                return new();
+
+            var vm = new IndexViewModel()
             {
-                Owner = await service.GetOwnerSettings(),
-                Private = await service.GetPrivateSettings(),
-                Public = await service.GetPublicSettings(),
+                Private = await service.GetPrivateData(),
+                Public = await service.GetPublicData(),
             };
+
+            if (user.IsOwner)
+                vm.Owner = await service.GetOwnerData();
+
+            return vm;
         }
     }
 }

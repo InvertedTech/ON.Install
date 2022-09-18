@@ -1,0 +1,19 @@
+﻿@using ON.Fragments.Settings
+@model ON.Fragments.Authorization.SubscriptionTier
+
+<h4>Add new tier</h4>
+<form method="post" class="needs-validation" novalidate asp-action="SubscriptionTierAdd">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input class="form-control" asp-for="Name" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input class="form-control" asp-for="Description" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Amount"></label>
+        <input class="form-control" asp-for="Amount" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</form>

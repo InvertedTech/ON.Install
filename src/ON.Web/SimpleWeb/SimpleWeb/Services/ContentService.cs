@@ -25,7 +25,42 @@ namespace ON.SimpleWeb.Services
             this.nameHelper = nameHelper;
         }
 
-        public async Task<ContentRecord> CreateContent(NewViewModel vm)
+        public async Task<ContentRecord> CreateContent(NewVideoViewModel vm)
+        {
+            if (!User.CanCreateContent)
+                return null;
+
+            var req = new CreateContentRequest
+            {
+                Public = new()
+                {
+                    Title = vm.Title,
+                    Description = vm.Subtitle,
+                    Author = vm.Author,
+                    SubscriptionLevel = vm.Level,
+
+                    Video = new()
+                    {
+                        RumbleVideoId = vm.RumbleVideoId ?? "",
+                        YoutubeVideoId = vm.YoutubeVideoId ?? "",
+                        HtmlBody = vm.Body
+                    }
+                },
+                Private = new()
+                {
+                    Video = new()
+                    {
+                    },
+                }
+            };
+
+            var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
+            var res = await client.CreateContentAsync(req, GetMetadata());
+
+            return res?.Record;
+        }
+
+        public async Task<ContentRecord> CreateContent(NewWrittenViewModel vm)
         {
             if (!User.CanCreateContent)
                 return null;
@@ -137,7 +172,35 @@ namespace ON.SimpleWeb.Services
             await client.UnpublishContentAsync(req, GetMetadata());
         }
 
-        public async Task<ContentRecord> UpdateContent(Guid contentId, EditViewModel vm)
+        public async Task<ContentRecord> UpdateContent(Guid contentId, EditVideoViewModel vm)
+        {
+            if (!User.CanCreateContent)
+                return null;
+
+            var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
+            var record = await GetContentAdmin(contentId);
+
+            record.Public.Data.Title = vm.Title;
+            record.Public.Data.Description = vm.Subtitle;
+            record.Public.Data.Author = vm.Author;
+            record.Public.Data.SubscriptionLevel = vm.Level;
+            record.Public.Data.Video.RumbleVideoId = vm.RumbleVideoId ?? "";
+            record.Public.Data.Video.YoutubeVideoId = vm.YoutubeVideoId ?? "";
+            record.Public.Data.Video.HtmlBody = vm.Body;
+
+            var req = new ModifyContentRequest()
+            {
+                ContentID = record.Public.ContentID,
+                Public = record.Public.Data,
+                Private = record.Private.Data,
+            };
+
+            var res = await client.ModifyContentAsync(req, GetMetadata());
+
+            return res?.Record;
+        }
+
+        public async Task<ContentRecord> UpdateContent(Guid contentId, EditWrittenViewModel vm)
         {
             if (!User.CanCreateContent)
                 return null;

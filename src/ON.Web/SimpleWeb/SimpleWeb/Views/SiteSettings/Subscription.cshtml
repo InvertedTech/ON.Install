@@ -1,0 +1,10 @@
+﻿@model ON.SimpleWeb.Models.SiteSettings.IndexViewModel
+
+<li class="list-group-item">
+    <h2>Subscription</h2>
+
+    <ul class="list-group">
+        @await Html.PartialAsync("SubscriptionPublic", Model.Public.Subscription)
+        @await Html.PartialAsync("SubscriptionOwner", Model.Owner.Subscription)
+    </ul>
+</li>
