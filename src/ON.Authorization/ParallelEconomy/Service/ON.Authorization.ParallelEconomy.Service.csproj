@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="../../../ON.Authentication/Shared/ON.Authentication.Shared.csproj" />
     <ProjectReference Include="../../../ON.Fragment/ON.Fragment.csproj" />
+    <ProjectReference Include="..\..\..\ON.Settings\Shared\ON.Settings.Shared.csproj" />
     <ProjectReference Include="..\Nugets\FortisAPI.Standard\FortisAPI.Standard.csproj" />
   </ItemGroup>
 

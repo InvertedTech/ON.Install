@@ -1,4 +1,5 @@
 ﻿@using ON.SimpleWeb.Models.Subscription.Main
+@inject ON.SimpleWeb.Helper.HtmlSubscriptionTierHelper subHelper;
 @model ON.SimpleWeb.Models.CMS.ManageViewModel
 @using userHelper = ON.Authentication.ONUserHelper;
 @{
@@ -52,7 +53,7 @@
                     }
                 }
             </td>
-            <td>@(CurrencyLevel.FromValue(record.SubscriptionLevel).Label)</td>
+            <td>@((await subHelper.FromAmount(record.SubscriptionLevel)).Label)</td>
         </tr>
 
     }

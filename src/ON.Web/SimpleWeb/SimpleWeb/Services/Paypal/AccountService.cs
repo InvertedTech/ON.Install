@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Fragments.Authorization;
 using ON.Fragments.Authorization.Payments.Paypal;
-using ON.SimpleWeb.Helper;
+using ON.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;

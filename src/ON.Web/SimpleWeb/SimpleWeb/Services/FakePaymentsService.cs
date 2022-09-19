@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Fragments.Authorization.Payments.Fake;
-using ON.SimpleWeb.Helper;
+using ON.Settings;
 using System.Threading.Tasks;
 
 namespace ON.SimpleWeb.Services
@@ -58,7 +58,8 @@ namespace ON.SimpleWeb.Services
         private Metadata GetMetadata()
         {
             var data = new Metadata();
-            data.Add("Authorization", "Bearer " + User.JwtToken);
+            if (User != null && !string.IsNullOrWhiteSpace(User.JwtToken))
+                data.Add("Authorization", "Bearer " + User.JwtToken);
 
             return data;
         }

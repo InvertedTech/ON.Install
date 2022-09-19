@@ -12,6 +12,7 @@ using ON.Authentication;
 using ON.Authorization.Paypal.Service.Clients;
 using ON.Authorization.Paypal.Service.Data;
 using ON.Authorization.Paypal.Service.Models;
+using ON.Settings;
 
 namespace ON.Authorization.Paypal.Service
 {
@@ -25,6 +26,7 @@ namespace ON.Authorization.Paypal.Service
         {
             Configuration = configuration;
         }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -36,6 +38,7 @@ namespace ON.Authorization.Paypal.Service
             services.AddSingleton<IPlanRecordProvider, FileSystemPlanRecordProvider>();
 
             services.AddJwtAuthentication();
+            services.AddSettingsHelpers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

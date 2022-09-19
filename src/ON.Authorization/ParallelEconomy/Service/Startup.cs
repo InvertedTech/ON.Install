@@ -12,6 +12,7 @@ using ON.Authentication;
 using ON.Authorization.ParallelEconomy.Service.Clients;
 using ON.Authorization.ParallelEconomy.Service.Data;
 using ON.Authorization.ParallelEconomy.Service.Models;
+using ON.Settings;
 
 namespace ON.Authorization.ParallelEconomy.Service
 {
@@ -35,6 +36,7 @@ namespace ON.Authorization.ParallelEconomy.Service
             services.AddSingleton<ISubscriptionRecordProvider, FileSystemSubscriptionRecordProvider>();
 
             services.AddJwtAuthentication();
+            services.AddSettingsHelpers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

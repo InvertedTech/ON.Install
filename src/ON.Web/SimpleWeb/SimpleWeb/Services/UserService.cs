@@ -2,11 +2,11 @@
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Fragments.Authentication;
-using ON.SimpleWeb.Helper;
 using ON.SimpleWeb.Models.Auth;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using ON.Settings;
 
 namespace ON.SimpleWeb.Services
 {

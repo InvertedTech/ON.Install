@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ON.Authentication;
+using ON.Settings;
 using ON.SimpleWeb.Helper;
 using ON.SimpleWeb.Services;
 
@@ -35,10 +36,11 @@ namespace ON.SimpleWeb
             services.AddScoped<FakePaymentsService>();
             services.AddScoped<UserService>();
 
-            services.AddSingleton<ServiceNameHelper>();
+            services.AddSingleton<HtmlSubscriptionTierHelper>();
             services.AddSingleton<SettingsService>();
 
             services.AddJwtAuthentication();
+            services.AddSettingsHelpers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

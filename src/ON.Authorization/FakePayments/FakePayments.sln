@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authorization.FakePayments.Web", "Web\ON.Authorization.FakePayments.Web.csproj", "{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authorization.FakePayments.Service", "Service\ON.Authorization.FakePayments.Service.csproj", "{5E0ED29F-EE04-46FC-A5DD-3CC3A691A871}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Fragment", "..\..\ON.Fragment\ON.Fragment.csproj", "{B9C552A1-ED60-489B-9B1B-316FA4348368}"
@@ -26,18 +24,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Debug|x64.Build.0 = Debug|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Debug|x86.Build.0 = Debug|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Release|x64.ActiveCfg = Release|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Release|x64.Build.0 = Release|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Release|x86.ActiveCfg = Release|Any CPU
-		{7B61392B-F8C6-4C59-9C6C-24C7F15B3B8C}.Release|x86.Build.0 = Release|Any CPU
 		{5E0ED29F-EE04-46FC-A5DD-3CC3A691A871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5E0ED29F-EE04-46FC-A5DD-3CC3A691A871}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E0ED29F-EE04-46FC-A5DD-3CC3A691A871}.Debug|x64.ActiveCfg = Debug|Any CPU

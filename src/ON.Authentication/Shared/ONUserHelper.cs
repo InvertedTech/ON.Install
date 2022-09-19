@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
+using System.Linq;
 
 namespace ON.Authentication
 {
@@ -18,7 +19,7 @@ namespace ON.Authentication
 
         public static ONUser ParseUser(HttpContext context)
         {
-            var user = ONUser.Parse(context.User.Claims);
+            var user = ONUser.Parse(context.User.Claims.ToArray());
             if (user != null)
                 user.JwtToken = GrabToken(context);
 

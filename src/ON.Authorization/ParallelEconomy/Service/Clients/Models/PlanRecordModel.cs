@@ -1,4 +1,6 @@
-﻿namespace ON.Authorization.ParallelEconomy.Service.Clients.Models
+﻿using ON.Fragments.Authorization;
+
+namespace ON.Authorization.ParallelEconomy.Service.Clients.Models
 {
     public class PlanRecordModel
     {
@@ -76,7 +78,7 @@
                     {
                         return new()
                         {
-                            value = tier.Value.ToString(),
+                            value = tier.Amount.ToString(),
                             currency_code = "USD",
                         };
                     }

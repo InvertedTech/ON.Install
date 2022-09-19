@@ -85,9 +85,9 @@ namespace ON.Authentication
                 yield return c;
         }
 
-        public static ONUser Parse(IEnumerable<Claim> claims)
+        public static ONUser Parse(Claim[] claims)
         {
-            if (claims == null)
+            if (claims == null || claims.Length == 0)
                 return null;
 
             var user = new ONUser();

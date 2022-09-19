@@ -1,10 +1,14 @@
-﻿@using userHelper = ON.Authentication.ONUserHelper;
+﻿@inject ON.Authentication.ONUserHelper userHelper;
+@inject ON.Settings.SettingsClient settings;
+@{
+    var siteTitle = (await settings.GetPublicData()).Personalization.Title;
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - @ON.SiteConfig.WebsiteName</title>
+    <title>@ViewData["Title"] - @siteTitle</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
@@ -42,7 +46,7 @@
                     </li>
                 </ul>
                 &nbsp; &nbsp;
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@ON.SiteConfig.WebsiteName</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@siteTitle</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -74,7 +78,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2022 - @ON.SiteConfig.WebsiteName -
+            &copy; 2022 - @siteTitle -
             Made with love by <a href="https://opennetworkfoundation.org">Open Network Foundation</a>
         </div>
     </footer>

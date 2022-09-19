@@ -57,6 +57,7 @@ message PersonalizationOwnerRecord {
 
 message SubscriptionPublicRecord {
   repeated ON.Fragments.Authorization.SubscriptionTier Tiers = 1;
+  bool AllowOther = 2;
 }
 
 message SubscriptionPrivateRecord {

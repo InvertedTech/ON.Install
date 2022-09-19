@@ -29,7 +29,6 @@ namespace ON.Settings.SimpleSettings.Service.Services
         private readonly OfflineHelper offlineHelper;
         private readonly ILogger<ServiceOpsService> logger;
         private readonly ISettingsDataProvider dataProvider;
-        private static readonly HashAlgorithm hasher = SHA256.Create();
 
         public SettingsService(OfflineHelper offlineHelper, ILogger<ServiceOpsService> logger, ISettingsDataProvider dataProvider)
         {
@@ -463,6 +462,7 @@ namespace ON.Settings.SimpleSettings.Service.Services
                     },
                     Subscription = new()
                     {
+                        AllowOther = true,
                     },
                     CMS = new()
                     {

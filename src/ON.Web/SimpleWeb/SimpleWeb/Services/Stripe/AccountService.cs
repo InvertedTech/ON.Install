@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ON.Fragments.Authorization.Payments.Stripe;
-using ON.SimpleWeb.Helper;
+using ON.Settings;
 using System.Linq;
 
 namespace ON.SimpleWeb.Services.Stripe

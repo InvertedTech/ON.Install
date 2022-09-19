@@ -1,78 +1,23 @@
 ﻿using ON.Fragments.Settings;
-using ON.SimpleWeb.Helper;
 using System.Threading.Tasks;
 using System;
 using System.Linq;
 using System.IO.Pipelines;
 using ON.Authentication;
 using Grpc.Core;
+using ON.Settings;
 
 namespace ON.SimpleWeb.Services
 {
     public class SettingsService
     {
         private readonly ServiceNameHelper nameHelper;
+        private readonly SettingsClient settingsClient;
 
-        private SettingsPublicData publicData = null;
-        private SettingsPrivateData privateData = null;
-        private SettingsOwnerData ownerData = null;
-
-        public SettingsService(ServiceNameHelper nameHelper)
+        public SettingsService(ServiceNameHelper nameHelper, SettingsClient settingsClient)
         {
             this.nameHelper = nameHelper;
-        }
-
-        public void Flush()
-        {
-            publicData = null;
-            privateData = null;
-            ownerData = null;
-        }
-
-        public async Task<SettingsOwnerData> GetOwnerData()
-        {
-            await LoadSettingsIfMissing();
-            return ownerData;
-        }
-
-        public async Task<SettingsPrivateData> GetPrivateData()
-        {
-            await LoadSettingsIfMissing();
-            return privateData;
-        }
-
-        public async Task<SettingsPublicData> GetPublicData()
-        {
-            await LoadSettingsIfMissing();
-            return publicData;
-        }
-
-        public async Task<CategoryRecord> GetCategoryById(string id)
-        {
-            await LoadSettingsIfMissing();
-
-            return publicData.CMS.Categories.FirstOrDefault(c => c.CategoryId == id);
-        }
-
-        public async Task<CategoryRecord> GetCategoryBySlug(string slug)
-        {
-            await LoadSettingsIfMissing();
-
-            return publicData.CMS.Categories.FirstOrDefault(c => c.UrlStub == slug);
-        }
-
-        public async Task<ChannelRecord> GetChannelById(string id)
-        {
-            await LoadSettingsIfMissing();
-
-            return publicData.CMS.Channels.FirstOrDefault(c => c.ChannelId == id);
-        }
-
-        public async Task<ChannelRecord> GetChannelBySlug(string slug)
-        {
-            await LoadSettingsIfMissing();
-
-            return publicData.CMS.Channels.FirstOrDefault(c => c.UrlStub == slug);
+            this.settingsClient = settingsClient;
         }
 
         public async Task<ModifyResponseErrorType> Modify(PersonalizationPublicRecord vm, ONUser user)
@@ -83,7 +28,7 @@ namespace ON.SimpleWeb.Services
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifyPersonalizationPublicDataAsync(new() { Data = vm }, GetMetadata(user));
 
-            Flush();
+            settingsClient.Flush();
 
             return res.Error;
         }
@@ -96,7 +41,7 @@ namespace ON.SimpleWeb.Services
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifySubscriptionPublicDataAsync(new() { Data = vm }, GetMetadata(user));
 
-            Flush();
+            settingsClient.Flush();
 
             return res.Error;
         }
@@ -109,30 +54,9 @@ namespace ON.SimpleWeb.Services
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifySubscriptionOwnerDataAsync(new() { Data = vm }, GetMetadata(user));
 
-            Flush();
+            settingsClient.Flush();
 
             return res.Error;
-        }
-
-        private async Task LoadSettingsIfMissing()
-        {
-            if (ownerData != null)
-                return;
-
-            var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
-            var res = await client.GetOwnerDataAsync(new(), GetMetadata());
-
-            publicData = res.Public;
-            privateData = res.Private;
-            ownerData = res.Owner;
-        }
-
-        private Metadata GetMetadata()
-        {
-            var data = new Metadata();
-            data.Add("Authorization", "Bearer " + nameHelper.ServiceToken);
-
-            return data;
         }
 
         private Metadata GetMetadata(ONUser user)

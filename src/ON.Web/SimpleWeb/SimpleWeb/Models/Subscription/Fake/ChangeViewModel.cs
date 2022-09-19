@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ON.Authentication;
 using ON.Fragments.Authentication;
+using ON.Fragments.Authorization;
 using ON.Fragments.Content;
+using ON.Settings;
 using ON.SimpleWeb.Models.Subscription.Main;
 using System;
 using System.Collections.Generic;
@@ -17,19 +20,40 @@ namespace ON.SimpleWeb.Models.Subscription.Fake
         {
         }
 
-        public ChangeViewModel(int level)
+        public static async Task<ChangeViewModel> Create(SubscriptionTierHelper subHelper, uint amount)
         {
-            var l = CurrencyLevel.FromValue((uint)level);
-            if (l != null)
+            var t = await subHelper.GetForAmount(amount, true);
+            var vm = new ChangeViewModel();
+            await vm.LoadTiers(subHelper);
+
+
+            if (t != null)
             {
-                Level = level;
+                vm.Level = (int)amount;
             }
             else
             {
-                Level = -1;
-                LevelOther = level;
+                if (amount == 0)
+                {
+                    vm.Level = 0;
+                }
+                else
+                {
+                    vm.Level = -1;
+                    vm.LevelOther = (int)amount;
+                }
             }
+
+            return vm;
         }
+
+        public async Task LoadTiers(SubscriptionTierHelper subHelper)
+        {
+            Tiers = await subHelper.GetAll();
+        }
+
+        public SubscriptionTier[] Tiers { get; private set; }
+
 
         [Display(Name = "Subscription Amount")]
         [DataType(DataType.Currency)]
@@ -53,11 +77,11 @@ namespace ON.SimpleWeb.Models.Subscription.Fake
                 if (Level < 1)
                     return 0;
 
-                var l = CurrencyLevel.FromValue((uint)Level);
-                if (l == null)
+                var t = Tiers?.FirstOrDefault(t => t.Amount == (uint)Level);
+                if (t == null)
                     return 0;
 
-                return (uint)l.Value;
+                return t.Amount;
             }
         }
 
@@ -82,8 +106,11 @@ namespace ON.SimpleWeb.Models.Subscription.Fake
                 return false;
             }
 
-            var l = CurrencyLevel.FromValue((uint)Level);
-            if (l == null)
+            if (Level == 0)
+                return true;
+
+            var t = Tiers.FirstOrDefault(t => t.Amount == (uint)Level);
+            if (t == null)
             {
                 ErrorMessage = "Subscription amount is not valid";
                 return false;

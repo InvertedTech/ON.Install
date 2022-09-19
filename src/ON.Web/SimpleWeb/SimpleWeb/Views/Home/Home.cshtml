@@ -1,9 +1,10 @@
 ﻿@model ON.SimpleWeb.Models.CMS.HomeViewModel
+@inject ON.Settings.SettingsClient settings;
 @{
     ViewData["Title"] = "Home";
 }
 
-<h1>@ON.SiteConfig.WebsiteDesc</h1>
+<h1>@((await settings.GetPublicData()).Personalization.MetaDescription)</h1>
 
 @foreach (var record in Model.Records)
 {

@@ -2,10 +2,6 @@ syntax = "proto3";
 
 package ON.Fragments.Authentication;
 
-import "google/api/annotations.proto";
-import "google/protobuf/timestamp.proto";
-import "Protos/ON/Fragments/Authentication/UserRecord.proto";
-
 // Service for Authentication user fragment interface
 service ServiceInterface {
   // Authenticate a service, return a bearer token if successful

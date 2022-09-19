@@ -2,7 +2,6 @@
 using Grpc.Core;
 using Microsoft.AspNetCore.Http;
 using ON.Authentication;
-using ON.SimpleWeb.Helper;
 using ON.Fragments.Authentication;
 using ON.Fragments.Content;
 using System;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ON.SimpleWeb.Models.CMS;
+using ON.Settings;
 
 namespace ON.SimpleWeb.Services
 {
@@ -229,7 +229,8 @@ namespace ON.SimpleWeb.Services
         private Metadata GetMetadata()
         {
             var data = new Metadata();
-            data.Add("Authorization", "Bearer " + User.JwtToken);
+            if (User != null && !string.IsNullOrWhiteSpace(User.JwtToken))
+                data.Add("Authorization", "Bearer " + User.JwtToken);
 
             return data;
         }
