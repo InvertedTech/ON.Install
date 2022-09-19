@@ -1,11 +1,11 @@
-name: Paypal-Web
+name: SimpleWeb
 
 on:
   push:
     branches:
     - main
     paths:
-    - 'src/ON.Authorization/Paypal/Web/**'
+    - 'src/ON.Web/SimpleWeb/SimpleWeb/**'
     - 'src/ON.Authentication/Shared/**'
     - 'src/ON.Crypto/ON.Crypto/**'
     - 'src/ON.Fragment/**'
@@ -27,19 +27,19 @@ jobs:
       run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     
     - name: Build amd64
-      run: docker build src/ --file src/ON.Authorization/Paypal/Web/Dockerfile-amd64 --tag opennetwork/paypal-web:linux-amd64
+      run: docker build src/ --file src/ON.Web/SimpleWeb/SimpleWeb/Dockerfile-amd64 --tag opennetwork/simpleweb:linux-amd64
     
     - name: Push amd64
-      run: docker push opennetwork/paypal-web:linux-amd64
+      run: docker push opennetwork/simpleweb:linux-amd64
     
     - name: Build arm64
-      run: docker build src/ --file src/ON.Authorization/Paypal/Web/Dockerfile-arm64 --tag opennetwork/paypal-web:linux-arm64
+      run: docker build src/ --file src/ON.Web/SimpleWeb/SimpleWeb/Dockerfile-arm64 --tag opennetwork/simpleweb:linux-arm64
     
     - name: Push arm64
-      run: docker push opennetwork/paypal-web:linux-arm64
+      run: docker push opennetwork/simpleweb:linux-arm64
     
     - name: Build arm32
-      run: docker build src/ --file src/ON.Authorization/Paypal/Web/Dockerfile-arm32 --tag opennetwork/paypal-web:linux-arm32
+      run: docker build src/ --file src/ON.Web/SimpleWeb/SimpleWeb/Dockerfile-arm32 --tag opennetwork/simpleweb:linux-arm32
     
     - name: Push arm32
-      run: docker push opennetwork/paypal-web:linux-arm32
+      run: docker push opennetwork/simpleweb:linux-arm32

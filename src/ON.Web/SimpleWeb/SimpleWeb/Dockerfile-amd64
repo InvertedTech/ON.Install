@@ -5,12 +5,12 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ON.Authentication/Shared ON.Authentication/Shared
-COPY ON.Content/SimpleCMS ON.Content/SimpleCMS
+COPY ON.Web ON.Web
 COPY ON.Fragment ON.Fragment
 COPY ON.Crypto ON.Crypto
 COPY ON.Settings ON.Settings
-RUN dotnet restore "ON.Content/SimpleCMS/Web/ON.SimpleWeb.csproj"
-WORKDIR "/src/ON.Content/SimpleCMS/Web"
+RUN dotnet restore "ON.Web/SimpleWeb/SimpleWeb/ON.SimpleWeb.csproj"
+WORKDIR "/src/ON.Web/SimpleWeb/SimpleWeb"
 RUN dotnet build "ON.SimpleWeb.csproj" -c Release -o /app/build
 
 FROM build AS publish
