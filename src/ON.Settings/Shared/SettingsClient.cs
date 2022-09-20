@@ -7,6 +7,7 @@ using EventStore.Client;
 using System;
 using System.Threading;
 using System.Text;
+using PubSub;
 
 namespace ON.Settings
 {
@@ -51,14 +52,14 @@ namespace ON.Settings
             catch { }
         }
 
-        private Task ProcessEvent(StreamSubscription sub, ResolvedEvent e, CancellationToken token)
+        private async Task ProcessEvent(StreamSubscription sub, ResolvedEvent e, CancellationToken token)
         {
             var json = Encoding.ASCII.GetString(e.Event.Data.Span);
             var record = Google.Protobuf.JsonParser.Default.Parse<SettingsRecord>(json);
 
             Load(record);
 
-            return Task.CompletedTask;
+            await Hub.Default.PublishAsync(record);
         }
 
         private void Load(SettingsRecord record)

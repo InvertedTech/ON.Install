@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using ON.Fragments.Authorization;
+using ON.Fragments.Settings;
 using ON.Settings;
+using PubSub;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +25,8 @@ namespace ON.SimpleWeb.Helper
             this.subHelper = subHelper;
 
             LoadTiers();
+
+            Hub.Default.Subscribe<SettingsRecord>(r => LoadTiers());
         }
 
         private void LoadTiers()
