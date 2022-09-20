@@ -119,6 +119,11 @@ services:
       - EVENTSTORE_INSECURE=true
       - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
       - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    volumes:
+      - source: tmpdata/eventdb/data
+        target: /var/lib/eventstore
+      - source: tmpdata/eventdb/logs
+        target: /var/log/eventstore
 # - name: grpc-lb
 # dockerFile: grpc-lb/Dockerfile
 # dockerFileContext: grpc-lb

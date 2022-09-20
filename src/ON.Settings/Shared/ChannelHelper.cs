@@ -16,14 +16,14 @@ namespace ON.Settings
             this.settingsClient = settingsClient;
         }
 
-        public async Task<ChannelRecord> GetChannelById(string id)
+        public ChannelRecord GetChannelById(string id)
         {
-            return (await settingsClient.GetPublicData()).CMS.Channels.FirstOrDefault(c => c.ChannelId == id);
+            return settingsClient.PublicData?.CMS?.Channels?.FirstOrDefault(c => c.ChannelId == id);
         }
 
-        public async Task<ChannelRecord> GetChannelBySlug(string slug)
+        public ChannelRecord GetChannelBySlug(string slug)
         {
-            return (await settingsClient.GetPublicData()).CMS.Channels.FirstOrDefault(c => c.UrlStub == slug);
+            return settingsClient.PublicData?.CMS?.Channels?.FirstOrDefault(c => c.UrlStub == slug);
         }
     }
 }

@@ -3,7 +3,7 @@
 @model IndexViewModel
 @{
     ViewData["Title"] = "My Subscriptions";
-    var subSet = (await settingsClient.GetOwnerData()).Subscription;
+    var subSet = settingsClient.OwnerData?.Subscription;
 }
 
 <h1>My Subscriptions</h1>

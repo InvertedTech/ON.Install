@@ -46,7 +46,7 @@ namespace ON.Authorization.Paypal.Service.Clients
 
         private async Task EnsurePlans()
         {
-            foreach (var tier in await subHelper.GetAll())
+            foreach (var tier in subHelper.GetAll())
                 await EnsurePlan(tier);
         }
 

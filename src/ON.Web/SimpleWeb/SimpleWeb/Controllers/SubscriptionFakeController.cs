@@ -35,14 +35,14 @@ namespace ON.SimpleWeb.Controllers
         public async Task<IActionResult> ChangeGet()
         {
             var rec = await paymentsService.GetCurrentRecord();
-            var vm = await ChangeViewModel.Create(subHelper, (rec?.Level ?? 0));
+            var vm = ChangeViewModel.Create(subHelper, (rec?.Level ?? 0));
             return View("Change", vm);
         }
 
         [HttpPost]
         public async Task<IActionResult> ChangePost(ChangeViewModel vm)
         {
-            await vm.LoadTiers(subHelper);
+            vm.LoadTiers(subHelper);
             if (!vm.Validate())
                 return View("Change", vm);
 

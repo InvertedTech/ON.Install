@@ -39,7 +39,7 @@ namespace ON.Authorization.ParallelEconomy.Service.Clients
 
             Plans = new PlanList();
 
-            Plans.Records.AddRange(this.subHelper.GetAll().Result.Select(s => new PlanRecord() { Name = s.Name, Value = (uint)s.Amount }));
+            Plans.Records.AddRange(this.subHelper.GetAll().Select(s => new PlanRecord() { Name = s.Name, Value = (uint)s.Amount }));
         }
 
         internal async Task<bool> CancelSubscription(string subscriptionId, string reason)

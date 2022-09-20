@@ -24,9 +24,9 @@ namespace ON.SimpleWeb.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var v = await IndexViewModel.Create(subHelper, userService.User);
+            var v = IndexViewModel.Create(subHelper, userService.User);
 
             return View(v);
         }

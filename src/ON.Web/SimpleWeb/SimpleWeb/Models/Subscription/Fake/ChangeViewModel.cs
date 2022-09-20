@@ -20,11 +20,11 @@ namespace ON.SimpleWeb.Models.Subscription.Fake
         {
         }
 
-        public static async Task<ChangeViewModel> Create(SubscriptionTierHelper subHelper, uint amount)
+        public static ChangeViewModel Create(SubscriptionTierHelper subHelper, uint amount)
         {
-            var t = await subHelper.GetForAmount(amount, true);
+            var t = subHelper.GetForAmount(amount, true);
             var vm = new ChangeViewModel();
-            await vm.LoadTiers(subHelper);
+            vm.LoadTiers(subHelper);
 
 
             if (t != null)
@@ -47,9 +47,9 @@ namespace ON.SimpleWeb.Models.Subscription.Fake
             return vm;
         }
 
-        public async Task LoadTiers(SubscriptionTierHelper subHelper)
+        public void LoadTiers(SubscriptionTierHelper subHelper)
         {
-            Tiers = await subHelper.GetAll();
+            Tiers = subHelper.GetAll();
         }
 
         public SubscriptionTier[] Tiers { get; private set; }

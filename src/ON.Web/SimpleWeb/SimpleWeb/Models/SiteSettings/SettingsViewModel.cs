@@ -17,19 +17,19 @@ namespace ON.SimpleWeb.Models.SiteSettings
 
         public IndexViewModel() { }
 
-        public static async Task<IndexViewModel> Load(SettingsClient settingsClient, ONUser user)
+        public static IndexViewModel Load(SettingsClient settingsClient, ONUser user)
         {
             if (!user.IsAdminOrHigher)
                 return new();
 
             var vm = new IndexViewModel()
             {
-                Private = await settingsClient.GetPrivateData(),
-                Public = await settingsClient.GetPublicData(),
+                Private = settingsClient.PrivateData,
+                Public = settingsClient.PublicData,
             };
 
             if (user.IsOwner)
-                vm.Owner = await settingsClient.GetOwnerData();
+                vm.Owner = settingsClient.OwnerData;
 
             return vm;
         }

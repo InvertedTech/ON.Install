@@ -15,7 +15,7 @@ namespace ON.SimpleWeb.Models.Subscription.Main
         {
         }
 
-        public static async Task<IndexViewModel> Create(SubscriptionTierHelper subHelper, ONUser user)
+        public static IndexViewModel Create(SubscriptionTierHelper subHelper, ONUser user)
         {
             var vm = new IndexViewModel()
             {
@@ -23,7 +23,7 @@ namespace ON.SimpleWeb.Models.Subscription.Main
                 SubscriptionProvider = user.SubscriptionProvider,
             };
 
-            var t = (await subHelper.GetForUser(user));
+            var t = subHelper.GetForUser(user);
             if (t != null)
             {
                 vm.SubscriptionLevelLabel = t.Label;

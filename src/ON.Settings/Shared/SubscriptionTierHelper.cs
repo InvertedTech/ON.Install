@@ -18,22 +18,22 @@ namespace ON.Settings
             this.settingsClient = settingsClient;
         }
 
-        public async Task<bool> AllowOther()
+        public bool AllowOther()
         {
-            return (await settingsClient.GetPublicData()).Subscription.AllowOther;
+            return settingsClient.PublicData?.Subscription?.AllowOther ?? false;
         }
 
-        public async Task<SubscriptionTier[]> GetAll()
+        public SubscriptionTier[] GetAll()
         {
-            return (await settingsClient.GetPublicData()).Subscription.Tiers.OrderBy(t => t.Amount).ToArray();
+            return settingsClient.PublicData?.Subscription?.Tiers?.OrderBy(t => t.Amount)?.ToArray() ?? new SubscriptionTier[0];
         }
 
-        public async Task<SubscriptionTier> GetForAmount(uint amount, bool strict = false)
+        public SubscriptionTier GetForAmount(uint amount, bool strict = false)
         {
             if (amount < 1)
                 return null;
 
-            var tiers = await GetAll();
+            var tiers = GetAll();
 
             var tier = tiers.FirstOrDefault(c => c.Amount == amount);
             if (tier != null)
@@ -51,12 +51,12 @@ namespace ON.Settings
             };
         }
 
-        public async Task<SubscriptionTier> GetForUser(ONUser user)
+        public SubscriptionTier GetForUser(ONUser user)
         {
             if (user == null || user.SubscriptionLevel < 1)
                 return null;
 
-            return await GetForAmount(user.SubscriptionLevel);
+            return GetForAmount(user.SubscriptionLevel);
         }
     }
 }
