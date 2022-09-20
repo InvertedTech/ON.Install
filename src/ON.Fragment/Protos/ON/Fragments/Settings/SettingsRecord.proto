@@ -4,6 +4,7 @@ package ON.Fragments.Settings;
 
 import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Authorization/SharedTypes.proto";
+import "Protos/ON/Fragments/Authorization/Payments/Fake/FakePaymentSettings.proto";
 import "Protos/ON/Fragments/Authorization/Payments/ParallelEconomy/ParallelEconomySettings.proto";
 import "Protos/ON/Fragments/Authorization/Payments/Stripe/StripeSettings.proto";
 import "Protos/ON/Fragments/Authorization/Payments/Paypal/PaypalSettings.proto";
@@ -67,6 +68,7 @@ message SubscriptionOwnerRecord {
   ON.Fragments.Authorization.Payments.ParallelEconomy.ParallelEconomySettings ParallelEconomy = 1;
   ON.Fragments.Authorization.Payments.Stripe.StripeSettings Stripe = 2;
   ON.Fragments.Authorization.Payments.Paypal.PaypalSettings Paypal = 3;
+  ON.Fragments.Authorization.Payments.Fake.FakePaymentSettings Fake = 4;
 }
 
 message CommentsPublicRecord {

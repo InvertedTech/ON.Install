@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Fragments.Authorization;
+using ON.Fragments.Authorization.Payments.Fake;
 using ON.Fragments.Authorization.Payments.ParallelEconomy;
 using ON.Fragments.Authorization.Payments.Paypal;
 using ON.Fragments.Authorization.Payments.Stripe;
@@ -111,6 +112,25 @@ namespace ON.SimpleWeb.Controllers
             if (tier == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
             record.Tiers.Remove(tier);
+
+            var res = await settingsService.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
+        [HttpPost("subscription/owner/fake")]
+        public async Task<IActionResult> ModifySubscriptionOwnerFake(FakePaymentSettings vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = await settingsClient.GetOwnerData();
+            var record = data.Subscription;
+
+            record.Fake = vm;
 
             var res = await settingsService.Modify(record, userHelper.MyUser);
 

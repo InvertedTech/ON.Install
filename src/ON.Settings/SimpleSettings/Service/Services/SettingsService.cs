@@ -492,6 +492,10 @@ namespace ON.Settings.SimpleSettings.Service.Services
                         Paypal = new()
                         {
                             Enabled = false,
+                        },
+                        Fake = new()
+                        {
+                            Enabled = true,
                         }
                     },
                 }
