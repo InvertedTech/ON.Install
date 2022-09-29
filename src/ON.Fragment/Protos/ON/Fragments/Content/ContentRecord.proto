@@ -14,7 +14,8 @@ message ContentPublicRecord {
   string ContentID = 1;   // Guid for the content record
   google.protobuf.Timestamp CreatedOnUTC = 2;  // UTC timestamp when content was created
   google.protobuf.Timestamp ModifiedOnUTC = 3; // UTC timestamp when content record was last modified
-  google.protobuf.Timestamp PublishOnUTC = 4;  // UTC timestamp when content was published
+  google.protobuf.Timestamp PublishOnUTC = 4;  // UTC timestamp when content was or will be published
+  google.protobuf.Timestamp AnnounceOnUTC = 7;  // UTC timestamp when content was or will be announced
   google.protobuf.Timestamp PinnedOnUTC = 5;   // UTC timestamp when content was pinned
   google.protobuf.Timestamp DeletedOnUTC = 6;   // UTC timestamp when content was deleted
 
@@ -25,6 +26,7 @@ message ContentPrivateRecord {
   string CreatedBy = 2;
   string ModifiedBy = 3;
   string PublishedBy = 4;
+  string AnnouncedBy = 7;
   string PinnedBy = 5;
   string DeletedBy = 6;
 

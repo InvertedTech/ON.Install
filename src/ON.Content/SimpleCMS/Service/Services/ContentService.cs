@@ -25,6 +25,27 @@ namespace ON.Content.SimpleCMS.Service
             this.dataProvider = dataProvider;
         }
 
+        [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
+        public override async Task<AnnounceContentResponse> AnnounceContent(AnnounceContentRequest request, ServerCallContext context)
+        {
+            if (request.AnnounceOnUTC == null)
+                return new();
+
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+
+            var contentId = request.ContentID.ToGuid();
+            var record = await dataProvider.GetById(contentId);
+            if (record == null)
+                return new();
+
+            record.Public.AnnounceOnUTC = request.AnnounceOnUTC;
+            record.Private.AnnouncedBy = user.Id.ToString();
+
+            await dataProvider.Save(record);
+
+            return new() { Record = record };
+        }
+
         [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
         public override async Task<CreateContentResponse> CreateContent(CreateContentRequest request, ServerCallContext context)
         {
@@ -333,6 +354,24 @@ namespace ON.Content.SimpleCMS.Service
 
             record.Public.PublishOnUTC = request.PublishOnUTC;
             record.Private.PublishedBy = user.Id.ToString();
+
+            await dataProvider.Save(record);
+
+            return new() { Record = record };
+        }
+
+        [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
+        public override async Task<UnannounceContentResponse> UnannounceContent(UnannounceContentRequest request, ServerCallContext context)
+        {
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+
+            var contentId = request.ContentID.ToGuid();
+            var record = await dataProvider.GetById(contentId);
+            if (record == null)
+                return new();
+
+            record.Public.AnnounceOnUTC = null;
+            record.Private.AnnouncedBy = user.Id.ToString();
 
             await dataProvider.Save(record);
 
