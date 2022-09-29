@@ -23,19 +23,62 @@ service SettingsInterface {
     };
   }
 
-  // Get all settings data
-  rpc GetAllData (GetAllDataRequest) returns (GetAllDataResponse)
+  // Get admin settings data
+  rpc GetAdminData (GetAdminDataRequest) returns (GetAdminDataResponse)
   {
     option (google.api.http) = {
-      get: "/api/settings/all"
+      get: "/api/settings/admin"
     };
   }
 
-  // Get all settings data
-  rpc GetAllNewerData (GetAllNewerDataRequest) returns (GetAllNewerDataResponse)
+  // Get admin settings data
+  rpc GetAdminNewerData (GetAdminNewerDataRequest) returns (GetAdminNewerDataResponse)
   {
     option (google.api.http) = {
-      get: "/api/settings/all/newer/{VersionNum}"
+      get: "/api/settings/admin/newer/{VersionNum}"
+    };
+  }
+
+  // Get owner settings data
+  rpc GetOwnerData (GetOwnerDataRequest) returns (GetOwnerDataResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/settings/owner"
+    };
+  }
+
+  // Get owner settings data
+  rpc GetOwnerNewerData (GetOwnerNewerDataRequest) returns (GetOwnerNewerDataResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/settings/owner/newer/{VersionNum}"
+    };
+  }
+
+  // Modify CMS public data
+  rpc ModifyCMSPublicData (ModifyCMSPublicDataRequest) returns (ModifyCMSPublicDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/cms/public"
+      body: "*"
+    };
+  }
+
+  // Modify CMS private data
+  rpc ModifyCMSPrivateData (ModifyCMSPrivateDataRequest) returns (ModifyCMSPrivateDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/cms/private"
+      body: "*"
+    };
+  }
+
+  // Modify CMS owner data
+  rpc ModifyCMSOwnerData (ModifyCMSOwnerDataRequest) returns (ModifyCMSOwnerDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/cms/owner"
+      body: "*"
     };
   }
 
@@ -53,6 +96,15 @@ service SettingsInterface {
   {
     option (google.api.http) = {
       post: "/api/settings/personalization/private"
+      body: "*"
+    };
+  }
+
+  // Modify Personalization owner data
+  rpc ModifyPersonalizationOwnerData (ModifyPersonalizationOwnerDataRequest) returns (ModifyPersonalizationOwnerDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/personalization/owner"
       body: "*"
     };
   }
@@ -75,6 +127,15 @@ service SettingsInterface {
     };
   }
 
+  // Modify Subscription owner data
+  rpc ModifySubscriptionOwnerData (ModifySubscriptionOwnerDataRequest) returns (ModifySubscriptionOwnerDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/subscription/owner"
+      body: "*"
+    };
+  }
+
   // Modify Comments public data
   rpc ModifyCommentsPublicData (ModifyCommentsPublicDataRequest) returns (ModifyCommentsPublicDataResponse)
   {
@@ -92,13 +153,22 @@ service SettingsInterface {
       body: "*"
     };
   }
+
+  // Modify Comments owner data
+  rpc ModifyCommentsOwnerData (ModifyCommentsOwnerDataRequest) returns (ModifyCommentsOwnerDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/comments/owner"
+      body: "*"
+    };
+  }
 }
 
 message GetPublicDataRequest {
 }
 
 message GetPublicDataResponse {
-  SettingsRecord.PublicData Data = 1;
+  SettingsPublicData Public = 1;
 }
 
 message GetPublicNewerDataRequest {
@@ -106,27 +176,73 @@ message GetPublicNewerDataRequest {
 }
 
 message GetPublicNewerDataResponse {
-  SettingsRecord.PublicData Data = 1;
+  SettingsPublicData Public = 1;
 }
 
-message GetAllDataRequest {
+message GetAdminDataRequest {
 }
 
-message GetAllDataResponse {
-  SettingsRecord Data = 1;
+message GetAdminDataResponse {
+  SettingsPublicData Public = 1;
+  SettingsPrivateData Private = 2;
 }
 
-message GetAllNewerDataRequest {
+message GetAdminNewerDataRequest {
   uint32 VersionNum = 1;
 }
 
-message GetAllNewerDataResponse {
-  SettingsRecord Data = 1;
+message GetAdminNewerDataResponse {
+  SettingsPublicData Public = 1;
+  SettingsPrivateData Private = 2;
+}
+
+message GetOwnerDataRequest {
+}
+
+message GetOwnerDataResponse {
+  SettingsPublicData Public = 1;
+  SettingsPrivateData Private = 2;
+  SettingsOwnerData Owner = 3;
+}
+
+message GetOwnerNewerDataRequest {
+  uint32 VersionNum = 1;
+}
+
+message GetOwnerNewerDataResponse {
+  SettingsPublicData Public = 1;
+  SettingsPrivateData Private = 2;
+  SettingsOwnerData Owner = 3;
 }
 
 enum ModifyResponseErrorType {
   NoError = 0;
   UnknownError = -1;
+}
+
+
+message ModifyCMSPublicDataRequest {
+  CMSPublicRecord Data = 1;
+}
+
+message ModifyCMSPublicDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyCMSPrivateDataRequest {
+  CMSPrivateRecord Data = 1;
+}
+
+message ModifyCMSPrivateDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyCMSOwnerDataRequest {
+  CMSOwnerRecord Data = 1;
+}
+
+message ModifyCMSOwnerDataResponse {
+  ModifyResponseErrorType Error = 1;
 }
 
 message ModifyPersonalizationPublicDataRequest {
@@ -142,6 +258,14 @@ message ModifyPersonalizationPrivateDataRequest {
 }
 
 message ModifyPersonalizationPrivateDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyPersonalizationOwnerDataRequest {
+  PersonalizationOwnerRecord Data = 1;
+}
+
+message ModifyPersonalizationOwnerDataResponse {
   ModifyResponseErrorType Error = 1;
 }
 
@@ -161,6 +285,14 @@ message ModifySubscriptionPrivateDataResponse {
   ModifyResponseErrorType Error = 1;
 }
 
+message ModifySubscriptionOwnerDataRequest {
+  SubscriptionOwnerRecord Data = 1;
+}
+
+message ModifySubscriptionOwnerDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
 message ModifyCommentsPublicDataRequest {
   CommentsPublicRecord Data = 1;
 }
@@ -176,3 +308,12 @@ message ModifyCommentsPrivateDataRequest {
 message ModifyCommentsPrivateDataResponse {
   ModifyResponseErrorType Error = 1;
 }
+
+message ModifyCommentsOwnerDataRequest {
+  CommentsOwnerRecord Data = 1;
+}
+
+message ModifyCommentsOwnerDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+

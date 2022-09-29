@@ -1,0 +1,22 @@
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-focal-arm32v7 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ON.Authentication/Shared ON.Authentication/Shared
+COPY ON.Web ON.Web
+COPY ON.Fragment ON.Fragment
+COPY ON.Crypto ON.Crypto
+COPY ON.Settings ON.Settings
+RUN dotnet restore "ON.Web/SimpleWeb/SimpleWeb/ON.SimpleWeb.csproj"
+WORKDIR "/src/ON.Web/SimpleWeb/SimpleWeb"
+RUN dotnet build "ON.SimpleWeb.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "ON.SimpleWeb.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "ON.SimpleWeb.dll"]

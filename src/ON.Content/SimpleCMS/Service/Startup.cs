@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Google.Api;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,13 @@ namespace ON.Content.SimpleCMS.Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddGrpc(options =>
+            {
+                // options.EnableDetailedErrors = true;
+                options.MaxReceiveMessageSize = null;
+                options.MaxSendMessageSize = null;
+            });
+
             services.AddGrpcHttpApi();
 
             services.AddSwaggerGen(c =>
@@ -40,7 +48,9 @@ namespace ON.Content.SimpleCMS.Service
             services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddSingleton<IContentDataProvider, FileSystemContentDataProvider>();
+            services.AddSingleton<IAssetDataProvider, FileSystemAssetDataProvider>();
+            services.AddSingleton<IContentDataProvider, MemCachedFileSystemContentDataProvider>();
+            services.AddSingleton<FileSystemContentDataProvider>();
 
             services.AddJwtAuthentication();
         }
@@ -64,10 +74,11 @@ namespace ON.Content.SimpleCMS.Service
 
             app.UseRouting();
 
-            app.UseJwtAuthentication();
+            app.UseJwtApiAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGrpcService<AssetService>();
                 endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ContentService>();
                 endpoints.MapGrpcService<ServiceOpsService>();

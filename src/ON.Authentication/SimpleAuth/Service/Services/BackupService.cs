@@ -1,5 +1,6 @@
 using Google.Protobuf;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using ON.Authentication.SimpleAuth.Service.Data;
 using ON.Authentication.SimpleAuth.Service.Helpers;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace ON.Authentication.SimpleAuth.Service.Services
 {
+    [Authorize(Roles = ONUser.ROLE_CAN_BACKUP)]
     public class BackupService : BackupInterface.BackupInterfaceBase
     {
         private readonly IUserDataProvider dataProvider;
@@ -59,16 +61,17 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
+        [AllowAnonymous]
         public override async Task ExportUsers(ExportUsersRequest request, IServerStreamWriter<ExportUsersResponse> responseStream, ServerCallContext context)
         {
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !(userToken.Roles.Contains(ONUser.ROLE_BACKUP) || userToken.Roles.Contains(ONUser.ROLE_ADMIN)))
+                if (userToken == null || !(userToken.IsBackup || userToken.IsAdminOrHigher))
                     return;
 
                 await foreach (var r in dataProvider.GetAll())
-                    await responseStream.WriteAsync(new ExportUsersResponse() { UserRecord = r.Public });
+                    await responseStream.WriteAsync(new ExportUsersResponse() { UserRecord = r.Normal.Public });
             }
             catch
             {
@@ -80,7 +83,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             logger.LogWarning("*** RestoreAllData - Entrance ***");
 
             RestoreAllDataResponse res = new RestoreAllDataResponse();
-            HashSet<Guid> idsLoaded = new HashSet<Guid>();
+            List<Guid> idsLoaded = new List<Guid>();
 
             await requestStream.MoveNext();
             if (requestStream.Current.RequestOneofCase != RestoreAllDataRequest.RequestOneofOneofCase.Mode)
@@ -93,23 +96,9 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
             try
             {
-                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null)
-                {
-                    logger.LogWarning("*** RestoreAllData - token bad ***");
-                    logger.LogWarning("*** RestoreAllData - jwttoken (" + (context.GetHttpContext()?.Request?.Headers["Authorization"] ?? "empty") + ") ***");
-                    return res;
-                }
-                if (!userToken.Roles.Contains(ONUser.ROLE_BACKUP))
-                {
-                    logger.LogWarning("*** RestoreAllData - not backup user: (" + String.Join(',', userToken.Roles) + ") ***");
-                    logger.LogWarning("*** RestoreAllData - jwttoken (" + (context.GetHttpContext()?.Request?.Headers["Authorization"] ?? "empty") + ") ***");
-                    return res;
-                }
-
                 await foreach (var r in requestStream.ReadAllAsync())
                 {
-                    Guid id = r.Record.Data.Public.UserID.ToGuid();
+                    Guid id = r.Record.Data.Normal.Public.UserID.ToGuid();
                     idsLoaded.Add(id);
 
                     try
@@ -136,9 +125,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 if (restoreMode == RestoreAllDataRequest.Types.RestoreMode.Wipe)
                 {
-                    await foreach (var r in dataProvider.GetAll())
+                    foreach (var id in dataProvider.GetAllIds())
                     {
-                        Guid id = r.Public.UserID.ToGuid();
                         if (!idsLoaded.Contains(id))
                         {
                             await dataProvider.Delete(id);
@@ -152,10 +140,6 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 logger.LogWarning("*** RestoreAllData - ERROR ***");
                 logger.LogWarning($"*** RestoreAllData - ERROR: {ex.Message} ***");
             }
-
-            logger.LogWarning("*** RestoreAllData - Start Reindex ***");
-
-            await dataProvider.ReindexAll();
 
             logger.LogWarning("*** RestoreAllData - Exit ***");
 

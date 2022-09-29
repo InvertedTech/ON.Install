@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ON.Fragments.Authentication;
+
+// Service for Authentication user fragment interface
+service ServiceInterface {
+  // Authenticate a service, return a bearer token if successful
+  rpc AuthenticateService (AuthenticateServiceRequest) returns (AuthenticateServiceResponse) { }
+}
+  
+message AuthenticateServiceRequest {
+}
+  
+message AuthenticateServiceResponse {
+  string BearerToken = 1;
+}

@@ -1,0 +1,41 @@
+﻿@using ON.SimpleWeb.Models.Subscription.PE
+@using ON.SimpleWeb.Services.PE
+@model CurrentViewModel
+@inject AccountService acct;
+@{
+    ViewData["Title"] = "Membership";
+}
+
+@if (Model != null)
+{
+    <h1>My Subscription</h1>
+    <br />
+    <span>$@(Model.Level) - @(Model.Name)</span>
+
+    @if (Model.IsCancelled)
+    {
+        <span style="color: red">Cancelled</span><br /><br />
+    }
+    else
+    {
+        <br />
+        <a href="/subscription/paralleleconomy/cancel">Cancel my subscription</a>
+    }
+}
+
+@if (Model == null || Model.IsCancelled)
+{
+    <h1>Sign up for membership</h1>
+    <br />
+
+    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center" style="color: black;">
+        @foreach (var plan in acct.Plans)
+        {
+            <div class="col">
+                <div class="card mb-4 rounded-3 shadow-sm">
+                    <a href="/subscription/paralleleconomy/newintent?level=@(plan.Value)">$@(plan.Value) - @(plan.Name)</a>
+                </div>
+            </div>
+        }
+    </div>
+}

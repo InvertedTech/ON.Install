@@ -12,17 +12,18 @@ namespace ON.Authentication.SimpleAuth.Web.Models.Admin
     {
         public EditUserViewModel() { }
 
-        public EditUserViewModel(UserRecord user)
+        public EditUserViewModel(UserNormalRecord user)
         {
-            UserName = user.Public.UserName;
-            DisplayName = user.Public.DisplayName;
-            Email = user.Private.Emails.FirstOrDefault();
+            UserName = user.Public.Data.UserName;
+            DisplayName = user.Public.Data.DisplayName;
+            Email = user.Private.Data.Emails.FirstOrDefault();
 
-            IsAdmin = user.Public.Roles.Contains(ONUser.ROLE_ADMIN);
-            IsContentPublisher = user.Public.Roles.Contains(ONUser.ROLE_CONTENT_PUBLISHER);
-            IsContentWriter = user.Public.Roles.Contains(ONUser.ROLE_CONTENT_WRITER);
-            IsCommentModerator = user.Public.Roles.Contains(ONUser.ROLE_COMMENT_MODERATOR);
-            IsCommentAppelateJudge = user.Public.Roles.Contains(ONUser.ROLE_COMMENT_APPELLATE_JUDGE);
+            IsOwner = user.Private.Roles.Contains(ONUser.ROLE_OWNER);
+            IsAdmin = user.Private.Roles.Contains(ONUser.ROLE_ADMIN);
+            IsContentPublisher = user.Private.Roles.Contains(ONUser.ROLE_CONTENT_PUBLISHER);
+            IsContentWriter = user.Private.Roles.Contains(ONUser.ROLE_CONTENT_WRITER);
+            IsCommentModerator = user.Private.Roles.Contains(ONUser.ROLE_COMMENT_MODERATOR);
+            IsCommentAppelateJudge = user.Private.Roles.Contains(ONUser.ROLE_COMMENT_APPELLATE_JUDGE);
         }
 
         [Display(Name = "User Name")]
@@ -38,6 +39,9 @@ namespace ON.Authentication.SimpleAuth.Web.Models.Admin
 
         [Required, DataType(DataType.EmailAddress), EmailAddress]
         public string Email { get; set; }
+
+        [Display(Name = "Owner")]
+        public bool IsOwner { get; set; }
 
         [Display(Name = "Admin")]
         public bool IsAdmin { get; set; }

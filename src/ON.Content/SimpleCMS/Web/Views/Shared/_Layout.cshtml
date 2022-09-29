@@ -23,11 +23,11 @@
             {
                 <li><a class="" href="/subscription/pick">Subscription</a></li>
                 <li><a class="" href="/settings">My Profile</a></li>
-                @if (User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_CONTENT_PUBLISHER) || User.IsInRole(ONUser.ROLE_CONTENT_WRITER))
+                @if (User.IsInRole(ONUser.ROLE_OWNER) || User.IsInRole(ONUser.ROLE_ADMIN) || User.IsInRole(ONUser.ROLE_CONTENT_PUBLISHER) || User.IsInRole(ONUser.ROLE_CONTENT_WRITER))
                 {
                     <li><a class="" href="/content/manage">Articles</a></li>
                 }
-                @if (User.IsInRole(ONUser.ROLE_ADMIN))
+                @if (User.IsInRole(ONUser.ROLE_OWNER) || User.IsInRole(ONUser.ROLE_ADMIN))
                 {
                     <li><a class="" href="/auth/admin">Manage Users</a></li>
                 }

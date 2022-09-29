@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package ON.Fragments.Content;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "Protos/ON/Fragments/Content/AudioAssetRecord.proto";
+import "Protos/ON/Fragments/Content/ImageAssetRecord.proto";
+
+// Service for Asset fragment interface
+service AssetInterface {
+  rpc CreateAsset (CreateAssetRequest) returns (CreateAssetResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/asset"
+      body: "*"
+    };
+  }
+  rpc GetAsset (GetAssetRequest) returns (GetAssetResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/asset/{AssetID}"
+    };
+  }
+  rpc GetAssetAdmin (GetAssetAdminRequest) returns (GetAssetAdminResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/admin/asset/{AssetID}"
+    };
+  }
+  rpc GetAssetByOldContentID (GetAssetByOldContentIDRequest) returns (GetAssetByOldContentIDResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/admin/asset/old/{OldAssetID}"
+    };
+  }
+  rpc GetListOfOldContentIDs (GetListOfOldContentIDsRequest) returns (stream GetListOfOldContentIDsResponse)
+  {
+  }
+}
+  
+message CreateAssetRequest {
+  oneof CreateAssetRequest_oneof
+  {
+    AudioAssetData Audio = 1;
+    ImageAssetData Image = 2;
+  }
+}
+  
+message CreateAssetResponse {
+  AssetRecord Record = 1;
+}
+
+message GetAssetRequest {
+  string AssetID = 1;   // Guid for the Asset record
+}
+  
+message GetAssetResponse {
+  oneof GetAssetResponse_oneof
+  {
+    AudioAssetPublicRecord Audio = 1;
+    ImageAssetPublicRecord Image = 2;
+  }
+}
+  
+message GetAssetAdminRequest {
+  string AssetID = 1;   // Guid for the content record
+}
+  
+message GetAssetAdminResponse {
+  AssetRecord Record = 1;
+}
+  
+message GetAssetByOldContentIDRequest {
+  string OldAssetID = 1;
+}
+  
+message GetAssetByOldContentIDResponse {
+  AssetRecord Record = 1;
+}
+
+message GetListOfOldContentIDsRequest {
+}
+  
+message GetListOfOldContentIDsResponse {
+  string AssetID = 1;
+  string OldAssetID = 2;
+  google.protobuf.Timestamp ModifiedOnUTC = 3;
+}
+
+message AssetRecord {
+  oneof AssetRecord_oneof
+  {
+    AudioAssetRecord Audio = 1;
+    ImageAssetRecord Image = 2;
+  }
+}

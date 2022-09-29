@@ -12,6 +12,7 @@ using ON.Authentication;
 using ON.Authorization.Stripe.Service.Clients;
 using ON.Authorization.Stripe.Service.Data;
 using ON.Authorization.Stripe.Service.Models;
+using ON.Settings;
 
 namespace ON.Authorization.Stripe.Service
 {
@@ -38,6 +39,7 @@ namespace ON.Authorization.Stripe.Service
             services.AddSingleton<IProductRecordProvider, FileSystemProductRecordProvider>();
 
             services.AddJwtAuthentication();
+            services.AddSettingsHelpers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

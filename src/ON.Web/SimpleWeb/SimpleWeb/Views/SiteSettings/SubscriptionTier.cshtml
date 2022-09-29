@@ -1,0 +1,14 @@
+﻿@using ON.Fragments.Settings
+@model ON.Fragments.Authorization.SubscriptionTier
+
+<tr>
+    <td>@Model.Amount</td>
+    <td>@Model.Name</td>
+    <td>@Model.Description</td>
+    <td>
+        <form method="post" class="needs-validation" novalidate asp-action="SubscriptionTierDelete">
+            <input type="hidden" asp-for="Amount" />
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </td>
+</tr>

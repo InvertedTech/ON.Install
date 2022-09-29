@@ -1,9 +1,12 @@
 ﻿using Google.Protobuf;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ON.Authentication.SimpleAuth.Service.Models;
+using ON.Authentication.SimpleAuth.Service.Services;
 using ON.Fragments.Authentication;
 using ON.Fragments.Generic;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,39 +17,51 @@ namespace ON.Authentication.SimpleAuth.Service.Data
     public class FileSystemUserDataProvider : IUserDataProvider
     {
         private readonly DirectoryInfo dataDir;
-        private readonly DirectoryInfo indexDir;
+        private readonly ILogger logger;
+        private readonly ConcurrentDictionary<string, Guid> loginIndex = new();
 
-        public FileSystemUserDataProvider(IOptions<AppSettings> settings)
+        public FileSystemUserDataProvider(IOptions<AppSettings> settings, ILogger<FileSystemUserDataProvider> logger)
         {
+            this.logger = logger;
+
             var root = new DirectoryInfo(settings.Value.DataStore);
             root.Create();
             dataDir = root.CreateSubdirectory("data");
-            indexDir = root.CreateSubdirectory("index");
+
+            LoadIndex().Wait();
         }
 
-        public async Task<bool> ChangeLogin(string oldLoginName, string newLoginName, Guid id)
+        private async Task LoadIndex()
         {
-            var fiOld = GetIndexFilePath(oldLoginName);
-            var fiNew = GetIndexFilePath(newLoginName);
-            if (!fiOld.Exists || fiNew.Exists)
-                return false;
+            await foreach(var r in GetAll())
+            {
+                loginIndex.TryAdd(r.Normal.Public.Data.UserName, r.UserIDGuid);
+            }
+        }
 
-            await File.WriteAllTextAsync(fiNew.FullName, id.ToString());
-            fiOld.Delete();
+        public Task<bool> ChangeLoginIndex(string oldLoginName, string newLoginName, Guid id)
+        {
+            if (!loginIndex.ContainsKey(oldLoginName))
+                return Task.FromResult(false);
 
-            return true;
+            if (!loginIndex.TryAdd(newLoginName, id))
+                return Task.FromResult(false);
+
+            loginIndex.TryRemove(oldLoginName, out var dummy);
+
+            return Task.FromResult(true);
         }
 
         public async Task<bool> Create(UserRecord user)
         {
-            var id = user.Public.UserID.ToGuid();
+            var id = user.UserIDGuid;
             var fd = GetDataFilePath(id);
-            var fi = GetIndexFilePath(user.Public.UserName);
 
-            if (fi.Exists || fd.Exists)
+            if (fd.Exists)
                 return false;
 
-            await File.WriteAllTextAsync(fi.FullName, id.ToString());
+            if (!loginIndex.TryAdd(user.Normal.Public.Data.UserName, id))
+                return false;
 
             await File.WriteAllBytesAsync(fd.FullName, user.ToByteArray());
 
@@ -62,9 +77,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             var rec = UserRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
             fd.Delete();
 
-            var fi = GetIndexFilePath(rec.Public.UserName);
-            if (fi.Exists)
-                fi.Delete();
+            loginIndex.TryRemove(rec.Normal.Public.Data.UserName, out var dummy);
 
             return true;
         }
@@ -77,14 +90,18 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         public Task<bool> Exists(string loginName)
         {
-            var fi = GetIndexFilePath(loginName);
-            return Task.FromResult(fi.Exists);
+            return Task.FromResult(loginIndex.TryGetValue(loginName, out var dummy));
         }
 
         public async IAsyncEnumerable<UserRecord> GetAll()
         {
             foreach (var fd in GetAllDataFiles())
                 yield return UserRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
+        }
+
+        public Guid[] GetAllIds()
+        {
+            return GetAllDataFiles().Select(f => Guid.Parse(f.Name)).ToArray();
         }
 
         public async Task<UserRecord> GetById(Guid userId)
@@ -98,36 +115,17 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         public async Task<UserRecord> GetByLogin(string loginName)
         {
-            var fi = GetIndexFilePath(loginName);
-            if (!fi.Exists)
-                return null;
+            if (loginIndex.TryGetValue(loginName, out var id))
+                return await GetById(id);
 
-            Guid id;
-            if (!Guid.TryParse(await File.ReadAllTextAsync(fi.FullName), out id))
-                return null;
-
-            return await GetById(id);
-
+            return null;
         }
 
         public async Task Save(UserRecord user)
         {
-            var id = user.Public.UserID.ToGuid();
+            var id = user.UserIDGuid;
             var fd = GetDataFilePath(id);
             await File.WriteAllBytesAsync(fd.FullName, user.ToByteArray());
-        }
-
-        public async Task ReindexAll()
-        {
-            TruncateAllIndexes();
-
-            await foreach(var user in GetAll())
-            {
-                var id = user.Public.UserID.ToGuid();
-                var fi = GetIndexFilePath(user.Public.UserName);
-
-                await File.WriteAllTextAsync(fi.FullName, id.ToString());
-            }
         }
 
         private IEnumerable<FileInfo> GetAllDataFiles()
@@ -140,18 +138,6 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             var name = userID.ToString();
             var dir = dataDir.CreateSubdirectory(name.Substring(0, 2)).CreateSubdirectory(name.Substring(2, 2));
             return new FileInfo(dir.FullName + "/" + name);
-        }
-
-        private FileInfo GetIndexFilePath(string loginName)
-        {
-            var dir = indexDir.CreateSubdirectory(loginName.Substring(0, 2)).CreateSubdirectory(loginName.Substring(2, 2));
-            return new FileInfo(dir.FullName + "/" + loginName);
-        }
-
-        private void TruncateAllIndexes()
-        {
-            indexDir.Delete(true);
-            indexDir.Create();
         }
     }
 }

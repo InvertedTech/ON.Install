@@ -70,12 +70,13 @@ namespace ON.Authentication.SimpleAuth.Service
 
             app.UseRouting();
 
-            app.UseJwtAuthentication();
+            app.UseJwtApiAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
+                endpoints.MapGrpcService<ServiceService>();
                 endpoints.MapGrpcService<UserService>();
             });
         }

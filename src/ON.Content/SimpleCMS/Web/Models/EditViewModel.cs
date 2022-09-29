@@ -11,11 +11,6 @@ namespace ON.Content.SimpleCMS.Web.Models
     {
         public EditViewModel() { }
 
-        public EditViewModel(UserRecord user)
-        {
-            Author = user.Public.UserName;
-        }
-
         [Required]
         [Display(Name = "Title")]
         [StringLength(100, ErrorMessage = "{0} length must be less than {1}.")]

@@ -9,13 +9,22 @@ namespace ON.Authentication
 {
     public class ONUser : ClaimsPrincipal
     {
+        public const string ROLE_OWNER = "owner";
         public const string ROLE_ADMIN = "admin";
         public const string ROLE_BACKUP = "backup";
         public const string ROLE_OPS = "ops";
+        public const string ROLE_SERVICE = "service";
         public const string ROLE_CONTENT_PUBLISHER = "con_publisher";
         public const string ROLE_CONTENT_WRITER = "con_writer";
         public const string ROLE_COMMENT_MODERATOR = "com_mod";
         public const string ROLE_COMMENT_APPELLATE_JUDGE = "com_appellate";
+
+        public const string ROLE_CAN_BACKUP = ROLE_OWNER + "," + ROLE_BACKUP;
+        public const string ROLE_CAN_CREATE_CONTENT = ROLE_CAN_PUBLISH + "," + ROLE_CONTENT_WRITER;
+        public const string ROLE_CAN_PUBLISH = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_CONTENT_PUBLISHER;
+        public const string ROLE_IS_ADMIN_OR_OWNER = ROLE_OWNER + "," + ROLE_ADMIN;
+        public const string ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_SERVICE;
+        public const string ROLE_IS_OWNER_OR_SERVICE = ROLE_OWNER + "," + ROLE_SERVICE;
 
         public Guid Id { get; set; } = Guid.Empty;
         public const string IdType = "Id";
@@ -37,11 +46,18 @@ namespace ON.Authentication
 
         public List<string> Roles { get; private set; } = new List<string>();
         public const string RolesType = ClaimTypes.Role;
+
+        public bool IsBackup { get => IsInRole(ROLE_BACKUP); }
+        public bool IsOwner { get => IsInRole(ROLE_OWNER); }
         public bool IsAdmin { get => IsInRole(ROLE_ADMIN); }
+        public bool IsAdminOrHigher { get => IsAdmin || IsOwner; }
         public bool IsPublisher { get => IsInRole(ROLE_CONTENT_PUBLISHER); }
-        public bool IsPublisherOrHigher { get => IsPublisher || IsAdmin; }
+        public bool IsPublisherOrHigher { get => IsPublisher || IsAdminOrHigher; }
         public bool IsWriter { get => IsInRole(ROLE_CONTENT_WRITER); }
         public bool IsWriterOrHigher { get => IsWriter || IsPublisherOrHigher; }
+
+        public bool CanPublish { get => IsPublisherOrHigher; }
+        public bool CanCreateContent { get => IsWriterOrHigher; }
 
         public List<Claim> ExtraClaims { get; private set; } = new List<Claim>();
 
@@ -69,9 +85,9 @@ namespace ON.Authentication
                 yield return c;
         }
 
-        public static ONUser Parse(IEnumerable<Claim> claims)
+        public static ONUser Parse(Claim[] claims)
         {
-            if (claims == null)
+            if (claims == null || claims.Length == 0)
                 return null;
 
             var user = new ONUser();

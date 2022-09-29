@@ -1,4 +1,5 @@
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using ON.Authentication.SimpleAuth.Service.Helpers;
 using ON.Fragments.Generic;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace ON.Authentication.SimpleAuth.Service.Services
 {
+    //[Authorize(Roles = ONUser.ROLE_OPS)]
     public class ServiceOpsService : ServiceOpsInterface.ServiceOpsInterfaceBase
     {
         private readonly OfflineHelper offlineHelper;

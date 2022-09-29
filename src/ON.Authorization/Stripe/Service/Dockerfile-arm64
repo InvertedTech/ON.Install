@@ -8,6 +8,7 @@ COPY ON.Authentication/Shared ON.Authentication/Shared
 COPY ON.Authorization/Stripe ON.Authorization/Stripe
 COPY ON.Fragment ON.Fragment
 COPY ON.Crypto ON.Crypto
+COPY ON.Settings ON.Settings
 RUN dotnet restore "ON.Authorization/Stripe/Service/ON.Authorization.Stripe.Service.csproj"
 WORKDIR "/src/ON.Authorization/Stripe/Service"
 RUN dotnet build "ON.Authorization.Stripe.Service.csproj" -c Release -o /app/build

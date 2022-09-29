@@ -8,6 +8,7 @@ COPY ON.Authentication/Shared ON.Authentication/Shared
 COPY ON.Content/SimpleCMS ON.Content/SimpleCMS
 COPY ON.Fragment ON.Fragment
 COPY ON.Crypto ON.Crypto
+COPY ON.Settings ON.Settings
 RUN dotnet restore "ON.Content/SimpleCMS/Service/ON.Content.SimpleCMS.Service.csproj"
 WORKDIR "/src/ON.Content/SimpleCMS/Service"
 RUN rm -f appsettings.Development.json

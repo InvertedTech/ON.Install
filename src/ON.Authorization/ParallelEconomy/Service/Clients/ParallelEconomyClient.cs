@@ -7,6 +7,7 @@ using ON.Authorization.ParallelEconomy.Service.Clients.Models;
 using ON.Authorization.ParallelEconomy.Service.Data;
 using ON.Authorization.ParallelEconomy.Service.Models;
 using ON.Fragments.Authorization.Payments.ParallelEconomy;
+using ON.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,18 +26,20 @@ namespace ON.Authorization.ParallelEconomy.Service.Clients
         public readonly PlanList Plans;
 
         private readonly AppSettings settings;
+        private readonly SubscriptionTierHelper subHelper;
 
         private FortisAPI.Standard.FortisAPIClient client;
 
-        public ParallelEconomyClient(IOptions<AppSettings> settings)
+        public ParallelEconomyClient(IOptions<AppSettings> settings, SubscriptionTierHelper subHelper)
         {
             this.settings = settings.Value;
+            this.subHelper = subHelper;
 
             client = GetClient().Result;
 
             Plans = new PlanList();
 
-            Plans.Records.AddRange(SubscriptionTier.PositiveList.Select(s => new PlanRecord() { Name = s.Name, Value = (uint)s.Value }));
+            Plans.Records.AddRange(this.subHelper.GetAll().Result.Select(s => new PlanRecord() { Name = s.Name, Value = (uint)s.Amount }));
         }
 
         internal async Task<bool> CancelSubscription(string subscriptionId, string reason)
@@ -206,7 +209,7 @@ namespace ON.Authorization.ParallelEconomy.Service.Clients
                 ResponseTransactionIntention result = await elementsController.TransactionIntentionAsync(body);
                 return result.Data.ClientToken;
             }
-            catch (ApiException e)
+            catch (ApiException)
             {
                 return "";
             };

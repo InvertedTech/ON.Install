@@ -1,0 +1,62 @@
+﻿@model ON.Fragments.Content.ContentPublicRecord
+@using userHelper = ON.Authentication.ONUserHelper;
+@{
+    ViewData["Title"] = Model.Data.Title;
+}
+
+@if (userHelper.MyUser?.IsWriterOrHigher ?? false)
+{
+    <p>
+        <a class="btn btn-primary" href="/content/@(Model.ContentID)/edit">Edit</a>
+    </p>
+    <br />
+}
+
+
+<h1>@Model.Data.Title</h1>
+
+<h5>@Model.Data.Description</h5>
+
+<em>By: @Model.Data.Author</em>
+
+@if (Model.Data.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
+{
+    @if (Model.Data.Video.RumbleVideoId != "")
+    {
+        <iframe loading="lazy" class="rumble" width="100%" height="100%" src="https://rumble.com/embed/@Model.Data.Video.RumbleVideoId" frameborder="0" allowfullscreen style="min-height:500px"></iframe>
+    }
+    else if (Model.Data.Video.YoutubeVideoId != "")
+    {
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/@Model.Data.Video.YoutubeVideoId" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="youtubeframe" style="min-height:500px"></iframe>
+    }
+    @Html.Raw(Model.Data.Video.HtmlBody)
+}
+else
+{
+    if (Model.Data.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    {
+        @if (Model.Data.Video.RumbleVideoId != "")
+        {
+            <iframe loading="lazy" class="rumble" width="100%" height="100%" src="https://rumble.com/embed/@Model.Data.Video.RumbleVideoId" frameborder="0" allowfullscreen style="min-height:500px"></iframe>
+        }
+        else if (Model.Data.Video.YoutubeVideoId != "")
+        {
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/@Model.Data.Video.YoutubeVideoId" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="youtubeframe" style="min-height:500px"></iframe>
+        }
+        @Html.Raw(Model.Data.Video.HtmlBody)
+    }
+    else
+    {
+        <br />
+        <br />
+        if (userHelper.MyUser == null)
+        {
+            <pre>To see the content <a href="/register">sign up</a> for an account</pre>
+        }
+        else
+        {
+            <pre>To see the content change your <a href="/subscription">subscription</a>  level</pre>
+        }
+    }
+}
+

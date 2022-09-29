@@ -8,6 +8,7 @@ COPY ON.Authentication/Shared ON.Authentication/Shared
 COPY ON.Authorization/Paypal ON.Authorization/Paypal
 COPY ON.Fragment ON.Fragment
 COPY ON.Crypto ON.Crypto
+COPY ON.Settings ON.Settings
 RUN dotnet restore "ON.Authorization/Paypal/Service/ON.Authorization.Paypal.Service.csproj"
 WORKDIR "/src/ON.Authorization/Paypal/Service"
 RUN dotnet build "ON.Authorization.Paypal.Service.csproj" -c Release -o /app/build

@@ -2,7 +2,9 @@
 using ON.Authorization.Paypal.Service.Clients.Models;
 using ON.Authorization.Paypal.Service.Data;
 using ON.Authorization.Paypal.Service.Models;
+using ON.Fragments.Authorization;
 using ON.Fragments.Authorization.Payments.Paypal;
+using ON.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,7 @@ namespace ON.Authorization.Paypal.Service.Clients
 
         private readonly AppSettings settings;
         private readonly IPlanRecordProvider recordProvider;
+        private readonly SubscriptionTierHelper subHelper;
 
         private Task loginTask;
         private string bearerToken;
@@ -30,10 +33,11 @@ namespace ON.Authorization.Paypal.Service.Clients
 
         private object syncObject = new();
 
-        public PaypalClient(IOptions<AppSettings> settings, IPlanRecordProvider recordProvider)
+        public PaypalClient(IOptions<AppSettings> settings, IPlanRecordProvider recordProvider, SubscriptionTierHelper subHelper)
         {
             this.settings = settings.Value;
             this.recordProvider = recordProvider;
+            this.subHelper = subHelper;
 
             Plans = recordProvider.GetAll().Result;
 
@@ -42,19 +46,18 @@ namespace ON.Authorization.Paypal.Service.Clients
 
         private async Task EnsurePlans()
         {
-            foreach (var tier in SiteConfig.SubscriptionTiers)
-                if (tier.Value > 0)
-                    await EnsurePlan(tier);
+            foreach (var tier in await subHelper.GetAll())
+                await EnsurePlan(tier);
         }
 
         private async Task EnsurePlan(SubscriptionTier tier)
         {
-            var p = Plans.Records.FirstOrDefault(x => x.Value == tier.Value);
+            var p = Plans.Records.FirstOrDefault(x => x.Value == tier.Amount);
             if (p != null)
             {
                 var pm = await GetPlan(p.PlanId);
                 if (pm.status == "ACTIVE"
-                    && pm?.billing_cycles?.FirstOrDefault()?.pricing_scheme?.fixed_price?.value == tier.Value.ToString("0.0")
+                    && pm?.billing_cycles?.FirstOrDefault()?.pricing_scheme?.fixed_price?.value == tier.Amount.ToString("0.0")
                     && pm?.name == tier.Name)
                 {
                     return;
@@ -67,7 +70,7 @@ namespace ON.Authorization.Paypal.Service.Clients
             {
                 Plans.Records.Add(new PlanRecord()
                 {
-                    Value = (uint)tier.Value,
+                    Value = (uint)tier.Amount,
                     Name = tier.Name,
                     PlanId = created.id,
                 });
@@ -206,7 +209,7 @@ namespace ON.Authorization.Paypal.Service.Clients
 
         private string GetProductId(SubscriptionTier tier)
         {
-            return "ONF-PROD-" + tier.Value;
+            return "ONF-PROD-" + tier.Amount;
         }
 
         private async Task<HttpClient> GetClient()

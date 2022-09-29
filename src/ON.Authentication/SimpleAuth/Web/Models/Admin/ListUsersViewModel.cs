@@ -10,6 +10,6 @@ namespace ON.Authentication.SimpleAuth.Web.Models.Admin
 {
     public class ListUsersViewModel
     {
-        public UserRecord.Types.PublicData[] UserRecords { get; set; }
+        public UserNormalRecord[] UserRecords { get; set; }
     }
 }

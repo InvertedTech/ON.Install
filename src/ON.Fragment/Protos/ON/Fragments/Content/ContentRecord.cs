@@ -8,18 +8,69 @@ using pb = global::Google.Protobuf;
 
 namespace ON.Fragments.Content
 {
-    public sealed partial class ContentRecord : pb::IMessage<ContentRecord>
+    public sealed partial class ContentListRecord : pb::IMessage<ContentListRecord>
     {
-        public static partial class Types
+        public Guid ContentIDGuid
         {
-            public sealed partial class PublicData : pb::IMessage<PublicData>
+            get => ContentID.ToGuid();
+            set => ContentID = value.ToString();
+        }
+    }
+
+    public sealed partial class ContentPublicData : pb::IMessage<ContentPublicData>
+    {
+        public ContentType GetContentType()
+        {
+            switch (ContentDataOneofCase)
             {
-                public Guid ContentIDGuid
-                {
-                    get => ContentID.ToGuid();
-                    set => ContentID = value.ToString();
-                }
+                case ContentDataOneofOneofCase.Audio:
+                    return ContentType.Audio;
+                case ContentDataOneofOneofCase.Picture:
+                    return ContentType.Picture;
+                case ContentDataOneofOneofCase.Written:
+                    return ContentType.Written;
+                case ContentDataOneofOneofCase.Video:
+                    return ContentType.Video;
+                default:
+                    return ContentType.None;
             }
+        }
+    }
+
+    public sealed partial class ContentPublicRecord : pb::IMessage<ContentPublicRecord>
+    {
+        public Guid ContentIDGuid
+        {
+            get => ContentID.ToGuid();
+            set => ContentID = value.ToString();
+        }
+
+        public ContentListRecord ToContentListRecord()
+        {
+            var rec = new ContentListRecord()
+            {
+                ContentID = ContentID,
+                CreatedOnUTC = CreatedOnUTC,
+                PublishOnUTC = PublishOnUTC,
+                Title = Data.Title,
+                Description = Data.Description,
+                SubscriptionLevel = Data.SubscriptionLevel,
+                URL = Data.URL,
+                Author = Data.Author,
+                FeaturedImageAssetID = Data.FeaturedImageAssetID,
+                ContentType = Data.GetContentType(),
+            };
+
+            rec.CategoryIds.AddRange(Data.CategoryIds);
+            rec.ChannelIds.AddRange(Data.ChannelIds);
+
+            if (rec.ContentType == ContentType.Video)
+            {
+                rec.IsLiveStream = Data.Video.IsLiveStream;
+                rec.IsLive = Data.Video.IsLive;
+            }
+
+            return rec;
         }
     }
 }

@@ -1,0 +1,47 @@
+﻿@model ON.SimpleWeb.Models.Auth.RegisterViewModel
+@{
+	ViewData["Title"] = "Registration";
+}
+
+<h1>Registration</h1>
+<br />
+
+@if(!string.IsNullOrEmpty(Model?.ErrorMessage))
+{
+    <h2 style="color: red;">@Model.ErrorMessage</h2>
+}
+
+<form asp-action="register" method="post" class="needs-validation" novalidate>
+  <div class="form-group">
+    <label asp-for="UserName"></label>
+    <input class="form-control" asp-for="UserName" />
+    <span asp-validation-for="UserName"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="DisplayName"></label>
+    <input class="form-control" asp-for="DisplayName" />
+    <span asp-validation-for="DisplayName"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="Email"></label>
+    <input class="form-control" asp-for="Email" />
+    <span asp-validation-for="Email"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="Password"></label>
+    <input class="form-control" asp-for="Password" />
+    <span asp-validation-for="Password"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="ConfirmPassword"></label>
+    <input class="form-control" asp-for="ConfirmPassword" />
+    <span asp-validation-for="ConfirmPassword"></span>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@section scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

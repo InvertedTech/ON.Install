@@ -1,0 +1,358 @@
+syntax = "proto3";
+
+package ON.Fragments.Authentication;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "Protos/ON/Fragments/Authentication/UserRecord.proto";
+
+// Service for Authentication user fragment interface
+service UserInterface {
+  // Authenticate a user with a login and password, return a bearer token if successful
+  rpc AuthenticateUser (AuthenticateUserRequest) returns (AuthenticateUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/login"
+      body: "*"
+    };
+  }
+
+  // Change another user's password.  Requires current user to be an admin.
+  rpc ChangeOtherPassword (ChangeOtherPasswordRequest) returns (ChangeOtherPasswordResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/password"
+      body: "*"
+    };
+  }
+
+  // Change another user's Profile Iamge.  Can take in multipe image type and will convert to PNG.
+  rpc ChangeOtherProfileImage (ChangeOtherProfileImageRequest) returns (ChangeOtherProfileImageResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/profileimage"
+      body: "*"
+    };
+  }
+
+  // Change user's own password.  Requires user to know their current password.
+  rpc ChangeOwnPassword (ChangeOwnPasswordRequest) returns (ChangeOwnPasswordResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/password"
+      body: "*"
+    };
+  }
+
+  // Change user's own Profile Image.  Can take in multipe image type and will convert to PNG.
+  rpc ChangeOwnProfileImage (ChangeOwnProfileImageRequest) returns (ChangeOwnProfileImageResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/profileimage"
+      body: "*"
+    };
+  }
+
+  // Create account for a user
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/createuser"
+      body: "*"
+    };
+  }
+
+  // Disable another user.  Requires current user to be an admin.
+  rpc DisableOtherUser (DisableEnableOtherUserRequest) returns (DisableEnableOtherUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/user/{UserID}/disable"
+    };
+  }
+
+  // Enable another user.  Requires current user to be an admin.
+  rpc EnableOtherUser (DisableEnableOtherUserRequest) returns (DisableEnableOtherUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/user/{UserID}/enable"
+    };
+  }
+
+  // Get All User records
+  rpc GetAllUsers (GetAllUsersRequest) returns (GetAllUsersResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/admin/user"
+    };
+  }
+
+  rpc GetListOfOldUserIDs (GetListOfOldUserIDsRequest) returns (stream GetListOfOldUserIDsResponse)
+  {
+  }
+
+  // Get User record
+  rpc GetOtherUser (GetOtherUserRequest) returns (GetOtherUserResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/admin/user/{UserID}"
+    };
+  }
+
+  // Get User public record
+  rpc GetOtherPublicUser (GetOtherPublicUserRequest) returns (GetOtherPublicUserResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/user/{UserID}"
+    };
+  }
+
+  // Get User record
+  rpc GetOwnUser (GetOwnUserRequest) returns (GetOwnUserResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/user"
+    };
+  }
+
+  // Get All User records
+  rpc GetUserIdList (GetUserIdListRequest) returns (GetUserIdListResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/user/ids"
+    };
+  }
+
+  // Modify User record
+  rpc ModifyOtherUser (ModifyOtherUserRequest) returns (ModifyOtherUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/user"
+      body: "*"
+    };
+  }
+
+  // Modify User record
+  rpc ModifyOtherUserRoles (ModifyOtherUserRolesRequest) returns (ModifyOtherUserRolesResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/user/roles"
+      body: "*"
+    };
+  }
+
+  // Modify User record
+  rpc ModifyOwnUser (ModifyOwnUserRequest) returns (ModifyOwnUserResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/user"
+      body: "*"
+    };
+  }
+
+  // Renew the bearer token
+  rpc RenewToken (RenewTokenRequest) returns (RenewTokenResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/renewtoken"
+    };
+  }
+}
+  
+message AuthenticateUserRequest {
+  string UserName = 1;
+  string Password = 2;
+}
+  
+message AuthenticateUserResponse {
+  string BearerToken = 1;
+  UserNormalRecord UserRecord = 2;
+}
+  
+message ChangeOtherPasswordRequest {
+  string UserID = 1;                   // Guid for the user
+  string NewPassword = 2;
+}
+  
+message ChangeOtherPasswordResponse {
+  ChangeOtherPasswordResponseErrorType Error = 1;
+
+  enum ChangeOtherPasswordResponseErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    UserNotFound = 1;
+    BadNewPassword = 2;
+  }
+}
+  
+message ChangeOtherProfileImageRequest {
+  string UserID = 1;                   // Guid for the user
+  bytes ProfileImage = 2;
+}
+  
+message ChangeOtherProfileImageResponse {
+  ChangeOtherProfileImageResponseErrorType Error = 1;
+
+  enum ChangeOtherProfileImageResponseErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    UserNotFound = 1;
+    BadFormat = 2;
+  }
+}
+  
+message ChangeOwnPasswordRequest {
+  string OldPassword = 1;
+  string NewPassword = 2;
+}
+  
+message ChangeOwnPasswordResponse {
+  ChangeOwnPasswordResponseErrorType Error = 1;
+
+  enum ChangeOwnPasswordResponseErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    BadOldPassword = 1;
+    BadNewPassword = 2;
+  }
+}
+
+message ChangeOwnProfileImageRequest {
+  bytes ProfileImage = 1;
+}
+  
+message ChangeOwnProfileImageResponse {
+  ChangeOwnProfileImageResponseErrorType Error = 1;
+
+  enum ChangeOwnProfileImageResponseErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    BadFormat = 1;
+  }
+}
+
+message CreateUserRequest {
+  string UserName = 1;                // User name of the user
+  string Password = 2;                // Password of the user
+  string DisplayName = 3;             // Public display name of the user
+  repeated string Emails = 4;         // Private email(s) used for password resets
+}
+  
+message CreateUserResponse {
+  string BearerToken = 1;
+  CreateUserResponseErrorType Error = 2;
+
+  enum CreateUserResponseErrorType {
+    NoError = 0;
+    UnknownError = -1;
+    UserNameTaken = 1;
+  }
+}
+
+message DisableEnableOtherUserRequest {
+  string UserID = 1;                   // Guid for the user
+}
+  
+message DisableEnableOtherUserResponse {
+  DisableEnableOtherUserResponseErrorType Error = 1;
+
+  enum DisableEnableOtherUserResponseErrorType {
+    NoError = 0;
+    UnknownError = -1;
+  }
+}
+
+message GetAllUsersRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+}
+  
+message GetAllUsersResponse {
+  repeated UserNormalRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+
+message GetListOfOldUserIDsRequest {
+}
+  
+message GetListOfOldUserIDsResponse {
+  string UserID = 1;
+  string OldUserID = 2;
+  google.protobuf.Timestamp ModifiedOnUTC = 3;
+}
+
+message GetOtherUserRequest {
+  string UserID = 1;                   // Guid for the user
+}
+  
+message GetOtherUserResponse {
+  UserNormalRecord Record = 1;
+}
+
+message GetOtherPublicUserRequest {
+  string UserID = 1;                   // Guid for the user
+}
+  
+message GetOtherPublicUserResponse {
+  UserPublicRecord Record = 1;
+}
+
+message GetOwnUserRequest {
+}
+  
+message GetOwnUserResponse {
+  UserNormalRecord Record = 1;
+}
+
+message GetUserIdListRequest {
+
+}
+
+message GetUserIdListResponse {
+  repeated UserIdRecord Records = 1;
+}
+
+message UserIdRecord {
+  string UserID = 1;                   // Guid for the user
+  string DisplayName = 2;
+  string UserName = 3;
+}
+
+message ModifyOtherUserRequest {
+  string UserID = 1;          // Guid for the user
+  string UserName = 2;        // User name of the user
+  string DisplayName = 3;     // Public display name of the user
+  repeated string Emails = 4; // Private email(s) used for password resets
+}
+  
+message ModifyOtherUserResponse {
+  string Error = 1;
+}
+
+message ModifyOtherUserRolesRequest {
+  string UserID = 1;         // Guid for the user
+  repeated string Roles = 2; // Roles for the user
+}
+  
+message ModifyOtherUserRolesResponse {
+  string Error = 1;
+}
+
+message ModifyOwnUserRequest {
+  string UserID = 1;          // Guid for the user
+  string DisplayName = 2;     // Public display name of the user
+  repeated string Emails = 3; // Private email(s) used for password resets
+}
+  
+message ModifyOwnUserResponse {
+  string Error = 1;
+  string BearerToken = 2;
+}
+
+message RenewTokenRequest {
+}
+  
+message RenewTokenResponse {
+  string BearerToken = 1;
+}

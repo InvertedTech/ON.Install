@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
@@ -8,10 +9,12 @@ using ON.Fragments.Content;
 using ON.Fragments.Generic;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace ON.Content.SimpleCMS.Service.Services
 {
+    [Authorize(Roles = ONUser.ROLE_CAN_BACKUP)]
     public class BackupService : BackupInterface.BackupInterfaceBase
     {
         private readonly IContentDataProvider dataProvider;
@@ -27,10 +30,6 @@ namespace ON.Content.SimpleCMS.Service.Services
         {
             try
             {
-                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !userToken.Roles.Contains(ONUser.ROLE_BACKUP))
-                    return;
-
                 var encKey = EcdhHelper.DeriveKeyServer(request.ClientPublicJwk.DecodeJsonWebKey(), out string serverPubKey);
                 await responseStream.WriteAsync(new BackupAllDataResponse() { ServerPublicJwk = serverPubKey });
 
@@ -62,10 +61,6 @@ namespace ON.Content.SimpleCMS.Service.Services
         {
             try
             {
-                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !(userToken.Roles.Contains(ONUser.ROLE_BACKUP) || userToken.Roles.Contains(ONUser.ROLE_ADMIN)))
-                    return;
-
                 await foreach (var r in dataProvider.GetAll())
                     await responseStream.WriteAsync(new ExportContentResponse() { ContentRecord = r.Public });
             }
@@ -87,10 +82,6 @@ namespace ON.Content.SimpleCMS.Service.Services
 
             try
             {
-                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null || !userToken.Roles.Contains(ONUser.ROLE_BACKUP))
-                    return res;
-
                 await foreach (var r in requestStream.ReadAllAsync())
                 {
                     Guid id = r.Record.Data.Public.ContentID.ToGuid();

@@ -1,0 +1,53 @@
+﻿@using ON.SimpleWeb.Models.Subscription.Main
+@inject ON.Settings.SettingsClient settingsClient;
+@model IndexViewModel
+@{
+    ViewData["Title"] = "My Subscriptions";
+    var subSet = (await settingsClient.GetOwnerData()).Subscription;
+}
+
+<h1>My Subscriptions</h1>
+
+@if (Model.IsSubscribed)
+{
+    <p>
+        My subscription level: @(Model.SubscriptionLevelLabel)
+    </p>
+    <p>
+        <a href="/subscription/@(Model.SubscriptionProvider)">Change my subscription</a>
+    </p>
+}
+else
+{
+    <p>
+        My subscription level: None
+    </p>
+    <p>
+        Pick a payment provider below to sign up!
+    </p>
+    @if (subSet?.Fake?.Enabled ?? false)
+    {
+        <p>
+            <a href="/subscription/fake">*Dev Only* Fake Payment Provider</a>
+        </p>
+    }
+    @if (subSet?.ParallelEconomy?.Enabled ?? false)
+    {
+        <p>
+            <a href="/subscription/pe">Parallel Economy (credit/debit cards)</a>
+        </p>
+    }
+    @if (subSet?.Stripe?.Enabled ?? false)
+    {
+        <p>
+            <a href="/subscription/stripe">Stripe (credit/debit cards)</a>
+        </p>
+    }
+    @if (subSet?.Paypal?.Enabled ?? false)
+    {
+        <p>
+            <a href="/subscription/paypal">Paypal</a>
+        </p>
+    }
+
+}

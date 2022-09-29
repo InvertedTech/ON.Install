@@ -1,0 +1,56 @@
+﻿@using ON.SimpleWeb.Models.Subscription.Fake
+@using ON.SimpleWeb.Models.Subscription.Main
+@model ChangeViewModel
+@inject ON.SimpleWeb.Helper.HtmlSubscriptionTierHelper subHelper;
+@{
+    ViewData["Title"] = "Change My Subscriptions";
+}
+
+<h1>Change My Subscriptions</h1>
+<br />
+
+@if (!string.IsNullOrEmpty(Model?.ErrorMessage))
+{
+    <h2 style="color: red;">@Model.ErrorMessage</h2>
+}
+
+@if (!string.IsNullOrEmpty(Model?.SuccessMessage))
+{
+    <h2 style="color: green;">@Model.SuccessMessage</h2>
+}
+
+<form method="post" class="needs-validation" novalidate>
+    <div class="form-group">
+        <label asp-for="Level"></label>
+        <select class="form-control" asp-for="Level" asp-items="subHelper.SelectListItemsWithOther">
+        </select>
+    </div>
+    <div class="form-group" id="LevelOtherDiv">
+        <label asp-for="LevelOther"></label>
+        <input class="form-control" asp-for="LevelOther" />
+        <span asp-validation-for="LevelOther"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Change Subscription</button>
+</form>
+
+@section scripts
+{
+
+    <script type="text/javascript">
+        $('#Level').on('change', function (e) {
+            FlipLevelOther();
+        });
+
+        function FlipLevelOther() {
+            if ($("#Level option:selected").val() == '-1') {
+                $('#LevelOtherDiv').show();
+            } else {
+                $('#LevelOtherDiv').hide();
+            }
+        }
+
+        setTimeout(FlipLevelOther);
+    </script>
+
+}

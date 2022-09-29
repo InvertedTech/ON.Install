@@ -1,0 +1,22 @@
+﻿@using ON.Fragments.Authorization
+@using ON.Fragments.Settings
+@model SubscriptionPublicRecord
+
+<li class="list-group-item">
+    <h2>Public Settings</h2>
+    @await Html.PartialAsync("SubscriptionTierAdd", new SubscriptionTier())
+
+    <hr />
+    <h4>Current Tiers</h4>
+    <table>
+        <tr>
+            <th>Amount</th>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        @foreach (var tiers in Model.Tiers.OrderBy(t => t.Amount))
+        {
+            @await Html.PartialAsync("SubscriptionTier", tiers)
+        }
+    </table>
+</li>

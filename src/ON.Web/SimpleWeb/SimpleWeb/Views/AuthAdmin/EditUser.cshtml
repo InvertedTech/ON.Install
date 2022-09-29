@@ -1,0 +1,75 @@
+﻿@model ON.SimpleWeb.Models.Auth.Admin.EditUserViewModel
+@{
+    ViewData["Title"] = "Update User Settings";
+}
+
+<h1>Update User Settings</h1>
+<br />
+
+@if(!string.IsNullOrEmpty(Model?.ErrorMessage))
+{
+    <h2 style="color: red;">@Model.ErrorMessage</h2>
+}
+
+@if(!string.IsNullOrEmpty(Model?.SuccessMessage))
+{
+    <h2 style="color: green;">@Model.SuccessMessage</h2>
+}
+
+<form method="post" class="needs-validation" novalidate>
+  <div class="form-group">
+    <label asp-for="UserName"></label>
+    <input class="form-control" asp-for="UserName" />
+  </div>
+  <div class="form-group">
+    <label asp-for="DisplayName"></label>
+    <input class="form-control" asp-for="DisplayName" />
+    <span asp-validation-for="DisplayName"></span>
+  </div>
+  <div class="form-group">
+    <label asp-for="Email"></label>
+    <input class="form-control" asp-for="Email" />
+    <span asp-validation-for="Email"></span>
+  </div>
+    <div class="form-group">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" asp-for="IsOwner" />
+            <label class="form-check-label" asp-for="IsOwner"></label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" asp-for="IsAdmin" />
+            <label class="form-check-label" asp-for="IsAdmin"></label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" asp-for="IsContentPublisher" />
+            <label class="form-check-label" asp-for="IsContentPublisher"></label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" asp-for="IsContentWriter" />
+            <label class="form-check-label" asp-for="IsContentWriter"></label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" asp-for="IsCommentAppelateJudge" />
+            <label class="form-check-label" asp-for="IsCommentAppelateJudge"></label>
+        </div>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" asp-for="IsCommentModerator" />
+            <label class="form-check-label" asp-for="IsCommentModerator"></label>
+        </div>
+    </div>
+    <br />
+
+  <button type="submit" class="btn btn-primary">Update</button>
+</form>
+
+<br />
+
+@*<p>
+ <h4> -- or --</h4>
+ <a class="btn btn-primary" asp-area="" asp-controller="changepassword" asp-action="">Change user's password</a>
+</p>
+*@
+@section scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

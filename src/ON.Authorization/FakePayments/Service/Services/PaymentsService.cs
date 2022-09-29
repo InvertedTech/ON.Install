@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Authorization.FakePayments.Service.Data;
 using ON.Fragments.Authorization;
+using ON.Fragments.Authorization.Payments.Fake;
 using ON.Fragments.Generic;
 using System;
 using System.Threading.Tasks;
