@@ -24,7 +24,7 @@ namespace ON.Authentication
         public const string ROLE_CAN_PUBLISH = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_CONTENT_PUBLISHER;
         public const string ROLE_IS_ADMIN_OR_OWNER = ROLE_OWNER + "," + ROLE_ADMIN;
         public const string ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_SERVICE;
-        public const string ROLE_IS_OWNER_OR_SERVICE = ROLE_OWNER + "," + ROLE_SERVICE;
+        public const string ROLE_IS_OWNER_OR_SERVICE = ROLE_SERVICE + "," + ROLE_OWNER;
 
         public Guid Id { get; set; } = Guid.Empty;
         public const string IdType = "Id";

@@ -5,7 +5,6 @@ package ON.Fragments.Authorization.Payments.Paypal;
 message PaypalSettings {
   bool Enabled = 1;
   string Url = 2;
-  string Account = 3;
-  string ClientID = 4;
-  string ClientSecret = 5;
+  string ClientID = 3;
+  string ClientSecret = 4;
 }

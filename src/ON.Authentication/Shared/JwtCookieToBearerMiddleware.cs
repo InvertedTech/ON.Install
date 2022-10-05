@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Threading.Tasks;
 
 namespace ON.Authentication
@@ -23,6 +24,12 @@ namespace ON.Authentication
             }
 
             await next(context);
+
+            var user = ONUserHelper.ParseUser(context);
+            if (user != null)
+            {
+                Console.WriteLine($"**** {user.UserName} - {string.Join(',', user.Roles)} ****");
+            }
         }
     }
 }
