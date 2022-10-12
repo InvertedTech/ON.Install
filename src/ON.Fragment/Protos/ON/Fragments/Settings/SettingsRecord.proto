@@ -89,6 +89,7 @@ message CMSPublicRecord {
   ON.Fragments.Content.LayoutEnum DefaultLayout = 1;
   repeated ChannelRecord Channels = 2;
   repeated CategoryRecord Categories = 3;
+  CMSPublicMenuRecord Menu = 4;
 }
 
 message CMSPrivateRecord {
@@ -113,4 +114,11 @@ message CategoryRecord {
   string UrlStub = 4;
 
   string OldCategoryId = 1001;
+}
+
+message CMSPublicMenuRecord {
+  string AudioMenuLinkName = 1;
+  string PictureMenuLinkName = 2;
+  string VideoMenuLinkName = 3;
+  string WrittenMenuLinkName = 4;
 }

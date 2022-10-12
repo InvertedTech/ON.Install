@@ -20,6 +20,19 @@ namespace ON.SimpleWeb.Services
             this.settingsClient = settingsClient;
         }
 
+        public async Task<ModifyResponseErrorType> Modify(CMSPublicRecord vm, ONUser user)
+        {
+            if (vm == null)
+                return ModifyResponseErrorType.UnknownError;
+
+            var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
+            var res = await client.ModifyCMSPublicDataAsync(new() { Data = vm }, GetMetadata(user));
+
+            settingsClient.Flush();
+
+            return res.Error;
+        }
+
         public async Task<ModifyResponseErrorType> Modify(PersonalizationPublicRecord vm, ONUser user)
         {
             if (vm == null)

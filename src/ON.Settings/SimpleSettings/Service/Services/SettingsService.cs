@@ -470,6 +470,13 @@ namespace ON.Settings.SimpleSettings.Service.Services
                     CMS = new()
                     {
                         DefaultLayout = Fragments.Content.LayoutEnum.List,
+                        Menu = new()
+                        {
+                            AudioMenuLinkName = "Listen",
+                            PictureMenuLinkName = "Photos",
+                            VideoMenuLinkName = "Watch",
+                            WrittenMenuLinkName = "Read",
+                        },
                     }
                 },
                 Private = new()

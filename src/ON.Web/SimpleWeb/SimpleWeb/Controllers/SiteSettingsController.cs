@@ -50,6 +50,32 @@ namespace ON.SimpleWeb.Controllers
             return View(vm);
         }
 
+        [HttpPost("cms/public/menu")]
+        public async Task<IActionResult> ModifyCMSPublicMenu(CMSPublicMenuRecord vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = await settingsClient.GetPublicData();
+            var record = data.CMS;
+            if (record.Menu == null)
+                record.Menu = new();
+
+            var menu = record.Menu;
+
+            menu.AudioMenuLinkName = vm.AudioMenuLinkName;
+            menu.PictureMenuLinkName = vm.PictureMenuLinkName;
+            menu.VideoMenuLinkName = vm.VideoMenuLinkName;
+            menu.WrittenMenuLinkName = vm.WrittenMenuLinkName;
+
+            var res = await settingsService.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
         [HttpPost("personalization/public")]
         public async Task<IActionResult> ModifyPersonalizationPublic(PersonalizationPublicRecord vm)
         {
