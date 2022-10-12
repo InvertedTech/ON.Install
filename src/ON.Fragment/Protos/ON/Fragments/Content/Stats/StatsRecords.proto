@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Stats;
+
+message StatsContentPublicRecord {
+	uint64 Likes = 1;
+	uint64 Saves = 2;
+	uint64 Shares = 3;
+	uint64 Views = 4;
+}
+
+message StatsContentPrivateRecord {
+	repeated string LikedBy = 1;
+	repeated string SavedBy = 2;
+	repeated string SharedBy = 3;
+	repeated string ViewedBy = 4;
+}
+
+message StatsUserPublicRecord {
+	uint64 Likes = 1;
+	uint64 Saves = 2;
+	uint64 Shares = 3;
+	uint64 Views = 4;
+}
+
+message StatsUserPrivateRecord {
+	repeated string Likes = 1;
+	repeated string Saves = 2;
+	repeated string Shares = 3;
+	repeated string Views = 4;
+}

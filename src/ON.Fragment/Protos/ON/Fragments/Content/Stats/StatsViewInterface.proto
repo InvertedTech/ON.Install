@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Stats;
+
+service StatsViewInterface {
+  rpc ViewContent (ViewContentRequest) returns (ViewContentResponse)
+  {
+  }
+}
+  
+message ViewContentRequest {
+  string ContentID = 1;
+}
+  
+message ViewContentResponse {
+}

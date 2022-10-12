@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Stats;
+
+import "google/api/annotations.proto";
+
+service StatsSaveInterface {
+  rpc SaveContent (SaveContentRequest) returns (SaveContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/stats/{ContentID}/save"
+      body: "*"
+    };
+  }
+  rpc UnsaveContent (UnsaveContentRequest) returns (UnsaveContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/stats/{ContentID}/unsave"
+      body: "*"
+    };
+  }
+}
+
+message SaveContentRequest {
+  string ContentID = 1;
+}
+
+message SaveContentResponse {
+}
+
+message UnsaveContentRequest {
+  string ContentID = 1;
+}
+
+message UnsaveContentResponse {
+}

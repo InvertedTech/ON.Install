@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Stats;
+
+import "google/api/annotations.proto";
+import "Protos/ON/Fragments/Content/Stats/StatsRecords.proto";
+
+service StatsQueryInterface {
+  rpc AdminGetContentStats (AdminGetContentStatsRequest) returns (AdminGetContentStatsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/admin/{ContentID}"
+    };
+  }
+  rpc AdminGetOtherUserStats (AdminGetOtherUserStatsRequest) returns (AdminGetOtherUserStatsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/admin/user/{UserID}"
+    };
+  }
+  rpc GetContentStats (GetContentStatsRequest) returns (GetContentStatsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/{ContentID}"
+    };
+  }
+  rpc GetOtherUserStats (GetOtherUserStatsRequest) returns (GetOtherUserStatsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/user/{UserID}"
+    };
+  }
+  rpc GetOwnUserStats (GetOwnUserStatsRequest) returns (GetOwnUserStatsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/user"
+    };
+  }
+}
+  
+message AdminGetContentStatsRequest {
+  string ContentID = 1;
+}
+  
+message AdminGetContentStatsResponse {
+  StatsContentPrivateRecord Record = 1;
+}
+
+message AdminGetOtherUserStatsRequest {
+  string UserID = 1;
+}
+  
+message AdminGetOtherUserStatsResponse {
+  StatsUserPrivateRecord Record = 1;
+}
+
+message GetContentStatsRequest {
+  string ContentID = 1;
+}
+  
+message GetContentStatsResponse {
+  StatsContentPublicRecord Record = 1;
+}
+
+
+message GetOtherUserStatsRequest {
+  string UserID = 1;
+}
+  
+message GetOtherUserStatsResponse {
+  StatsUserPublicRecord Record = 1;
+}
+
+message GetOwnUserStatsRequest {
+}
+  
+message GetOwnUserStatsResponse {
+  StatsUserPrivateRecord Record = 1;
+}

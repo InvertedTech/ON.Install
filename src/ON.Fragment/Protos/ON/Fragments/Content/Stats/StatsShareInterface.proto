@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Stats;
+
+import "google/api/annotations.proto";
+
+service StatsShareInterface {
+  rpc ShareContent (ShareContentRequest) returns (ShareContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/stats/{ContentID}/share"
+      body: "*"
+    };
+  }
+}
+  
+message ShareContentRequest {
+  string ContentID = 1;
+}
+  
+message ShareContentResponse {
+}
