@@ -12,7 +12,7 @@ service StatsLikeInterface {
       body: "*"
     };
   }
-  rpc UnlikeContent (UnlikeContentRequest) returns (UnlikeContentResponse)
+  rpc UnlikeContent (LikeContentRequest) returns (LikeContentResponse)
   {
     option (google.api.http) = {
       post: "/api/stats/{ContentID}/unlike"
@@ -28,9 +28,12 @@ message LikeContentRequest {
 message LikeContentResponse {
 }
 
-message UnlikeContentRequest {
-  string ContentID = 1;
+message LikeContentEvent {
+  string UserID = 1;
+  string ContentID = 2;
 }
 
-message UnlikeContentResponse {
+message UnlikeContentEvent {
+  string UserID = 1;
+  string ContentID = 2;
 }

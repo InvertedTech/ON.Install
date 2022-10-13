@@ -12,7 +12,7 @@ service StatsSaveInterface {
       body: "*"
     };
   }
-  rpc UnsaveContent (UnsaveContentRequest) returns (UnsaveContentResponse)
+  rpc UnsaveContent (SaveContentRequest) returns (SaveContentResponse)
   {
     option (google.api.http) = {
       post: "/api/stats/{ContentID}/unsave"
@@ -28,9 +28,12 @@ message SaveContentRequest {
 message SaveContentResponse {
 }
 
-message UnsaveContentRequest {
-  string ContentID = 1;
+message SaveContentEvent {
+  string UserID = 1;
+  string ContentID = 2;
 }
 
-message UnsaveContentResponse {
+message UnsaveContentEvent {
+  string UserID = 1;
+  string ContentID = 2;
 }

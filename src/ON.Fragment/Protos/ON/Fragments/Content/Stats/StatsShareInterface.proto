@@ -5,18 +5,23 @@ package ON.Fragments.Content.Stats;
 import "google/api/annotations.proto";
 
 service StatsShareInterface {
-  rpc ShareContent (ShareContentRequest) returns (ShareContentResponse)
+  rpc LogShareContent (LogShareContentRequest) returns (LogShareContentResponse)
   {
     option (google.api.http) = {
-      post: "/api/stats/{ContentID}/share"
+      post: "/api/stats/{ContentID}/logshare"
       body: "*"
     };
   }
 }
   
-message ShareContentRequest {
+message LogShareContentRequest {
   string ContentID = 1;
 }
   
-message ShareContentResponse {
+message LogShareContentResponse {
+}
+
+message ShareContentEvent {
+  string UserID = 1;
+  string ContentID = 2;
 }

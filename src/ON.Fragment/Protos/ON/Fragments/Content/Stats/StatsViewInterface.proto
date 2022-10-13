@@ -3,14 +3,19 @@ syntax = "proto3";
 package ON.Fragments.Content.Stats;
 
 service StatsViewInterface {
-  rpc ViewContent (ViewContentRequest) returns (ViewContentResponse)
+  rpc LogViewContent (LogViewContentRequest) returns (LogViewContentResponse)
   {
   }
 }
   
-message ViewContentRequest {
+message LogViewContentRequest {
   string ContentID = 1;
 }
   
-message ViewContentResponse {
+message LogViewContentResponse {
+}
+
+message ViewContentEvent {
+  string UserID = 1;
+  string ContentID = 2;
 }

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
 using ON.Content.SimpleStats.Service.Data;
+using ON.Content.SimpleStats.Service.Helper;
 using ON.Content.SimpleStats.Service.Models;
 using ON.Content.SimpleStats.Service.Services;
 
@@ -48,9 +49,11 @@ namespace ON.Content.SimpleStats.Service
             services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddSingleton<IAssetDataProvider, FileSystemAssetDataProvider>();
-            services.AddSingleton<IContentDataProvider, MemCachedFileSystemContentDataProvider>();
-            services.AddSingleton<FileSystemContentDataProvider>();
+            services.AddSingleton<ILikeDataProvider, EventDdLikeDataProvider>();
+            services.AddSingleton<ISaveDataProvider, EventDdSaveDataProvider>();
+            services.AddSingleton<IShareDataProvider, EventDdShareDataProvider>();
+            services.AddSingleton<IViewDataProvider, EventDdViewDataProvider>();
+            services.AddSingleton<EventDBHelper>();
 
             services.AddJwtAuthentication();
         }
@@ -78,6 +81,10 @@ namespace ON.Content.SimpleStats.Service
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGrpcService<LikeService>();
+                endpoints.MapGrpcService<SaveService>();
+                endpoints.MapGrpcService<ShareService>();
+                endpoints.MapGrpcService<ViewService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
             });
         }

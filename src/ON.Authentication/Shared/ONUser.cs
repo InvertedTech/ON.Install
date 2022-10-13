@@ -47,6 +47,8 @@ namespace ON.Authentication
         public List<string> Roles { get; private set; } = new List<string>();
         public const string RolesType = ClaimTypes.Role;
 
+        public bool IsLoggedIn => Id != Guid.Empty;
+
         public bool IsBackup { get => IsInRole(ROLE_BACKUP); }
         public bool IsOwner { get => IsInRole(ROLE_OWNER); }
         public bool IsAdmin { get => IsInRole(ROLE_ADMIN); }
@@ -62,7 +64,6 @@ namespace ON.Authentication
         public List<Claim> ExtraClaims { get; private set; } = new List<Claim>();
 
         public string JwtToken { get; set; } = "";
-
 
         public IEnumerable<Claim> ToClaims()
         {

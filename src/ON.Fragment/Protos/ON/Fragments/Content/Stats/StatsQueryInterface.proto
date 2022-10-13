@@ -30,6 +30,12 @@ service StatsQueryInterface {
       get: "/api/stats/user/{UserID}"
     };
   }
+  rpc GetOwnUserSaves (GetOwnUserSavesRequest) returns (GetOwnUserSavesResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/user/saves"
+    };
+  }
   rpc GetOwnUserStats (GetOwnUserStatsRequest) returns (GetOwnUserStatsResponse)
   {
     option (google.api.http) = {
@@ -69,6 +75,13 @@ message GetOtherUserStatsRequest {
   
 message GetOtherUserStatsResponse {
   StatsUserPublicRecord Record = 1;
+}
+
+message GetOwnUserSavesRequest {
+}
+  
+message GetOwnUserSavesResponse {
+  repeated string SavedContentIDs = 1;
 }
 
 message GetOwnUserStatsRequest {
