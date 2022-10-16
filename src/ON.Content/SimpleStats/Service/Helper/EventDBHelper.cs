@@ -1,10 +1,14 @@
 ﻿using EventStore.Client;
 using Google.Protobuf;
+using Google.Protobuf.Reflection;
 using Microsoft.Extensions.Options;
 using ON.Content.SimpleStats.Service.Models;
 using ON.Fragments.Content.Stats;
+using ON.Fragments.Settings;
 using System;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ON.Content.SimpleStats.Service.Helper
@@ -100,6 +104,40 @@ namespace ON.Content.SimpleStats.Service.Helper
             }
 
             return null;
+        }
+
+        public IMessage Parse(ResolvedEvent e)
+        {
+            var desc = GetDescriptor(e);
+            if (desc == null)
+                return null;
+
+            var json = Encoding.ASCII.GetString(e.Event.Data.Span);
+            return JsonParser.Default.Parse(json, desc);
+        }
+
+        public async Task SubscribeToAll(string streamName, Func<StreamSubscription, ResolvedEvent, CancellationToken, Task> eventAppeared, FromAll? fromAll = null)
+        {
+            FromAll f = fromAll ?? FromAll.Start;
+
+            var prefixStreamFilter = new SubscriptionFilterOptions(StreamFilter.Prefix(streamName));
+            await client.SubscribeToAllAsync(
+                f,
+                eventAppeared,
+                filterOptions: prefixStreamFilter);
+        }
+
+        private MessageDescriptor? GetDescriptor(ResolvedEvent e)
+        {
+            var t = Assembly.GetAssembly(typeof(LikeContentEvent)).GetType(e.Event.EventType, false);
+            if (t == null)
+                return null;
+
+            var pi = t.GetProperty("Descriptor", BindingFlags.Public | BindingFlags.Static);
+            if (pi == null)
+                return null;
+
+            return pi.GetValue(null) as MessageDescriptor;
         }
     }
 }

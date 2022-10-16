@@ -15,6 +15,7 @@ using ON.Content.SimpleStats.Service.Data;
 using ON.Content.SimpleStats.Service.Helper;
 using ON.Content.SimpleStats.Service.Models;
 using ON.Content.SimpleStats.Service.Services;
+using ON.Content.SimpleStats.Service.Subscriptions;
 
 namespace ON.Content.SimpleStats.Service
 {
@@ -53,7 +54,15 @@ namespace ON.Content.SimpleStats.Service
             services.AddSingleton<ISaveDataProvider, EventDdSaveDataProvider>();
             services.AddSingleton<IShareDataProvider, EventDdShareDataProvider>();
             services.AddSingleton<IViewDataProvider, EventDdViewDataProvider>();
+
+            services.AddSingleton<IStatsContentPublicDataProvider, FileSystemStatsContentPublicDataProvider>();
+            services.AddSingleton<IStatsContentPrivateDataProvider, FileSystemStatsContentPrivateDataProvider>();
+            services.AddSingleton<IStatsUserPublicDataProvider, FileSystemStatsUserPublicDataProvider>();
+            services.AddSingleton<IStatsUserPrivateDataProvider, FileSystemStatsUserPrivateDataProvider>();
+
             services.AddSingleton<EventDBHelper>();
+            services.AddSingleton<ContentSubscription>();
+            services.AddSingleton<UserSubscription>();
 
             services.AddJwtAuthentication();
         }
@@ -61,6 +70,8 @@ namespace ON.Content.SimpleStats.Service
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.LaunchSubscriptionServices();
+
             app.Map("/ping", (app1) => app1.Run(async context => {
                 await context.Response.BodyWriter.WriteAsync(PONG_RESPONSE);
             }));
@@ -85,6 +96,9 @@ namespace ON.Content.SimpleStats.Service
                 endpoints.MapGrpcService<SaveService>();
                 endpoints.MapGrpcService<ShareService>();
                 endpoints.MapGrpcService<ViewService>();
+
+                endpoints.MapGrpcService<QueryService>();
+
                 endpoints.MapGrpcService<ServiceOpsService>();
             });
         }

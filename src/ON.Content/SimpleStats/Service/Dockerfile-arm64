@@ -5,12 +5,12 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ON.Authentication/Shared ON.Authentication/Shared
-COPY ON.Content/SimpleCMS ON.Content/SimpleCMS
+COPY ON.Content/SimpleStats ON.Content/SimpleStats
 COPY ON.Fragment ON.Fragment
 COPY ON.Crypto ON.Crypto
 COPY ON.Settings ON.Settings
-RUN dotnet restore "ON.Content/SimpleCMS/Service/ON.Content.SimpleStats.Service.csproj"
-WORKDIR "/src/ON.Content/SimpleCMS/Service"
+RUN dotnet restore "ON.Content/SimpleStats/Service/ON.Content.SimpleStats.Service.csproj"
+WORKDIR "/src/ON.Content/SimpleStats/Service"
 RUN rm -f appsettings.Development.json
 RUN dotnet build "ON.Content.SimpleStats.Service.csproj" -c Release -o /app/build
 

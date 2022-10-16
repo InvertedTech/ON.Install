@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace ON.Content.SimpleStats.Service.Services
 {
+    [AllowAnonymous]
     public class ViewService : StatsViewInterface.StatsViewInterfaceBase
     {
         private readonly ILogger logger;
