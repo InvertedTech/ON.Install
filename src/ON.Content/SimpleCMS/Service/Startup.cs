@@ -32,6 +32,9 @@ namespace ON.Content.SimpleCMS.Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+            services.AddControllersWithViews();
+
             services.AddGrpc(options =>
             {
                 // options.EnableDetailedErrors = true;
@@ -82,6 +85,10 @@ namespace ON.Content.SimpleCMS.Service
                 endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ContentService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
