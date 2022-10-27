@@ -46,8 +46,8 @@ message PersonalizationPublicRecord {
   string Title = 1;
   string MetaDescription = 2;
   bool DefaultToDarkMode = 3;
-  bytes ProfileImage = 10;
-  bytes HeaderImage = 11;
+  string ProfileImageAssetId = 4;
+  string HeaderImageAssetId = 5;
 }
 
 message PersonalizationPrivateRecord {
