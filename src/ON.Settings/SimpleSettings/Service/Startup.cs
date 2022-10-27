@@ -30,7 +30,8 @@ namespace ON.Settings.SimpleSettings.Service
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddGrpc();
+            services.AddControllersWithViews();
+
             services.AddGrpcHttpApi();
 
             services.AddSwaggerGen(c =>
@@ -76,6 +77,10 @@ namespace ON.Settings.SimpleSettings.Service
                 endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
                 endpoints.MapGrpcService<SettingsService>();
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

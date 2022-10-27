@@ -2,8 +2,8 @@
   "profiles": {
     "ON.Settings.SimpleSettings.Service": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
-      "launchBrowser": false,
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
       "applicationUrl": "http://localhost:8009/api/settings",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
