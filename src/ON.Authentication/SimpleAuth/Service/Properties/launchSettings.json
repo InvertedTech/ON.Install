@@ -2,8 +2,8 @@
   "profiles": {
     "ON.Authentication.SimpleAuth.Service": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
-      "launchBrowser": false,
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
       "applicationUrl": "http://localhost:8001/api/auth",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",

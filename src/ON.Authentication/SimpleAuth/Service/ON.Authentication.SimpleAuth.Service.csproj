@@ -16,4 +16,8 @@
     <ProjectReference Include="../../Shared/ON.Authentication.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\api\auth\" />
+  </ItemGroup>
+
 </Project>
