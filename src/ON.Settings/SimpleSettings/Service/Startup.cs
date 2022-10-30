@@ -13,6 +13,7 @@ using ON.Settings.SimpleSettings.Service.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ON.Settings.SimpleSettings.Service
@@ -30,7 +31,11 @@ namespace ON.Settings.SimpleSettings.Service
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                    .AddJsonOptions(options=>
+                    {
+                        options.JsonSerializerOptions.PropertyNamingPolicy = new NeutralNamingPolicy();
+                    });
 
             services.AddGrpcHttpApi();
 
