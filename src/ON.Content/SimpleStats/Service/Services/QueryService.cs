@@ -27,38 +27,30 @@ namespace ON.Content.SimpleStats.Service.Services
             this.uPrvDb = uPrvDb;
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
-        public override async Task<AdminGetContentStatsResponse> AdminGetContentStats(AdminGetContentStatsRequest request, ServerCallContext context)
-        {
-            if (!Guid.TryParse(request.ContentID, out var contentId))
-                return new();
-
-            return new()
-            {
-                Record = await cPrvDb.GetById(contentId)
-            };
-        }
-
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
-        public override async Task<AdminGetOtherUserStatsResponse> AdminGetOtherUserStats(AdminGetOtherUserStatsRequest request, ServerCallContext context)
-        {
-            if (!Guid.TryParse(request.UserID, out var userId))
-                return new();
-
-            return new()
-            {
-                Record = await uPrvDb.GetById(userId)
-            };
-        }
-
         public override async Task<GetContentStatsResponse> GetContentStats(GetContentStatsRequest request, ServerCallContext context)
         {
             if (!Guid.TryParse(request.ContentID, out var contentId))
                 return new();
 
+            bool isLiked = false, isSaved = false, isViewed = false;
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken != null && userToken.IsLoggedIn)
+            {
+                var userRecord = await uPrvDb.GetById(userToken.Id);
+                if (userRecord != null)
+                {
+                    isLiked = userRecord.Likes.Contains(request.ContentID);
+                    isSaved = userRecord.Saves.Contains(request.ContentID);
+                    isViewed = userRecord.Views.Contains(request.ContentID);
+                }
+            }
+
             return new()
             {
-                Record = await cPubDb.GetById(contentId)
+                Record = await cPubDb.GetById(contentId),
+                LikedByUser = isLiked,
+                SavedByUser = isSaved,
+                ViewedByUser = isViewed,
             };
         }
 
@@ -71,6 +63,20 @@ namespace ON.Content.SimpleStats.Service.Services
             {
                 Record = await uPubDb.GetById(userId)
             };
+        }
+
+        public override async Task<GetOwnUserLikesResponse> GetOwnUserLikes(GetOwnUserLikesRequest request, ServerCallContext context)
+        {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null || !userToken.IsLoggedIn)
+                return new();
+
+            var record = await uPrvDb.GetById(userToken.Id);
+
+            var ret = new GetOwnUserLikesResponse();
+            ret.LikedContentIDs.AddRange(record.Likes);
+
+            return ret;
         }
 
         public override async Task<GetOwnUserSavesResponse> GetOwnUserSaves(GetOwnUserSavesRequest request, ServerCallContext context)
@@ -95,7 +101,7 @@ namespace ON.Content.SimpleStats.Service.Services
 
             return new()
             {
-                Record = await uPrvDb.GetById(userToken.Id)
+                Record = await uPubDb.GetById(userToken.Id)
             };
         }
     }
