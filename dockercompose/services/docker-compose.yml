@@ -70,3 +70,21 @@ services:
       - SERVICE__SETTINGSSERVICE__GRPC__PORT=7009
     volumes:
       - ../../src/tmpdata/settings:/data
+  eventdb:
+    image: eventstore/eventstore:21.10.8-buster-slim
+    expose:
+      - "1113"
+    ports:
+      - "2113:2113"
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    volumes:
+      - ../../src/tmpdata/eventdb/data:/var/lib/eventstore
+      - ../../src/tmpdata/eventdb/logs:/var/log/eventstore

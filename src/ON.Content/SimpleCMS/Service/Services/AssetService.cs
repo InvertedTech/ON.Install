@@ -48,8 +48,6 @@ namespace ON.Content.SimpleCMS.Service
                 default:
                     return new();
             }
-
-            return new() { };
         }
 
         private async Task<CreateAssetResponse> CreateAudio(AudioAssetData audio, ONUser user)

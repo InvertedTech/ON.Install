@@ -12,8 +12,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
+using ON.Content.SimpleCMS.Service.Helpers;
 using ON.Content.SimpleCMS.Service.Models;
 using ON.Content.SimpleCMS.Service.Services;
+using ON.Settings;
 
 namespace ON.Content.SimpleCMS.Service
 {
@@ -34,6 +36,7 @@ namespace ON.Content.SimpleCMS.Service
         {
             services.AddHttpContextAccessor();
             services.AddControllersWithViews();
+            services.AddSettingsHelpers();
 
             services.AddGrpc(options =>
             {
@@ -54,6 +57,7 @@ namespace ON.Content.SimpleCMS.Service
             services.AddSingleton<IAssetDataProvider, FileSystemAssetDataProvider>();
             services.AddSingleton<IContentDataProvider, MemCachedFileSystemContentDataProvider>();
             services.AddSingleton<FileSystemContentDataProvider>();
+            services.AddSingleton<StatsClient>();
 
             services.AddJwtAuthentication();
         }

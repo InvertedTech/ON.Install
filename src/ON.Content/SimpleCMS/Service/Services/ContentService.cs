@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
+using ON.Content.SimpleCMS.Service.Helpers;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
 
@@ -18,11 +19,13 @@ namespace ON.Content.SimpleCMS.Service
     {
         private readonly ILogger logger;
         private readonly IContentDataProvider dataProvider;
+        private readonly StatsClient statsClient;
 
-        public ContentService(ILogger<ContentService> logger, IContentDataProvider dataProvider)
+        public ContentService(ILogger<ContentService> logger, IContentDataProvider dataProvider, StatsClient statsClient)
         {
             this.logger = logger;
             this.dataProvider = dataProvider;
+            this.statsClient = statsClient;
         }
 
         [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
@@ -258,6 +261,8 @@ namespace ON.Content.SimpleCMS.Service
 
             if (!CanShowContent(rec, user))
                 rec.Public.Data.ClearContentDataOneof();
+
+            await statsClient.RecordView(contentId, user);
 
             return new() { Record = rec.Public };
         }
