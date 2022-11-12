@@ -19,13 +19,13 @@ namespace ON.Content.SimpleCMS.Service
     {
         private readonly ILogger logger;
         private readonly IContentDataProvider dataProvider;
-        private readonly StatsClient statsClient;
+        //private readonly StatsClient statsClient;
 
-        public ContentService(ILogger<ContentService> logger, IContentDataProvider dataProvider, StatsClient statsClient)
+        public ContentService(ILogger<ContentService> logger, IContentDataProvider dataProvider/*, StatsClient statsClient*/)
         {
             this.logger = logger;
             this.dataProvider = dataProvider;
-            this.statsClient = statsClient;
+            //this.statsClient = statsClient;
         }
 
         [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
