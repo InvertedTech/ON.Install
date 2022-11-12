@@ -264,7 +264,7 @@ namespace ON.Content.SimpleCMS.Service
                 if (!CanShowContent(rec, user))
                     rec.Public.Data.ClearContentDataOneof();
 
-                await statsClient.RecordView(contentId, user);
+                //await statsClient.RecordView(contentId, user);
 
                 return new() { Record = rec.Public };
             }
