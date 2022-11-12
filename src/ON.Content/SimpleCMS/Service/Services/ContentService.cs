@@ -246,25 +246,34 @@ namespace ON.Content.SimpleCMS.Service
         [AllowAnonymous]
         public override async Task<GetContentResponse> GetContent(GetContentRequest request, ServerCallContext context)
         {
-            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+            try
+            {
+                var user = ONUserHelper.ParseUser(context.GetHttpContext());
 
-            Guid contentId = request.ContentID.ToGuid();
-            if (contentId == Guid.Empty)
-                return new GetContentResponse();
+                Guid contentId = request.ContentID.ToGuid();
+                if (contentId == Guid.Empty)
+                    return new GetContentResponse();
 
-            var rec = await dataProvider.GetById(contentId);
-            if (rec == null)
-                return new();
+                var rec = await dataProvider.GetById(contentId);
+                if (rec == null)
+                    return new();
 
-            if (!CanShowInList(rec, user))
-                return new();
+                if (!CanShowInList(rec, user))
+                    return new();
 
-            if (!CanShowContent(rec, user))
-                rec.Public.Data.ClearContentDataOneof();
+                if (!CanShowContent(rec, user))
+                    rec.Public.Data.ClearContentDataOneof();
 
-            await statsClient.RecordView(contentId, user);
+                await statsClient.RecordView(contentId, user);
 
-            return new() { Record = rec.Public };
+                return new() { Record = rec.Public };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error trying to GetContent");
+            }
+
+            return new();
         }
 
         [AllowAnonymous]
