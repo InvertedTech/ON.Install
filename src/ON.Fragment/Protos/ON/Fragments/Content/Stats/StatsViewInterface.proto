@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Stats;
+
+service StatsViewInterface {
+  rpc LogViewContent (LogViewContentRequest) returns (LogViewContentResponse)
+  {
+  }
+}
+  
+message LogViewContentRequest {
+  string ContentID = 1;
+}
+  
+message LogViewContentResponse {
+}
+
+message ViewContentEvent {
+  string UserID = 1;
+  string ContentID = 2;
+}

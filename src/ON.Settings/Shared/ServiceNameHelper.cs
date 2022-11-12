@@ -18,6 +18,7 @@ namespace ON.Settings
         public readonly Channel PaypalPaymentsServiceChannel;
         public readonly Channel StripePaymentsServiceChannel;
         public readonly Channel PEPaymentsServiceChannel;
+        public readonly Channel StatsServiceChannel;
 
         public readonly string ServiceToken;
 
@@ -56,6 +57,10 @@ namespace ON.Settings
             uri = configuration.GetServiceUri("peservice", "grpc");
             if (uri != null)
                 PEPaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+
+            uri = configuration.GetServiceUri("statsservice", "grpc");
+            if (uri != null)
+                StatsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
 
             ServiceToken = GetServiceToken().Result;
         }

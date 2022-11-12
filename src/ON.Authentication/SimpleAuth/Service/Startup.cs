@@ -29,6 +29,12 @@ namespace ON.Authentication.SimpleAuth.Service
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews()
+                    .AddJsonOptions(options =>
+                    {
+                        options.JsonSerializerOptions.PropertyNamingPolicy = new NeutralNamingPolicy();
+                    });
+
             //services.AddGrpc();
             services.AddGrpcHttpApi();
 
@@ -68,6 +74,8 @@ namespace ON.Authentication.SimpleAuth.Service
             if (env.IsDevelopment())
                 Program.IsDevelopment = true;
 
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseJwtApiAuthentication();
@@ -78,6 +86,10 @@ namespace ON.Authentication.SimpleAuth.Service
                 endpoints.MapGrpcService<ServiceOpsService>();
                 endpoints.MapGrpcService<ServiceService>();
                 endpoints.MapGrpcService<UserService>();
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

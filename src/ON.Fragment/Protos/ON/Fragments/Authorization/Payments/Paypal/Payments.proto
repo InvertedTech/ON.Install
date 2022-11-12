@@ -2,14 +2,40 @@ syntax = "proto3";
 
 package ON.Fragments.Authorization.Payments.Paypal;
 
+import "google/api/annotations.proto";
 import "Protos/ON/Fragments/Authorization/Payments/Paypal/PlanRecord.proto";
 import "Protos/ON/Fragments/Authorization/Payments/Paypal/SubscriptionRecord.proto";
 
 service PaymentsInterface {
-  rpc CancelOwnSubscription (CancelOwnSubscriptionRequest) returns (CancelOwnSubscriptionResponse) {}
-  rpc GetAccountDetails (GetAccountDetailsRequest) returns (GetAccountDetailsResponse) {}
-  rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse) {}
-  rpc NewOwnSubscription (NewOwnSubscriptionRequest) returns (NewOwnSubscriptionResponse) {}
+  rpc CancelOwnSubscription (CancelOwnSubscriptionRequest) returns (CancelOwnSubscriptionResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/paypal/subscription/cancel"
+      body: "*"
+    };
+  }
+
+  rpc GetAccountDetails (GetAccountDetailsRequest) returns (GetAccountDetailsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/paypal/settings"
+    };
+  }
+
+  rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/paypal/subscription"
+    };
+  }
+
+  rpc NewOwnSubscription (NewOwnSubscriptionRequest) returns (NewOwnSubscriptionResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/paypal/subscription"
+      body: "*"
+    };
+  }
 }
   
 message CancelOwnSubscriptionRequest {

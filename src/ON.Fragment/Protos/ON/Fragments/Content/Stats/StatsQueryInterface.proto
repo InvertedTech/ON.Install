@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Stats;
+
+import "google/api/annotations.proto";
+import "Protos/ON/Fragments/Content/Stats/StatsRecords.proto";
+
+service StatsQueryInterface {
+  rpc GetContentStats (GetContentStatsRequest) returns (GetContentStatsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/{ContentID}"
+    };
+  }
+  rpc GetOtherUserStats (GetOtherUserStatsRequest) returns (GetOtherUserStatsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/user/{UserID}"
+    };
+  }
+  rpc GetOwnUserStats (GetOwnUserStatsRequest) returns (GetOwnUserStatsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/user"
+    };
+  }
+  rpc GetOwnUserLikes (GetOwnUserLikesRequest) returns (GetOwnUserLikesResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/user/likes"
+    };
+  }
+  rpc GetOwnUserSaves (GetOwnUserSavesRequest) returns (GetOwnUserSavesResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/user/saves"
+    };
+  }
+}
+
+
+message GetContentStatsRequest {
+  string ContentID = 1;
+}
+
+message GetContentStatsResponse {
+  StatsContentPublicRecord Record = 1;
+  bool LikedByUser = 2;
+  bool SavedByUser = 3;
+  bool ViewedByUser = 4;
+}
+
+
+message GetOtherUserStatsRequest {
+  string UserID = 1;
+}
+
+message GetOtherUserStatsResponse {
+  StatsUserPublicRecord Record = 1;
+}
+
+
+message GetOwnUserSavesRequest {
+}
+
+message GetOwnUserSavesResponse {
+  repeated string SavedContentIDs = 1;
+}
+
+
+message GetOwnUserLikesRequest {
+}
+
+message GetOwnUserLikesResponse {
+  repeated string LikedContentIDs = 1;
+}
+
+
+message GetOwnUserStatsRequest {
+}
+
+message GetOwnUserStatsResponse {
+  StatsUserPublicRecord Record = 1;
+}

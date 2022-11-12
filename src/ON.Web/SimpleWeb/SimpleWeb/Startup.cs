@@ -35,9 +35,11 @@ namespace ON.SimpleWeb
             services.AddScoped<ContentService>();
             services.AddScoped<FakePaymentsService>();
             services.AddScoped<UserService>();
+            services.AddScoped<Services.Paypal.PaymentsService>();
 
             services.AddSingleton<HtmlSubscriptionTierHelper>();
             services.AddSingleton<SettingsService>();
+            services.AddSingleton<Services.Paypal.AccountService>();
 
             services.AddJwtAuthentication();
             services.AddSettingsHelpers();

@@ -1,0 +1,9 @@
+﻿@model ON.SimpleWeb.Models.SiteSettings.IndexViewModel
+
+<li class="list-group-item">
+    <h2>CMS</h2>
+
+    <ul class="list-group">
+        @await Html.PartialAsync("CMSPublic", Model.Public.CMS)
+    </ul>
+</li>

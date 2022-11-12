@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim-amd64 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ON.Authentication/Shared ON.Authentication/Shared
+COPY ON.Content/SimpleStats ON.Content/SimpleStats
+COPY ON.Fragment ON.Fragment
+COPY ON.Crypto ON.Crypto
+COPY ON.Settings ON.Settings
+RUN dotnet restore "ON.Content/SimpleStats/Service/ON.Content.SimpleStats.Service.csproj"
+WORKDIR "/src/ON.Content/SimpleStats/Service"
+RUN rm -f appsettings.Development.json
+RUN dotnet build "ON.Content.SimpleStats.Service.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "ON.Content.SimpleStats.Service.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "ON.Content.SimpleStats.Service.dll"]

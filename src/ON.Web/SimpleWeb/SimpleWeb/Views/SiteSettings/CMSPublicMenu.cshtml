@@ -1,0 +1,27 @@
+﻿@using ON.Fragments.Settings
+@model CMSPublicMenuRecord
+
+<li class="list-group-item">
+    <h2>Public Settings</h2>
+    <form method="post" class="needs-validation" novalidate asp-action="ModifyCMSPublicMenu">
+        <div class="form-group">
+            <label asp-for="AudioMenuLinkName">Audio Menu Link Name (blank to hide)</label>
+            <input class="form-control" asp-for="AudioMenuLinkName" />
+        </div>
+        <div class="form-group">
+            <label asp-for="PictureMenuLinkName">Picture Menu Link Name (blank to hide)</label>
+            <input class="form-control" asp-for="PictureMenuLinkName" />
+        </div>
+        <div class="form-group">
+            <label asp-for="VideoMenuLinkName">Video MenuLink Name (blank to hide)</label>
+            <input class="form-control" asp-for="VideoMenuLinkName" />
+        </div>
+        <div class="form-group">
+            <label asp-for="WrittenMenuLinkName">Written Menu Link Name (blank to hide)</label>
+            <input class="form-control" asp-for="WrittenMenuLinkName" />
+        </div>
+        <br />
+
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</li>

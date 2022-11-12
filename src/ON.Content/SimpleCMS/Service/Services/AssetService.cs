@@ -11,6 +11,7 @@ using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ON.Content.SimpleCMS.Service
 {
@@ -41,14 +42,43 @@ namespace ON.Content.SimpleCMS.Service
             switch (request.CreateAssetRequestOneofCase)
             {
                 case CreateAssetRequest.CreateAssetRequestOneofOneofCase.Audio:
-                    break;
+                    return await CreateAudio(request.Audio, user);
                 case CreateAssetRequest.CreateAssetRequestOneofOneofCase.Image:
                     return await CreateImage(request.Image, user);
                 default:
                     return new();
             }
+        }
 
-            return new() { };
+        private async Task<CreateAssetResponse> CreateAudio(AudioAssetData audio, ONUser user)
+        {
+            AssetRecord record = new()
+            {
+                Audio = new()
+                {
+                    Public = new()
+                    {
+                        AssetID = Guid.NewGuid().ToString(),
+                        CreatedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow),
+                        Data = audio.Public
+                    },
+                    Private = new()
+                    {
+                        CreatedBy = user.Id.ToString(),
+                        Data = audio.Private
+                    }
+                }
+            };
+
+            await dataProvider.Save(record);
+
+            return new()
+            {
+                Record = new()
+                {
+                    Audio = record.Audio,
+                }
+            };
         }
 
         private async Task<CreateAssetResponse> CreateImage(ImageAssetData image, ONUser user)
@@ -191,7 +221,12 @@ namespace ON.Content.SimpleCMS.Service
 
         private bool IsValid(AudioAssetData audio)
         {
-            return false;
+            if (audio.Public == null)
+                return false;
+            if (audio.Private == null)
+                audio.Private = new();
+
+            return true;
         }
 
         private bool IsValid(ImageAssetData image)
@@ -199,7 +234,7 @@ namespace ON.Content.SimpleCMS.Service
             if (image.Public == null)
                 return false;
             if (image.Private == null)
-                return false;
+                image.Private = new();
 
             return true;
         }
