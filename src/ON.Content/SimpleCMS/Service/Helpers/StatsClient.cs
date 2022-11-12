@@ -1,5 +1,4 @@
 ﻿using Grpc.Core;
-using Grpc.Core.Logging;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Fragments.Content.Stats;
@@ -32,7 +31,7 @@ namespace ON.Content.SimpleCMS.Service.Helpers
             }
             catch (Exception ex)
             {
-                logger.LogError(ex);
+                logger.LogError(ex, "Error trying to RecordView");
             }
         }
 
