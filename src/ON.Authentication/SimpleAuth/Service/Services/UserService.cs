@@ -243,8 +243,9 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 return new() { Error = ChangeOwnProfileImageResponse.Types.ChangeOwnProfileImageResponseErrorType.NoError };
             }
-            catch
+            catch (Exception ex)
             {
+                logger.LogError(ex, "Error in ChangeOwnProfileImage");
                 return new() { Error = ChangeOwnProfileImageResponse.Types.ChangeOwnProfileImageResponseErrorType.BadFormat };
             }
         }

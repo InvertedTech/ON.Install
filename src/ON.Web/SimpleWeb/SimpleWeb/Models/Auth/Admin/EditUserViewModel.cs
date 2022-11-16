@@ -14,6 +14,7 @@ namespace ON.SimpleWeb.Models.Auth.Admin
 
         public EditUserViewModel(UserNormalRecord user)
         {
+            UserID = user.Public.UserID;
             UserName = user.Public.Data.UserName;
             DisplayName = user.Public.Data.DisplayName;
             Email = user.Private.Data.Emails.FirstOrDefault();
@@ -25,6 +26,8 @@ namespace ON.SimpleWeb.Models.Auth.Admin
             IsCommentModerator = user.Private.Roles.Contains(ONUser.ROLE_COMMENT_MODERATOR);
             IsCommentAppelateJudge = user.Private.Roles.Contains(ONUser.ROLE_COMMENT_APPELLATE_JUDGE);
         }
+
+        public string UserID { get; set; }
 
         [Display(Name = "User Name")]
         [RegularExpression(@"^[a-zA-Z0-9]+$")]

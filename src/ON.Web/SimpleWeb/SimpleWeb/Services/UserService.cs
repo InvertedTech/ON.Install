@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using ON.Settings;
+using Google.Protobuf;
+using System.IO;
 
 namespace ON.SimpleWeb.Services
 {
@@ -50,6 +52,19 @@ namespace ON.SimpleWeb.Services
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.ChangeOwnPasswordAsync(req, GetMetadata());
             return reply.Error;
+        }
+
+        public async Task<ChangeOwnProfileImageResponse> ChangeProfilePicture(Stream stream)
+        {
+            var req = new ChangeOwnProfileImageRequest()
+            {
+                ProfileImage = await ByteString.FromStreamAsync(stream)
+            };
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.ChangeOwnProfileImageAsync(req, GetMetadata());
+
+            return reply;
         }
 
         public async Task<CreateUserResponse> CreateUser(RegisterViewModel vm)
@@ -114,7 +129,7 @@ namespace ON.SimpleWeb.Services
             try
             {
                 var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
-                var reply = await client.GetOtherPublicUserAsync(new() { UserID = userId.ToString() }, GetMetadata());
+                var reply = await client.GetOtherPublicUserAsync(new() { UserID = userId }, GetMetadata());
                 return reply.Record;
             }
             catch

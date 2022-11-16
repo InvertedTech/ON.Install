@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Stats;
+
+import "google/api/annotations.proto";
+
+service StatsLikeInterface {
+  rpc LikeContent (LikeContentRequest) returns (LikeContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/stats/{ContentID}/like"
+      body: "*"
+    };
+  }
+  rpc UnlikeContent (LikeContentRequest) returns (LikeContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/stats/{ContentID}/unlike"
+      body: "*"
+    };
+  }
+}
+
+message LikeContentRequest {
+  string ContentID = 1;
+}
+
+message LikeContentResponse {
+}
+
+message LikeContentEvent {
+  string UserID = 1;
+  string ContentID = 2;
+}
+
+message UnlikeContentEvent {
+  string UserID = 1;
+  string ContentID = 2;
+}

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
+using ON.Content.SimpleCMS.Service.Helpers;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
 
@@ -18,11 +19,34 @@ namespace ON.Content.SimpleCMS.Service
     {
         private readonly ILogger logger;
         private readonly IContentDataProvider dataProvider;
+        //private readonly StatsClient statsClient;
 
-        public ContentService(ILogger<ContentService> logger, IContentDataProvider dataProvider)
+        public ContentService(ILogger<ContentService> logger, IContentDataProvider dataProvider/*, StatsClient statsClient*/)
         {
             this.logger = logger;
             this.dataProvider = dataProvider;
+            //this.statsClient = statsClient;
+        }
+
+        [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
+        public override async Task<AnnounceContentResponse> AnnounceContent(AnnounceContentRequest request, ServerCallContext context)
+        {
+            if (request.AnnounceOnUTC == null)
+                return new();
+
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+
+            var contentId = request.ContentID.ToGuid();
+            var record = await dataProvider.GetById(contentId);
+            if (record == null)
+                return new();
+
+            record.Public.AnnounceOnUTC = request.AnnounceOnUTC;
+            record.Private.AnnouncedBy = user.Id.ToString();
+
+            await dataProvider.Save(record);
+
+            return new() { Record = record };
         }
 
         [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
@@ -222,23 +246,34 @@ namespace ON.Content.SimpleCMS.Service
         [AllowAnonymous]
         public override async Task<GetContentResponse> GetContent(GetContentRequest request, ServerCallContext context)
         {
-            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+            try
+            {
+                var user = ONUserHelper.ParseUser(context.GetHttpContext());
 
-            Guid contentId = request.ContentID.ToGuid();
-            if (contentId == Guid.Empty)
-                return new GetContentResponse();
+                Guid contentId = request.ContentID.ToGuid();
+                if (contentId == Guid.Empty)
+                    return new GetContentResponse();
 
-            var rec = await dataProvider.GetById(contentId);
-            if (rec == null)
-                return new();
+                var rec = await dataProvider.GetById(contentId);
+                if (rec == null)
+                    return new();
 
-            if (!CanShowInList(rec, user))
-                return new();
+                if (!CanShowInList(rec, user))
+                    return new();
 
-            if (!CanShowContent(rec, user))
-                rec.Public.Data.ClearContentDataOneof();
+                if (!CanShowContent(rec, user))
+                    rec.Public.Data.ClearContentDataOneof();
 
-            return new() { Record = rec.Public };
+                //await statsClient.RecordView(contentId, user);
+
+                return new() { Record = rec.Public };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error trying to GetContent");
+            }
+
+            return new();
         }
 
         [AllowAnonymous]
@@ -333,6 +368,24 @@ namespace ON.Content.SimpleCMS.Service
 
             record.Public.PublishOnUTC = request.PublishOnUTC;
             record.Private.PublishedBy = user.Id.ToString();
+
+            await dataProvider.Save(record);
+
+            return new() { Record = record };
+        }
+
+        [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
+        public override async Task<UnannounceContentResponse> UnannounceContent(UnannounceContentRequest request, ServerCallContext context)
+        {
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+
+            var contentId = request.ContentID.ToGuid();
+            var record = await dataProvider.GetById(contentId);
+            if (record == null)
+                return new();
+
+            record.Public.AnnounceOnUTC = null;
+            record.Private.AnnouncedBy = user.Id.ToString();
 
             await dataProvider.Save(record);
 

@@ -8,6 +8,13 @@ import "Protos/ON/Fragments/Content/ContentRecord.proto";
 
 // Service for Content fragment interface
 service ContentInterface {
+  rpc AnnounceContent (AnnounceContentRequest) returns (AnnounceContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/content/{ContentID}/announce"
+      body: "*"
+    };
+  }
   rpc CreateContent (CreateContentRequest) returns (CreateContentResponse)
   {
     option (google.api.http) = {
@@ -71,6 +78,12 @@ service ContentInterface {
       body: "*"
     };
   }
+  rpc UnannounceContent (UnannounceContentRequest) returns (UnannounceContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/content/{ContentID}/unannounce"
+    };
+  }
   rpc UndeleteContent (UndeleteContentRequest) returns (UndeleteContentResponse)
   {
     option (google.api.http) = {
@@ -83,6 +96,15 @@ service ContentInterface {
       post: "/api/cms/admin/content/{ContentID}/unpublish"
     };
   }
+}
+  
+message AnnounceContentRequest {
+  string ContentID = 1;   // Guid for the content record
+  google.protobuf.Timestamp AnnounceOnUTC = 3; // UTC timestamp when content was or will be announced
+}
+  
+message AnnounceContentResponse {
+  ContentRecord Record = 1;
 }
   
 message CreateContentRequest {
@@ -198,10 +220,18 @@ message ContentListRecord {
 
 message PublishContentRequest {
   string ContentID = 1;   // Guid for the content record
-  google.protobuf.Timestamp PublishOnUTC = 3; // UTC timestamp when content was published
+  google.protobuf.Timestamp PublishOnUTC = 3; // UTC timestamp when content was or will be published
 }
   
 message PublishContentResponse {
+  ContentRecord Record = 1;
+}
+  
+message UnannounceContentRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message UnannounceContentResponse {
   ContentRecord Record = 1;
 }
   

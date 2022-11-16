@@ -2,35 +2,37 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using ON.Authorization.Paypal.Service.Models;
 using ON.Fragments.Generic;
+using ON.Settings;
 using System.Threading.Tasks;
+using static ON.Fragments.Generic.ServiceStatusResponse.Types;
 
 namespace ON.Authorization.Paypal.Service
 {
     public class ServiceOpsService : ServiceOpsInterface.ServiceOpsInterfaceBase
     {
-        private readonly AppSettings appSettings;
-        private readonly ILogger<ServiceOpsService> logger;
+        private readonly SettingsClient settingsClient;
+        private readonly ILogger logger;
 
-        public ServiceOpsService(ILogger<ServiceOpsService> logger, AppSettings appSettings)
+        public ServiceOpsService(ILogger<ServiceOpsService> logger, SettingsClient settingsClient)
         {
-            this.appSettings = appSettings;
+            this.settingsClient = settingsClient;
             this.logger = logger;
         }
 
-        public override Task<ServiceStatusResponse> ServiceStatus(ServiceStatusRequest request, ServerCallContext context)
+        public override async Task<ServiceStatusResponse> ServiceStatus(ServiceStatusRequest request, ServerCallContext context)
         {
-            if (!appSettings.ContainsSecrets)
-            {
-                return Task.FromResult(new ServiceStatusResponse()
-                {
-                    Status = ServiceStatusResponse.Types.OnlineStatus.Faulted
-                });
-            }
+            return new() { Status = await ServiceStatus(settingsClient) };
+        }
 
-            return Task.FromResult(new ServiceStatusResponse()
-            {
-                Status = ServiceStatusResponse.Types.OnlineStatus.Online
-            });
+        public static async Task<OnlineStatus> ServiceStatus(SettingsClient settingsClient)
+        {
+            if (!(await settingsClient.GetOwnerData()).Subscription.Paypal.Enabled)
+                return ServiceStatusResponse.Types.OnlineStatus.Offline;
+
+            if (!(await settingsClient.GetOwnerData()).Subscription.Paypal.IsValid)
+                return ServiceStatusResponse.Types.OnlineStatus.Faulted;
+
+            return ServiceStatusResponse.Types.OnlineStatus.Online;
         }
     }
 }

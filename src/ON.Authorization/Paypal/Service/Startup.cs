@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using ON.Authentication;
 using ON.Authorization.Paypal.Service.Clients;
 using ON.Authorization.Paypal.Service.Data;
@@ -31,9 +32,16 @@ namespace ON.Authorization.Paypal.Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddGrpcHttpApi();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("paypal", new OpenApiInfo { Title = "Paypal API" });
+            });
+            services.AddGrpcSwagger();
+
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<PaypalClient>();
-            services.AddGrpc();
             services.AddSingleton<ISubscriptionRecordProvider, FileSystemSubscriptionRecordProvider>();
             services.AddSingleton<IPlanRecordProvider, FileSystemPlanRecordProvider>();
 
@@ -48,6 +56,19 @@ namespace ON.Authorization.Paypal.Service
                 await context.Response.BodyWriter.WriteAsync(PONG_RESPONSE);
             }));
 
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "api/{documentName}/swagger.json";
+            });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/api/paypal/swagger.json", "Paypal API");
+                c.RoutePrefix = "api/paypal";
+            });
+
+            if (env.IsDevelopment())
+                Program.IsDevelopment = true;
+
             app.UseRouting();
 
             app.UseJwtAuthentication();
@@ -57,11 +78,6 @@ namespace ON.Authorization.Paypal.Service
                 endpoints.MapGrpcService<ClaimsService>();
                 endpoints.MapGrpcService<PaymentsService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
-
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-                });
             });
         }
     }

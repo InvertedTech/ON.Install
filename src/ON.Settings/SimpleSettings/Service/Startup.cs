@@ -13,6 +13,7 @@ using ON.Settings.SimpleSettings.Service.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ON.Settings.SimpleSettings.Service
@@ -30,7 +31,12 @@ namespace ON.Settings.SimpleSettings.Service
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddGrpc();
+            services.AddControllersWithViews()
+                    .AddJsonOptions(options=>
+                    {
+                        options.JsonSerializerOptions.PropertyNamingPolicy = new NeutralNamingPolicy();
+                    });
+
             services.AddGrpcHttpApi();
 
             services.AddSwaggerGen(c =>
@@ -76,6 +82,10 @@ namespace ON.Settings.SimpleSettings.Service
                 endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
                 endpoints.MapGrpcService<SettingsService>();
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

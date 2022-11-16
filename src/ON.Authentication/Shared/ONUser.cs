@@ -24,7 +24,7 @@ namespace ON.Authentication
         public const string ROLE_CAN_PUBLISH = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_CONTENT_PUBLISHER;
         public const string ROLE_IS_ADMIN_OR_OWNER = ROLE_OWNER + "," + ROLE_ADMIN;
         public const string ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_SERVICE;
-        public const string ROLE_IS_OWNER_OR_SERVICE = ROLE_OWNER + "," + ROLE_SERVICE;
+        public const string ROLE_IS_OWNER_OR_SERVICE = ROLE_SERVICE + "," + ROLE_OWNER;
 
         public Guid Id { get; set; } = Guid.Empty;
         public const string IdType = "Id";
@@ -47,6 +47,8 @@ namespace ON.Authentication
         public List<string> Roles { get; private set; } = new List<string>();
         public const string RolesType = ClaimTypes.Role;
 
+        public bool IsLoggedIn => Id != Guid.Empty;
+
         public bool IsBackup { get => IsInRole(ROLE_BACKUP); }
         public bool IsOwner { get => IsInRole(ROLE_OWNER); }
         public bool IsAdmin { get => IsInRole(ROLE_ADMIN); }
@@ -62,7 +64,6 @@ namespace ON.Authentication
         public List<Claim> ExtraClaims { get; private set; } = new List<Claim>();
 
         public string JwtToken { get; set; } = "";
-
 
         public IEnumerable<Claim> ToClaims()
         {

@@ -9,11 +9,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
+using ON.Content.SimpleCMS.Service.Helpers;
 using ON.Content.SimpleCMS.Service.Models;
 using ON.Content.SimpleCMS.Service.Services;
+using ON.Settings;
 
 namespace ON.Content.SimpleCMS.Service
 {
@@ -32,6 +35,12 @@ namespace ON.Content.SimpleCMS.Service
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(configure => configure.AddConsole());
+
+            services.AddHttpContextAccessor();
+            services.AddControllersWithViews();
+            services.AddSettingsHelpers();
+
             services.AddGrpc(options =>
             {
                 // options.EnableDetailedErrors = true;
@@ -51,6 +60,7 @@ namespace ON.Content.SimpleCMS.Service
             services.AddSingleton<IAssetDataProvider, FileSystemAssetDataProvider>();
             services.AddSingleton<IContentDataProvider, MemCachedFileSystemContentDataProvider>();
             services.AddSingleton<FileSystemContentDataProvider>();
+            services.AddSingleton<StatsClient>();
 
             services.AddJwtAuthentication();
         }
@@ -82,6 +92,10 @@ namespace ON.Content.SimpleCMS.Service
                 endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ContentService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

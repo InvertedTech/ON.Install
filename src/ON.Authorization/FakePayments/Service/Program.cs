@@ -28,6 +28,7 @@ namespace ON.Authorization.FakePayments.Service
                 {
                     webBuilder.ConfigureKestrel(options =>
                     {
+                        options.AllowSynchronousIO = true;
                         options.ListenAnyIP(GetPort(API_PORT_NAME), o => o.Protocols = HttpProtocols.Http1);
                         options.ListenAnyIP(GetPort(GRPC_PORT_NAME), o => o.Protocols = HttpProtocols.Http2);
                     });

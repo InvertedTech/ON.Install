@@ -2,7 +2,7 @@
   "profiles": {
     "ON.Settings.SimpleSettings.Service": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
+      "dotnetRunMessages": true,
       "launchBrowser": true,
       "applicationUrl": "http://localhost:8009/api/settings",
       "environmentVariables": {

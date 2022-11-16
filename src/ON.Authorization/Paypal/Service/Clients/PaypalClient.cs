@@ -4,6 +4,7 @@ using ON.Authorization.Paypal.Service.Data;
 using ON.Authorization.Paypal.Service.Models;
 using ON.Fragments.Authorization;
 using ON.Fragments.Authorization.Payments.Paypal;
+using ON.Fragments.Settings;
 using ON.Settings;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace ON.Authorization.Paypal.Service.Clients
     {
         public readonly PlanList Plans;
 
-        private readonly AppSettings settings;
+        private readonly SettingsClient settingsClient;
         private readonly IPlanRecordProvider recordProvider;
         private readonly SubscriptionTierHelper subHelper;
 
@@ -30,24 +31,36 @@ namespace ON.Authorization.Paypal.Service.Clients
         private string bearerToken;
         private DateTime bearerExpiration = DateTime.MinValue;
         private DateTime bearerSoftExpiration = DateTime.MinValue;
+        private uint ensuredPlanSettingId = 0;
 
         private object syncObject = new();
 
-        public PaypalClient(IOptions<AppSettings> settings, IPlanRecordProvider recordProvider, SubscriptionTierHelper subHelper)
+        public PaypalClient(IPlanRecordProvider recordProvider, SubscriptionTierHelper subHelper, SettingsClient settingsClient)
         {
-            this.settings = settings.Value;
+            this.settingsClient = settingsClient;
             this.recordProvider = recordProvider;
             this.subHelper = subHelper;
 
             Plans = recordProvider.GetAll().Result;
 
             EnsurePlans().Wait();
+
+
+            PubSub.Hub.Default.Subscribe<SettingsPublicData>(this, d =>
+            {
+                EnsurePlans().Wait();
+            });
         }
 
         private async Task EnsurePlans()
         {
+            if (ensuredPlanSettingId == settingsClient.CurrentSettingsId)
+                return;
+
             foreach (var tier in subHelper.GetAll())
                 await EnsurePlan(tier);
+
+            ensuredPlanSettingId = settingsClient.CurrentSettingsId;
         }
 
         private async Task EnsurePlan(SubscriptionTier tier)
@@ -214,12 +227,14 @@ namespace ON.Authorization.Paypal.Service.Clients
 
         private async Task<HttpClient> GetClient()
         {
-            var token = await GetBearerToken();
+            var settings = (await settingsClient.GetOwnerData()).Subscription.Paypal;
+
+            var token = await GetBearerToken(settings);
             if (token == null)
                 return null;
 
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(settings.PaypalUrl);
+            client.BaseAddress = new Uri(settings.Url);
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
             client.DefaultRequestHeaders.AcceptLanguage.Add(StringWithQualityHeaderValue.Parse("en_US"));
@@ -229,7 +244,7 @@ namespace ON.Authorization.Paypal.Service.Clients
             return client;
         }
 
-        private async Task<string> GetBearerToken()
+        private async Task<string> GetBearerToken(PaypalSettings settings)
         {
             var now = DateTime.UtcNow;
 
@@ -239,7 +254,7 @@ namespace ON.Authorization.Paypal.Service.Clients
                 {
                     if (loginTask == null)
                     {
-                        loginTask = DoLogin();
+                        loginTask = DoLogin(settings);
                     }
                 }
             }
@@ -250,20 +265,20 @@ namespace ON.Authorization.Paypal.Service.Clients
             return bearerToken;
         }
 
-        private async Task DoLogin()
+        private async Task DoLogin(PaypalSettings settings)
         {
             try
             {
                 CancellationTokenSource timeout = new CancellationTokenSource();
                 timeout.CancelAfter(3000);
                 using HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(settings.PaypalUrl);
+                client.BaseAddress = new Uri(settings.Url);
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
                 client.DefaultRequestHeaders.AcceptLanguage.Add(StringWithQualityHeaderValue.Parse("en_US"));
                 client.DefaultRequestHeaders.ConnectionClose = true;
 
-                var authenticationString = settings.PaypalClientID + ":" + settings.PaypalClientSecret;
+                var authenticationString = settings.ClientID + ":" + settings.ClientSecret;
                 var base64EncodedAuthenticationString = Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
 

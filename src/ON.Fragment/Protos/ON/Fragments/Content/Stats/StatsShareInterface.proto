@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Stats;
+
+import "google/api/annotations.proto";
+
+service StatsShareInterface {
+  rpc LogShareContent (LogShareContentRequest) returns (LogShareContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/stats/{ContentID}/logshare"
+      body: "*"
+    };
+  }
+}
+  
+message LogShareContentRequest {
+  string ContentID = 1;
+}
+  
+message LogShareContentResponse {
+}
+
+message ShareContentEvent {
+  string UserID = 1;
+  string ContentID = 2;
+}

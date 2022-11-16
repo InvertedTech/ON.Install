@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -214,6 +216,43 @@ namespace ON.SimpleWeb.Controllers
             };
 
             return View("Settings", vm);
+        }
+
+        [HttpGet("/settings/profile")]
+        public async Task<IActionResult> GetMyProfilePic()
+        {
+            var user = await userService.GetCurrentUser();
+            if (user == null)
+                return NotFound();
+
+            return base.File(user.Public.Data.ProfileImagePNG.ToArray(), "image/png"); ;
+        }
+
+        [HttpPost("/settings/profile")]
+        public async Task<IActionResult> UpdateProfilePic(IFormFile? file)
+        {
+            if (file == null) return RedirectToAction(nameof(SettingsGet));
+            if (file.Length == 0) return RedirectToAction(nameof(SettingsGet));
+
+            using var stream = file.OpenReadStream();
+
+            await userService.ChangeProfilePicture(stream);
+
+            return RedirectToAction(nameof(SettingsGet));
+        }
+
+        [HttpGet("/profile/pic/{id}")]
+        public async Task<IActionResult> GetProfilePic(string id)
+        {
+            Guid guid;
+            if (!Guid.TryParse(id, out guid))
+                return NotFound();
+
+            var user = await userService.GetUserPublic(guid.ToString());
+            if (user == null)
+                return NotFound();
+
+            return base.File(user.Data.ProfileImagePNG.ToArray(), "image/png"); ;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

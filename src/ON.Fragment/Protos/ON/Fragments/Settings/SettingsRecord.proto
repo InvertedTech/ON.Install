@@ -46,8 +46,8 @@ message PersonalizationPublicRecord {
   string Title = 1;
   string MetaDescription = 2;
   bool DefaultToDarkMode = 3;
-  bytes ProfileImage = 10;
-  bytes HeaderImage = 11;
+  string ProfileImageAssetId = 4;
+  string HeaderImageAssetId = 5;
 }
 
 message PersonalizationPrivateRecord {
@@ -89,6 +89,7 @@ message CMSPublicRecord {
   ON.Fragments.Content.LayoutEnum DefaultLayout = 1;
   repeated ChannelRecord Channels = 2;
   repeated CategoryRecord Categories = 3;
+  CMSPublicMenuRecord Menu = 4;
 }
 
 message CMSPrivateRecord {
@@ -113,4 +114,11 @@ message CategoryRecord {
   string UrlStub = 4;
 
   string OldCategoryId = 1001;
+}
+
+message CMSPublicMenuRecord {
+  string AudioMenuLinkName = 1;
+  string PictureMenuLinkName = 2;
+  string VideoMenuLinkName = 3;
+  string WrittenMenuLinkName = 4;
 }
