@@ -28,8 +28,6 @@ namespace ON.SimpleWeb.Services
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifyCMSPublicDataAsync(new() { Data = vm }, GetMetadata(user));
 
-            settingsClient.Flush();
-
             return res.Error;
         }
 
