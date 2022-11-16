@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using ON.Fragments.Authorization;
+using ON.Fragments.Settings;
 using ON.Settings;
+using PubSub;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,12 +24,14 @@ namespace ON.SimpleWeb.Helper
         {
             this.subHelper = subHelper;
 
-            LoadTiers().Wait();
+            LoadTiers();
+
+            Hub.Default.Subscribe<SettingsRecord>(r => LoadTiers());
         }
 
-        private async Task LoadTiers()
+        private void LoadTiers()
         {
-            Tiers = await subHelper.GetAll();
+            Tiers = subHelper.GetAll();
 
             SelectListItems = new SelectList(Tiers, nameof(SubscriptionTier.Amount), nameof(SubscriptionTier.Label));
 
@@ -55,9 +59,9 @@ namespace ON.SimpleWeb.Helper
             SelectListItemsWithOther = new SelectList(TiersWithOther, nameof(InnerTier.Amount), nameof(InnerTier.Label));
         }
 
-        public async Task<SubscriptionTier> FromAmount(uint amount)
+        public SubscriptionTier FromAmount(uint amount)
         {
-            return await subHelper.GetForAmount(amount);
+            return subHelper.GetForAmount(amount);
         }
 
         public class InnerTier

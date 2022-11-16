@@ -3,101 +3,70 @@ using System.Threading.Tasks;
 using System.Linq;
 using ON.Authentication;
 using Grpc.Core;
-using System.Timers;
+using EventStore.Client;
+using System;
+using System.Threading;
+using System.Text;
 using PubSub;
 
 namespace ON.Settings
 {
     public class SettingsClient
     {
-        private readonly ServiceNameHelper nameHelper;
-        private Timer pollingTimer;
+        private string connStr = "esdb://127.0.0.1:2113?tls=false&keepAliveTimeout=10000&keepAliveInterval=10000";
+        private EventStoreClient client;
+        private string streamName = "simplesettings";
 
-        private SettingsPublicData publicData = null;
-        private SettingsPrivateData privateData = null;
-        private SettingsOwnerData ownerData = null;
+        public SettingsPublicData PublicData { get; private set; }
+        public SettingsPrivateData PrivateData { get; private set; }
+        public SettingsOwnerData OwnerData { get; private set; }
 
-        public uint CurrentSettingsId => publicData?.VersionNum ?? 0;
-
-        public SettingsClient(ServiceNameHelper nameHelper)
+        public SettingsClient()
         {
-            this.nameHelper = nameHelper;
-
-            pollingTimer = new Timer(10000);
-            pollingTimer.AutoReset = true;
-            pollingTimer.Elapsed += new ElapsedEventHandler(PollingTimer_Elapsed);
-            pollingTimer.Start();
+            var settings = EventStoreClientSettings.Create(connStr);
+            client = new EventStoreClient(settings);
+            SubscribeToEvents().Wait();
         }
 
-        private async void PollingTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private async Task SubscribeToEvents()
+        {
+            await LoadLatest();
+            await client.SubscribeToStreamAsync(streamName, FromStream.End, ProcessEvent);
+        }
+
+        public async Task LoadLatest()
         {
             try
             {
-                var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
-                var res = await client.GetOwnerNewerDataAsync(new() { VersionNum = CurrentSettingsId }, GetMetadata());
+                var result = client.ReadStreamAsync(
+                    Direction.Backwards,
+                    streamName,
+                    StreamPosition.End);
 
-                if ((res?.Public?.VersionNum ?? 0) == 0)
-                    return;
+                var e = await result.FirstOrDefaultAsync();
+                var json = Encoding.ASCII.GetString(e.Event.Data.Span);
+                var record = Google.Protobuf.JsonParser.Default.Parse<SettingsRecord>(json);
 
-                publicData = res.Public;
-                privateData = res.Private;
-                ownerData = res.Owner;
-
-                await Hub.Default.PublishAsync(publicData);
-                await Hub.Default.PublishAsync(privateData);
-                await Hub.Default.PublishAsync(ownerData);
+                Load(record);
             }
             catch { }
         }
 
-        public void Flush()
+        private async Task ProcessEvent(StreamSubscription sub, ResolvedEvent e, CancellationToken token)
         {
-            publicData = null;
-            privateData = null;
-            ownerData = null;
+            var json = Encoding.ASCII.GetString(e.Event.Data.Span);
+            var record = Google.Protobuf.JsonParser.Default.Parse<SettingsRecord>(json);
+
+            Load(record);
+
+            await Hub.Default.PublishAsync(record);
         }
 
-        public async Task<SettingsOwnerData> GetOwnerData()
+        private void Load(SettingsRecord record)
         {
-            await LoadSettingsIfMissing();
-            return ownerData;
-        }
-
-        public async Task<SettingsPrivateData> GetPrivateData()
-        {
-            await LoadSettingsIfMissing();
-            return privateData;
-        }
-
-        public async Task<SettingsPublicData> GetPublicData()
-        {
-            await LoadSettingsIfMissing();
-            return publicData;
-        }
-
-        private async Task LoadSettingsIfMissing()
-        {
-            if (ownerData != null)
-                return;
-
-            var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
-            var res = await client.GetOwnerDataAsync(new(), GetMetadata());
-
-            publicData = res.Public;
-            privateData = res.Private;
-            ownerData = res.Owner;
-
-            await Hub.Default.PublishAsync(publicData);
-            await Hub.Default.PublishAsync(privateData);
-            await Hub.Default.PublishAsync(ownerData);
-        }
-
-        private Metadata GetMetadata()
-        {
-            var data = new Metadata();
-            data.Add("Authorization", "Bearer " + nameHelper.ServiceToken);
-
-            return data;
+            PublicData = record.Public;
+            PrivateData = record.Private;
+            OwnerData = record.Owner;
         }
     }
 }

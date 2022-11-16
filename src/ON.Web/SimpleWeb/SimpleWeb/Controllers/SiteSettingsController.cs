@@ -41,9 +41,9 @@ namespace ON.SimpleWeb.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string errorMsg = "", string successMsg = "")
+        public IActionResult Index(string errorMsg = "", string successMsg = "")
         {
-            var vm = await IndexViewModel.Load(settingsClient, userHelper.MyUser);
+            var vm = IndexViewModel.Load(settingsClient, userHelper.MyUser);
             vm.ErrorMessage = errorMsg;
             vm.SuccessMessage = successMsg;
 
@@ -82,7 +82,7 @@ namespace ON.SimpleWeb.Controllers
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
 
-            var data = await settingsClient.GetPublicData();
+            var data = settingsClient.PublicData;
             var record = data.Personalization;
 
             record.Title = vm.Title;
@@ -108,7 +108,7 @@ namespace ON.SimpleWeb.Controllers
 
             vm.Color = "#000000";
 
-            var data = await settingsClient.GetPublicData();
+            var data = settingsClient.PublicData;
             var record = data.Subscription;
 
             var tier = record.Tiers.FirstOrDefault(t => t.Amount == vm.Amount);
@@ -131,7 +131,7 @@ namespace ON.SimpleWeb.Controllers
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
 
-            var data = await settingsClient.GetPublicData();
+            var data = settingsClient.PublicData;
             var record = data.Subscription;
 
             var tier = record.Tiers.FirstOrDefault(t => t.Amount == vm.Amount);
@@ -153,7 +153,7 @@ namespace ON.SimpleWeb.Controllers
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
 
-            var data = await settingsClient.GetOwnerData();
+            var data = settingsClient.OwnerData;
             var record = data.Subscription;
 
             record.Fake = vm;
@@ -172,7 +172,7 @@ namespace ON.SimpleWeb.Controllers
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
 
-            var data = await settingsClient.GetOwnerData();
+            var data = settingsClient.OwnerData;
             var record = data.Subscription;
 
             record.Paypal = vm;
@@ -191,7 +191,7 @@ namespace ON.SimpleWeb.Controllers
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
 
-            var data = await settingsClient.GetOwnerData();
+            var data = settingsClient.OwnerData;
             var record = data.Subscription;
 
             record.ParallelEconomy = vm;
@@ -210,7 +210,7 @@ namespace ON.SimpleWeb.Controllers
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
 
-            var data = await settingsClient.GetOwnerData();
+            var data = settingsClient.OwnerData;
             var record = data.Subscription;
 
             record.Stripe = vm;

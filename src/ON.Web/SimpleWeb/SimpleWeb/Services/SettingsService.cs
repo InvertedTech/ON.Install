@@ -41,8 +41,6 @@ namespace ON.SimpleWeb.Services
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifyPersonalizationPublicDataAsync(new() { Data = vm }, GetMetadata(user));
 
-            settingsClient.Flush();
-
             return res.Error;
         }
 
@@ -54,8 +52,6 @@ namespace ON.SimpleWeb.Services
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifySubscriptionPublicDataAsync(new() { Data = vm }, GetMetadata(user));
 
-            settingsClient.Flush();
-
             return res.Error;
         }
 
@@ -66,8 +62,6 @@ namespace ON.SimpleWeb.Services
 
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifySubscriptionOwnerDataAsync(new() { Data = vm }, GetMetadata(user));
-
-            settingsClient.Flush();
 
             return res.Error;
         }

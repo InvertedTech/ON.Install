@@ -57,7 +57,7 @@ namespace ON.Authorization.Paypal.Service.Clients
             if (ensuredPlanSettingId == settingsClient.CurrentSettingsId)
                 return;
 
-            foreach (var tier in await subHelper.GetAll())
+            foreach (var tier in subHelper.GetAll())
                 await EnsurePlan(tier);
 
             ensuredPlanSettingId = settingsClient.CurrentSettingsId;

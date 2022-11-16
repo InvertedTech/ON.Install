@@ -46,7 +46,7 @@ namespace ON.Settings.SimpleSettings.Service
             services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddSingleton<ISettingsDataProvider, FileSettingsDataProvider>();
+            services.AddSingleton<ISettingsDataProvider, EventDBSettingsDataProvider>();
             services.AddSingleton<OfflineHelper>();
 
             services.AddJwtAuthentication();
