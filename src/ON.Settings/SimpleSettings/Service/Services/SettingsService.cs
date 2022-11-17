@@ -42,6 +42,8 @@ namespace ON.Settings.SimpleSettings.Service.Services
         public override async Task<GetAdminDataResponse> GetAdminData(GetAdminDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
+            if (record == null)
+                return new() { };
 
             return new()
             {
@@ -54,13 +56,16 @@ namespace ON.Settings.SimpleSettings.Service.Services
         public override async Task<GetAdminNewerDataResponse> GetAdminNewerData(GetAdminNewerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
-            if (record.Public.VersionNum == request.VersionNum)
+            if (record == null)
+                return new() { };
+
+            if (record?.Public?.VersionNum == request.VersionNum)
                 record = null;
 
             return new()
             {
-                Public = record.Public,
-                Private = record.Private,
+                Public = record?.Public,
+                Private = record?.Private,
             };
         }
 
@@ -68,12 +73,14 @@ namespace ON.Settings.SimpleSettings.Service.Services
         public override async Task<GetOwnerDataResponse> GetOwnerData(GetOwnerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
+            if (record == null)
+                return new() { };
 
             return new()
             {
-                Public = record.Public,
-                Private = record.Private,
-                Owner = record.Owner,
+                Public = record?.Public,
+                Private = record?.Private,
+                Owner = record?.Owner,
             };
         }
 
@@ -81,7 +88,10 @@ namespace ON.Settings.SimpleSettings.Service.Services
         public override async Task<GetOwnerNewerDataResponse> GetOwnerNewerData(GetOwnerNewerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
-            if (record.Public.VersionNum == request.VersionNum)
+            if (record == null)
+                return new() { };
+
+            if (record?.Public?.VersionNum == request.VersionNum)
                 record = null;
 
             return new()
@@ -96,18 +106,23 @@ namespace ON.Settings.SimpleSettings.Service.Services
         public override async Task<GetPublicDataResponse> GetPublicData(GetPublicDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
+            if (record == null)
+                return new() { };
 
-            return new() { Public = record.Public };
+            return new() { Public = record?.Public };
         }
 
         [AllowAnonymous]
         public override async Task<GetPublicNewerDataResponse> GetPublicNewerData(GetPublicNewerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
-            if (record.Public.VersionNum == request.VersionNum)
+            if (record == null)
+                return new() { };
+
+            if (record?.Public?.VersionNum == request.VersionNum)
                 record.Public = null;
 
-            return new() { Public = record.Public };
+            return new() { Public = record?.Public };
         }
 
         [Authorize(Roles = ONUser.ROLE_OWNER)]
