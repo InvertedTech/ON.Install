@@ -58,23 +58,16 @@ namespace ON.Settings.SimpleSettings.Service.Data
 
         public async IAsyncEnumerable<SettingsRecord> GetAll()
         {
-            try
-            {
-                var result = client.ReadStreamAsync(
-                    Direction.Backwards,
-                    streamName,
-                    StreamPosition.End);
+            var result = client.ReadStreamAsync(
+                Direction.Backwards,
+                streamName,
+                StreamPosition.End);
 
-                await foreach (var e in result)
-                {
-                    var json = Encoding.ASCII.GetString(e.Event.Data.Span);
-                    var record = Google.Protobuf.JsonParser.Default.Parse<SettingsRecord>(json);
-                    yield return record;
-                }
-            }
-            catch (Exception ex)
+            await foreach (var e in result)
             {
-                logger.LogError(ex, "Error in GetAll()");
+                var json = Encoding.ASCII.GetString(e.Event.Data.Span);
+                var record = Google.Protobuf.JsonParser.Default.Parse<SettingsRecord>(json);
+                yield return record;
             }
         }
 
