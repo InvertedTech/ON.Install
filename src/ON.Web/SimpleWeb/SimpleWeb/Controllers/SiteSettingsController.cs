@@ -56,7 +56,7 @@ namespace ON.SimpleWeb.Controllers
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
 
-            var data = await settingsClient.GetPublicData();
+            var data = settingsClient.PublicData;
             var record = data.CMS;
             if (record.Menu == null)
                 record.Menu = new();
