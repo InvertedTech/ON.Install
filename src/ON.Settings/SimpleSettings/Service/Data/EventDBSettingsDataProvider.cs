@@ -1,7 +1,9 @@
 ﻿using EventStore.Client;
 using Grpc.Net.Client.Balancer;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ON.Fragments.Settings;
+using ON.Settings.SimpleSettings.Service.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,16 +18,15 @@ namespace ON.Settings.SimpleSettings.Service.Data
     {
         private readonly ILogger logger;
 
-        private string connStr = "esdb://127.0.0.1:2113?tls=false&keepAliveTimeout=10000&keepAliveInterval=10000";
         private EventStoreClient client;
         private string streamName = "simplesettings";
 
-        public EventDBSettingsDataProvider(ILogger<EventDBSettingsDataProvider> logger)
+        public EventDBSettingsDataProvider(ILogger<EventDBSettingsDataProvider> logger, IOptions<AppSettings> settings)
         {
             this.logger = logger;
 
-            var settings = EventStoreClientSettings.Create(connStr);
-            client = new EventStoreClient(settings);
+            var clientSettings = EventStoreClientSettings.Create(settings.Value.EventDBConnStr);
+            client = new EventStoreClient(clientSettings);
         }
 
         public async Task Clear()
