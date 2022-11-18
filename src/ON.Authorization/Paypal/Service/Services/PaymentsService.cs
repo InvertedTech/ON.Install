@@ -33,7 +33,7 @@ namespace ON.Authorization.Paypal.Service
 
         public override async Task<CancelOwnSubscriptionResponse> CancelOwnSubscription(CancelOwnSubscriptionRequest request, ServerCallContext context)
         {
-            if (await ServiceOpsService.ServiceStatus(settingsClient) != ServiceStatusResponse.Types.OnlineStatus.Online)
+            if (ServiceOpsService.ServiceStatus(settingsClient) != ServiceStatusResponse.Types.OnlineStatus.Online)
                 return new() { Error = "Service Offline." };
 
             try
@@ -74,20 +74,20 @@ namespace ON.Authorization.Paypal.Service
             }
         }
 
-        public override async Task<GetAccountDetailsResponse> GetAccountDetails(GetAccountDetailsRequest request, ServerCallContext context)
+        public override Task<GetAccountDetailsResponse> GetAccountDetails(GetAccountDetailsRequest request, ServerCallContext context)
         {
-            if (await ServiceOpsService.ServiceStatus(settingsClient) != ServiceStatusResponse.Types.OnlineStatus.Online)
-                return new();
+            if (ServiceOpsService.ServiceStatus(settingsClient) != ServiceStatusResponse.Types.OnlineStatus.Online)
+                return Task.FromResult(new GetAccountDetailsResponse());
 
             var res = new GetAccountDetailsResponse();
             res.Plans = client.Plans;
-            res.ClientId = (await settingsClient.GetOwnerData()).Subscription.Paypal.ClientID;
-            return res;
+            res.ClientId = settingsClient.OwnerData.Subscription.Paypal.ClientID;
+            return Task.FromResult(res);
         }
 
         public override async Task<GetOwnSubscriptionRecordResponse> GetOwnSubscriptionRecord(GetOwnSubscriptionRecordRequest request, ServerCallContext context)
         {
-            if (await ServiceOpsService.ServiceStatus(settingsClient) != ServiceStatusResponse.Types.OnlineStatus.Online)
+            if (ServiceOpsService.ServiceStatus(settingsClient) != ServiceStatusResponse.Types.OnlineStatus.Online)
                 return new();
 
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
@@ -102,7 +102,7 @@ namespace ON.Authorization.Paypal.Service
 
         public override async Task<NewOwnSubscriptionResponse> NewOwnSubscription(NewOwnSubscriptionRequest request, ServerCallContext context)
         {
-            if (await ServiceOpsService.ServiceStatus(settingsClient) != ServiceStatusResponse.Types.OnlineStatus.Online)
+            if (ServiceOpsService.ServiceStatus(settingsClient) != ServiceStatusResponse.Types.OnlineStatus.Online)
                 return new() { Error = "Service Offline." };
 
             try

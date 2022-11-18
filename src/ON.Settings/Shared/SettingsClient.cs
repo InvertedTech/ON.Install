@@ -8,12 +8,12 @@ using System;
 using System.Threading;
 using System.Text;
 using PubSub;
+using Microsoft.Extensions.Options;
 
 namespace ON.Settings
 {
     public class SettingsClient
     {
-        private string connStr = "esdb://127.0.0.1:2113?tls=false&keepAliveTimeout=10000&keepAliveInterval=10000";
         private EventStoreClient client;
         private string streamName = "simplesettings";
 
@@ -21,10 +21,12 @@ namespace ON.Settings
         public SettingsPrivateData PrivateData { get; private set; }
         public SettingsOwnerData OwnerData { get; private set; }
 
-        public SettingsClient()
+        public uint CurrentSettingsId => PublicData.VersionNum;
+
+        public SettingsClient(IOptions<SettingsClientSettings> settings)
         {
-            var settings = EventStoreClientSettings.Create(connStr);
-            client = new EventStoreClient(settings);
+            var dbSettings = EventStoreClientSettings.Create(settings.Value.EventDBConnStr);
+            client = new EventStoreClient(dbSettings);
             SubscribeToEvents().Wait();
         }
 

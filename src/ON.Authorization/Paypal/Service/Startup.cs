@@ -41,6 +41,8 @@ namespace ON.Authorization.Paypal.Service
             services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<SettingsClientSettings>(Configuration.GetSection("SettingsClientSettings"));
+
             services.AddSingleton<PaypalClient>();
             services.AddSingleton<ISubscriptionRecordProvider, FileSystemSubscriptionRecordProvider>();
             services.AddSingleton<IPlanRecordProvider, FileSystemPlanRecordProvider>();

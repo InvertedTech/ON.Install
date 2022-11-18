@@ -227,7 +227,7 @@ namespace ON.Authorization.Paypal.Service.Clients
 
         private async Task<HttpClient> GetClient()
         {
-            var settings = (await settingsClient.GetOwnerData()).Subscription.Paypal;
+            var settings = settingsClient.OwnerData.Subscription.Paypal;
 
             var token = await GetBearerToken(settings);
             if (token == null)
