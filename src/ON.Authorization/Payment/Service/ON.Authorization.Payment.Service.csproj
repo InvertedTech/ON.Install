@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.34.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../ON.Authentication/Shared/ON.Authentication.Shared.csproj" />
+    <ProjectReference Include="../../../ON.Fragment/ON.Fragment.csproj" />
+    <ProjectReference Include="..\..\..\ON.Settings\Shared\ON.Settings.Shared.csproj" />
+    <ProjectReference Include="..\Paypal\ON.Authorization.Payment.Paypal\ON.Authorization.Payment.Paypal.csproj" />
+  </ItemGroup>
+
+</Project>
