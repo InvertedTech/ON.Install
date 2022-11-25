@@ -262,7 +262,7 @@ namespace ON.Content.SimpleCMS.Service
                     return new();
 
                 if (!CanShowContent(rec, user))
-                    rec.Public.Data.ClearContentDataOneof();
+                    ClearPublicData(rec.Public.Data);
 
                 //await statsClient.RecordView(contentId, user);
 
@@ -293,7 +293,7 @@ namespace ON.Content.SimpleCMS.Service
                 return new();
 
             if (!CanShowContent(rec, user))
-                rec.Public.Data.ClearContentDataOneof();
+                ClearPublicData(rec.Public.Data);
 
             return new() { Record = rec.Public };
         }
@@ -430,7 +430,7 @@ namespace ON.Content.SimpleCMS.Service
 
         private bool CanShowContent(ContentRecord rec, ONUser user)
         {
-            if (user.IsWriterOrHigher)
+            if (user?.IsWriterOrHigher ?? false)
                 return true;
 
             if (!CanShowInList(rec, user))
@@ -455,6 +455,29 @@ namespace ON.Content.SimpleCMS.Service
                 return false;
 
             return true;
+        }
+
+        private void ClearPublicData(ContentPublicData data)
+        {
+            switch (data.ContentDataOneofCase)
+            {
+                case ContentPublicData.ContentDataOneofOneofCase.Audio:
+                    data.Audio.AudioAssetID = "";
+                    data.Audio.HtmlBody = "";
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Picture:
+                    data.Picture.HtmlBody = "";
+                    data.Picture.ImageAssetIDs.Clear();
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Video:
+                    data.Video.HtmlBody = "";
+                    data.Video.RumbleVideoId = "";
+                    data.Video.YoutubeVideoId = "";
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Written:
+                    data.Written.HtmlBody = "";
+                    break;
+            }
         }
 
         private bool IsValid(ContentPublicData pubData, ContentPrivateData privData)
