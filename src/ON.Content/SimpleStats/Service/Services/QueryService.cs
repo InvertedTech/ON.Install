@@ -27,6 +27,7 @@ namespace ON.Content.SimpleStats.Service.Services
             this.uPrvDb = uPrvDb;
         }
 
+        [AllowAnonymous]
         public override async Task<GetContentStatsResponse> GetContentStats(GetContentStatsRequest request, ServerCallContext context)
         {
             if (!Guid.TryParse(request.ContentID, out var contentId))
@@ -54,6 +55,7 @@ namespace ON.Content.SimpleStats.Service.Services
             };
         }
 
+        [AllowAnonymous]
         public override async Task<GetOtherUserStatsResponse> GetOtherUserStats(GetOtherUserStatsRequest request, ServerCallContext context)
         {
             if (!Guid.TryParse(request.UserID, out var userId))
