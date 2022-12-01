@@ -277,6 +277,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                         {
                             UserName = request.UserName,
                             DisplayName = request.DisplayName,
+                            Bio = request.Bio,
                         },
                     },
                     Private = new()
@@ -541,6 +542,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.Normal.Public.Data.DisplayName = request.DisplayName;
+                record.Normal.Public.Data.Bio = request.Bio;
 
                 record.Normal.Private.ModifiedBy = userToken.Id.ToString();
                 record.Normal.Private.Data.Emails.Clear();
@@ -609,6 +611,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return new ModifyOwnUserResponse() { Error = "Display Name not valid" };
 
                 record.Normal.Public.Data.DisplayName = request.DisplayName;
+                record.Normal.Public.Data.Bio = request.Bio;
                 record.Normal.Private.Data.Emails.Clear();
                 record.Normal.Private.Data.Emails.AddRange(request.Emails);
 

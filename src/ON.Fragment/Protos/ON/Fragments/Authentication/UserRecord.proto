@@ -28,6 +28,7 @@ message UserPublicData {
   string UserName = 1;                // User name of the user
   string DisplayName = 2;             // Public display name of the user
   repeated string Identities = 3;     // Public identities associated with the user ex: user@domain.com
+  string Bio = 4;                     // Biographical info of the user
 
   bytes ProfileImagePNG = 20;         // Profile image saved as a PNG
 }

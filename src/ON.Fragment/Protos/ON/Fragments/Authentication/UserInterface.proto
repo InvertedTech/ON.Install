@@ -234,7 +234,8 @@ message CreateUserRequest {
   string UserName = 1;                // User name of the user
   string Password = 2;                // Password of the user
   string DisplayName = 3;             // Public display name of the user
-  repeated string Emails = 4;         // Private email(s) used for password resets
+  string Bio = 4;                     // Biographical info of the user
+  repeated string Emails = 5;         // Private email(s) used for password resets
 }
   
 message CreateUserResponse {
@@ -323,7 +324,8 @@ message ModifyOtherUserRequest {
   string UserID = 1;          // Guid for the user
   string UserName = 2;        // User name of the user
   string DisplayName = 3;     // Public display name of the user
-  repeated string Emails = 4; // Private email(s) used for password resets
+  string Bio = 4;             // Biographical info of the user
+  repeated string Emails = 5; // Private email(s) used for password resets
 }
   
 message ModifyOtherUserResponse {
@@ -342,7 +344,8 @@ message ModifyOtherUserRolesResponse {
 message ModifyOwnUserRequest {
   string UserID = 1;          // Guid for the user
   string DisplayName = 2;     // Public display name of the user
-  repeated string Emails = 3; // Private email(s) used for password resets
+  string Bio = 3;             // Biographical info of the user
+  repeated string Emails = 4; // Private email(s) used for password resets
 }
   
 message ModifyOwnUserResponse {
