@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Fake;
+
+import "google/api/annotations.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Fake/FakeSubscriptionRecord.proto";
+
+service FakeInterface {
+  rpc FakeCancelOwnSubscription (FakeCancelOwnSubscriptionRequest) returns (FakeCancelOwnSubscriptionResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/payment/fake/subscription/cancel"
+      body: "*"
+    };
+  }
+
+  rpc FakeGetOwnSubscriptionRecord (FakeGetOwnSubscriptionRecordRequest) returns (FakeGetOwnSubscriptionRecordResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/payment/fake/subscription"
+    };
+  }
+
+  rpc FakeNewOwnSubscription (FakeNewOwnSubscriptionRequest) returns (FakeNewOwnSubscriptionResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/payment/fake/subscription/new"
+      body: "*"
+    };
+  }
+}
+  
+message FakeCancelOwnSubscriptionRequest {
+  string Reason = 1;
+}
+  
+message FakeCancelOwnSubscriptionResponse {
+  FakeSubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
+message FakeGetOwnSubscriptionRecordRequest {
+}
+  
+message FakeGetOwnSubscriptionRecordResponse {
+  FakeSubscriptionRecord Record = 1;
+}
+
+message FakeNewOwnSubscriptionRequest {
+  uint32 Level = 1;
+}
+  
+message FakeNewOwnSubscriptionResponse {
+  FakeSubscriptionRecord Record = 1;
+  string Error = 2;
+}

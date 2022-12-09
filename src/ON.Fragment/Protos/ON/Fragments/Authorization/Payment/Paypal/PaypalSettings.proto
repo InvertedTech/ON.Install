@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Paypal;
+
+message PaypalPublicSettings {
+  bool Enabled = 1;
+  string Url = 2;
+  string ClientID = 3;
+}
+
+message PaypalOwnerSettings {
+  string ClientSecret = 1;
+}

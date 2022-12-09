@@ -9,7 +9,7 @@ namespace ON.Authorization.Payment.Paypal.Data
 {
     public interface ISubscriptionRecordProvider
     {
-        Task<SubscriptionRecord?> GetById(Guid userId);
-        Task Save(SubscriptionRecord record);
+        Task<PaypalSubscriptionRecord?> GetById(Guid userId);
+        Task Save(PaypalSubscriptionRecord record);
     }
 }

@@ -18,7 +18,7 @@ message ClaimRecord {
 }
 
 message GetClaimsRequest {
-  bytes UserID = 1; // Guid for the user
+  string UserID = 1; // Guid for the user
 }
   
 message GetClaimsResponse {

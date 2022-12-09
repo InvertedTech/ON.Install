@@ -78,7 +78,7 @@ namespace ON.Authorization.ParallelEconomy.Service.Clients.Models
                     {
                         return new()
                         {
-                            value = tier.Amount.ToString(),
+                            value = tier.AmountCents.ToString(),
                             currency_code = "USD",
                         };
                     }

@@ -19,10 +19,10 @@ namespace ON.Authorization.Payment.Paypal.Data
         {
             var root = new DirectoryInfo(settings.Value.DataStore);
             root.Create();
-            dataDir = root.CreateSubdirectory("data");
+            dataDir = root.CreateSubdirectory("paypal");
         }
 
-        public async Task<SubscriptionRecord?> GetById(Guid userId)
+        public async Task<PaypalSubscriptionRecord?> GetById(Guid userId)
         {
             var fd = GetDataFilePath(userId);
             if (!fd.Exists)
@@ -30,12 +30,12 @@ namespace ON.Authorization.Payment.Paypal.Data
 
             var last = (await File.ReadAllLinesAsync(fd.FullName)).Last();
 
-            return SubscriptionRecord.Parser.ParseFrom(Convert.FromBase64String(last));
+            return PaypalSubscriptionRecord.Parser.ParseFrom(Convert.FromBase64String(last));
         }
 
-        public async Task Save(SubscriptionRecord rec)
+        public async Task Save(PaypalSubscriptionRecord rec)
         {
-            var id = new Guid(rec.UserID.Span);
+            var id = Guid.Parse(rec.UserID);
             var fd = GetDataFilePath(id);
             await File.AppendAllTextAsync(fd.FullName, Convert.ToBase64String(rec.ToByteArray()) + "\n");
         }

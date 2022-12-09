@@ -1,7 +1,6 @@
 ﻿@using ON.SimpleWeb.Models.Subscription.Paypal
 @using ON.SimpleWeb.Services.Paypal
 @model CurrentViewModel
-@inject AccountService acct;
 @{
     ViewData["Title"] = "Membership";
 }
@@ -29,17 +28,17 @@
     <br />
 
     <div class="row row-cols-1 row-cols-md-3 mb-3 text-center" style="color: black;">
-        @foreach (var plan in acct.Plans)
+        foreach (var plan in acct.Plans)
         {
             <div class="col">
                 <div class="card mb-4 rounded-3 shadow-sm">
                     <div class="card-header py-3">
-                        <h4 class="my-0 fw-normal">@(plan.Name)</h4>
+                        <h4 class="my-0 fw-normal">(plan.Name)</h4>
                     </div>
                     <div class="card-body">
                         <div class="column">
-                            <h1 class="card-title pricing-card-title">$@(plan.Value)<small class="text-muted fw-light">/mo</small></h1>
-                            <div id="paypal-button-@(plan.PlanId)"></div>
+                            <h1 class="card-title pricing-card-title">$(plan.Value)<small class="text-muted fw-light">/mo</small></h1>
+                            <div id="paypal-button-(plan.PlanId)"></div>
                         </div>
                     </div>
                 </div>
@@ -54,21 +53,21 @@
     @if (Model == null || Model.IsCancelled)
     {
 
-        <script src="https://www.paypal.com/sdk/js?client-id=@(acct.AccountId)&vault=true&intent=subscription"></script>
+        <script src="https://www.paypal.com/sdk/js?client-id=(acct.AccountId)&vault=true&intent=subscription&disable-funding=credit,card"></script>
 
-        @foreach (var plan in acct.Plans)
-        {
+@*        foreach (var plan in acct.Plans)
+*@        {
         <script>
             paypal.Buttons({
               createSubscription: function(data, actions) {
                 return actions.subscription.create({
-                  'plan_id': '@(plan.PlanId)'
+                  'plan_id': '(plan.PlanId)'
                 });
               },
               onApprove: function(data, actions) {
                 location.href = '/subscription/paypal/new?subId=' + data.subscriptionID;
               }
-            }).render('#paypal-button-@(plan.PlanId)');
+            }).render('#paypal-button-(plan.PlanId)');
         </script>
         }
     }

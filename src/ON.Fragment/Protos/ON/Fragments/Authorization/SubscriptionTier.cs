@@ -12,7 +12,7 @@ namespace ON.Fragments.Authorization
     {
         public string Label
         {
-            get => "$" + Amount + " - " + Name;
+            get => "$" + (AmountCents / 100.0) + " - " + Name;
         }
     }
 }

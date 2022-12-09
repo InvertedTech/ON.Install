@@ -6,7 +6,7 @@ using ON.Authentication;
 using ON.Authorization.ParallelEconomy.Service.Clients.Models;
 using ON.Authorization.ParallelEconomy.Service.Data;
 using ON.Authorization.ParallelEconomy.Service.Models;
-using ON.Fragments.Authorization.Payments.ParallelEconomy;
+using ON.Fragments.Authorization.Payment.ParallelEconomy;
 using ON.Settings;
 using System;
 using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace ON.Authorization.ParallelEconomy.Service.Clients
 
             Plans = new PlanList();
 
-            Plans.Records.AddRange(this.subHelper.GetAll().Select(s => new PlanRecord() { Name = s.Name, Value = (uint)s.Amount }));
+            Plans.Records.AddRange(this.subHelper.GetAll().Select(s => new PlanRecord() { Name = s.Name, Value = (uint)s.AmountCents }));
         }
 
         internal async Task<bool> CancelSubscription(string subscriptionId, string reason)

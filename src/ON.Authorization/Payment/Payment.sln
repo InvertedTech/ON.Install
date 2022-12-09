@@ -16,11 +16,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Settings.Shared", "..\..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authorization.Payment.Service", "Service\ON.Authorization.Payment.Service.csproj", "{3EB13ACA-2C6B-4D95-A854-2261DCFBC5A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ON.Authorization.Payment.Paypal", "Paypal\ON.Authorization.Payment.Paypal\ON.Authorization.Payment.Paypal.csproj", "{55379070-12D1-4CED-826E-30D13D74239E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ON.Authorization.Payment.ParallelEconomy", "ParallelEconomy\ON.Authorization.Payment.ParallelEconomy\ON.Authorization.Payment.ParallelEconomy.csproj", "{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authorization.Payment.Paypal", "Paypal\ON.Authorization.Payment.Paypal\ON.Authorization.Payment.Paypal.csproj", "{55379070-12D1-4CED-826E-30D13D74239E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FortisAPI.Standard", "ParallelEconomy\Nugets\FortisAPI.Standard\FortisAPI.Standard.csproj", "{B5AFBF36-2A84-41E7-B62C-7120E003F9A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ON.Authorization.Payment.Fake", "Fake\ON.Authorization.Payment.Fake\ON.Authorization.Payment.Fake.csproj", "{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,18 +92,6 @@ Global
 		{55379070-12D1-4CED-826E-30D13D74239E}.Release|x64.Build.0 = Release|Any CPU
 		{55379070-12D1-4CED-826E-30D13D74239E}.Release|x86.ActiveCfg = Release|Any CPU
 		{55379070-12D1-4CED-826E-30D13D74239E}.Release|x86.Build.0 = Release|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Debug|x64.Build.0 = Debug|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Debug|x86.Build.0 = Debug|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Release|x64.ActiveCfg = Release|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Release|x64.Build.0 = Release|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Release|x86.ActiveCfg = Release|Any CPU
-		{D22D6DAB-D7C2-4EF2-A278-1541154D13F2}.Release|x86.Build.0 = Release|Any CPU
 		{B5AFBF36-2A84-41E7-B62C-7120E003F9A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B5AFBF36-2A84-41E7-B62C-7120E003F9A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5AFBF36-2A84-41E7-B62C-7120E003F9A9}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -116,6 +104,18 @@ Global
 		{B5AFBF36-2A84-41E7-B62C-7120E003F9A9}.Release|x64.Build.0 = Release|Any CPU
 		{B5AFBF36-2A84-41E7-B62C-7120E003F9A9}.Release|x86.ActiveCfg = Release|Any CPU
 		{B5AFBF36-2A84-41E7-B62C-7120E003F9A9}.Release|x86.Build.0 = Release|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Debug|x64.Build.0 = Debug|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Debug|x86.Build.0 = Debug|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Release|x64.ActiveCfg = Release|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Release|x64.Build.0 = Release|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Release|x86.ActiveCfg = Release|Any CPU
+		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

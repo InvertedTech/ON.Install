@@ -1,7 +1,7 @@
 ﻿using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
-using ON.Fragments.Authorization.Payments.Paypal;
+using ON.Fragments.Authorization.Payment.Paypal;
 using ON.Settings;
 using System.Threading.Tasks;
 
@@ -24,49 +24,49 @@ namespace ON.SimpleWeb.Services.Paypal
 
         public bool IsLoggedIn { get => User != null; }
 
-        public async Task<CancelOwnSubscriptionResponse> CancelSubscription(string reason)
+        public async Task<PaypalCancelOwnSubscriptionResponse> CancelSubscription(string reason)
         {
             if (!IsLoggedIn)
                 return null;
 
-            var req = new CancelOwnSubscriptionRequest()
+            var req = new PaypalCancelOwnSubscriptionRequest()
             {
                 Reason = reason
             };
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaypalPaymentsServiceChannel);
-            var reply = await client.CancelOwnSubscriptionAsync(req, GetMetadata());
+            var client = new PaypalInterface.PaypalInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.PaypalCancelOwnSubscriptionAsync(req, GetMetadata());
             return reply;
         }
 
-        public async Task<SubscriptionRecord> GetCurrentRecord()
+        public async Task<PaypalSubscriptionRecord> GetCurrentRecord()
         {
             if (!IsLoggedIn)
                 return null;
 
-            if (nameHelper.PaypalPaymentsServiceChannel == null)
+            if (nameHelper.PaymentServiceChannel == null)
                 return null;
 
-            logger.LogWarning($"******Trying to hopefully connect to PaymentService at:({nameHelper.PaypalPaymentsServiceChannel.Target})******");
+            logger.LogWarning($"******Trying to hopefully connect to PaymentService at:({nameHelper.PaymentServiceChannel.Target})******");
 
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaypalPaymentsServiceChannel);
-            var reply = await client.GetOwnSubscriptionRecordAsync(new GetOwnSubscriptionRecordRequest(), GetMetadata());
+            var client = new PaypalInterface.PaypalInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.PaypalGetOwnSubscriptionRecordAsync(new PaypalGetOwnSubscriptionRecordRequest(), GetMetadata());
             return reply.Record;
         }
 
-        public async Task<NewOwnSubscriptionResponse> NewSubscription(string subscriptionId)
+        public async Task<PaypalNewOwnSubscriptionResponse> NewSubscription(string subscriptionId)
         {
             if (!IsLoggedIn)
                 return null;
 
-            var req = new NewOwnSubscriptionRequest()
+            var req = new PaypalNewOwnSubscriptionRequest()
             {
                 SubscriptionId = subscriptionId
             };
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaypalPaymentsServiceChannel);
-            var reply = await client.NewOwnSubscriptionAsync(req, GetMetadata());
+            var client = new PaypalInterface.PaypalInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.PaypalNewOwnSubscriptionAsync(req, GetMetadata());
             return reply;
         }
 

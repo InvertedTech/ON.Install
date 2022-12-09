@@ -1,0 +1,49 @@
+﻿@using ON.SimpleWeb.Models.Subscription.Main
+@inject ON.Settings.SettingsClient settingsClient;
+@inject ON.Settings.SubscriptionTierHelper subTierHelper
+@model NewViewModel
+@{
+    ViewData["Title"] = "New Subscription";
+    var subSet = settingsClient.PublicData?.Subscription;
+    var blah = Model.ShowFake;
+}
+
+<h1>New Subscription</h1>
+
+<p>
+    Subscription level: @(subTierHelper.GetForAmount(Model.AmountCents).Label)
+</p>
+
+@if(Model.ShowFake)
+{
+    <p>
+        <a href="/subscription/fake/new?level=@Model.AmountCents">Fake Payment</a>
+    </p>
+}
+@if (Model.ShowPaypal)
+{
+    <div id="paypal-button-@Model.Methods.Paypal.PlanId" style="width: 200px;"></div>
+}
+
+@section scripts
+    {
+
+    @if (Model.ShowPaypal)
+    {
+
+        <script src="https://www.paypal.com/sdk/js?client-id=@(Model.Methods.Paypal.AccountId)&vault=true&intent=subscription&disable-funding=credit,card"></script>
+
+        <script>
+            paypal.Buttons({
+                createSubscription: function (data, actions) {
+                    return actions.subscription.create({
+                        'plan_id': '@(Model.Methods.Paypal.PlanId)'
+                    });
+                },
+                onApprove: function (data, actions) {
+                    location.href = '/subscription/paypal/new?subId=' + data.subscriptionID;
+                }
+            }).render('#paypal-button-@(Model.Methods.Paypal.PlanId)');
+        </script>
+    }
+}

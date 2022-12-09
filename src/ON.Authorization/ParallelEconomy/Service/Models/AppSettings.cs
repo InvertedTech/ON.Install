@@ -1,5 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using ON.Fragments.Authorization.Payments;
+using ON.Fragments.Authorization.Payment;
 using System;
 using System.Collections.Generic;
 using System.Linq;

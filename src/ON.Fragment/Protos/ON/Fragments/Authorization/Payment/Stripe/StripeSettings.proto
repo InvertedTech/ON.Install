@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Stripe;
+
+message StripePublicSettings {
+  bool Enabled = 1;
+  string Url = 2;
+}
+
+message StripeOwnerSettings {
+  string Account = 1;
+  string ClientID = 2;
+  string ClientSecret = 3;
+}

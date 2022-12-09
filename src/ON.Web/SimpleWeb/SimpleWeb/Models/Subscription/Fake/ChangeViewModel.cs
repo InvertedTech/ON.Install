@@ -77,11 +77,11 @@ namespace ON.SimpleWeb.Models.Subscription.Fake
                 if (Level < 1)
                     return 0;
 
-                var t = Tiers?.FirstOrDefault(t => t.Amount == (uint)Level);
+                var t = Tiers?.FirstOrDefault(t => t.AmountCents == (uint)Level);
                 if (t == null)
                     return 0;
 
-                return t.Amount;
+                return t.AmountCents;
             }
         }
 
@@ -109,7 +109,7 @@ namespace ON.SimpleWeb.Models.Subscription.Fake
             if (Level == 0)
                 return true;
 
-            var t = Tiers.FirstOrDefault(t => t.Amount == (uint)Level);
+            var t = Tiers.FirstOrDefault(t => t.AmountCents == (uint)Level);
             if (t == null)
             {
                 ErrorMessage = "Subscription amount is not valid";

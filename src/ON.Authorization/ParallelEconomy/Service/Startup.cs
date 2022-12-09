@@ -53,7 +53,7 @@ namespace ON.Authorization.ParallelEconomy.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<ClaimsService>();
-                endpoints.MapGrpcService<PaymentsService>();
+                endpoints.MapGrpcService<ParallelEconomyService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
 
                 endpoints.MapGet("/", async context =>

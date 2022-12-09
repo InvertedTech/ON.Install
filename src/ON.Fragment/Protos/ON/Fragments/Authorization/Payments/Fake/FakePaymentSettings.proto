@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package ON.Fragments.Authorization.Payments.Fake;
-
-message FakePaymentSettings {
-  bool Enabled = 1;
-}

@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Stripe;
+
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/ProductRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/SubscriptionRecord.proto";
+
+service PaymentsInterface {
+  rpc CancelOwnSubscription (CancelOwnSubscriptionRequest) returns (CancelOwnSubscriptionResponse) {}
+  rpc GetAccountDetails (GetAccountDetailsRequest) returns (GetAccountDetailsResponse) {}
+  rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse) {}
+  rpc NewOwnSubscription (NewOwnSubscriptionRequest) returns (NewOwnSubscriptionResponse) {}
+  rpc CreateBillingPortal (CreateBillingPortalRequest) returns (CreateBillingPortalResponse) {}
+  rpc CreateCheckoutSession(CheckoutSessionRequest) returns (CheckoutSessionResponse) {}
+}
+
+message CheckoutSessionRequest {
+	string PriceId = 1;
+}
+
+message CheckoutSessionResponse {
+	string SessionUrl = 1;
+	string Error = 2;
+}
+ 
+message CreateBillingPortalRequest {
+	string CustomerId = 1;
+}
+
+message CreateBillingPortalResponse {
+	string Url = 1;
+	string Error = 2;
+}
+
+message CancelOwnSubscriptionRequest {
+  string Reason = 1;
+  string SubscriptionId = 2;
+}
+  
+message CancelOwnSubscriptionResponse {
+  SubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
+message GetAccountDetailsRequest {
+}
+  
+message GetAccountDetailsResponse {
+  ProductList Products = 1;
+  string ClientId = 2;
+}
+  
+message GetOwnSubscriptionRecordRequest {
+}
+  
+message GetOwnSubscriptionRecordResponse {
+  SubscriptionRecord Record = 1;
+}
+
+message NewOwnSubscriptionRequest {
+  string SubscriptionId = 1;
+  uint32 SubscriptionPrice = 2;
+  string CustomerId = 3;
+}
+  
+message NewOwnSubscriptionResponse {
+  SubscriptionRecord Record = 1;
+  string Error = 2;
+}

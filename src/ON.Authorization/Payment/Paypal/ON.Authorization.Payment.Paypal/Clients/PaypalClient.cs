@@ -52,6 +52,7 @@ namespace ON.Authorization.Payment.Paypal.Clients
 
             return new()
             {
+                AccountId = settingsClient.PublicData.Subscription.Paypal.ClientID,
                 PlanId = plan.id,
             };
         }

@@ -1,11 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using ON.Fragments.Authorization.Payments;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ON.Settings
+﻿namespace ON.Settings
 {
     public class SettingsClientSettings
     {

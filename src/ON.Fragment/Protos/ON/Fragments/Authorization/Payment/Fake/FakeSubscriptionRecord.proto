@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Fake;
+
+import "google/protobuf/timestamp.proto";
+
+// User claim's record
+message FakeSubscriptionRecord {
+  string UserID = 1; // Guid for the user
+  uint32 Level = 2;
+  google.protobuf.Timestamp ChangedOnUTC = 3;
+}

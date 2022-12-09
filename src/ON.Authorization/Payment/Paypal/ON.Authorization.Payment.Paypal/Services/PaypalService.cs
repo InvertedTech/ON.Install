@@ -32,27 +32,27 @@ namespace ON.Authorization.Payment.Paypal.Services
             this.settingsClient = settingsClient;
         }
 
-        public override async Task<CancelOwnSubscriptionResponse> CancelOwnSubscription(CancelOwnSubscriptionRequest request, ServerCallContext context)
+        public override async Task<PaypalCancelOwnSubscriptionResponse> PaypalCancelOwnSubscription(PaypalCancelOwnSubscriptionRequest request, ServerCallContext context)
         {
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
                 if (userToken == null)
-                    return new CancelOwnSubscriptionResponse() { Error = "No user token specified" };
+                    return new () { Error = "No user token specified" };
 
                 var record = await subscriptionProvider.GetById(userToken.Id);
                 if (record == null)
-                    return new CancelOwnSubscriptionResponse() { Error = "Record not found" };
+                    return new () { Error = "Record not found" };
 
                 var sub = await client.GetSubscription(record.SubscriptionId);
                 if (sub == null)
-                    return new CancelOwnSubscriptionResponse() { Error = "SubscriptionId not valid" };
+                    return new () { Error = "SubscriptionId not valid" };
 
                 if (sub.status == "ACTIVE")
                 {
                     var canceled = await client.CancelSubscription(record.SubscriptionId, request.Reason ?? "None");
                     if (!canceled)
-                        return new CancelOwnSubscriptionResponse() { Error = "Unable to cancel subscription" };
+                        return new () { Error = "Unable to cancel subscription" };
                 }
 
                 record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
@@ -61,56 +61,56 @@ namespace ON.Authorization.Payment.Paypal.Services
 
                 await subscriptionProvider.Save(record);
 
-                return new CancelOwnSubscriptionResponse()
+                return new ()
                 {
                     Record = record
                 };
             }
             catch
             {
-                return new CancelOwnSubscriptionResponse() { Error = "Unknown error" };
+                return new () { Error = "Unknown error" };
             }
         }
 
-        public override async Task<GetOwnSubscriptionRecordResponse> GetOwnSubscriptionRecord(GetOwnSubscriptionRecordRequest request, ServerCallContext context)
+        public override async Task<PaypalGetOwnSubscriptionRecordResponse> PaypalGetOwnSubscriptionRecord(PaypalGetOwnSubscriptionRecordRequest request, ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
-                return new GetOwnSubscriptionRecordResponse();
+                return new ();
 
-            return new GetOwnSubscriptionRecordResponse
+            return new ()
             {
                 Record = await subscriptionProvider.GetById(userToken.Id)
             };
         }
 
-        public override async Task<NewOwnSubscriptionResponse> NewOwnSubscription(NewOwnSubscriptionRequest request, ServerCallContext context)
+        public override async Task<PaypalNewOwnSubscriptionResponse> PaypalNewOwnSubscription(PaypalNewOwnSubscriptionRequest request, ServerCallContext context)
         {
             try
             {
                 var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
                 if (userToken == null)
-                    return new NewOwnSubscriptionResponse() { Error = "No user token specified" };
+                    return new () { Error = "No user token specified" };
 
                 if (request?.SubscriptionId == null)
-                    return new NewOwnSubscriptionResponse() { Error = "SubscriptionId not valid" };
+                    return new () { Error = "SubscriptionId not valid" };
 
                 var sub = await client.GetSubscription(request.SubscriptionId);
                 if (sub == null)
-                    return new NewOwnSubscriptionResponse() { Error = "SubscriptionId not valid" };
+                    return new () { Error = "SubscriptionId not valid" };
 
                 var billing_info = sub.billing_info;
                 if (billing_info == null)
-                    return new NewOwnSubscriptionResponse() { Error = "SubscriptionId not valid" };
+                    return new () { Error = "SubscriptionId not valid" };
 
                 decimal value = 0;
                 if (!decimal.TryParse(sub.billing_info?.last_payment?.amount?.value ?? "0", out value))
-                    return new NewOwnSubscriptionResponse() { Error = "Subscription Value not valid" };
+                    return new () { Error = "Subscription Value not valid" };
 
-                var record = new SubscriptionRecord()
+                var record = new PaypalSubscriptionRecord()
                 {
-                    UserID = Google.Protobuf.ByteString.CopyFrom(userToken.Id.ToByteArray()),
-                    Level = (uint)value,
+                    UserID = userToken.Id.ToString(),
+                    Level = (uint)(value * 100),
                     ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
                     LastPaidUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
                     SubscriptionId = request.SubscriptionId,
@@ -120,14 +120,14 @@ namespace ON.Authorization.Payment.Paypal.Services
 
                 await subscriptionProvider.Save(record);
 
-                return new NewOwnSubscriptionResponse()
+                return new ()
                 {
                     Record = record
                 };
             }
             catch
             {
-                return new NewOwnSubscriptionResponse() { Error = "Unknown error" };
+                return new () { Error = "Unknown error" };
             }
         }
     }

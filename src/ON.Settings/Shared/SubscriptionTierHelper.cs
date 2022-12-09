@@ -25,17 +25,17 @@ namespace ON.Settings
 
         public SubscriptionTier[] GetAll()
         {
-            return settingsClient.PublicData?.Subscription?.Tiers?.OrderBy(t => t.Amount)?.ToArray() ?? new SubscriptionTier[0];
+            return settingsClient.PublicData?.Subscription?.Tiers?.OrderBy(t => t.AmountCents)?.ToArray() ?? new SubscriptionTier[0];
         }
 
-        public SubscriptionTier GetForAmount(uint amount, bool strict = false)
+        public SubscriptionTier GetForAmount(uint amountCents, bool strict = false)
         {
-            if (amount < 1)
+            if (amountCents < 1)
                 return null;
 
             var tiers = GetAll();
 
-            var tier = tiers.FirstOrDefault(c => c.Amount == amount);
+            var tier = tiers.FirstOrDefault(c => c.AmountCents == amountCents);
             if (tier != null)
                 return tier;
 
@@ -44,7 +44,7 @@ namespace ON.Settings
 
             return new()
             {
-                Amount = amount,
+                AmountCents = amountCents,
                 Color = "#000000",
                 Name = "Other",
                 Description = "Other",

@@ -31,22 +31,19 @@ namespace ON.SimpleWeb.Controllers
             this.userHelper = userHelper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ChangeGet()
+        [HttpGet("new")]
+        public async Task<IActionResult> New(uint level)
         {
-            var rec = await paymentsService.GetCurrentRecord();
-            var vm = ChangeViewModel.Create(subHelper, (rec?.Level ?? 0));
-            return View("Change", vm);
+            if (level > 0)
+                await paymentsService.ChangeCurrentSubscriptionLevel(level);
+
+            return Redirect("/settings/refreshtoken?url=/subscription/");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ChangePost(ChangeViewModel vm)
+        [HttpGet("cancel")]
+        public async Task<IActionResult> Cancel(string reason = null)
         {
-            vm.LoadTiers(subHelper);
-            if (!vm.Validate())
-                return View("Change", vm);
-
-            await paymentsService.ChangeCurrentSubscriptionLevel(vm.LevelCombined);
+            await paymentsService.CancelSubscription(reason ?? "No reason");
 
             return Redirect("/settings/refreshtoken?url=/subscription/");
         }

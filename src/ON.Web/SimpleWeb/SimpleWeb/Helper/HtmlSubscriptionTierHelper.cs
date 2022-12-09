@@ -33,12 +33,12 @@ namespace ON.SimpleWeb.Helper
         {
             Tiers = subHelper.GetAll();
 
-            SelectListItems = new SelectList(Tiers, nameof(SubscriptionTier.Amount), nameof(SubscriptionTier.Label));
+            SelectListItems = new SelectList(Tiers, nameof(SubscriptionTier.AmountCents), nameof(SubscriptionTier.Label));
 
             var list = new List<SubscriptionTier>();
             list.Add(new()
             {
-                Amount = 0,
+                AmountCents = 0,
                 Name = "None",
                 Description = "",
                 Color = "#000000",
@@ -46,7 +46,7 @@ namespace ON.SimpleWeb.Helper
             list.AddRange(Tiers);
             TiersWithNone = list.ToArray();
 
-            SelectListItemsWithNone = new SelectList(TiersWithNone, nameof(SubscriptionTier.Amount), nameof(SubscriptionTier.Label));
+            SelectListItemsWithNone = new SelectList(TiersWithNone, nameof(SubscriptionTier.AmountCents), nameof(SubscriptionTier.Label));
 
             var list2 = list.Select(t => new InnerTier(t)).ToList();
             list2.Add(new InnerTier()
@@ -73,7 +73,7 @@ namespace ON.SimpleWeb.Helper
 
             public InnerTier(SubscriptionTier tier)
             {
-                Amount = (int)tier.Amount;
+                Amount = (int)tier.AmountCents;
                 Label = tier.Label;
             }
         }

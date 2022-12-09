@@ -1,7 +1,7 @@
 ﻿using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
-using ON.Fragments.Authorization.Payments.ParallelEconomy;
+using ON.Fragments.Authorization.Payment.ParallelEconomy;
 using ON.Settings;
 using System.Threading.Tasks;
 
@@ -34,9 +34,10 @@ namespace ON.SimpleWeb.Services.PE
                 Reason = reason
             };
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PEPaymentsServiceChannel);
-            var reply = await client.CancelOwnSubscriptionAsync(req, GetMetadata());
-            return reply;
+            return null;
+            //var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PEPaymentsServiceChannel);
+            //var reply = await client.CancelOwnSubscriptionAsync(req, GetMetadata());
+            //return reply;
         }
 
         public async Task<SubscriptionRecord> GetCurrentRecord()
@@ -44,15 +45,15 @@ namespace ON.SimpleWeb.Services.PE
             if (!IsLoggedIn)
                 return null;
 
-            if (nameHelper.PEPaymentsServiceChannel == null)
+            if (nameHelper.PaymentServiceChannel == null)
                 return null;
 
-            logger.LogWarning($"******Trying to hopefully connect to PaymentService at:({nameHelper.PEPaymentsServiceChannel.Target})******");
+            logger.LogWarning($"******Trying to hopefully connect to PaymentService at:({nameHelper.PaymentServiceChannel.Target})******");
 
-
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PEPaymentsServiceChannel);
-            var reply = await client.GetOwnSubscriptionRecordAsync(new GetOwnSubscriptionRecordRequest(), GetMetadata());
-            return reply.Record;
+            return null;
+            //var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PEPaymentsServiceChannel);
+            //var reply = await client.GetOwnSubscriptionRecordAsync(new GetOwnSubscriptionRecordRequest(), GetMetadata());
+            //return reply.Record;
         }
 
         public async Task<NewOwnSubscriptionResponse> NewSubscription(string tranId)
@@ -65,25 +66,26 @@ namespace ON.SimpleWeb.Services.PE
                 TransactionId = tranId
             };
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PEPaymentsServiceChannel);
-            var reply = await client.NewOwnSubscriptionAsync(req, GetMetadata());
-            return reply;
+            return null;
+            //var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PEPaymentsServiceChannel);
+            //var reply = await client.NewOwnSubscriptionAsync(req, GetMetadata());
+            //return reply;
         }
 
-        public async Task<StartNewSubscriptionResponse> StartNewSubscription(uint level)
-        {
-            if (!IsLoggedIn)
-                return null;
+        //public async Task<StartNewSubscriptionResponse> StartNewSubscription(uint level)
+        //{
+        //    if (!IsLoggedIn)
+        //        return null;
 
-            var req = new StartNewSubscriptionRequest()
-            {
-                Level = level
-            };
+        //    var req = new StartNewSubscriptionRequest()
+        //    {
+        //        Level = level
+        //    };
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PEPaymentsServiceChannel);
-            var reply = await client.StartNewSubscriptionAsync(req, GetMetadata());
-            return reply;
-        }
+        //    var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PEPaymentsServiceChannel);
+        //    var reply = await client.StartNewSubscriptionAsync(req, GetMetadata());
+        //    return reply;
+        //}
 
         private Metadata GetMetadata()
         {

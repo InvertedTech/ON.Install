@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Paypal;
+
+import "google/api/annotations.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Paypal/PaypalSubscriptionRecord.proto";
+
+service PaypalInterface {
+  rpc PaypalCancelOwnSubscription (PaypalCancelOwnSubscriptionRequest) returns (PaypalCancelOwnSubscriptionResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/payment/paypal/subscription/cancel"
+      body: "*"
+    };
+  }
+
+  rpc PaypalGetOwnSubscriptionRecord (PaypalGetOwnSubscriptionRecordRequest) returns (PaypalGetOwnSubscriptionRecordResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/payment/paypal/subscription"
+    };
+  }
+
+  rpc PaypalNewOwnSubscription (PaypalNewOwnSubscriptionRequest) returns (PaypalNewOwnSubscriptionResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/payment/paypal/subscription/new"
+      body: "*"
+    };
+  }
+}
+  
+message PaypalCancelOwnSubscriptionRequest {
+  string Reason = 1;
+}
+  
+message PaypalCancelOwnSubscriptionResponse {
+  PaypalSubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
+message PaypalGetOwnSubscriptionRecordRequest {
+}
+  
+message PaypalGetOwnSubscriptionRecordResponse {
+  PaypalSubscriptionRecord Record = 1;
+}
+
+message PaypalNewOwnSubscriptionRequest {
+  string SubscriptionId = 1;
+}
+  
+message PaypalNewOwnSubscriptionResponse {
+  PaypalSubscriptionRecord Record = 1;
+  string Error = 2;
+}

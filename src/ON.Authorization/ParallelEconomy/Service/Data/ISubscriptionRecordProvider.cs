@@ -1,5 +1,5 @@
 ﻿using ON.Fragments.Authorization;
-using ON.Fragments.Authorization.Payments.ParallelEconomy;
+using ON.Fragments.Authorization.Payment.ParallelEconomy;
 using System;
 using System.Collections.Generic;
 using System.Linq;

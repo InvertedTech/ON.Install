@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
-using ON.Authorization.Payment.Paypal.Clients;
-using ON.Authorization.Payment.Paypal.Data;
-using ON.Authorization.Payment.Paypal.Models;
+using ON.Authorization.Payment.Fake.Helper;
+using ON.Authorization.Payment.Fake.Service;
+using ON.Authorization.Payment.Paypal.Helper;
+using FakeM = ON.Authorization.Payment.Fake.Models;
+using PaypalM = ON.Authorization.Payment.Paypal.Models;
 using ON.Authorization.Payment.Paypal.Services;
 using ON.Settings;
 
@@ -41,11 +38,12 @@ namespace ON.Authorization.Payment.Service
             });
             services.AddGrpcSwagger();
 
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<FakeM.AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<PaypalM.AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<SettingsClientSettings>(Configuration.GetSection("SettingsClientSettings"));
 
-            services.AddSingleton<PaypalClient>();
-            services.AddSingleton<ISubscriptionRecordProvider, FileSystemSubscriptionRecordProvider>();
+            services.AddFakeHelpers();
+            services.AddPaypalHelpers();
 
             services.AddJwtAuthentication();
             services.AddSettingsHelpers();
@@ -79,7 +77,8 @@ namespace ON.Authorization.Payment.Service
             {
                 endpoints.MapGrpcService<ClaimsService>();
                 endpoints.MapGrpcService<PaymentService>();
-                //endpoints.MapGrpcService<PaypalService>();
+                endpoints.MapGrpcService<FakeService>();
+                endpoints.MapGrpcService<PaypalService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
             });
         }

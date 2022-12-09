@@ -2,12 +2,12 @@
 @model ON.Fragments.Authorization.SubscriptionTier
 
 <tr>
-    <td>@Model.Amount</td>
+    <td>@Model.AmountCents</td>
     <td>@Model.Name</td>
     <td>@Model.Description</td>
     <td>
         <form method="post" class="needs-validation" novalidate asp-action="SubscriptionTierDelete">
-            <input type="hidden" asp-for="Amount" />
+            <input type="hidden" asp-for="AmountCents" />
             <button type="submit" class="btn btn-danger">Delete</button>
         </form>
     </td>

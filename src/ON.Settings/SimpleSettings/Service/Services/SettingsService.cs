@@ -481,6 +481,26 @@ namespace ON.Settings.SimpleSettings.Service.Services
                     Subscription = new()
                     {
                         AllowOther = true,
+                        ParallelEconomy = new()
+                        {
+                            Enabled = false,
+                        },
+                        Stripe = new()
+                        {
+                            Enabled = false,
+                        },
+                        Paypal = new()
+                        {
+                            Enabled = false,
+                        },
+                        Crypto = new()
+                        {
+                            Enabled = false,
+                        },
+                        Fake = new()
+                        {
+                            Enabled = true,
+                        }
                     },
                     CMS = new()
                     {
@@ -506,22 +526,9 @@ namespace ON.Settings.SimpleSettings.Service.Services
                     Personalization = new() { },
                     Subscription = new()
                     {
-                        ParallelEconomy = new()
-                        {
-                            Enabled = false,
-                        },
-                        Stripe = new()
-                        {
-                            Enabled = false,
-                        },
-                        Paypal = new()
-                        {
-                            Enabled = false,
-                        },
-                        Fake = new()
-                        {
-                            Enabled = true,
-                        }
+                        ParallelEconomy = new(),
+                        Stripe = new(),
+                        Paypal = new(),
                     },
                 }
             };
@@ -531,28 +538,28 @@ namespace ON.Settings.SimpleSettings.Service.Services
                 Name = "Basic",
                 Description = "You're basic bro...",
                 Color = "orange",
-                Amount = 5,
+                AmountCents = 500,
             });
             record.Public.Subscription.Tiers.Add(new SubscriptionTier()
             {
                 Name = "Bronze",
                 Description = "meh...",
                 Color = "bronze",
-                Amount = 10,
+                AmountCents = 1000,
             });
             record.Public.Subscription.Tiers.Add(new SubscriptionTier()
             {
                 Name = "Silver",
                 Description = "Nice...",
                 Color = "silver",
-                Amount = 25,
+                AmountCents = 2500,
             });
             record.Public.Subscription.Tiers.Add(new SubscriptionTier()
             {
                 Name = "Gold",
                 Description = "You rock...",
                 Color = "gold",
-                Amount = 50,
+                AmountCents = 5000,
             });
 
             record.Private.Comments.BlackList.AddRange(new[] { "fuck", "shit", "cunt" });

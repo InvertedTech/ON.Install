@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Fragments.Authorization;
-using ON.Fragments.Authorization.Payments.Fake;
-using ON.Fragments.Authorization.Payments.ParallelEconomy;
-using ON.Fragments.Authorization.Payments.Paypal;
-using ON.Fragments.Authorization.Payments.Stripe;
+using ON.Fragments.Authorization.Payment.Crypto;
+using ON.Fragments.Authorization.Payment.Fake;
+using ON.Fragments.Authorization.Payment.ParallelEconomy;
+using ON.Fragments.Authorization.Payment.Paypal;
+using ON.Fragments.Authorization.Payment.Stripe;
 using ON.Fragments.Settings;
 using ON.Settings;
 using ON.SimpleWeb.Models;
@@ -111,7 +112,7 @@ namespace ON.SimpleWeb.Controllers
             var data = settingsClient.PublicData;
             var record = data.Subscription;
 
-            var tier = record.Tiers.FirstOrDefault(t => t.Amount == vm.Amount);
+            var tier = record.Tiers.FirstOrDefault(t => t.AmountCents == vm.AmountCents);
             if (tier != null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
 
@@ -134,7 +135,7 @@ namespace ON.SimpleWeb.Controllers
             var data = settingsClient.PublicData;
             var record = data.Subscription;
 
-            var tier = record.Tiers.FirstOrDefault(t => t.Amount == vm.Amount);
+            var tier = record.Tiers.FirstOrDefault(t => t.AmountCents == vm.AmountCents);
             if (tier == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
             record.Tiers.Remove(tier);
@@ -147,13 +148,13 @@ namespace ON.SimpleWeb.Controllers
             return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
         }
 
-        [HttpPost("subscription/owner/fake")]
-        public async Task<IActionResult> ModifySubscriptionOwnerFake(FakePaymentSettings vm)
+        [HttpPost("subscription/public/fake")]
+        public async Task<IActionResult> ModifySubscriptionPublicFake(FakePaymentPublicSettings vm)
         {
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
 
-            var data = settingsClient.OwnerData;
+            var data = settingsClient.PublicData;
             var record = data.Subscription;
 
             record.Fake = vm;
@@ -166,8 +167,46 @@ namespace ON.SimpleWeb.Controllers
             return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
         }
 
+        [HttpPost("subscription/public/crypto")]
+        public async Task<IActionResult> ModifySubscriptionPublicCrypto(CryptoPublicSettings vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = settingsClient.PublicData;
+            var record = data.Subscription;
+
+            record.Crypto = vm;
+
+            var res = await settingsService.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
+        [HttpPost("subscription/public/paypal")]
+        public async Task<IActionResult> ModifySubscriptionPublicPaypal(PaypalPublicSettings vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = settingsClient.PublicData;
+            var record = data.Subscription;
+
+            record.Paypal = vm;
+
+            var res = await settingsService.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
         [HttpPost("subscription/owner/paypal")]
-        public async Task<IActionResult> ModifySubscriptionOwnerPaypal(PaypalSettings vm)
+        public async Task<IActionResult> ModifySubscriptionOwnerPaypal(PaypalOwnerSettings vm)
         {
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
@@ -185,8 +224,27 @@ namespace ON.SimpleWeb.Controllers
             return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
         }
 
+        [HttpPost("subscription/public/pe")]
+        public async Task<IActionResult> ModifySubscriptionPublicPE(ParallelEconomyPublicSettings vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = settingsClient.PublicData;
+            var record = data.Subscription;
+
+            record.ParallelEconomy = vm;
+
+            var res = await settingsService.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
         [HttpPost("subscription/owner/pe")]
-        public async Task<IActionResult> ModifySubscriptionOwnerPE(ParallelEconomySettings vm)
+        public async Task<IActionResult> ModifySubscriptionOwnerPE(ParallelEconomyOwnerSettings vm)
         {
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
@@ -204,8 +262,27 @@ namespace ON.SimpleWeb.Controllers
             return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
         }
 
+        [HttpPost("subscription/public/stripe")]
+        public async Task<IActionResult> ModifySubscriptionPublicStripe(StripePublicSettings vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = settingsClient.PublicData;
+            var record = data.Subscription;
+
+            record.Stripe = vm;
+
+            var res = await settingsService.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
         [HttpPost("subscription/owner/stripe")]
-        public async Task<IActionResult> ModifySubscriptionOwnerStripe(StripeSettings vm)
+        public async Task<IActionResult> ModifySubscriptionOwnerStripe(StripeOwnerSettings vm)
         {
             if (vm == null)
                 return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
@@ -225,7 +302,7 @@ namespace ON.SimpleWeb.Controllers
 
         private bool IsValid(SubscriptionTier vm)
         {
-            if (vm.Amount < 1)
+            if (vm.AmountCents < 1)
                 return false;
             if (string.IsNullOrWhiteSpace(vm.Name))
                 return false;
