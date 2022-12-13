@@ -474,6 +474,17 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return new() { Record = record?.Normal.Public };
         }
 
+        [AllowAnonymous]
+        public override async Task<GetOtherPublicUserByUserNameResponse> GetOtherPublicUserByUserName(GetOtherPublicUserByUserNameRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            var record = await dataProvider.GetByLogin(request.UserName);
+
+            return new() { Record = record?.Normal.Public };
+        }
+
         public override async Task<GetOwnUserResponse> GetOwnUser(GetOwnUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)

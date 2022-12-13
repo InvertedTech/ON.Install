@@ -106,6 +106,14 @@ service UserInterface {
     };
   }
 
+  // Get User public record
+  rpc GetOtherPublicUserByUserName (GetOtherPublicUserByUserNameRequest) returns (GetOtherPublicUserByUserNameResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/username/{UserName}"
+    };
+  }
+
   // Get User record
   rpc GetOwnUser (GetOwnUserRequest) returns (GetOwnUserResponse)
   {
@@ -296,6 +304,14 @@ message GetOtherPublicUserRequest {
 }
   
 message GetOtherPublicUserResponse {
+  UserPublicRecord Record = 1;
+}
+
+message GetOtherPublicUserByUserNameRequest {
+  string UserName = 1;
+}
+  
+message GetOtherPublicUserByUserNameResponse {
   UserPublicRecord Record = 1;
 }
 
