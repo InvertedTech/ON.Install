@@ -61,8 +61,9 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (user == null)
                 return new AuthenticateUserResponse();
 
-            var hash = ComputeSaltedHash(request.Password, user.Server.PasswordSalt.Span);
-            if (!CryptographicOperations.FixedTimeEquals(user.Server.PasswordHash.Span, hash))
+            bool isCorrect = await IsPasswordCorrect(request.Password, user);
+
+            if (!isCorrect)
                 return new AuthenticateUserResponse();
 
             var otherClaims = await claimsClient.GetOtherClaims(user.UserIDGuid);
@@ -675,6 +676,35 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 return false;
 
             return true;
+        }
+
+        private async Task<bool> IsPasswordCorrect(string password, UserRecord user)
+        {
+            var hash = ComputeSaltedHash(password, user.Server.PasswordSalt.Span);
+            if (CryptographicOperations.FixedTimeEquals(user.Server.PasswordHash.Span, hash))
+                return true;
+
+            if (string.IsNullOrEmpty(user.Server.OldPasswordAlgorithm) || string.IsNullOrEmpty(user.Server.OldPassword))
+                return false;
+
+            if (user.Server.OldPasswordAlgorithm == "Wordpress")
+            {
+                if (!CryptSharp.Core.PhpassCrypter.CheckPassword(password, user.Server.OldPassword))
+                    return false;
+
+                byte[] salt = RandomNumberGenerator.GetBytes(16);
+                user.Server.PasswordSalt = ByteString.CopyFrom(salt);
+                user.Server.PasswordHash = ByteString.CopyFrom(ComputeSaltedHash(password, salt));
+
+                user.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                user.Normal.Private.ModifiedBy = user.Normal.Public.UserID;
+
+                await dataProvider.Save(user);
+
+                return true;
+            }
+
+            return false;
         }
 
         private bool IsValid(UserNormalRecord user)
