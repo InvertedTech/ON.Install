@@ -29,6 +29,7 @@
     <None Remove="Protos\ON\Fragments\Content\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Content\StatsInterface.proto" />
     <None Remove="Protos\ON\Fragments\Content\StatsRecords.proto" />
+    <None Remove="Protos\ON\Fragments\Content\Stats\StatsProgressInterface.proto" />
     <None Remove="Protos\ON\Fragments\Content\Stats\StatsQueryInterface.proto" />
     <None Remove="Protos\ON\Fragments\Content\Stats\StatsSaveInterface.proto" />
     <None Remove="Protos\ON\Fragments\Content\Stats\StatsShareInterface.proto" />
@@ -76,6 +77,7 @@
     <Protobuf Include="Protos\ON\Fragments\Authorization\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Comments\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsSaveInterface.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsProgressInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsViewInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsShareInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsQueryInterface.proto" />

@@ -51,6 +51,7 @@ namespace ON.Content.SimpleStats.Service
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<ILikeDataProvider, EventDdLikeDataProvider>();
+            services.AddSingleton<IProgressDataProvider, EventDdProgressDataProvider>();
             services.AddSingleton<ISaveDataProvider, EventDdSaveDataProvider>();
             services.AddSingleton<IShareDataProvider, EventDdShareDataProvider>();
             services.AddSingleton<IViewDataProvider, EventDdViewDataProvider>();
@@ -93,6 +94,7 @@ namespace ON.Content.SimpleStats.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<LikeService>();
+                endpoints.MapGrpcService<ProgressService>();
                 endpoints.MapGrpcService<SaveService>();
                 endpoints.MapGrpcService<ShareService>();
                 endpoints.MapGrpcService<ViewService>();

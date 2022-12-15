@@ -5,6 +5,7 @@ using ON.Authentication;
 using ON.Content.SimpleStats.Service.Data;
 using ON.Fragments.Content.Stats;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ON.Content.SimpleStats.Service.Services
@@ -34,6 +35,8 @@ namespace ON.Content.SimpleStats.Service.Services
                 return new();
 
             bool isLiked = false, isSaved = false, isViewed = false;
+            float progress = 0;
+
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             if (userToken != null && userToken.IsLoggedIn)
             {
@@ -43,6 +46,10 @@ namespace ON.Content.SimpleStats.Service.Services
                     isLiked = userRecord.Likes.Contains(request.ContentID);
                     isSaved = userRecord.Saves.Contains(request.ContentID);
                     isViewed = userRecord.Views.Contains(request.ContentID);
+
+                    var rec = userRecord.ProgressRecords.FirstOrDefault(r => r.ContentID == request.ContentID);
+                    if (rec != null)
+                        progress = rec.Progress;
                 }
             }
 
@@ -52,6 +59,7 @@ namespace ON.Content.SimpleStats.Service.Services
                 LikedByUser = isLiked,
                 SavedByUser = isSaved,
                 ViewedByUser = isViewed,
+                ProgressByUser = progress,
             };
         }
 
@@ -77,6 +85,20 @@ namespace ON.Content.SimpleStats.Service.Services
 
             var ret = new GetOwnUserLikesResponse();
             ret.LikedContentIDs.AddRange(record.Likes);
+
+            return ret;
+        }
+
+        public override async Task<GetOwnUserProgressHistoryResponse> GetOwnUserProgressHistory(GetOwnUserProgressHistoryRequest request, ServerCallContext context)
+        {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null || !userToken.IsLoggedIn)
+                return new();
+
+            var record = await uPrvDb.GetById(userToken.Id);
+
+            var ret = new GetOwnUserProgressHistoryResponse();
+            ret.Records.AddRange(record.ProgressRecords.OrderByDescending(r => r.UpdatedOnUTC).Take(20));
 
             return ret;
         }

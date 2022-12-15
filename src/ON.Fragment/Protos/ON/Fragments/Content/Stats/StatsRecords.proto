@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package ON.Fragments.Content.Stats;
 
+import "google/protobuf/timestamp.proto";
+
 message StatsContentPublicRecord {
     string ContentID = 1;
 	uint64 Version = 2;
@@ -36,4 +38,11 @@ message StatsUserPrivateRecord {
 	repeated string Saves = 12;
 	repeated string Shares = 13;
 	repeated string Views = 14;
+	repeated UserProgressRecord ProgressRecords = 15;
+}
+
+message UserProgressRecord {
+	string ContentID = 1;
+	float Progress = 2;
+	google.protobuf.Timestamp UpdatedOnUTC = 3;
 }

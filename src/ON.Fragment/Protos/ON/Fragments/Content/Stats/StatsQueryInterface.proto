@@ -30,6 +30,12 @@ service StatsQueryInterface {
       get: "/api/stats/user/likes"
     };
   }
+  rpc GetOwnUserProgressHistory (GetOwnUserProgressHistoryRequest) returns (GetOwnUserProgressHistoryResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/stats/user/progress"
+    };
+  }
   rpc GetOwnUserSaves (GetOwnUserSavesRequest) returns (GetOwnUserSavesResponse)
   {
     option (google.api.http) = {
@@ -48,6 +54,7 @@ message GetContentStatsResponse {
   bool LikedByUser = 2;
   bool SavedByUser = 3;
   bool ViewedByUser = 4;
+  float ProgressByUser = 5;
 }
 
 
@@ -73,6 +80,14 @@ message GetOwnUserLikesRequest {
 
 message GetOwnUserLikesResponse {
   repeated string LikedContentIDs = 1;
+}
+
+
+message GetOwnUserProgressHistoryRequest {
+}
+
+message GetOwnUserProgressHistoryResponse {
+  repeated UserProgressRecord Records = 1;
 }
 
 
