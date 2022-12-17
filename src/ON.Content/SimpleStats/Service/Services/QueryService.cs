@@ -95,11 +95,23 @@ namespace ON.Content.SimpleStats.Service.Services
             if (userToken == null || !userToken.IsLoggedIn)
                 return new();
 
+            var possiblyIDs = request.PossibleContentIDs.ToList();
+            if (!possiblyIDs.Any())
+                possiblyIDs = null;
+
             var record = await uPrvDb.GetById(userToken.Id);
 
             var ret = new GetOwnUserProgressHistoryResponse();
-            ret.PageTotalItems = (uint)record.ProgressRecords.Count();
             ret.Records.AddRange(record.ProgressRecords.OrderByDescending(r => r.UpdatedOnUTC));
+
+            if (possiblyIDs != null)
+            {
+                var filtered = ret.Records.Where(r => possiblyIDs.Contains(r.ContentID));
+                ret.Records.Clear();
+                ret.Records.AddRange(filtered);
+            }
+
+            ret.PageTotalItems = (uint)ret.Records.Count();
 
             if (request.PageSize > 0)
             {

@@ -87,6 +87,7 @@ message GetOwnUserLikesResponse {
 message GetOwnUserProgressHistoryRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
+  repeated string PossibleContentIDs = 6;
 }
 
 message GetOwnUserProgressHistoryResponse {
