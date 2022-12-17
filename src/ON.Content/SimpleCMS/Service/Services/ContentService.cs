@@ -100,10 +100,14 @@ namespace ON.Content.SimpleCMS.Service
         [AllowAnonymous]
         public override async Task<GetAllContentResponse> GetAllContent(GetAllContentRequest request, ServerCallContext context)
         {
+            var possiblyIDs = request.PossibleContentIDs.ToList();
             var searchCatId = request.CategoryId;
             var searchChanId = request.ChannelId;
             var searchTag = request.Tag;
+            var searchLiveOnly = request.OnlyLive;
 
+            if (!possiblyIDs.Any())
+                possiblyIDs = null;
             if (string.IsNullOrWhiteSpace(searchCatId))
                 searchCatId = null;
             if (string.IsNullOrWhiteSpace(searchChanId))
@@ -118,6 +122,10 @@ namespace ON.Content.SimpleCMS.Service
             {
                 if (!CanShowInList(rec, null))
                     continue;
+
+                if (possiblyIDs != null)
+                    if (!possiblyIDs.Contains(rec.Public.ContentID))
+                        continue;
 
                 if (request.SubscriptionSearch != null)
                 {
@@ -137,6 +145,10 @@ namespace ON.Content.SimpleCMS.Service
 
                 if (searchTag != null)
                     if (!rec.Public.Data.Tags.Select(t => t.ToLower()).Contains(searchTag.ToLower()))
+                        continue;
+
+                if (searchLiveOnly)
+                    if (!(rec.Public.Data.Video?.IsLive ?? false))
                         continue;
 
                 var listRec = rec.Public.ToContentListRecord();
@@ -169,10 +181,14 @@ namespace ON.Content.SimpleCMS.Service
         [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
         public override async Task<GetAllContentAdminResponse> GetAllContentAdmin(GetAllContentAdminRequest request, ServerCallContext context)
         {
+            var possiblyIDs = request.PossibleContentIDs.ToList();
             var searchCatId = request.CategoryId;
             var searchChanId = request.ChannelId;
             var searchTag = request.Tag;
+            var searchLiveOnly = request.OnlyLive;
 
+            if (!possiblyIDs.Any())
+                possiblyIDs = null;
             if (string.IsNullOrWhiteSpace(searchCatId))
                 searchCatId = null;
             if (string.IsNullOrWhiteSpace(searchChanId))
@@ -196,6 +212,10 @@ namespace ON.Content.SimpleCMS.Service
                         continue;
                 }
 
+                if (possiblyIDs != null)
+                    if (!possiblyIDs.Contains(rec.Public.ContentID))
+                        continue;
+
                 if (request.SubscriptionSearch != null)
                 {
                     if (rec.Public.Data.SubscriptionLevel < request.SubscriptionSearch.MinimumLevel)
@@ -214,6 +234,10 @@ namespace ON.Content.SimpleCMS.Service
 
                 if (searchTag != null)
                     if (!rec.Public.Data.Tags.Select(t => t.ToLower()).Contains(searchTag.ToLower()))
+                        continue;
+
+                if (searchLiveOnly)
+                    if (!(rec.Public.Data.Video?.IsLive ?? false))
                         continue;
 
                 var listRec = rec.Public.ToContentListRecord();

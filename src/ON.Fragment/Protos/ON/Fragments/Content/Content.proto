@@ -127,11 +127,13 @@ message DeleteContentResponse {
 message GetAllContentRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
+  repeated string PossibleContentIDs = 6;
   SubscriptionLevelSearch SubscriptionSearch = 10;
   ContentType ContentType = 11;
   string CategoryId = 12;
   string ChannelId = 13;
   string Tag = 14;
+  bool OnlyLive = 15;
 }
   
 message GetAllContentResponse {
@@ -144,11 +146,13 @@ message GetAllContentResponse {
 message GetAllContentAdminRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
+  repeated string PossibleContentIDs = 6;
   SubscriptionLevelSearch SubscriptionSearch = 10;
   ContentType ContentType = 11;
   string CategoryId = 12;
   string ChannelId = 13;
   string Tag = 14;
+  bool OnlyLive = 15;
   bool Deleted = 21;
 }
   
