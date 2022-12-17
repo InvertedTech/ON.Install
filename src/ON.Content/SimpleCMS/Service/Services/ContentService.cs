@@ -167,12 +167,13 @@ namespace ON.Content.SimpleCMS.Service
 
             if (request.PageSize > 0)
             {
+                res.PageOffsetStart = request.PageOffset;
+
                 var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
                 res.Records.Clear();
                 res.Records.AddRange(page);
             }
 
-            res.PageOffsetStart = request.PageOffset;
             res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
 
             return res;
@@ -256,12 +257,13 @@ namespace ON.Content.SimpleCMS.Service
 
             if (request.PageSize > 0)
             {
+                res.PageOffsetStart = request.PageOffset;
+
                 var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
                 res.Records.Clear();
                 res.Records.AddRange(page);
             }
 
-            res.PageOffsetStart = request.PageOffset;
             res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
 
             return res;

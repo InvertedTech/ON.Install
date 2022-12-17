@@ -68,6 +68,7 @@ message GetOtherUserStatsResponse {
 
 
 message GetOwnUserSavesRequest {
+
 }
 
 message GetOwnUserSavesResponse {
@@ -84,10 +85,15 @@ message GetOwnUserLikesResponse {
 
 
 message GetOwnUserProgressHistoryRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
 }
 
 message GetOwnUserProgressHistoryResponse {
   repeated UserProgressRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
 }
 
 

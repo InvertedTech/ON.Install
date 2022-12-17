@@ -98,7 +98,19 @@ namespace ON.Content.SimpleStats.Service.Services
             var record = await uPrvDb.GetById(userToken.Id);
 
             var ret = new GetOwnUserProgressHistoryResponse();
-            ret.Records.AddRange(record.ProgressRecords.OrderByDescending(r => r.UpdatedOnUTC).Take(20));
+            ret.PageTotalItems = (uint)record.ProgressRecords.Count();
+            ret.Records.AddRange(record.ProgressRecords.OrderByDescending(r => r.UpdatedOnUTC));
+
+            if (request.PageSize > 0)
+            {
+                ret.PageOffsetStart = request.PageOffset;
+
+                var page = ret.Records.Skip((int)request.PageOffset).Take((int)request.PageSize);
+                ret.Records.Clear();
+                ret.Records.AddRange(page);
+            }
+
+            ret.PageOffsetEnd = ret.PageOffsetStart + (uint)ret.Records.Count;
 
             return ret;
         }
