@@ -117,7 +117,7 @@ namespace ON.Content.SimpleStats.Service.Services
             {
                 ret.PageOffsetStart = request.PageOffset;
 
-                var page = ret.Records.Skip((int)request.PageOffset).Take((int)request.PageSize);
+                var page = ret.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToArray();
                 ret.Records.Clear();
                 ret.Records.AddRange(page);
             }
