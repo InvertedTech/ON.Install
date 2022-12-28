@@ -108,6 +108,7 @@ message ChannelRecord {
   string ParentChannelId = 2;
   string DisplayName = 3;
   string UrlStub = 4;
+  string ImageAssetId = 5;
 
   string OldChannelId = 1001;
 }
