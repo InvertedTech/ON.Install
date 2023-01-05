@@ -37,6 +37,7 @@ message ContentPublicData {
   string Title = 1;
   string Description = 2;
   string Author = 3;
+  string AuthorID = 13;
   string URL = 4;
   string FeaturedImageAssetID = 6;
   uint32 SubscriptionLevel = 7;

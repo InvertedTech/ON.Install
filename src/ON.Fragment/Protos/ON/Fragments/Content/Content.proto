@@ -214,6 +214,7 @@ message ContentListRecord {
   uint32 SubscriptionLevel = 6;
   string URL = 7;
   string Author = 8;
+  string AuthorID = 18;
   string FeaturedImageAssetID = 9;
   repeated string CategoryIds = 10;
   repeated string ChannelIds = 11;
