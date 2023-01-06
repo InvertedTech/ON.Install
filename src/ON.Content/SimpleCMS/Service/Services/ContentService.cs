@@ -410,7 +410,7 @@ namespace ON.Content.SimpleCMS.Service
             var searchLiveOnly = request.OnlyLive;
 
             if (!string.IsNullOrWhiteSpace(request.Query))
-                searchQueryBits = request.Query.Replace("\"", " ").Split(' ', StringSplitOptions.RemoveEmptyEntries).ToArray();
+                searchQueryBits = request.Query.ToLower().Replace("\"", " ").Split(' ', StringSplitOptions.RemoveEmptyEntries).ToArray();
 
             if (string.IsNullOrWhiteSpace(searchCatId))
                 searchCatId = null;
@@ -683,28 +683,28 @@ namespace ON.Content.SimpleCMS.Service
 
         private bool MeetsQuery(string[] searchQueryBits, ContentRecord rec)
         {
-            if (MeetsQuery(searchQueryBits, rec.Public.Data.Title))
+            if (MeetsQuery(searchQueryBits, rec.Public.Data.Title.ToLower()))
                 return true;
 
-            if (MeetsQuery(searchQueryBits, rec.Public.Data.Description))
+            if (MeetsQuery(searchQueryBits, rec.Public.Data.Description.ToLower()))
                 return true;
 
             switch (rec.Public.Data.ContentDataOneofCase)
             {
                 case ContentPublicData.ContentDataOneofOneofCase.Audio:
-                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Audio.HtmlBody))
+                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Audio.HtmlBody.ToLower()))
                         return true;
                     break;
                 case ContentPublicData.ContentDataOneofOneofCase.Picture:
-                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Picture.HtmlBody))
+                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Picture.HtmlBody.ToLower()))
                         return true;
                     break;
                 case ContentPublicData.ContentDataOneofOneofCase.Written:
-                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Written.HtmlBody))
+                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Written.HtmlBody.ToLower()))
                         return true;
                     break;
                 case ContentPublicData.ContentDataOneofOneofCase.Video:
-                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Video.HtmlBody))
+                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Video.HtmlBody.ToLower()))
                         return true;
                     break;
                 default:
