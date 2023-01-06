@@ -78,6 +78,12 @@ service ContentInterface {
       body: "*"
     };
   }
+  rpc SearchContent (SearchContentRequest) returns (SearchContentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/search"
+    };
+  }
   rpc UnannounceContent (UnannounceContentRequest) returns (UnannounceContentResponse)
   {
     option (google.api.http) = {
@@ -230,6 +236,25 @@ message PublishContentRequest {
   
 message PublishContentResponse {
   ContentRecord Record = 1;
+}
+  
+message SearchContentRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  string Query = 6;
+  SubscriptionLevelSearch SubscriptionSearch = 10;
+  ContentType ContentType = 11;
+  string CategoryId = 12;
+  string ChannelId = 13;
+  string Tag = 14;
+  bool OnlyLive = 15;
+}
+  
+message SearchContentResponse {
+  repeated ContentListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
 }
   
 message UnannounceContentRequest {

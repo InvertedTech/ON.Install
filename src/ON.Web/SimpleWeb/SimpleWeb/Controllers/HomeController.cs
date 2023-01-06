@@ -33,6 +33,12 @@ namespace ON.SimpleWeb.Controllers
             return View("Home", new HomeViewModel((await contentService.GetAll()), userHelper.MyUser));
         }
 
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(string query)
+        {
+            return View("Home", new HomeViewModel((await contentService.Search(query ?? "")), userHelper.MyUser));
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
