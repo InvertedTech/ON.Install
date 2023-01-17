@@ -108,7 +108,7 @@ namespace ON.Content.SimpleStats.Service.Services
 
             if (possiblyIDs != null)
             {
-                var filtered = ret.Records.Where(r => possiblyIDs.Contains(r.ContentID));
+                var filtered = ret.Records.Where(r => possiblyIDs.Contains(r.ContentID)).ToArray();
                 ret.Records.Clear();
                 ret.Records.AddRange(filtered);
             }
