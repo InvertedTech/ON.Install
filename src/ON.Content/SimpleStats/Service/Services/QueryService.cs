@@ -102,7 +102,9 @@ namespace ON.Content.SimpleStats.Service.Services
             var record = await uPrvDb.GetById(userToken.Id);
 
             var ret = new GetOwnUserProgressHistoryResponse();
-            ret.Records.AddRange(record.ProgressRecords.OrderByDescending(r => r.UpdatedOnUTC));
+
+            if (record?.ProgressRecords != null)
+                ret.Records.AddRange(record.ProgressRecords.OrderByDescending(r => r.UpdatedOnUTC));
 
             if (possiblyIDs != null)
             {
