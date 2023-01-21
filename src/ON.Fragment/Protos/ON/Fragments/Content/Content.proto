@@ -139,7 +139,8 @@ message GetAllContentRequest {
   string CategoryId = 12;
   string ChannelId = 13;
   string Tag = 14;
-  bool OnlyLive = 15;
+  string AuthorId = 15;
+  bool OnlyLive = 16;
 }
   
 message GetAllContentResponse {

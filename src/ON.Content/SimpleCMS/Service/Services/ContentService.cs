@@ -103,6 +103,7 @@ namespace ON.Content.SimpleCMS.Service
             var possiblyIDs = request.PossibleContentIDs.ToList();
             var searchCatId = request.CategoryId;
             var searchChanId = request.ChannelId;
+            var searchAuthorId = request.AuthorId;
             var searchTag = request.Tag;
             var searchLiveOnly = request.OnlyLive;
 
@@ -112,6 +113,8 @@ namespace ON.Content.SimpleCMS.Service
                 searchCatId = null;
             if (string.IsNullOrWhiteSpace(searchChanId))
                 searchChanId = null;
+            if (string.IsNullOrWhiteSpace(searchAuthorId))
+                searchAuthorId = null;
             if (string.IsNullOrWhiteSpace(searchTag))
                 searchTag = null;
 
@@ -141,6 +144,10 @@ namespace ON.Content.SimpleCMS.Service
 
                 if (searchChanId != null)
                     if (!rec.Public.Data.ChannelIds.Contains(searchChanId))
+                        continue;
+
+                if (searchAuthorId != null)
+                    if (rec.Public.Data.AuthorID != searchAuthorId)
                         continue;
 
                 if (searchTag != null)
