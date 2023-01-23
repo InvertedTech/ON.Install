@@ -9,7 +9,7 @@ namespace ON.Authorization.Payment.Fake.Data
 {
     public interface ISubscriptionRecordProvider
     {
-        Task<FakeSubscriptionRecord> GetById(Guid userId);
+        Task<FakeSubscriptionRecord?> GetById(Guid userId);
         Task Save(FakeSubscriptionRecord record);
     }
 }

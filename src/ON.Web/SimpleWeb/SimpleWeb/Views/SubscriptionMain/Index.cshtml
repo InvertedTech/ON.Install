@@ -9,22 +9,10 @@
 
 <h1>My Subscriptions</h1>
 
-@if (Model.IsSubscribed)
+@if (!Model.HasActiveSubscription)
 {
     <p>
-        My subscription level: @(Model.SubscriptionLevelLabel)
-    </p>
-    <p>
-        <a href="/subscription/@(Model.SubscriptionProvider)/cancel">Cancel my subscription</a>
-    </p>
-}
-else
-{
-    <p>
-        My subscription level: None
-    </p>
-    <p>
-        Pick a payment level
+        Pick your subscription level.
     </p>
     <ul>
         @foreach (var level in subTierHelper.GetAll())
@@ -33,3 +21,25 @@ else
         }
     </ul>
 }
+
+<br />
+<br />
+<br />
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Created</th>
+            <th>Status</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    @foreach (var sub in Model.Subscriptions)
+    {
+        <tr>
+            <td><a asp-action="Single" asp-route-subId="@sub.SubscriptionId.ToString()">@sub.StartedOnUTC.ToShortDateString()</a></td>
+            <td>@sub.StatusPretty</td>
+            <td>$@((sub.AmountCents / 100.0).ToString("###,##0.00"))</td>
+        </tr>
+    }
+</table>

@@ -18,9 +18,9 @@ namespace ON.Authorization.Payment.Service
         private readonly ILogger logger;
         private readonly Paypal.Clients.PaypalClient paypalClient;
         private readonly FakeD.ISubscriptionRecordProvider fakeProvider;
-        private readonly PaypalD.ISubscriptionRecordProvider paypalProvider;
+        private readonly PaypalD.DataMergeService paypalProvider;
 
-        public PaymentService(ILogger<PaymentService> logger, Paypal.Clients.PaypalClient paypalClient, FakeD.ISubscriptionRecordProvider fakeProvider, PaypalD.ISubscriptionRecordProvider paypalProvider)
+        public PaymentService(ILogger<PaymentService> logger, Paypal.Clients.PaypalClient paypalClient, FakeD.ISubscriptionRecordProvider fakeProvider, PaypalD.DataMergeService paypalProvider)
         {
             this.logger = logger;
             this.paypalClient = paypalClient;
@@ -44,26 +44,27 @@ namespace ON.Authorization.Payment.Service
             };
         }
 
-        public override async Task<GetOwnSubscriptionRecordResponse> GetOwnSubscriptionRecord(GetOwnSubscriptionRecordRequest request, ServerCallContext context)
+        public override async Task<GetOwnSubscriptionRecordsResponse> GetOwnSubscriptionRecords(GetOwnSubscriptionRecordsRequest request, ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
                 return new();
 
             var fakeT = fakeProvider.GetById(userToken.Id);
-            var paypalT = paypalProvider.GetById(userToken.Id);
+            var paypalT = paypalProvider.GetAllByUserId(userToken.Id);
 
             await Task.WhenAll(fakeT, paypalT);
 
+            var res = new GetOwnSubscriptionRecordsResponse();
+
             if (fakeT.Result != null)
-                if (fakeT.Result.Level > 0)
-                    return new() { Fake = fakeT.Result };
+                if (fakeT.Result.AmountCents > 0)
+                    res.Fake = fakeT.Result;
 
             if (paypalT.Result != null)
-                if (paypalT.Result.CanceledOnUTC == null)
-                    return new() { Paypal = paypalT.Result };
+                res.Paypal.AddRange(paypalT.Result);
 
-            return new();
+            return res;
         }
     }
 }

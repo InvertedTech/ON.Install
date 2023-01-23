@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Fragments.Authorization.Payment.Paypal;
 using ON.Settings;
+using System;
 using System.Threading.Tasks;
 
 namespace ON.SimpleWeb.Services.Paypal
@@ -24,13 +25,14 @@ namespace ON.SimpleWeb.Services.Paypal
 
         public bool IsLoggedIn { get => User != null; }
 
-        public async Task<PaypalCancelOwnSubscriptionResponse> CancelSubscription(string reason)
+        public async Task<PaypalCancelOwnSubscriptionResponse> CancelSubscription(Guid subscriptionId, string reason)
         {
             if (!IsLoggedIn)
                 return null;
 
             var req = new PaypalCancelOwnSubscriptionRequest()
             {
+                SubscriptionID = subscriptionId.ToString(),
                 Reason = reason
             };
 
@@ -39,7 +41,7 @@ namespace ON.SimpleWeb.Services.Paypal
             return reply;
         }
 
-        public async Task<PaypalSubscriptionRecord> GetCurrentRecord()
+        public async Task<PaypalGetOwnSubscriptionRecordsResponse> GetRecords()
         {
             if (!IsLoggedIn)
                 return null;
@@ -51,8 +53,8 @@ namespace ON.SimpleWeb.Services.Paypal
 
 
             var client = new PaypalInterface.PaypalInterfaceClient(nameHelper.PaymentServiceChannel);
-            var reply = await client.PaypalGetOwnSubscriptionRecordAsync(new PaypalGetOwnSubscriptionRecordRequest(), GetMetadata());
-            return reply.Record;
+            var reply = await client.PaypalGetOwnSubscriptionRecordsAsync(new PaypalGetOwnSubscriptionRecordsRequest(), GetMetadata());
+            return reply;
         }
 
         public async Task<PaypalNewOwnSubscriptionResponse> NewSubscription(string subscriptionId)
@@ -62,7 +64,7 @@ namespace ON.SimpleWeb.Services.Paypal
 
             var req = new PaypalNewOwnSubscriptionRequest()
             {
-                SubscriptionId = subscriptionId
+                PaypalSubscriptionId = subscriptionId
             };
 
             var client = new PaypalInterface.PaypalInterfaceClient(nameHelper.PaymentServiceChannel);

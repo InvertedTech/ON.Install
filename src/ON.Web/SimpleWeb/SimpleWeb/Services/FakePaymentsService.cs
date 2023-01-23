@@ -62,7 +62,7 @@ namespace ON.SimpleWeb.Services
 
             var req = new FakeNewOwnSubscriptionRequest()
             {
-                Level = level
+                AmountCents = level
             };
 
             var client = new FakeInterface.FakeInterfaceClient(nameHelper.PaymentServiceChannel);

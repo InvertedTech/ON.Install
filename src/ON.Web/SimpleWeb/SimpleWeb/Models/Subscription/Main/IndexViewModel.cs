@@ -16,40 +16,37 @@ namespace ON.SimpleWeb.Models.Subscription.Main
         {
         }
 
-        public static IndexViewModel Create(SubscriptionTierHelper subHelper, GetOwnSubscriptionRecordResponse record)
+        public static IndexViewModel Create(SubscriptionTierHelper subHelper, GetOwnSubscriptionRecordsResponse res)
         {
-            uint amount = 0;
-            var vm = new IndexViewModel();
+            var vm = new IndexViewModel()
+            {
+                Records = res,
+            };
 
-            if (record?.Fake != null)
-            {
-                vm.IsSubscribed = true;
-                vm.SubscriptionProvider = "fake";
-                amount = record.Fake.Level;
-            }
-            else if (record?.Paypal != null)
-            {
-                vm.IsSubscribed = true;
-                vm.SubscriptionProvider = "paypal";
-                amount = record.Paypal.Level;
-            }
+            vm.Subscriptions.AddRange(res.Paypal.Select(r => new SubscriptionViewModel(r)));
 
-            var t = subHelper.GetForAmount(amount);
-            if (t != null)
-            {
-                vm.SubscriptionLevelLabel = t.Label;
-            }
-            else if (amount > 0)
-            {
-                vm.SubscriptionLevelLabel = $"${amount} - Other";
-            }
+
+            vm.Subscriptions = vm.Subscriptions.OrderByDescending(s => s.Status == SubscriptionStatus.SubscriptionActive ? 1 : 0).OrderByDescending(s => s.StartedOnUTC).ToList();
 
             return vm;
         }
 
-        public bool IsSubscribed { get; set; } = false;
+        public GetOwnSubscriptionRecordsResponse Records { get; set; }
 
-        public string SubscriptionLevelLabel { get; set; } = "None";
-        public string SubscriptionProvider { get; set; }
+        public List<SubscriptionViewModel> Subscriptions { get; set; } = new();
+
+        public bool HasActiveSubscription
+        {
+            get
+            {
+                if ((Records.Fake?.AmountCents ?? 0) > 0)
+                    return true;
+
+                if (Records.Paypal.Any(r => r.Subscription.Status == SubscriptionStatus.SubscriptionActive))
+                    return true;
+
+                return false;
+            }
+        }
     }
 }

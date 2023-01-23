@@ -3,7 +3,7 @@ syntax = "proto3";
 package ON.Fragments.Authorization.Payment.ParallelEconomy;
 
 import "Protos/ON/Fragments/Authorization/Payment/ParallelEconomy/PlanRecord.proto";
-import "Protos/ON/Fragments/Authorization/Payment/ParallelEconomy/SubscriptionRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payment/ParallelEconomy/ParallelEconomySubscriptionRecord.proto";
 
 service ParallelEconomyInterface {
   rpc CancelOwnSubscription (CancelOwnSubscriptionRequest) returns (CancelOwnSubscriptionResponse) {}
@@ -17,7 +17,7 @@ message CancelOwnSubscriptionRequest {
 }
   
 message CancelOwnSubscriptionResponse {
-  SubscriptionRecord Record = 1;
+  ParallelEconomySubscriptionRecord Record = 1;
   string Error = 2;
 }
 
@@ -33,7 +33,7 @@ message GetOwnSubscriptionRecordRequest {
 }
   
 message GetOwnSubscriptionRecordResponse {
-  SubscriptionRecord Record = 1;
+  ParallelEconomySubscriptionRecord Record = 1;
 }
 
 message NewOwnSubscriptionRequest {
@@ -41,6 +41,6 @@ message NewOwnSubscriptionRequest {
 }
   
 message NewOwnSubscriptionResponse {
-  SubscriptionRecord Record = 1;
+  ParallelEconomySubscriptionRecord Record = 1;
   string Error = 2;
 }

@@ -20,14 +20,18 @@ namespace ON.Authorization.Payment.Paypal.Services
     public class PaypalService : PaypalInterface.PaypalInterfaceBase
     {
         private readonly ILogger<PaypalService> logger;
+        private readonly DataMergeService dataMerger;
         private readonly ISubscriptionRecordProvider subscriptionProvider;
+        private readonly IPaymentRecordProvider paymentProvider;
         private readonly PaypalClient client;
         private readonly SettingsClient settingsClient;
 
-        public PaypalService(ILogger<PaypalService> logger, ISubscriptionRecordProvider subscriptionProvider, PaypalClient client, SettingsClient settingsClient)
+        public PaypalService(ILogger<PaypalService> logger, DataMergeService dataMerger, ISubscriptionRecordProvider subscriptionProvider, IPaymentRecordProvider paymentProvider, PaypalClient client, SettingsClient settingsClient)
         {
             this.logger = logger;
+            this.dataMerger = dataMerger;
             this.subscriptionProvider = subscriptionProvider;
+            this.paymentProvider = paymentProvider;
             this.client = client;
             this.settingsClient = settingsClient;
         }
@@ -40,17 +44,21 @@ namespace ON.Authorization.Payment.Paypal.Services
                 if (userToken == null)
                     return new () { Error = "No user token specified" };
 
-                var record = await subscriptionProvider.GetById(userToken.Id);
+                Guid subscriptionId;
+                if (!Guid.TryParse(request.SubscriptionID, out subscriptionId))
+                    return new() { Error = "No SubscriptionID specified" };
+
+                var record = await subscriptionProvider.GetById(userToken.Id, subscriptionId);
                 if (record == null)
                     return new () { Error = "Record not found" };
 
-                var sub = await client.GetSubscription(record.SubscriptionId);
+                var sub = await client.GetSubscription(record.PaypalSubscriptionID);
                 if (sub == null)
                     return new () { Error = "SubscriptionId not valid" };
 
                 if (sub.status == "ACTIVE")
                 {
-                    var canceled = await client.CancelSubscription(record.SubscriptionId, request.Reason ?? "None");
+                    var canceled = await client.CancelSubscription(record.PaypalSubscriptionID, request.Reason ?? "None");
                     if (!canceled)
                         return new () { Error = "Unable to cancel subscription" };
                 }
@@ -58,6 +66,7 @@ namespace ON.Authorization.Payment.Paypal.Services
                 record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.RenewsOnUTC = null;
+                record.Status = Fragments.Authorization.Payment.SubscriptionStatus.SubscriptionStopped;
 
                 await subscriptionProvider.Save(record);
 
@@ -72,16 +81,16 @@ namespace ON.Authorization.Payment.Paypal.Services
             }
         }
 
-        public override async Task<PaypalGetOwnSubscriptionRecordResponse> PaypalGetOwnSubscriptionRecord(PaypalGetOwnSubscriptionRecordRequest request, ServerCallContext context)
+        public override async Task<PaypalGetOwnSubscriptionRecordsResponse> PaypalGetOwnSubscriptionRecords(PaypalGetOwnSubscriptionRecordsRequest request, ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
                 return new ();
 
-            return new ()
-            {
-                Record = await subscriptionProvider.GetById(userToken.Id)
-            };
+            var res = new PaypalGetOwnSubscriptionRecordsResponse();
+            res.Records.AddRange(await dataMerger.GetAllByUserId(userToken.Id));
+
+            return res;
         }
 
         public override async Task<PaypalNewOwnSubscriptionResponse> PaypalNewOwnSubscription(PaypalNewOwnSubscriptionRequest request, ServerCallContext context)
@@ -92,10 +101,10 @@ namespace ON.Authorization.Payment.Paypal.Services
                 if (userToken == null)
                     return new () { Error = "No user token specified" };
 
-                if (request?.SubscriptionId == null)
+                if (request?.PaypalSubscriptionId == null)
                     return new () { Error = "SubscriptionId not valid" };
 
-                var sub = await client.GetSubscription(request.SubscriptionId);
+                var sub = await client.GetSubscription(request.PaypalSubscriptionId);
                 if (sub == null)
                     return new () { Error = "SubscriptionId not valid" };
 
@@ -110,15 +119,34 @@ namespace ON.Authorization.Payment.Paypal.Services
                 var record = new PaypalSubscriptionRecord()
                 {
                     UserID = userToken.Id.ToString(),
-                    Level = (uint)(value * 100),
+                    SubscriptionID = Guid.NewGuid().ToString(),
+                    PaypalSubscriptionID = request.PaypalSubscriptionId,
+                    AmountCents = (uint)(value * 100),
+                    Status = Fragments.Authorization.Payment.SubscriptionStatus.SubscriptionActive,
+                    CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    LastPaidUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(sub.create_time),
                     ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
-                    LastPaidUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
-                    SubscriptionId = request.SubscriptionId,
                     PaidThruUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(billing_info.next_billing_time),
                     RenewsOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(billing_info.next_billing_time),
                 };
 
                 await subscriptionProvider.Save(record);
+
+                var payment = new PaypalPaymentRecord()
+                {
+                    UserID = userToken.Id.ToString(),
+                    SubscriptionID = record.SubscriptionID,
+                    PaymentID = Guid.NewGuid().ToString(),
+                    PaypalPaymentID = sub.id,
+                    AmountCents = (uint)(value * 100),
+                    Status = Fragments.Authorization.Payment.PaymentStatus.PaymentComplete,
+                    CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    PaidOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(sub.create_time),
+                    ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    PaidThruUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(billing_info.next_billing_time),
+                };
+
+                await paymentProvider.Save(payment);
 
                 return new ()
                 {

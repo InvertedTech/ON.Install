@@ -1,19 +1,15 @@
 syntax = "proto3";
 
-package ON.Fragments.Authorization.Payment.Paypal;
+package ON.Fragments.Authorization.Payment.ParallelEconomy;
 
 import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Authorization/Payment/SharedTypes.proto";
 
-message PaypalSubscriptionFullRecord {
-	PaypalSubscriptionRecord Subscription = 1;
-	repeated PaypalPaymentRecord Payments = 2;
-}
-
-message PaypalSubscriptionRecord {
+// User claim's record
+message ParallelEconomySubscriptionRecord {
   string UserID = 1; // Guid for the user
   string SubscriptionID = 2; // Guid for the Subscription
-  string PaypalSubscriptionID = 3;
+  string ParallelEconomySubscriptionId = 3;
   uint32 AmountCents = 4;
   SubscriptionStatus Status = 5;
   google.protobuf.Timestamp CreatedOnUTC = 11;
@@ -28,7 +24,7 @@ message PaypalPaymentRecord {
   string UserID = 1; // Guid for the user
   string SubscriptionID = 2; // Guid for the Subscription
   string PaymentID = 3; // Guid for the Payment
-  string PaypalPaymentID = 4;
+  string ParallelEconomyPaymentID = 4;
   uint32 AmountCents = 5;
   PaymentStatus Status = 6;
   google.protobuf.Timestamp CreatedOnUTC = 11;

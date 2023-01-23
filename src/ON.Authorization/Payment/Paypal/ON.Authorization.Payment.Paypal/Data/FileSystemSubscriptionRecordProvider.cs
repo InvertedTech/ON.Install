@@ -19,31 +19,68 @@ namespace ON.Authorization.Payment.Paypal.Data
         {
             var root = new DirectoryInfo(settings.Value.DataStore);
             root.Create();
-            dataDir = root.CreateSubdirectory("paypal");
+            dataDir = root.CreateSubdirectory("paypal").CreateSubdirectory("sub");
         }
 
-        public async Task<PaypalSubscriptionRecord?> GetById(Guid userId)
+        public async Task<PaypalSubscriptionRecord?> GetById(Guid userId, Guid subscriptionId)
         {
-            var fd = GetDataFilePath(userId);
+            var fd = GetDataFilePath(userId, subscriptionId);
             if (!fd.Exists)
                 return null;
 
-            var last = (await File.ReadAllLinesAsync(fd.FullName)).Last();
+            var last = (await File.ReadAllLinesAsync(fd.FullName)).Where(l => l.Length != 0).Last();
 
             return PaypalSubscriptionRecord.Parser.ParseFrom(Convert.FromBase64String(last));
+        }
+
+        public async Task<List<PaypalSubscriptionRecord>> GetAllByUserId(Guid userId)
+        {
+            List<PaypalSubscriptionRecord> list = new();
+
+            var dir = GetDataDirPath(userId);
+            foreach (var fi in dir.GetFiles())
+            {
+                if (Guid.TryParse(fi.Name, out var subscriptionId))
+                {
+                    var rec = await GetById(userId, subscriptionId);
+                    if (rec != null)
+                        list.Add(rec);
+                }
+            }
+
+            return list;
         }
 
         public async Task Save(PaypalSubscriptionRecord rec)
         {
             var id = Guid.Parse(rec.UserID);
-            var fd = GetDataFilePath(id);
+            var fd = GetDataFilePath(rec);
             await File.AppendAllTextAsync(fd.FullName, Convert.ToBase64String(rec.ToByteArray()) + "\n");
         }
 
-        private FileInfo GetDataFilePath(Guid userID)
+        private DirectoryInfo GetDataDirPath(PaypalSubscriptionRecord rec)
         {
-            var name = userID.ToString();
-            var dir = dataDir.CreateSubdirectory(name.Substring(0, 2)).CreateSubdirectory(name.Substring(2, 2));
+            var userId = Guid.Parse(rec.UserID);
+            return GetDataDirPath(userId);
+        }
+
+        private DirectoryInfo GetDataDirPath(Guid userId)
+        {
+            var name = userId.ToString();
+            return dataDir.CreateSubdirectory(name.Substring(0, 2)).CreateSubdirectory(name.Substring(2, 2)).CreateSubdirectory(name);
+        }
+
+        private FileInfo GetDataFilePath(PaypalSubscriptionRecord rec)
+        {
+            var userId = Guid.Parse(rec.UserID);
+            var subscriptionId = Guid.Parse(rec.SubscriptionID);
+            return GetDataFilePath(userId, subscriptionId);
+        }
+
+        private FileInfo GetDataFilePath(Guid userId, Guid subscriptionId)
+        {
+            var name = subscriptionId.ToString();
+            var dir = GetDataDirPath(userId);
             return new FileInfo(dir.FullName + "/" + name);
         }
     }

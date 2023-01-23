@@ -40,7 +40,7 @@ namespace ON.SimpleWeb.Services.PE
             //return reply;
         }
 
-        public async Task<SubscriptionRecord> GetCurrentRecord()
+        public async Task<ParallelEconomySubscriptionRecord> GetCurrentRecord()
         {
             if (!IsLoggedIn)
                 return null;

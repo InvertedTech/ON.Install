@@ -47,7 +47,7 @@ message FakeGetOwnSubscriptionRecordResponse {
 }
 
 message FakeNewOwnSubscriptionRequest {
-  uint32 Level = 1;
+  uint32 AmountCents = 1;
 }
   
 message FakeNewOwnSubscriptionResponse {

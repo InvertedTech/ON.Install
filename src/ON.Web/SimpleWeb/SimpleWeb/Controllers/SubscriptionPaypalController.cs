@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,10 +24,11 @@ namespace ON.SimpleWeb.Controllers
             this.userHelper = userHelper;
         }
 
-        [HttpGet("cancel")]
-        public async Task<IActionResult> Cancel(string reason = null)
+        [HttpGet("cancel/{id}")]
+        public async Task<IActionResult> Cancel(string id, string reason = null)
         {
-            await paymentsService.CancelSubscription(reason ?? "No reason");
+            if (Guid.TryParse(id, out var subscriptionId))
+                await paymentsService.CancelSubscription(subscriptionId, reason ?? "No reason");
 
             return Redirect("/settings/refreshtoken?url=/subscription/");
         }

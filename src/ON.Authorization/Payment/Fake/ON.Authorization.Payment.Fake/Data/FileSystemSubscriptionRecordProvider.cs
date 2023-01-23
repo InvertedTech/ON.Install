@@ -22,7 +22,7 @@ namespace ON.Authorization.Payment.Fake.Data
             dataDir = root.CreateSubdirectory("fake");
         }
 
-        public async Task<FakeSubscriptionRecord> GetById(Guid userId)
+        public async Task<FakeSubscriptionRecord?> GetById(Guid userId)
         {
             var fd = GetDataFilePath(userId);
             if (!fd.Exists)

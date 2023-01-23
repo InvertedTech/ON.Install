@@ -1,0 +1,59 @@
+﻿@using ON.SimpleWeb.Models.Subscription.Main
+@inject ON.Settings.SettingsClient settingsClient;
+@inject ON.Settings.SubscriptionTierHelper subTierHelper
+@model SubscriptionViewModel
+@{
+    ViewData["Title"] = "My Subscriptions";
+    var subSet = settingsClient.PublicData?.Subscription;
+}
+
+<h1>My Subscriptions</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Created</th>
+            <td>@Model.StartedOnUTC.ToShortDateString() - @Model.StartedOnUTC.ToShortTimeString()</td>
+        </tr>
+        <tr>
+            <th>Amount</th>
+            <td>$@((Model.AmountCents / 100.0).ToString("###,##0.00"))</td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>
+                @Model.StatusPretty
+                @if (Model.Status != ON.Fragments.Authorization.Payment.SubscriptionStatus.SubscriptionStopped)
+                {
+                    <span>&nbsp; &nbsp; &nbsp;</span>
+                    <a asp-controller="SubscriptionPaypal" asp-action="Cancel" asp-route-id="@Model.SubscriptionId.ToString()">Cancel</a>
+                }
+            </td>
+        </tr>
+        <tr>
+            <th>Subscription</th>
+            <td>@Model.OtherSubscriptionId</td>
+        </tr>
+    </thead>
+</table>
+
+<br />
+<br />
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Paid On</th>
+            <th>Status</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    @foreach (var pay in Model.Payments)
+    {
+        <tr>
+            <td>@pay.PaidOnUTC.ToShortDateString() - @pay.PaidOnUTC.ToShortTimeString()</td>
+            <td>@pay.StatusPretty</td>
+            <td>$@((pay.AmountCents / 100.0).ToString("###,##0.00"))</td>
+        </tr>
+    }
+</table>

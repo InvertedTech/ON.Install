@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using ON.Settings;
 using ON.SimpleWeb.Models.Subscription.Main;
 using ON.SimpleWeb.Services;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ON.SimpleWeb.Controllers
@@ -44,6 +45,17 @@ namespace ON.SimpleWeb.Controllers
             v.Methods = await payService.GetNewDetails(amountCents);
 
             return View(v);
+        }
+
+        [HttpGet("{subId}")]
+        public async Task<IActionResult> Single(string subId)
+        {
+            var rec = await payService.GetOwnSubscriptionRecord();
+            var v = IndexViewModel.Create(subHelper, rec);
+
+            var v2 = v.Subscriptions.FirstOrDefault(s => s.SubscriptionId.ToString() == subId);
+
+            return View(v2);
         }
     }
 }

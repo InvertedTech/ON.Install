@@ -41,7 +41,7 @@ namespace ON.SimpleWeb.Services
             return reply;
         }
 
-        public async Task<GetOwnSubscriptionRecordResponse> GetOwnSubscriptionRecord()
+        public async Task<GetOwnSubscriptionRecordsResponse> GetOwnSubscriptionRecord()
         {
             if (!IsLoggedIn)
                 return null;
@@ -53,7 +53,7 @@ namespace ON.SimpleWeb.Services
 
 
             var client = new PaymentInterface.PaymentInterfaceClient(nameHelper.PaymentServiceChannel);
-            var reply = await client.GetOwnSubscriptionRecordAsync(new(), GetMetadata());
+            var reply = await client.GetOwnSubscriptionRecordsAsync(new(), GetMetadata());
             return reply;
         }
 

@@ -16,7 +16,7 @@ service PaymentInterface {
     };
   }
 
-  rpc GetOwnSubscriptionRecord (GetOwnSubscriptionRecordRequest) returns (GetOwnSubscriptionRecordResponse)
+  rpc GetOwnSubscriptionRecords (GetOwnSubscriptionRecordsRequest) returns (GetOwnSubscriptionRecordsResponse)
   {
     option (google.api.http) = {
       get: "/api/payment/subscription"
@@ -34,10 +34,10 @@ message GetNewDetailsResponse {
 }
 
 
-message GetOwnSubscriptionRecordRequest {
+message GetOwnSubscriptionRecordsRequest {
 }
 
-message GetOwnSubscriptionRecordResponse {
+message GetOwnSubscriptionRecordsResponse {
     Fake.FakeSubscriptionRecord Fake = 2;
-    Paypal.PaypalSubscriptionRecord Paypal = 5;
+    repeated Paypal.PaypalSubscriptionFullRecord Paypal = 5;
 }

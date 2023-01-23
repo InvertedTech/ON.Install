@@ -15,11 +15,13 @@
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Fake\FakeSubscriptionRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\ParallelEconomyInterface.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\ParallelEconomySettings.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\ParallelEconomySubscriptionRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\PaymentInterface.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Paypal\PaypalInterface.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Paypal\PaypalRecords.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Paypal\PaypalSettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Paypal\PaypalSubscriptionRecord.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payment\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Comments\SharedTypes.proto" />
@@ -46,7 +48,6 @@
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Crypto\BitcoinService.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\Backup.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\PlanRecord.proto" />
-    <None Remove="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\SubscriptionRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\Backup.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\Payments.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\ProductRecord.proto" />
@@ -73,6 +74,9 @@
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\PaymentInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Paypal\PaypalRecords.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Paypal\PaypalSettings.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\SharedTypes.proto">
+      <GrpcServices>None</GrpcServices>
+    </Protobuf>
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSettings.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Comments\SharedTypes.proto" GrpcServices="None" />
@@ -99,7 +103,7 @@
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\Backup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\ParallelEconomyInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\PlanRecord.proto" />
-    <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\SubscriptionRecord.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\ParallelEconomySubscriptionRecord.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\Backup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\Payments.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\ProductRecord.proto" />

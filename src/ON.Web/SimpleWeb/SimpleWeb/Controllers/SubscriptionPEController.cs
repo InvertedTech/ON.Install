@@ -31,7 +31,7 @@ namespace ON.Authorization.ParallelEconomy.Web.Controllers
             var rec = await paymentsService.GetCurrentRecord();
             if (rec == null)
                 return View("Main", null);
-            return View("Main", new CurrentViewModel(rec.Level, acctsService, rec.CanceledOnUTC != null));
+            return View("Main", new CurrentViewModel(rec.AmountCents, acctsService, rec.CanceledOnUTC != null));
         }
 
         //[HttpGet("newintent")]

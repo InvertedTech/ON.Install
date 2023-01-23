@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Google.Rpc.Context.AttributeContext.Types;
 using System.Linq;
+using ON.Fragments.Authorization.Payment.Paypal;
 
 namespace ON.Authorization.Payment.Service
 {
@@ -54,7 +55,7 @@ namespace ON.Authorization.Payment.Service
         {
             var rec = await fakeProvider.GetById(userId);
 
-            if (rec == null || rec.Level < 1)
+            if (rec == null || rec.AmountCents < 1)
                 return Array.Empty<ClaimRecord>();
 
             var claims = new List<ClaimRecord>();
@@ -62,7 +63,7 @@ namespace ON.Authorization.Payment.Service
             claims.Add(new ClaimRecord()
             {
                 Name = ONUser.SubscriptionLevelType,
-                Value = rec.Level.ToString(),
+                Value = rec.AmountCents.ToString(),
                 ExpiresOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow.AddDays(30))
             });
 
@@ -77,9 +78,9 @@ namespace ON.Authorization.Payment.Service
         }
         private async Task<ClaimRecord[]> GetPaypalClaims(Guid userId)
         {
-            var rec = await paypalProvider.GetById(userId);
+            var rec = await GetBestSubscription(userId);
 
-            if (rec == null || rec.Level < 1)
+            if (rec == null || rec.AmountCents < 1)
                 return Array.Empty<ClaimRecord>();
 
             if (rec.PaidThruUTC.ToDateTime() < DateTime.UtcNow)
@@ -90,7 +91,7 @@ namespace ON.Authorization.Payment.Service
             claims.Add(new ClaimRecord()
             {
                 Name = ONUser.SubscriptionLevelType,
-                Value = rec.Level.ToString(),
+                Value = rec.AmountCents.ToString(),
                 ExpiresOnUTC = rec.PaidThruUTC
             });
             claims.Add(new ClaimRecord()
@@ -101,6 +102,12 @@ namespace ON.Authorization.Payment.Service
             });
 
             return claims.ToArray();
+        }
+
+        private async Task<PaypalSubscriptionRecord> GetBestSubscription(Guid userId)
+        {
+            var recs = await paypalProvider.GetAllByUserId(userId);
+            return recs.Where(r => r.PaidThruUTC.ToDateTime() > DateTime.UtcNow).OrderByDescending(r => r.PaidThruUTC).OrderByDescending(r => r.AmountCents).FirstOrDefault();
         }
     }
 }

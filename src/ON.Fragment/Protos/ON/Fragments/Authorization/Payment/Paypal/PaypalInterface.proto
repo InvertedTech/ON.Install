@@ -14,7 +14,7 @@ service PaypalInterface {
     };
   }
 
-  rpc PaypalGetOwnSubscriptionRecord (PaypalGetOwnSubscriptionRecordRequest) returns (PaypalGetOwnSubscriptionRecordResponse)
+  rpc PaypalGetOwnSubscriptionRecords (PaypalGetOwnSubscriptionRecordsRequest) returns (PaypalGetOwnSubscriptionRecordsResponse)
   {
     option (google.api.http) = {
       get: "/api/payment/paypal/subscription"
@@ -31,7 +31,8 @@ service PaypalInterface {
 }
   
 message PaypalCancelOwnSubscriptionRequest {
-  string Reason = 1;
+  string SubscriptionID = 1;
+  string Reason = 2;
 }
   
 message PaypalCancelOwnSubscriptionResponse {
@@ -39,15 +40,15 @@ message PaypalCancelOwnSubscriptionResponse {
   string Error = 2;
 }
 
-message PaypalGetOwnSubscriptionRecordRequest {
+message PaypalGetOwnSubscriptionRecordsRequest {
 }
   
-message PaypalGetOwnSubscriptionRecordResponse {
-  PaypalSubscriptionRecord Record = 1;
+message PaypalGetOwnSubscriptionRecordsResponse {
+  repeated PaypalSubscriptionFullRecord Records = 1;
 }
 
 message PaypalNewOwnSubscriptionRequest {
-  string SubscriptionId = 1;
+  string PaypalSubscriptionId = 1;
 }
   
 message PaypalNewOwnSubscriptionResponse {

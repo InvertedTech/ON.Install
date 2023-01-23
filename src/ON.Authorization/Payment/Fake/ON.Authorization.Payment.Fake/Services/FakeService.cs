@@ -35,7 +35,7 @@ namespace ON.Authorization.Payment.Fake.Service
                     return new() { Error = "Record not found" };
 
                 record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
-                record.Level = 0;
+                record.AmountCents = 0;
 
                 await subscriptionProvider.Save(record);
 
@@ -87,7 +87,7 @@ namespace ON.Authorization.Payment.Fake.Service
                 {
                     UserID = userToken.Id.ToString(),
                     ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
-                    Level = request.Level,
+                    AmountCents = request.AmountCents,
                 };
 
                 await subscriptionProvider.Save(record);

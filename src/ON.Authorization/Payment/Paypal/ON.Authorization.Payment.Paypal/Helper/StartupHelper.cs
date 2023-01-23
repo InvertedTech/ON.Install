@@ -15,7 +15,9 @@ namespace ON.Authorization.Payment.Paypal.Helper
         public static void AddPaypalHelpers(this IServiceCollection services)
         {
             services.AddSingleton<PaypalClient>();
+            services.AddSingleton<DataMergeService>();
             services.AddSingleton<ISubscriptionRecordProvider, FileSystemSubscriptionRecordProvider>();
+            services.AddSingleton<IPaymentRecordProvider, FileSystemPaymentRecordProvider>();
         }
     }
 }
