@@ -363,6 +363,61 @@ namespace ON.Content.SimpleCMS.Service
             return res;
         }
 
+        [AllowAnonymous]
+        public override async Task<GetRelatedContentResponse> GetRelatedContent(GetRelatedContentRequest request, ServerCallContext context)
+        {
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+
+            Guid contentId = request.ContentID.ToGuid();
+            if (contentId == Guid.Empty)
+                return new ();
+
+            var curRec = await dataProvider.GetById(contentId);
+            if (curRec == null)
+                return new();
+
+            if (!CanShowInList(curRec, user))
+                return new();
+
+            var res = new GetRelatedContentResponse();
+
+            List<ContentListRecord> list = new();
+            await foreach (var rec in dataProvider.GetAll())
+            {
+                if (!CanShowInList(rec, null))
+                    continue;
+
+                if (rec.Public.ContentID == request.ContentID)
+                    continue;
+
+                var listRec = rec.Public.ToContentListRecord();
+
+                if (curRec.Public.Data.GetContentType() != ContentType.None)
+                {
+                    if (listRec.ContentType != curRec.Public.Data.GetContentType())
+                        continue;
+                }
+
+                list.Add(listRec);
+            }
+
+            res.Records.AddRange(list.OrderByDescending(r => r.PublishOnUTC));
+            res.PageTotalItems = (uint)res.Records.Count;
+
+            if (request.PageSize > 0)
+            {
+                res.PageOffsetStart = request.PageOffset;
+
+                var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
+                res.Records.Clear();
+                res.Records.AddRange(page);
+            }
+
+            res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
+
+            return res;
+        }
+
         [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
         public override async Task<ModifyContentResponse> ModifyContent(ModifyContentRequest request, ServerCallContext context)
         {

@@ -64,6 +64,12 @@ service ContentInterface {
       get: "/api/cms/tags/recent"
     };
   }
+  rpc GetRelatedContent (GetRelatedContentRequest) returns (GetRelatedContentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/content/{ContentID}/related"
+    };
+  }
   rpc ModifyContent (ModifyContentRequest) returns (ModifyContentResponse)
   {
     option (google.api.http) = {
@@ -200,6 +206,19 @@ message GetRecentTagsRequest {
   
 message GetRecentTagsResponse {
   repeated string Tags = 1;
+}
+  
+message GetRelatedContentRequest {
+  string ContentID = 1;   // Guid for the content record
+  uint32 PageSize = 2;
+  uint32 PageOffset = 3;
+}
+  
+message GetRelatedContentResponse {
+  repeated ContentListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
 }
   
 message ModifyContentRequest {
