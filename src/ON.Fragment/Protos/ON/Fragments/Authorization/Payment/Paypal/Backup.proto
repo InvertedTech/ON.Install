@@ -20,11 +20,11 @@ message BackupAllDataRequest {
 message BackupAllDataResponse {
   oneof Response_oneof {
     string ServerPublicJwk = 1;
-    EncryptedUserBackupDataRecord EncryptedRecord = 10;
+    EncryptedSubscriptionBackupDataRecord EncryptedRecord = 10;
   }
 }
 
-message EncryptedUserBackupDataRecord {
+message EncryptedSubscriptionBackupDataRecord {
   bytes EncryptionIV = 1;
   bytes Data = 10;
 }
@@ -32,7 +32,7 @@ message EncryptedUserBackupDataRecord {
 message RestoreAllDataRequest {
   oneof Request_oneof {
     RestoreMode Mode = 1;
-    UserBackupDataRecord Record = 10;
+    SubscriptionBackupDataRecord Record = 10;
   }
 
   enum RestoreMode {
@@ -43,13 +43,13 @@ message RestoreAllDataRequest {
 }
 
 message RestoreAllDataResponse {
-  int32 NumUsersRestored = 1;
-  int32 NumUsersSkipped = 2;
-  int32 NumUsersOverwriten = 3;
-  int32 NumUsersWiped = 4;
+  int32 NumSubscriptionsRestored = 1;
+  int32 NumSubscriptionsSkipped = 2;
+  int32 NumSubscriptionsOverwriten = 3;
+  int32 NumSubscriptionsWiped = 4;
 }
 
-message UserBackupDataRecord {
+message SubscriptionBackupDataRecord {
   bytes ExtraData = 1;   // Generic byte structure to save all application specific data for user
   PaypalSubscriptionFullRecord SubscriptionFullRecord = 2; // SubscriptionRecord
 }

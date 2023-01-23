@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.Collections;
 using Microsoft.Extensions.Options;
 using ON.Authorization.Payment.Paypal.Models;
 using ON.Fragments.Authorization;
@@ -22,6 +23,27 @@ namespace ON.Authorization.Payment.Paypal.Data
             dataDir = root.CreateSubdirectory("paypal").CreateSubdirectory("pay");
         }
 
+        public Task Delete(Guid userId, Guid subscriptionId, Guid paymentId)
+        {
+            var fi = GetDataFilePath(userId, subscriptionId, paymentId);
+            if (fi.Exists)
+                fi.Delete();
+
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteAll(Guid userId, Guid subscriptionId)
+        {
+            GetDataDirPath(userId, subscriptionId).Delete();
+
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> Exists(Guid userId, Guid subscriptionId, Guid paymentId)
+        {
+            var fi = GetDataFilePath(userId, subscriptionId, paymentId);
+            return Task.FromResult(fi.Exists);
+        }
         public async Task<PaypalPaymentRecord?> GetById(Guid userId, Guid subscriptionId, Guid paymentId)
         {
             var fi = GetDataFilePath(userId, subscriptionId, paymentId);
@@ -68,7 +90,8 @@ namespace ON.Authorization.Payment.Paypal.Data
         private DirectoryInfo GetDataDirPath(PaypalPaymentRecord rec)
         {
             var userId = Guid.Parse(rec.UserID);
-            return GetDataDirPath(userId);
+            var subscriptionId = Guid.Parse(rec.SubscriptionID);
+            return GetDataDirPath(userId, subscriptionId);
         }
 
         private DirectoryInfo GetDataDirPath(Guid userId)
@@ -104,6 +127,14 @@ namespace ON.Authorization.Payment.Paypal.Data
             var last = (await File.ReadAllLinesAsync(fi.FullName)).Where(l => l.Length != 0).Last();
 
             return PaypalPaymentRecord.Parser.ParseFrom(Convert.FromBase64String(last));
+        }
+
+        public async Task SaveAll(IEnumerable<PaypalPaymentRecord> payments)
+        {
+            foreach (var p in payments)
+            {
+                await Save(p);
+            }
         }
     }
 }

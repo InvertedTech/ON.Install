@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using ON.Authorization.Payment.Paypal.Models;
 using ON.Fragments.Authorization;
 using ON.Fragments.Authorization.Payment.Paypal;
+using ON.Fragments.Content;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,15 +23,36 @@ namespace ON.Authorization.Payment.Paypal.Data
             dataDir = root.CreateSubdirectory("paypal").CreateSubdirectory("sub");
         }
 
-        public async Task<PaypalSubscriptionRecord?> GetById(Guid userId, Guid subscriptionId)
+        public Task Delete(Guid userId, Guid subscriptionId)
         {
-            var fd = GetDataFilePath(userId, subscriptionId);
-            if (!fd.Exists)
-                return null;
+            var fi = GetDataFilePath(userId, subscriptionId);
+            if (fi.Exists)
+                fi.Delete();
 
-            var last = (await File.ReadAllLinesAsync(fd.FullName)).Where(l => l.Length != 0).Last();
+            return Task.CompletedTask;
+        }
 
-            return PaypalSubscriptionRecord.Parser.ParseFrom(Convert.FromBase64String(last));
+        public Task<bool> Exists(Guid userId, Guid subscriptionId)
+        {
+            var fi = GetDataFilePath(userId, subscriptionId);
+            return Task.FromResult(fi.Exists);
+        }
+
+        public async IAsyncEnumerable<PaypalSubscriptionRecord> GetAll()
+        {
+            foreach (var fi in dataDir.GetFiles("*", SearchOption.AllDirectories))
+            {
+                var rec = await ReadLastOfFile(fi);
+                if (rec != null)
+                    yield return rec;
+            }
+        }
+
+
+        public Task<PaypalSubscriptionRecord?> GetById(Guid userId, Guid subscriptionId)
+        {
+            var fi = GetDataFilePath(userId, subscriptionId);
+            return ReadLastOfFile(fi);
         }
 
         public async Task<List<PaypalSubscriptionRecord>> GetAllByUserId(Guid userId)
@@ -40,12 +62,9 @@ namespace ON.Authorization.Payment.Paypal.Data
             var dir = GetDataDirPath(userId);
             foreach (var fi in dir.GetFiles())
             {
-                if (Guid.TryParse(fi.Name, out var subscriptionId))
-                {
-                    var rec = await GetById(userId, subscriptionId);
-                    if (rec != null)
-                        list.Add(rec);
-                }
+                var rec = await ReadLastOfFile(fi);
+                if (rec != null)
+                    list.Add(rec);
             }
 
             return list;
@@ -54,8 +73,8 @@ namespace ON.Authorization.Payment.Paypal.Data
         public async Task Save(PaypalSubscriptionRecord rec)
         {
             var id = Guid.Parse(rec.UserID);
-            var fd = GetDataFilePath(rec);
-            await File.AppendAllTextAsync(fd.FullName, Convert.ToBase64String(rec.ToByteArray()) + "\n");
+            var fi = GetDataFilePath(rec);
+            await File.AppendAllTextAsync(fi.FullName, Convert.ToBase64String(rec.ToByteArray()) + "\n");
         }
 
         private DirectoryInfo GetDataDirPath(PaypalSubscriptionRecord rec)
@@ -82,6 +101,16 @@ namespace ON.Authorization.Payment.Paypal.Data
             var name = subscriptionId.ToString();
             var dir = GetDataDirPath(userId);
             return new FileInfo(dir.FullName + "/" + name);
+        }
+
+        private async Task<PaypalSubscriptionRecord?> ReadLastOfFile(FileInfo fi)
+        {
+            if (!fi.Exists)
+                return null;
+
+            var last = (await File.ReadAllLinesAsync(fi.FullName)).Where(l => l.Length != 0).Last();
+
+            return PaypalSubscriptionRecord.Parser.ParseFrom(Convert.FromBase64String(last));
         }
     }
 }
