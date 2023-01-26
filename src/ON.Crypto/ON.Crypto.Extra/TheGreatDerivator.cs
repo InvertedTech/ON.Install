@@ -1,4 +1,6 @@
 ﻿using NBitcoin;
+using NBitcoin.Crypto;
+using NBitcoin.DataEncoders;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -11,12 +13,14 @@ namespace ON.Crypto.Extra
         private readonly ExtKey master;
 
         private const string BITCOIN_RECEIVE_PATH = "49'/0'/0'/0";
-        private const string FLOCOIN_RECEIVE_PATH = "44'/216'/0'/0";
+
+        private const string FLOCOIN_RECEIVE_PATH = "44'/0'/0'/0/0";
 
         private const string KEYPATH_JWTKEY = "12021'/0'";
         private const string KEYPATH_SSHKEY = "12021'/1'";
         private const string KEYPATH_BACKUPKEY = "12021'/2'";
         private const string KEYPATH_TORKEY = "12021'/3'";
+        private const string KEYPATH_FLOCOIN = "12021'/216'";
 
         public TheGreatDerivator(string mnemoWords, string passphrase = null)
         {
@@ -48,9 +52,45 @@ namespace ON.Crypto.Extra
             return master.Derive(new KeyPath(BITCOIN_RECEIVE_PATH));
         }
 
-        public ExtKey DeriveFlocoinExtendPrivateKey()
+        public Mnemonic DeriveFlocoinMnemonic(uint account = 0, uint keyNum = 0)
         {
-            return master.Derive(new KeyPath(FLOCOIN_RECEIVE_PATH));
+            var key = master.Derive(new KeyPath($"{KEYPATH_FLOCOIN}/{account}'/{keyNum}'"));
+            var bytes = key.PrivateKey.ToBytes();
+            return new Mnemonic(Wordlist.English, bytes);
+        }
+
+        public string DeriveFlocoinWIF(uint account = 0, uint keyNum = 0)
+        {
+            var floMaster = DeriveFlocoinMnemonic(account, keyNum).DeriveExtKey();
+            var floKey = floMaster.Derive(new KeyPath(FLOCOIN_RECEIVE_PATH));
+            var privKey = floKey.PrivateKey.ToBytes();
+            byte[] wifBytes = new byte[38];
+            wifBytes[0] = 0xa3;
+            Array.Copy(privKey, 0, wifBytes, 1, 32);
+            wifBytes[33] = 0x1;
+            var toHash = wifBytes[0..34];
+            var hash = Hashes.SHA256(Hashes.SHA256(toHash));
+            Array.Copy(hash, 0, wifBytes, 34, 4);
+
+            var enc = new Base58Encoder();
+            return enc.EncodeData(wifBytes);
+        }
+
+        public string DeriveFlocoinAddress(uint account = 0, uint keyNum = 0)
+        {
+            var enc = new Base58Encoder();
+
+            var floMaster = DeriveFlocoinMnemonic(account, keyNum).DeriveExtKey();
+            var floKey = floMaster.Derive(new KeyPath(FLOCOIN_RECEIVE_PATH));
+            var bitcoinStyleAddress = floKey.GetPublicKey().GetAddress(ScriptPubKeyType.Legacy, Network.Main);
+            var addyBytes = enc.DecodeData(bitcoinStyleAddress.ToString());
+
+            addyBytes[0] = 0x23;
+            var toHash = addyBytes[0..21];
+            var hash = Hashes.SHA256(Hashes.SHA256(toHash));
+            Array.Copy(hash, 0, addyBytes, 21, 4);
+
+            return enc.EncodeData(addyBytes);
         }
 
         public ECDsa DeriveEcJwtKey(uint account = 0, uint keyNum = 0)
