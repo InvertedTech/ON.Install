@@ -75,6 +75,9 @@ namespace ON.Content.SimpleStats.Service.Subscriptions
 
         private async Task Apply(ProgressContentEvent e, ulong version, System.DateTime createdOn)
         {
+            if (float.IsNaN(e.Progress))
+                return;
+
             var contentId = e.ContentID.ToGuid();
             var userId = e.UserID.ToGuid();
             var tPub = pubDb.GetById(userId);

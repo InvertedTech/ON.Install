@@ -27,6 +27,10 @@ namespace ON.Content.SimpleStats.Service.Services
 
             if (!Guid.TryParse(request.ContentID, out var contentId))
                 return new() { Error = "ContentID not valid Guid." };
+
+            if (float.IsNaN(request.Progress))
+                return new() { Error = "Progress must be between 0 and 1." };
+
             if (request.Progress < 0 || request.Progress > 1)
                 return new() { Error = "Progress must be between 0 and 1." };
 
