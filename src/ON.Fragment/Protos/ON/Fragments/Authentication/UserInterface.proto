@@ -375,3 +375,25 @@ message RenewTokenRequest {
 message RenewTokenResponse {
   string BearerToken = 1;
 }
+
+message SearchUsersAdminRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  repeated string UserIDs = 6;
+  string SearchString = 10;
+  repeated string Roles = 11;
+  google.protobuf.Timestamp CreatedAfter = 12;
+  google.protobuf.Timestamp CreatedBefore = 13;
+  bool IncludeDeleted = 21;
+}
+  
+message SearchUsersAdminResponse {
+  repeated UserSearchRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+
+message UserSearchRecord {
+
+}
