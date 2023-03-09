@@ -29,18 +29,14 @@ namespace ON.Notification.SimpleNotification.Service.Services
     public class UserService : UserNotificationInterface.UserNotificationInterfaceBase
     {
         private readonly ILogger logger;
-        private readonly SigningCredentials creds;
         private readonly INotificationUserDataProvider notificationDataProvider;
         private readonly IUserNotificationDataProvider userDataProvider;
-        private static readonly HashAlgorithm hasher = SHA256.Create();
 
         public UserService(ILogger<UserService> logger, INotificationUserDataProvider notificationDataProvider, IUserNotificationDataProvider userDataProvider)
         {
             this.logger = logger;
             this.notificationDataProvider = notificationDataProvider;
             this.userDataProvider = userDataProvider;
-
-            creds = new SigningCredentials(JwtExtensions.GetPrivateKey(), SecurityAlgorithms.EcdsaSha256);
         }
 
         public override async Task<GetRecordResponse> GetRecord(GetRecordRequest request, ServerCallContext context)

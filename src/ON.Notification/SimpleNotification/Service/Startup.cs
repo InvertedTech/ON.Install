@@ -73,8 +73,6 @@ namespace ON.Notification.SimpleNotification.Service
             if (env.IsDevelopment())
                 Program.IsDevelopment = true;
 
-            app.UseStaticFiles();
-
             app.UseRouting();
 
             app.UseJwtApiAuthentication();
