@@ -60,7 +60,13 @@ namespace ON.Notification.SimpleNotification.Service.Services
 
                 var record = await userDataProvider.GetById(userToken.Id);
                 if (record == null)
-                    return new() { Error = "User not found" };
+                {
+                    record = new()
+                    {
+                        UserID = userToken.Id.ToString(),
+                        CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    };
+                }
 
                 record.Normal = request.Record;
                 record.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
