@@ -12,8 +12,8 @@ namespace ON.Fragments.Notification
     {
         public Guid UserIDGuid
         {
-            get => UserIDGuid;
-            set => UserIDGuid = value;
+            get => UserID.ToGuid();
+            set => UserID = value.ToString();
         }
     }
 }
