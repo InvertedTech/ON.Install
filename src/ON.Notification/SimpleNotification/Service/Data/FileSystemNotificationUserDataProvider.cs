@@ -19,7 +19,6 @@ namespace ON.Notification.SimpleNotification.Service.Data
     {
         private readonly DirectoryInfo dataDir;
         private readonly ILogger logger;
-        private readonly ConcurrentDictionary<string, Guid> loginIndex = new();
 
         public FileSystemNotificationUserDataProvider(IOptions<AppSettings> settings, ILogger<FileSystemNotificationUserDataProvider> logger)
         {
@@ -36,10 +35,7 @@ namespace ON.Notification.SimpleNotification.Service.Data
             if (!fd.Exists)
                 return false;
 
-            var rec = UserRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
             fd.Delete();
-
-            loginIndex.TryRemove(rec.Normal.Public.Data.UserName, out var dummy);
 
             return true;
         }
