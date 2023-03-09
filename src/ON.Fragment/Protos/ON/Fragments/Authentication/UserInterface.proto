@@ -164,6 +164,13 @@ service UserInterface {
       get: "/api/auth/renewtoken"
     };
   }
+
+  rpc SearchUsersAdmin (SearchUsersAdminRequest) returns (SearchUsersAdminResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/admin/search"
+    };
+  }
 }
   
 message AuthenticateUserRequest {
@@ -395,5 +402,12 @@ message SearchUsersAdminResponse {
 }
 
 message UserSearchRecord {
-
+  string UserID = 1;
+  string UserName = 2;                // User name of the user
+  string DisplayName = 3;             // Public display name of the user
+  repeated string Emails = 4;         // Private email(s) used for password resets
+  repeated string Roles = 5;          // Roles for the user
+  google.protobuf.Timestamp CreatedOnUTC = 11;   // UTC timestamp when user was created
+  google.protobuf.Timestamp ModifiedOnUTC = 12;  // UTC timestamp when user record was last modified
+  google.protobuf.Timestamp DisabledOnUTC = 13;  // UTC timestamp when user was disabled, null = not disabled
 }

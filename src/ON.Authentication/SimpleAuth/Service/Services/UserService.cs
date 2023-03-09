@@ -672,6 +672,76 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<SearchUsersAdminResponse> SearchUsersAdmin(SearchUsersAdminRequest request, ServerCallContext context)
+        {
+            var minDateValue = new DateTime(2000, 1, 1);
+
+            var possibleIDs = request.UserIDs.ToList();
+            var possibleRoles = request.Roles.ToList();
+            var searchSearchString = request.SearchString;
+            var searchCreatedBefore = request.CreatedBefore;
+            var searchCreatedAfter = request.CreatedAfter;
+            var searchIncludeDeleted = request.IncludeDeleted;
+
+            if (!possibleIDs.Any())
+                possibleIDs = null;
+            if (!possibleRoles.Any())
+                possibleRoles = null;
+            if (string.IsNullOrWhiteSpace(searchSearchString))
+                searchSearchString = null;
+
+            var res = new SearchUsersAdminResponse();
+
+            List<UserSearchRecord> list = new();
+            await foreach (var rec in dataProvider.GetAll())
+            {
+                if (possibleIDs != null)
+                    if (!possibleIDs.Contains(rec.Normal.Public.UserID))
+                        continue;
+
+                if (possibleRoles != null)
+                    if (!possibleRoles.Any(possibleRole => rec.Normal.Private.Roles.Any(role => possibleRole.Contains(role))))
+                        continue;
+
+                if (searchCreatedBefore != null)
+                    if (rec.Normal.Public.CreatedOnUTC < searchCreatedBefore)
+                        continue;
+
+                if (searchCreatedAfter != null)
+                    if (rec.Normal.Public.CreatedOnUTC > searchCreatedAfter)
+                        continue;
+
+                if (!searchIncludeDeleted)
+                    if (rec.Normal.Public.DisabledOnUTC != null)
+                        continue;
+
+                if (searchSearchString != null)
+                    if (!rec.Normal.Public.Data.UserName.Contains(searchSearchString) && !rec.Normal.Public.Data.DisplayName.Contains(searchSearchString))
+                        continue;
+
+                var listRec = rec.Normal.ToUserSearchRecord();
+
+                list.Add(listRec);
+            }
+
+            res.Records.AddRange(list.OrderBy(r => r.DisplayName));
+            res.PageTotalItems = (uint)res.Records.Count;
+
+            if (request.PageSize > 0)
+            {
+                res.PageOffsetStart = request.PageOffset;
+
+                var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
+                res.Records.Clear();
+                res.Records.AddRange(page);
+            }
+
+            res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
+
+            return res;
+        }
+
         private async Task<bool> AmIReallyAdmin(ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
