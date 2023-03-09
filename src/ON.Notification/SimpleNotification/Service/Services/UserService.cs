@@ -30,13 +30,15 @@ namespace ON.Notification.SimpleNotification.Service.Services
     {
         private readonly ILogger logger;
         private readonly SigningCredentials creds;
-        private readonly IUserNotificationDataProvider dataProvider;
+        private readonly INotificationUserDataProvider notificationDataProvider;
+        private readonly IUserNotificationDataProvider userDataProvider;
         private static readonly HashAlgorithm hasher = SHA256.Create();
 
-        public UserService(ILogger<UserService> logger, IUserNotificationDataProvider dataProvider)
+        public UserService(ILogger<UserService> logger, INotificationUserDataProvider notificationDataProvider, IUserNotificationDataProvider userDataProvider)
         {
             this.logger = logger;
-            this.dataProvider = dataProvider;
+            this.notificationDataProvider = notificationDataProvider;
+            this.userDataProvider = userDataProvider;
 
             creds = new SigningCredentials(JwtExtensions.GetPrivateKey(), SecurityAlgorithms.EcdsaSha256);
         }
@@ -47,7 +49,7 @@ namespace ON.Notification.SimpleNotification.Service.Services
             if (userToken == null)
                 return new();
 
-            var record = await dataProvider.GetById(userToken.Id);
+            var record = await userDataProvider.GetById(userToken.Id);
 
             return new() { Record = record };
         }
@@ -60,14 +62,77 @@ namespace ON.Notification.SimpleNotification.Service.Services
                 if (userToken == null)
                     return new() { Error = "No user token specified" };
 
-                var record = await dataProvider.GetById(userToken.Id);
+                var record = await userDataProvider.GetById(userToken.Id);
                 if (record == null)
                     return new() { Error = "User not found" };
 
                 record.Normal = request.Record;
                 record.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
 
-                await dataProvider.Save(record);
+                await userDataProvider.Save(record);
+
+                return new();
+            }
+            catch
+            {
+                return new() { Error = "Unknown error" };
+            }
+        }
+
+        public override async Task<RegisterNewTokenResponse> RegisterNewToken(RegisterNewTokenRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "No user token specified" };
+
+                if (string.IsNullOrWhiteSpace(request.TokenID))
+                    return new() { Error = "TokenID is empty" };
+
+                var record = await notificationDataProvider.GetByTokenId(request.TokenID);
+                if (record == null)
+                    record = new()
+                    {
+                        CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                    };
+
+                record.TokenID = request.TokenID;
+                record.UserIDGuid = userToken.Id;
+                record.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+
+                await notificationDataProvider.Save(record);
+
+                return new();
+            }
+            catch
+            {
+                return new() { Error = "Unknown error" };
+            }
+        }
+
+        public override async Task<UnRegisterNewTokenResponse> UnRegisterNewToken(UnRegisterNewTokenRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "No user token specified" };
+
+                if (string.IsNullOrWhiteSpace(request.TokenID))
+                    return new() { Error = "TokenID is empty" };
+
+                var record = await notificationDataProvider.GetByTokenId(request.TokenID);
+                if (record == null)
+                    return new();
+
+                if (record.TokenID != request.TokenID)
+                    return new();
+
+                if (record.UserIDGuid != userToken.Id)
+                    return new();
+
+                await notificationDataProvider.Delete(request.TokenID);
 
                 return new();
             }

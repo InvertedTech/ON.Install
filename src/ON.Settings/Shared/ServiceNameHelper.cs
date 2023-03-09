@@ -14,6 +14,7 @@ namespace ON.Settings
         public readonly GrpcChannel ContentServiceChannel;
         public readonly Channel SettingsServiceChannel;
         public readonly Channel UserServiceChannel;
+        public readonly Channel NotificationServiceChannel;
         public readonly Channel PaymentServiceChannel;
         public readonly Channel StatsServiceChannel;
 
@@ -38,6 +39,10 @@ namespace ON.Settings
             uri = configuration.GetServiceUri("cmsservice", "grpc");
             if (uri != null)
                 ContentServiceChannel = GrpcChannel.ForAddress(uri, options);
+
+            uri = configuration.GetServiceUri("notificationservice", "grpc");
+            if (uri != null)
+                NotificationServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
 
             uri = configuration.GetServiceUri("paymentservice", "grpc");
             if (uri != null)
