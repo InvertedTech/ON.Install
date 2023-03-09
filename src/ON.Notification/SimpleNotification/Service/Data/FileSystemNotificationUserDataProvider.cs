@@ -27,7 +27,7 @@ namespace ON.Notification.SimpleNotification.Service.Data
 
             var root = new DirectoryInfo(settings.Value.DataStore);
             root.Create();
-            dataDir = root.CreateSubdirectory("data");
+            dataDir = root.CreateSubdirectory("notification");
         }
 
         public async Task<bool> Delete(string tokenId)
