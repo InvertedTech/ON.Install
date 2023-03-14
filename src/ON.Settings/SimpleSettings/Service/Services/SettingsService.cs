@@ -288,6 +288,87 @@ namespace ON.Settings.SimpleSettings.Service.Services
         }
 
         [Authorize(Roles = ONUser.ROLE_OWNER)]
+        public override async Task<ModifyNotificationOwnerDataResponse> ModifyNotificationOwnerData(ModifyNotificationOwnerDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Owner.Notification = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<ModifyNotificationPrivateDataResponse> ModifyNotificationPrivateData(ModifyNotificationPrivateDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Private.Notification = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<ModifyNotificationPublicDataResponse> ModifyNotificationPublicData(ModifyNotificationPublicDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Public.Notification = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_OWNER)]
         public override async Task<ModifyPersonalizationOwnerDataResponse> ModifyPersonalizationOwnerData(ModifyPersonalizationOwnerDataRequest request, ServerCallContext context)
         {
             try

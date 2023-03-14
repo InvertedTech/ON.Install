@@ -162,6 +162,33 @@ service SettingsInterface {
       body: "*"
     };
   }
+
+  // Modify Notification public data
+  rpc ModifyNotificationPublicData (ModifyNotificationPublicDataRequest) returns (ModifyNotificationPublicDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/notification/public"
+      body: "*"
+    };
+  }
+
+  // Modify Notification private data
+  rpc ModifyNotificationPrivateData (ModifyNotificationPrivateDataRequest) returns (ModifyNotificationPrivateDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/notification/private"
+      body: "*"
+    };
+  }
+
+  // Modify Notification owner data
+  rpc ModifyNotificationOwnerData (ModifyNotificationOwnerDataRequest) returns (ModifyNotificationOwnerDataResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/settings/notification/owner"
+      body: "*"
+    };
+  }
 }
 
 message GetPublicDataRequest {
@@ -314,6 +341,30 @@ message ModifyCommentsOwnerDataRequest {
 }
 
 message ModifyCommentsOwnerDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyNotificationPublicDataRequest {
+  NotificationPublicRecord Data = 1;
+}
+
+message ModifyNotificationPublicDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyNotificationPrivateDataRequest {
+  NotificationPrivateRecord Data = 1;
+}
+
+message ModifyNotificationPrivateDataResponse {
+  ModifyResponseErrorType Error = 1;
+}
+
+message ModifyNotificationOwnerDataRequest {
+  NotificationOwnerRecord Data = 1;
+}
+
+message ModifyNotificationOwnerDataResponse {
   ModifyResponseErrorType Error = 1;
 }
 

@@ -40,6 +40,7 @@
     <None Remove="Protos\ON\Fragments\Notification\UserNotificationInterface.proto" />
     <None Remove="Protos\ON\Fragments\Notification\UserNotificationSettingsRecord.proto" />
     <None Remove="Protos\ON\Fragments\Settings\Backup.proto" />
+    <None Remove="Protos\ON\Fragments\Settings\NotificationSettings.proto" />
     <None Remove="Protos\ON\Fragments\Settings\SettingsInterface.proto" />
     <None Remove="Protos\ON\Fragments\Settings\SettingsRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authentication\Backup.proto" />
@@ -97,6 +98,7 @@
     <Protobuf Include="Protos\ON\Fragments\Notification\NotificationUserRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Notification\UserNotificationSettingsRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Settings\Backup.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Notification\NotificationSettings.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Settings\SettingsInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Settings\SettingsRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Authentication\UserInterface.proto" />

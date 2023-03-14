@@ -11,6 +11,7 @@ import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeSettings.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Paypal/PaypalSettings.proto";
 import "Protos/ON/Fragments/Content/SharedTypes.proto";
 import "Protos/ON/Fragments/Comments/SharedTypes.proto";
+import "Protos/ON/Fragments/Notification/NotificationSettings.proto";
 
 // User authentication data
 message SettingsRecord {
@@ -26,6 +27,7 @@ message SettingsPublicData {
   SubscriptionPublicRecord Subscription = 11;
   CommentsPublicRecord Comments = 12;
   CMSPublicRecord CMS = 13;
+  NotificationPublicRecord Notification = 14;
 }
 
 message SettingsPrivateData {
@@ -34,6 +36,7 @@ message SettingsPrivateData {
   SubscriptionPrivateRecord Subscription = 11;
   CommentsPrivateRecord Comments = 12;
   CMSPrivateRecord CMS = 13;
+  NotificationPrivateRecord Notification = 14;
 }
 
 message SettingsOwnerData {
@@ -41,6 +44,7 @@ message SettingsOwnerData {
   SubscriptionOwnerRecord Subscription = 11;
   CommentsOwnerRecord Comments = 12;
   CMSOwnerRecord CMS = 13;
+  NotificationOwnerRecord Notification = 14;
 }
 
 message PersonalizationPublicRecord {
@@ -101,6 +105,16 @@ message CMSPrivateRecord {
 }
 
 message CMSOwnerRecord {
+}
+
+message NotificationPublicRecord {
+}
+
+message NotificationPrivateRecord {
+}
+
+message NotificationOwnerRecord {
+  ON.Fragments.Notification.SendgridSettings Sendgrid = 1;
 }
 
 message ChannelRecord {
