@@ -14,7 +14,7 @@ namespace ON.Crypto.Extra
 
         private const string BITCOIN_RECEIVE_PATH = "49'/0'/0'/0";
 
-        private const string FLOCOIN_RECEIVE_PATH = "44'/0'/0'/0/0";
+        private const string FLOCOIN_RECEIVE_PATH = "44'/216'/0'/0/0";
 
         private const string KEYPATH_JWTKEY = "12021'/0'";
         private const string KEYPATH_SSHKEY = "12021'/1'";
