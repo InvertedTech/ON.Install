@@ -14,6 +14,7 @@ using ON.Fragments.Authorization.Payment.Fake;
 using ON.Fragments.Authorization.Payment.ParallelEconomy;
 using ON.Fragments.Authorization.Payment.Paypal;
 using ON.Fragments.Authorization.Payment.Stripe;
+using ON.Fragments.Notification;
 using ON.Fragments.Settings;
 using ON.Settings;
 using ON.SimpleWeb.Models;
@@ -68,6 +69,25 @@ namespace ON.SimpleWeb.Controllers
             menu.PictureMenuLinkName = vm.PictureMenuLinkName;
             menu.VideoMenuLinkName = vm.VideoMenuLinkName;
             menu.WrittenMenuLinkName = vm.WrittenMenuLinkName;
+
+            var res = await settingsService.Modify(record, userHelper.MyUser);
+
+            if (res == ModifyResponseErrorType.NoError)
+                return RedirectToAction(nameof(Index), new { successMsg = "Settings updated successfully." });
+
+            return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+        }
+
+        [HttpPost("notification/owner/sendgrid")]
+        public async Task<IActionResult> ModifyNotificationOwnerSendgrid(SendgridOwnerSettings vm)
+        {
+            if (vm == null)
+                return RedirectToAction(nameof(Index), new { errorMsg = "An error occured!" });
+
+            var data = settingsClient.OwnerData;
+            var record = data.Notification ?? new();
+
+            record.Sendgrid = vm;
 
             var res = await settingsService.Modify(record, userHelper.MyUser);
 

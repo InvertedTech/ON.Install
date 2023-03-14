@@ -6,10 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
+using ON.Notification.SimpleNotification.Service.Clients;
 using ON.Notification.SimpleNotification.Service.Data;
 using ON.Notification.SimpleNotification.Service.Helpers;
 using ON.Notification.SimpleNotification.Service.Models;
 using ON.Notification.SimpleNotification.Service.Services;
+using ON.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,10 +48,12 @@ namespace ON.Notification.SimpleNotification.Service
             services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.AddSingleton<SendgridClient>();
             services.AddSingleton<INotificationUserDataProvider, FileSystemNotificationUserDataProvider>();
             services.AddSingleton<IUserNotificationDataProvider, FileSystemUserNotificationDataProvider>();
 
             services.AddJwtAuthentication();
+            services.AddSettingsHelpers();
 
             Console.WriteLine("*** Loading pubkey: ("+ JwtExtensions.GetPublicKey()+ ")  ***");
         }
@@ -79,6 +83,7 @@ namespace ON.Notification.SimpleNotification.Service
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGrpcService<NotificationService>();
                 endpoints.MapGrpcService<UserService>();
 
                 endpoints.MapControllerRoute(

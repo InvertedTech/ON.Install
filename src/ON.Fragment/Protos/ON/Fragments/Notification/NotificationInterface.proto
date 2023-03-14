@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package ON.Fragments.Notification;
+
+import "google/api/annotations.proto";
+
+// Service for Notification fragment interface
+service NotificationInterface {
+  rpc SendEmail (SendEmailRequest) returns (SendEmailResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/notification/sendemail"
+      body: "*"
+    };
+  }
+}
+  
+message SendEmailRequest {
+  string SendToAddress = 1;
+  string Subject = 2;
+  string BodyPlain = 3;
+  string BodyHtml = 4;
+}
+  
+message SendEmailResponse {
+  string Error = 1;
+}

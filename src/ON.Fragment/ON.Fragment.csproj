@@ -36,6 +36,7 @@
     <None Remove="Protos\ON\Fragments\Content\Stats\StatsSaveInterface.proto" />
     <None Remove="Protos\ON\Fragments\Content\Stats\StatsShareInterface.proto" />
     <None Remove="Protos\ON\Fragments\Content\Stats\StatsViewInterface.proto" />
+    <None Remove="Protos\ON\Fragments\Notification\NotificationInterface.proto" />
     <None Remove="Protos\ON\Fragments\Notification\NotificationUserRecord.proto" />
     <None Remove="Protos\ON\Fragments\Notification\UserNotificationInterface.proto" />
     <None Remove="Protos\ON\Fragments\Notification\UserNotificationSettingsRecord.proto" />
@@ -94,6 +95,7 @@
     <Protobuf Include="Protos\ON\Fragments\Content\AssetInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\ImageAssetRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Content\SharedTypes.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Notification\NotificationInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Notification\UserNotificationInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Notification\NotificationUserRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Notification\UserNotificationSettingsRecord.proto" GrpcServices="None" />

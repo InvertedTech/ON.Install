@@ -114,7 +114,7 @@ message NotificationPrivateRecord {
 }
 
 message NotificationOwnerRecord {
-  ON.Fragments.Notification.SendgridSettings Sendgrid = 1;
+  ON.Fragments.Notification.SendgridOwnerSettings Sendgrid = 1;
 }
 
 message ChannelRecord {

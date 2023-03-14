@@ -31,6 +31,17 @@ namespace ON.SimpleWeb.Services
             return res.Error;
         }
 
+        public async Task<ModifyResponseErrorType> Modify(NotificationOwnerRecord vm, ONUser user)
+        {
+            if (vm == null)
+                return ModifyResponseErrorType.UnknownError;
+
+            var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
+            var res = await client.ModifyNotificationOwnerDataAsync(new() { Data = vm }, GetMetadata(user));
+
+            return res.Error;
+        }
+
         public async Task<ModifyResponseErrorType> Modify(PersonalizationPublicRecord vm, ONUser user)
         {
             if (vm == null)

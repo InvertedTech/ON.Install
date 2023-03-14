@@ -1,0 +1,10 @@
+﻿@using ON.Fragments.Settings
+@model NotificationOwnerRecord
+
+<li class="list-group-item">
+    <h2>Owner Settings</h2>
+
+    <ul class="list-group">
+        @await Html.PartialAsync("NotificationOwnerSendgrid", Model?.Sendgrid ?? new())
+    </ul>
+</li>

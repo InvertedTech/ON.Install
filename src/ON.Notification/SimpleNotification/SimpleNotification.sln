@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Notification.SimpleNotif
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authentication.Shared", "..\..\ON.Authentication\Shared\ON.Authentication.Shared.csproj", "{2B98B863-6F98-4876-A6E6-CC14C40E8E70}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Settings.Shared", "..\..\ON.Settings\Shared\ON.Settings.Shared.csproj", "{FC4AB4C4-5530-488E-8279-0DFC239FB0BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{2B98B863-6F98-4876-A6E6-CC14C40E8E70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B98B863-6F98-4876-A6E6-CC14C40E8E70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B98B863-6F98-4876-A6E6-CC14C40E8E70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC4AB4C4-5530-488E-8279-0DFC239FB0BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC4AB4C4-5530-488E-8279-0DFC239FB0BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC4AB4C4-5530-488E-8279-0DFC239FB0BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC4AB4C4-5530-488E-8279-0DFC239FB0BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
