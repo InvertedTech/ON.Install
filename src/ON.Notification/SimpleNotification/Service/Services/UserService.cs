@@ -39,6 +39,34 @@ namespace ON.Notification.SimpleNotification.Service.Services
             this.userDataProvider = userDataProvider;
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE_OR_BOT)]
+        public override async Task<GetAllTokensResponse> GetAllTokens(GetAllTokensRequest request, ServerCallContext context)
+        {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null)
+                return new();
+
+            var disabled = new List<string>();
+
+            if (!request.IncludeDisabledPush)
+            {
+                await foreach (var data in userDataProvider.GetAll())
+                    if (data.Normal.DisableAllPush)
+                        disabled.Add(data.UserID);
+            }
+
+            var tokens = new List<string>();
+
+            await foreach (var data in notificationDataProvider.GetAll())
+                if (!disabled.Contains(data.UserID))
+                    tokens.Add(data.TokenID);
+
+            var ret = new GetAllTokensResponse();
+            ret.TokenIDs.AddRange(tokens);
+
+            return ret;
+        }
+
         public override async Task<GetRecordResponse> GetRecord(GetRecordRequest request, ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());

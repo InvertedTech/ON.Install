@@ -7,11 +7,18 @@ import "Protos/ON/Fragments/Notification/UserNotificationSettingsRecord.proto";
 
 // Service for User Notification fragment interface
 service UserNotificationInterface {
+  rpc GetAllTokens (GetAllTokensRequest) returns (GetAllTokensResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/notification/tokens"
+      body: "*"
+    };
+  }
+
   rpc GetRecord (GetRecordRequest) returns (GetRecordResponse)
   {
     option (google.api.http) = {
-      post: "/api/notification/user"
-      body: "*"
+      get: "/api/notification/user"
     };
   }
 
@@ -38,6 +45,14 @@ service UserNotificationInterface {
       body: "*"
     };
   }
+}
+  
+message GetAllTokensRequest {
+  bool IncludeDisabledPush = 1;
+}
+  
+message GetAllTokensResponse {
+  repeated string TokenIDs = 1;
 }
   
 message GetRecordRequest {
