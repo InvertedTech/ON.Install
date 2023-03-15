@@ -14,6 +14,8 @@ message UserNotificationSettingsRecord {
 }
 
 message UserNotificationSettingsNormalRecord {
+  bool DisableAllEmail = 1;
+  bool DisableAllPush = 2;
   bool DisableLiveScheduleEmail = 10;
   bool DisableLiveSchedulePush = 11;
   bool DisableLiveGoEmail = 15;
