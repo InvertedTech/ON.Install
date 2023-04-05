@@ -25,7 +25,9 @@
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Comments\SharedTypes.proto" />
+    <None Remove="Protos\ON\Fragments\Content\AssetBackup.proto" />
     <None Remove="Protos\ON\Fragments\Content\AssetInterface.proto" />
+    <None Remove="Protos\ON\Fragments\Content\AssetRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\AudioAssetRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\ImageAssetRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\SharedTypes.proto" />
@@ -85,6 +87,8 @@
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSettings.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Comments\SharedTypes.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Content\AssetBackup.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Content\AssetRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsSaveInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsProgressInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsViewInterface.proto" />

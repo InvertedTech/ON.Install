@@ -64,6 +64,8 @@ message PersonalizationOwnerRecord {
 message SubscriptionPublicRecord {
   repeated ON.Fragments.Authorization.SubscriptionTier Tiers = 1;
   bool AllowOther = 2;
+  bool MinimumAllowed = 3;
+  bool MaximumAllowed = 4;
   ON.Fragments.Authorization.Payment.Fake.FakePaymentPublicSettings Fake = 11;
   ON.Fragments.Authorization.Payment.ParallelEconomy.ParallelEconomyPublicSettings ParallelEconomy = 12;
   ON.Fragments.Authorization.Payment.Crypto.CryptoPublicSettings Crypto = 13;

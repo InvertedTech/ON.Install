@@ -4,6 +4,7 @@ package ON.Fragments.Content;
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
+import "Protos/ON/Fragments/Content/AssetRecord.proto";
 import "Protos/ON/Fragments/Content/AudioAssetRecord.proto";
 import "Protos/ON/Fragments/Content/ImageAssetRecord.proto";
 
@@ -88,10 +89,3 @@ message GetListOfOldContentIDsResponse {
   google.protobuf.Timestamp ModifiedOnUTC = 3;
 }
 
-message AssetRecord {
-  oneof AssetRecord_oneof
-  {
-    AudioAssetRecord Audio = 1;
-    ImageAssetRecord Image = 2;
-  }
-}
