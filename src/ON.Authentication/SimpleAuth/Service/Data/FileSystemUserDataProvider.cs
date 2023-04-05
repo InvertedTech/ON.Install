@@ -33,7 +33,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         private async Task LoadIndex()
         {
-            await foreach(var r in GetAll())
+            await foreach (var r in GetAll())
             {
                 loginIndex.TryAdd(r.Normal.Public.Data.UserName, r.UserIDGuid);
             }
@@ -126,6 +126,8 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             var id = user.UserIDGuid;
             var fd = GetDataFilePath(id);
             await File.WriteAllBytesAsync(fd.FullName, user.ToByteArray());
+
+            loginIndex.AddOrUpdate(user.Normal.Public.Data.UserName, id, (k, v) => id);
         }
 
         private IEnumerable<FileInfo> GetAllDataFiles()
