@@ -11,7 +11,9 @@ namespace ON.Fragments.Generic
     {
         public static Guid ToGuid(this string id)
         {
-            return new Guid(id);
+            Guid guid = Guid.Empty;
+            Guid.TryParse(id, out guid);
+            return guid;
         }
     }
 }

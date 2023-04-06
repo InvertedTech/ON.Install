@@ -6,6 +6,14 @@ import "google/api/annotations.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Fake/FakeSubscriptionRecord.proto";
 
 service FakeInterface {
+  rpc FakeCancelOtherSubscription (FakeCancelOtherSubscriptionRequest) returns (FakeCancelOtherSubscriptionResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/payment/fake/admin/subscription/cancel"
+      body: "*"
+    };
+  }
+
   rpc FakeCancelOwnSubscription (FakeCancelOwnSubscriptionRequest) returns (FakeCancelOwnSubscriptionResponse)
   {
     option (google.api.http) = {
@@ -14,10 +22,25 @@ service FakeInterface {
     };
   }
 
+  rpc FakeGetOtherSubscriptionRecord (FakeGetOtherSubscriptionRecordRequest) returns (FakeGetOtherSubscriptionRecordResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/payment/fake/admin/subscription"
+    };
+  }
+
   rpc FakeGetOwnSubscriptionRecord (FakeGetOwnSubscriptionRecordRequest) returns (FakeGetOwnSubscriptionRecordResponse)
   {
     option (google.api.http) = {
       get: "/api/payment/fake/subscription"
+    };
+  }
+
+  rpc FakeNewOtherSubscription (FakeNewOtherSubscriptionRequest) returns (FakeNewOtherSubscriptionResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/payment/fake/admin/subscription/new"
+      body: "*"
     };
   }
 
@@ -29,7 +52,17 @@ service FakeInterface {
     };
   }
 }
+
+message FakeCancelOtherSubscriptionRequest {
+  string UserId = 1;
+  string Reason = 2;
+}
   
+message FakeCancelOtherSubscriptionResponse {
+  FakeSubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
 message FakeCancelOwnSubscriptionRequest {
   string Reason = 1;
 }
@@ -39,17 +72,35 @@ message FakeCancelOwnSubscriptionResponse {
   string Error = 2;
 }
 
+message FakeGetOtherSubscriptionRecordRequest {
+  string UserId = 1;
+}
+
+message FakeGetOtherSubscriptionRecordResponse {
+  FakeSubscriptionRecord Record = 1;
+}
+
 message FakeGetOwnSubscriptionRecordRequest {
 }
-  
+
 message FakeGetOwnSubscriptionRecordResponse {
   FakeSubscriptionRecord Record = 1;
+}
+
+message FakeNewOtherSubscriptionRequest {
+  string UserId = 1;
+  uint32 AmountCents = 2;
+}
+
+message FakeNewOtherSubscriptionResponse {
+  FakeSubscriptionRecord Record = 1;
+  string Error = 2;
 }
 
 message FakeNewOwnSubscriptionRequest {
   uint32 AmountCents = 1;
 }
-  
+
 message FakeNewOwnSubscriptionResponse {
   FakeSubscriptionRecord Record = 1;
   string Error = 2;
