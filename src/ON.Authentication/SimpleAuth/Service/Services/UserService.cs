@@ -276,7 +276,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                         ModifiedOnUTC = now,
                         Data = new()
                         {
-                            UserName = request.UserName,
+                            UserName = request.UserName.ToLower(),
                             DisplayName = request.DisplayName,
                             Bio = request.Bio,
                         },
@@ -306,7 +306,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     Error = CreateUserResponse.Types.CreateUserResponseErrorType.UnknownError
                 };
 
-            if (await dataProvider.Exists(user.Normal.Public.Data.UserName))
+            if (await dataProvider.Exists(user.Normal.Public.Data.UserName.ToLower()))
                 return new CreateUserResponse
                 {
                     Error = CreateUserResponse.Types.CreateUserResponseErrorType.UserNameTaken
@@ -541,6 +541,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 if (!IsUserNameValid(request.UserName))
                     return new() { Error = "User Name not valid" };
 
+                request.UserName = request.UserName.ToLower();
+
                 if (!IsDisplayNameValid(request.DisplayName))
                     return new() { Error = "Display Name not valid" };
 
@@ -717,7 +719,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                         continue;
 
                 if (searchSearchString != null)
-                    if (!rec.Normal.Public.Data.UserName.Contains(searchSearchString) && !rec.Normal.Public.Data.DisplayName.Contains(searchSearchString))
+                    if (!rec.Normal.Public.Data.UserName.Contains(searchSearchString, StringComparison.InvariantCultureIgnoreCase) && !rec.Normal.Public.Data.DisplayName.Contains(searchSearchString, StringComparison.InvariantCultureIgnoreCase))
                         continue;
 
                 var listRec = rec.Normal.ToUserSearchRecord();
@@ -824,7 +826,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (userName.Length < 4 || userName.Length > 20)
                 return false;
 
-            var regex = new Regex(@"^[a-zA-Z0-9]+$");
+            var regex = new Regex(@"^[a-z0-9]+$");
             if (!regex.IsMatch(userName))
                 return false;
 
