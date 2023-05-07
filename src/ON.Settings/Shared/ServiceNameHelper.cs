@@ -14,10 +14,8 @@ namespace ON.Settings
         public readonly GrpcChannel ContentServiceChannel;
         public readonly Channel SettingsServiceChannel;
         public readonly Channel UserServiceChannel;
-        public readonly Channel FakePaymentsServiceChannel;
-        public readonly Channel PaypalPaymentsServiceChannel;
-        public readonly Channel StripePaymentsServiceChannel;
-        public readonly Channel PEPaymentsServiceChannel;
+        public readonly Channel NotificationServiceChannel;
+        public readonly Channel PaymentServiceChannel;
         public readonly Channel StatsServiceChannel;
 
         public readonly string ServiceToken;
@@ -42,21 +40,13 @@ namespace ON.Settings
             if (uri != null)
                 ContentServiceChannel = GrpcChannel.ForAddress(uri, options);
 
-            uri = configuration.GetServiceUri("fakepayservice", "grpc");
+            uri = configuration.GetServiceUri("notificationservice", "grpc");
             if (uri != null)
-                FakePaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+                NotificationServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
 
-            uri = configuration.GetServiceUri("paypalservice", "grpc");
+            uri = configuration.GetServiceUri("paymentservice", "grpc");
             if (uri != null)
-                PaypalPaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
-
-            uri = configuration.GetServiceUri("stripeservice", "grpc");
-            if (uri != null)
-                StripePaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
-
-            uri = configuration.GetServiceUri("peservice", "grpc");
-            if (uri != null)
-                PEPaymentsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+                PaymentServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
 
             uri = configuration.GetServiceUri("statsservice", "grpc");
             if (uri != null)

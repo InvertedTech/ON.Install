@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package ON.Fragments.Notification;
+
+message SendgridOwnerSettings {
+  bool Enabled = 1;
+  string ApiKeySecret = 2;
+  string SendFromAddress = 3;
+}
+

@@ -10,11 +10,9 @@
         "SERVICE__AUTHSERVICE__GRPC__HOST": "localhost",
         "SERVICE__AUTHSERVICE__GRPC__PORT": "7001",
         "SERVICE__PAYPALSERVICE__API__PORT": "8004",
-        "SERVICE__PAYPALSERVICE__GRPC__PORT": "7004",
-        "SERVICE__SETTINGSSERVICE__GRPC__HOST": "localhost",
-        "SERVICE__SETTINGSSERVICE__GRPC__PORT": "7009"
+        "SERVICE__PAYPALSERVICE__GRPC__PORT": "7004"
       },
-      "dotnetRunMessages": "true",
+      "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:8004/"
     }
   }

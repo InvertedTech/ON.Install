@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ON.Fragments.Notification;
+
+import "google/protobuf/timestamp.proto";
+
+// User authentication data
+message NotificationUserRecord {
+  string TokenID = 1;                  // DeviceToken
+  string UserID = 2;                   // Guid for the user last logged in
+  google.protobuf.Timestamp CreatedOnUTC = 11;   // UTC timestamp when user was created
+  google.protobuf.Timestamp ModifiedOnUTC = 12;  // UTC timestamp when user record was last modified
+}

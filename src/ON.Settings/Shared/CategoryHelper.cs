@@ -16,14 +16,14 @@ namespace ON.Settings
             this.settingsClient = settingsClient;
         }
 
-        public async Task<CategoryRecord> GetCategoryById(string id)
+        public CategoryRecord GetCategoryById(string id)
         {
-            return (await settingsClient.GetPublicData()).CMS.Categories.FirstOrDefault(c => c.CategoryId == id);
+            return settingsClient.PublicData?.CMS?.Categories?.FirstOrDefault(c => c.CategoryId == id);
         }
 
-        public async Task<CategoryRecord> GetCategoryBySlug(string slug)
+        public CategoryRecord GetCategoryBySlug(string slug)
         {
-            return (await settingsClient.GetPublicData()).CMS.Categories.FirstOrDefault(c => c.UrlStub == slug);
+            return settingsClient.PublicData?.CMS?.Categories?.FirstOrDefault(c => c.UrlStub == slug);
         }
     }
 }

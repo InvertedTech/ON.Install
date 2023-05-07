@@ -64,6 +64,12 @@ service ContentInterface {
       get: "/api/cms/tags/recent"
     };
   }
+  rpc GetRelatedContent (GetRelatedContentRequest) returns (GetRelatedContentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/content/{ContentID}/related"
+    };
+  }
   rpc ModifyContent (ModifyContentRequest) returns (ModifyContentResponse)
   {
     option (google.api.http) = {
@@ -76,6 +82,12 @@ service ContentInterface {
     option (google.api.http) = {
       post: "/api/cms/admin/content/{ContentID}/publish"
       body: "*"
+    };
+  }
+  rpc SearchContent (SearchContentRequest) returns (SearchContentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/search"
     };
   }
   rpc UnannounceContent (UnannounceContentRequest) returns (UnannounceContentResponse)
@@ -127,11 +139,14 @@ message DeleteContentResponse {
 message GetAllContentRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
+  repeated string PossibleContentIDs = 6;
   SubscriptionLevelSearch SubscriptionSearch = 10;
   ContentType ContentType = 11;
   string CategoryId = 12;
   string ChannelId = 13;
   string Tag = 14;
+  string AuthorId = 15;
+  bool OnlyLive = 16;
 }
   
 message GetAllContentResponse {
@@ -144,11 +159,13 @@ message GetAllContentResponse {
 message GetAllContentAdminRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
+  repeated string PossibleContentIDs = 6;
   SubscriptionLevelSearch SubscriptionSearch = 10;
   ContentType ContentType = 11;
   string CategoryId = 12;
   string ChannelId = 13;
   string Tag = 14;
+  bool OnlyLive = 15;
   bool Deleted = 21;
 }
   
@@ -191,6 +208,19 @@ message GetRecentTagsResponse {
   repeated string Tags = 1;
 }
   
+message GetRelatedContentRequest {
+  string ContentID = 1;   // Guid for the content record
+  uint32 PageSize = 2;
+  uint32 PageOffset = 3;
+}
+  
+message GetRelatedContentResponse {
+  repeated ContentListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+  
 message ModifyContentRequest {
   string ContentID = 1;   // Guid for the content record
   ContentPublicData Public = 2;
@@ -210,6 +240,7 @@ message ContentListRecord {
   uint32 SubscriptionLevel = 6;
   string URL = 7;
   string Author = 8;
+  string AuthorID = 18;
   string FeaturedImageAssetID = 9;
   repeated string CategoryIds = 10;
   repeated string ChannelIds = 11;
@@ -225,6 +256,25 @@ message PublishContentRequest {
   
 message PublishContentResponse {
   ContentRecord Record = 1;
+}
+  
+message SearchContentRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  string Query = 6;
+  SubscriptionLevelSearch SubscriptionSearch = 10;
+  ContentType ContentType = 11;
+  string CategoryId = 12;
+  string ChannelId = 13;
+  string Tag = 14;
+  bool OnlyLive = 15;
+}
+  
+message SearchContentResponse {
+  repeated ContentListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
 }
   
 message UnannounceContentRequest {

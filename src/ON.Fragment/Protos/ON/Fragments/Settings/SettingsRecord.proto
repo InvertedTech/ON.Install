@@ -4,12 +4,14 @@ package ON.Fragments.Settings;
 
 import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Authorization/SharedTypes.proto";
-import "Protos/ON/Fragments/Authorization/Payments/Fake/FakePaymentSettings.proto";
-import "Protos/ON/Fragments/Authorization/Payments/ParallelEconomy/ParallelEconomySettings.proto";
-import "Protos/ON/Fragments/Authorization/Payments/Stripe/StripeSettings.proto";
-import "Protos/ON/Fragments/Authorization/Payments/Paypal/PaypalSettings.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Crypto/CryptoSettings.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Fake/FakePaymentSettings.proto";
+import "Protos/ON/Fragments/Authorization/Payment/ParallelEconomy/ParallelEconomySettings.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeSettings.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Paypal/PaypalSettings.proto";
 import "Protos/ON/Fragments/Content/SharedTypes.proto";
 import "Protos/ON/Fragments/Comments/SharedTypes.proto";
+import "Protos/ON/Fragments/Notification/NotificationSettings.proto";
 
 // User authentication data
 message SettingsRecord {
@@ -25,6 +27,7 @@ message SettingsPublicData {
   SubscriptionPublicRecord Subscription = 11;
   CommentsPublicRecord Comments = 12;
   CMSPublicRecord CMS = 13;
+  NotificationPublicRecord Notification = 14;
 }
 
 message SettingsPrivateData {
@@ -33,6 +36,7 @@ message SettingsPrivateData {
   SubscriptionPrivateRecord Subscription = 11;
   CommentsPrivateRecord Comments = 12;
   CMSPrivateRecord CMS = 13;
+  NotificationPrivateRecord Notification = 14;
 }
 
 message SettingsOwnerData {
@@ -40,6 +44,7 @@ message SettingsOwnerData {
   SubscriptionOwnerRecord Subscription = 11;
   CommentsOwnerRecord Comments = 12;
   CMSOwnerRecord CMS = 13;
+  NotificationOwnerRecord Notification = 14;
 }
 
 message PersonalizationPublicRecord {
@@ -59,16 +64,22 @@ message PersonalizationOwnerRecord {
 message SubscriptionPublicRecord {
   repeated ON.Fragments.Authorization.SubscriptionTier Tiers = 1;
   bool AllowOther = 2;
+  bool MinimumAllowed = 3;
+  bool MaximumAllowed = 4;
+  ON.Fragments.Authorization.Payment.Fake.FakePaymentPublicSettings Fake = 11;
+  ON.Fragments.Authorization.Payment.ParallelEconomy.ParallelEconomyPublicSettings ParallelEconomy = 12;
+  ON.Fragments.Authorization.Payment.Crypto.CryptoPublicSettings Crypto = 13;
+  ON.Fragments.Authorization.Payment.Stripe.StripePublicSettings Stripe = 14;
+  ON.Fragments.Authorization.Payment.Paypal.PaypalPublicSettings Paypal = 15;
 }
 
 message SubscriptionPrivateRecord {
 }
 
 message SubscriptionOwnerRecord {
-  ON.Fragments.Authorization.Payments.ParallelEconomy.ParallelEconomySettings ParallelEconomy = 1;
-  ON.Fragments.Authorization.Payments.Stripe.StripeSettings Stripe = 2;
-  ON.Fragments.Authorization.Payments.Paypal.PaypalSettings Paypal = 3;
-  ON.Fragments.Authorization.Payments.Fake.FakePaymentSettings Fake = 4;
+  ON.Fragments.Authorization.Payment.ParallelEconomy.ParallelEconomyOwnerSettings ParallelEconomy = 12;
+  ON.Fragments.Authorization.Payment.Stripe.StripeOwnerSettings Stripe = 14;
+  ON.Fragments.Authorization.Payment.Paypal.PaypalOwnerSettings Paypal = 15;
 }
 
 message CommentsPublicRecord {
@@ -98,11 +109,22 @@ message CMSPrivateRecord {
 message CMSOwnerRecord {
 }
 
+message NotificationPublicRecord {
+}
+
+message NotificationPrivateRecord {
+}
+
+message NotificationOwnerRecord {
+  ON.Fragments.Notification.SendgridOwnerSettings Sendgrid = 1;
+}
+
 message ChannelRecord {
   string ChannelId = 1;
   string ParentChannelId = 2;
   string DisplayName = 3;
   string UrlStub = 4;
+  string ImageAssetId = 5;
 
   string OldChannelId = 1001;
 }

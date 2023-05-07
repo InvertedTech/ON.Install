@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package ON.Fragments.Notification;
+
+import "google/protobuf/timestamp.proto";
+
+// User authentication data
+message UserNotificationSettingsRecord {
+  string UserID = 1;                   // Guid for the user
+  google.protobuf.Timestamp CreatedOnUTC = 2;   // UTC timestamp when user was created
+  google.protobuf.Timestamp ModifiedOnUTC = 3;  // UTC timestamp when user record was last modified
+
+  UserNotificationSettingsNormalRecord Normal = 11;
+}
+
+message UserNotificationSettingsNormalRecord {
+  bool DisableAllEmail = 1;
+  bool DisableAllPush = 2;
+  bool DisableLiveScheduleEmail = 10;
+  bool DisableLiveSchedulePush = 11;
+  bool DisableLiveGoEmail = 15;
+  bool DisableLiveGoPush = 16;
+  bool DisableNewAudioEmail = 20;
+  bool DisableNewAudioPush = 21;
+  bool DisableNewImageEmail = 25;
+  bool DisableNewImagePush = 26;
+  bool DisableNewVideoEmail = 30;
+  bool DisableNewVideoPush = 31;
+  bool DisableNewWrittenEmail = 35;
+  bool DisableNewWrittenPush = 36;
+}
+

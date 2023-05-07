@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using ON.Fragments.Authorization.Payments.ParallelEconomy;
+using ON.Fragments.Authorization.Payment.ParallelEconomy;
 using ON.Settings;
 using System.Linq;
 
@@ -25,12 +25,13 @@ namespace ON.SimpleWeb.Services.PE
 
         private GetAccountDetailsResponse GetDetails()
         {
-            if (nameHelper.PEPaymentsServiceChannel == null)
+            if (nameHelper.PaymentServiceChannel == null)
                 return null;
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PEPaymentsServiceChannel);
-            var reply = client.GetAccountDetails(new GetAccountDetailsRequest());
-            return reply;
+            return null;
+            //var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PEPaymentsServiceChannel);
+            //var reply = client.GetAccountDetails(new GetAccountDetailsRequest());
+            //return reply;
         }
     }
 }

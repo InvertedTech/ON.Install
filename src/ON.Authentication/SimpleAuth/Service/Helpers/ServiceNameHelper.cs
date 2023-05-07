@@ -10,23 +10,13 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 {
     public class ServiceNameHelper
     {
-        public readonly Channel FakePaymentServiceChannel;
-        public readonly Channel PaypalServiceChannel;
-        public readonly Channel StripeServiceChannel;
+        public readonly Channel PaymentServiceChannel;
 
         public ServiceNameHelper(IConfiguration configuration, ILogger<ServiceNameHelper> logger)
         {
-            var uri = configuration.GetServiceUri("fakepayservice", "grpc");
+            var uri = configuration.GetServiceUri("paymentservice", "grpc");
             if (uri != null)
-                FakePaymentServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
-
-            uri = configuration.GetServiceUri("paypalservice");
-            if (uri != null)
-                PaypalServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
-
-            uri = configuration.GetServiceUri("stripeservice");
-            if (uri != null)
-                StripeServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+                PaymentServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
         }
     }
 }

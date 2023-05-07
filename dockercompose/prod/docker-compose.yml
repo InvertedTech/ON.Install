@@ -1,0 +1,134 @@
+version: '3'
+services:
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:dev-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  authservice:
+    image: opennetwork/simpleauth-service:linux-amd64
+    depends_on:
+      - "eventdb"
+    expose:
+      - "80"
+    ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+    environment:
+      - VIRTUAL_HOST=${DNSNAME}
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=~^/api/auth
+      - JWT_PRIV_KEY=${JWTPRIV}
+      - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__AUTHSERVICE__API__PORT=80
+      - SERVICE__AUTHSERVICE__GRPC__PORT=${AUTH_PORT}
+      - SERVICE__PAYMENTSERVICE__GRPC__HOST=paymentservice
+      - SERVICE__PAYMENTSERVICE__GRPC__PORT=${PAYMENT_PORT}
+#      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ./data/auth:/data
+  cmsservice:
+    image: opennetwork/simplecms-service:linux-amd64
+    depends_on:
+      - "eventdb"
+    expose:
+      - "80"
+    ports:
+      - ${CMS_PORT}:${CMS_PORT}
+    environment:
+      - VIRTUAL_HOST=${DNSNAME}
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=~^/api/cms
+      - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__CMSSERVICE__API__PORT=80
+      - SERVICE__CMSSERVICE__GRPC__PORT=${CMS_PORT}
+      - SERVICE__STATSSERVICE__GRPC__HOST=statsservice
+      - SERVICE__STATSSERVICE__GRPC__PORT=${STATS_PORT}
+    volumes:
+      - ./data/cms:/data
+  paymentservice:
+    image: opennetwork/payment-service:linux-amd64
+    depends_on:
+      - "eventdb"
+    expose:
+      - "80"
+    ports:
+      - ${PAYMENT_PORT}:${PAYMENT_PORT}
+    environment:
+      - VIRTUAL_HOST=${DNSNAME}
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=~^/api/payment
+      - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__PAYMENTSERVICE__API__PORT=80
+      - SERVICE__PAYMENTSERVICE__GRPC__PORT=${PAYMENT_PORT}
+      - SERVICE__AUTHSERVICE__GRPC__HOST=authservice
+      - SERVICE__AUTHSERVICE__GRPC__PORT=${AUTH_PORT}
+    volumes:
+      - ./data/payment:/data
+  settingsservice:
+    image: opennetwork/simplesettings-service:linux-amd64
+    depends_on:
+      - "eventdb"
+    expose:
+      - "80"
+    ports:
+      - ${SETTINGS_PORT}:${SETTINGS_PORT}
+    environment:
+      - VIRTUAL_HOST=${DNSNAME}
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=~^/api/settings
+      - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__SETTINGSSERVICE__API__PORT=80
+      - SERVICE__SETTINGSSERVICE__GRPC__PORT=${SETTINGS_PORT}
+    volumes:
+      - ./data/settings:/data
+  statsservice:
+    image: opennetwork/simplestats-service:linux-amd64
+    depends_on:
+      - "eventdb"
+    expose:
+      - "80"
+    ports:
+      - ${STATS_PORT}:${STATS_PORT}
+    environment:
+      - VIRTUAL_HOST=${DNSNAME}
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=~^/api/stats
+      - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__STATSSERVICE__API__PORT=80
+      - SERVICE__STATSSERVICE__GRPC__PORT=${STATS_PORT}
+    restart: always
+    volumes:
+      - ./data/stats:/data
+  eventdb:
+    image: eventstore/eventstore:21.10.8-buster-slim
+    ports:
+      - "2113:2113"
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+    volumes:
+      - ./data/eventdb/data:/var/lib/eventstore
+      - ./data/eventdb/logs:/var/log/eventstore
+  web:
+    image: opennetwork/simpleweb:linux-amd64
+    expose:
+      - "80"
+    environment:
+      - VIRTUAL_HOST=${DNSNAME}
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=/
+      - JWT_PUB_KEY=${JWTPUB}
+      - SERVICE__AUTHSERVICE__GRPC__HOST=authservice
+      - SERVICE__AUTHSERVICE__GRPC__PORT=${AUTH_PORT}
+      - SERVICE__CMSSERVICE__GRPC__HOST=cmsservice
+      - SERVICE__CMSSERVICE__GRPC__PORT=${CMS_PORT}
+      - SERVICE__PAYMENTSERVICE__GRPC__HOST=paymentservice
+      - SERVICE__PAYMENTSERVICE__GRPC__PORT=${PAYMENT_PORT}
+      - SERVICE__SETTINGSSERVICE__GRPC__HOST=settingsservice
+      - SERVICE__SETTINGSSERVICE__GRPC__PORT=${SETTINGS_PORT}
+      - SERVICE__STATSSERVICE__GRPC__HOST=statsservice
+      - SERVICE__STATSSSERVICE__GRPC__PORT=${STATS_PORT}

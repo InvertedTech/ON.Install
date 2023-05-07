@@ -4,7 +4,7 @@
     ViewData["Title"] = "Home";
 }
 
-<h1>@((await settings.GetPublicData()).Personalization.MetaDescription)</h1>
+<h1>@settings.PublicData?.Personalization?.MetaDescription</h1>
 
 @foreach (var record in Model.Records)
 {

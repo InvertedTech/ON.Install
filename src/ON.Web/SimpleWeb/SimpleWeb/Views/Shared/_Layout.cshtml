@@ -1,7 +1,7 @@
 ﻿@inject ON.Authentication.ONUserHelper userHelper;
 @inject ON.Settings.SettingsClient settings;
 @{
-    var siteTitle = (await settings.GetPublicData()).Personalization.Title;
+    var siteTitle = settings.PublicData?.Personalization?.Title;
 }
 <!DOCTYPE html>
 <html lang="en">

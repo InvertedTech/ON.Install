@@ -28,9 +28,7 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
         public async Task<IEnumerable<ClaimRecord>> GetOtherClaims(Guid userId)
         {
             List<Channel> channels = new List<Channel>();
-            channels.Add(nameHelper.FakePaymentServiceChannel);
-            channels.Add(nameHelper.PaypalServiceChannel);
-            channels.Add(nameHelper.StripeServiceChannel);
+            channels.Add(nameHelper.PaymentServiceChannel);
 
             var tasks = channels.Select(c => GetOtherClaims(userId, c));
 
@@ -68,7 +66,7 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
                 var client = new ClaimsInterface.ClaimsInterfaceClient(channel);
                 var reply = await client.GetClaimsAsync(new GetClaimsRequest()
                 {
-                    UserID = Google.Protobuf.ByteString.CopyFrom(userId.ToByteArray())
+                    UserID = userId.ToString()
                 });
 
                 return reply.Claims;

@@ -5,9 +5,8 @@
     <h2>Owner Settings</h2>
 
     <ul class="list-group">
-        @await Html.PartialAsync("SubscriptionOwnerFake", Model.Fake)
-        @await Html.PartialAsync("SubscriptionOwnerPE", Model.ParallelEconomy)
-        @await Html.PartialAsync("SubscriptionOwnerStripe", Model.Stripe)
-        @await Html.PartialAsync("SubscriptionOwnerPaypal", Model.Paypal)
+        @await Html.PartialAsync("SubscriptionOwnerPE", Model.ParallelEconomy ?? new())
+        @await Html.PartialAsync("SubscriptionOwnerStripe", Model.Stripe ?? new())
+        @await Html.PartialAsync("SubscriptionOwnerPaypal", Model.Paypal ?? new())
     </ul>
 </li>

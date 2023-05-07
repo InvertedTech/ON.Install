@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Asset;
+
+import "Protos/ON/Fragments/Content/AssetRecord.proto";
+
+// Service for Asset backup fragment interface
+service AssetBackupInterface {
+  // Export a list of all data.
+  rpc BackupAllData (BackupAllDataRequest) returns (stream BackupAllDataResponse) {}
+
+  // Restore a list of all data.
+  rpc RestoreAllData (stream RestoreAllDataRequest) returns (RestoreAllDataResponse) {}
+}
+  
+message BackupAllDataRequest {
+  string ClientPublicJwk = 1;
+}
+  
+message BackupAllDataResponse {
+  oneof Response_oneof {
+    string ServerPublicJwk = 1;
+    EncryptedAssetBackupDataRecord EncryptedRecord = 10;
+  }
+}
+
+message AssetBackupDataRecord {
+  bytes ExtraData = 1; // Generic byte structure to save all application specific data for asset record
+  AssetRecord Data = 2; // Structured asset data, including both private and public data
+}
+
+message EncryptedAssetBackupDataRecord {
+  bytes EncryptionIV = 1;
+  bytes Data = 10;
+}
+
+message RestoreAllDataRequest {
+  oneof Request_oneof {
+    RestoreMode Mode = 1;
+    AssetBackupDataRecord Record = 10;
+  }
+
+  enum RestoreMode {
+    Wipe = 0;         // Wipe entire asset database and restore asset.  Any data new asset will be deleted.
+    Overwrite = 1;    // Overwrite all records with corresponding record.  Will not delete new records not in list.
+    MissingOnly = 2;  // Only restore missing asset records.  Will not overwrite asset records that already exist.
+  }
+}
+
+message RestoreAllDataResponse {
+  int32 NumRecordsRestored = 1;
+  int32 NumRecordsSkipped = 2;
+  int32 NumRecordsOverwriten = 3;
+  int32 NumRecordsWiped = 4;
+}

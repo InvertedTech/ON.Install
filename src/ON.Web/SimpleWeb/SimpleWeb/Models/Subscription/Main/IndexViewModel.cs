@@ -1,5 +1,6 @@
 ﻿using ON.Authentication;
 using ON.Fragments.Authentication;
+using ON.Fragments.Authorization.Payment;
 using ON.Settings;
 using System;
 using System.Collections.Generic;
@@ -15,30 +16,37 @@ namespace ON.SimpleWeb.Models.Subscription.Main
         {
         }
 
-        public static async Task<IndexViewModel> Create(SubscriptionTierHelper subHelper, ONUser user)
+        public static IndexViewModel Create(SubscriptionTierHelper subHelper, GetOwnSubscriptionRecordsResponse res)
         {
             var vm = new IndexViewModel()
             {
-                IsSubscribed = user.SubscriptionLevel > 0,
-                SubscriptionProvider = user.SubscriptionProvider,
+                Records = res,
             };
 
-            var t = (await subHelper.GetForUser(user));
-            if (t != null)
-            {
-                vm.SubscriptionLevelLabel = t.Label;
-            }
-            else if (user.SubscriptionLevel > 0)
-            {
-                vm.SubscriptionLevelLabel = $"${user.SubscriptionLevel} - Other";
-            }
+            vm.Subscriptions.AddRange(res.Paypal.Select(r => new SubscriptionViewModel(r)));
+
+
+            vm.Subscriptions = vm.Subscriptions.OrderByDescending(s => s.Status == SubscriptionStatus.SubscriptionActive ? 1 : 0).OrderByDescending(s => s.StartedOnUTC).ToList();
 
             return vm;
         }
 
-        public bool IsSubscribed { get; set; }
+        public GetOwnSubscriptionRecordsResponse Records { get; set; }
 
-        public string SubscriptionLevelLabel { get; set; } = "None";
-        public string SubscriptionProvider { get; set; }
+        public List<SubscriptionViewModel> Subscriptions { get; set; } = new();
+
+        public bool HasActiveSubscription
+        {
+            get
+            {
+                if ((Records.Fake?.AmountCents ?? 0) > 0)
+                    return true;
+
+                if (Records.Paypal.Any(r => r.Subscription.Status == SubscriptionStatus.SubscriptionActive))
+                    return true;
+
+                return false;
+            }
+        }
     }
 }

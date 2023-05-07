@@ -13,7 +13,6 @@ services:
     ports:
       - "7001:7001"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
       - VIRTUAL_HOST=localhost
       - VIRTUAL_PORT=80
       - VIRTUAL_PATH=~^/api/auth
@@ -21,8 +20,8 @@ services:
       - JWT_PUB_KEY=eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjpudWxsLCJEUCI6bnVsbCwiRFEiOm51bGwsIkUiOm51bGwsIksiOm51bGwsIktleUlkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS2V5T3BzIjpbXSwiS2lkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS3R5IjoiRUMiLCJOIjpudWxsLCJPdGgiOm51bGwsIlAiOm51bGwsIlEiOm51bGwsIlFJIjpudWxsLCJVc2UiOiJzaWciLCJYIjoiVDNCQzlQUlNkamFIcEV4VXF6Z1RpMWt5X2pvMG9YSHMtbVNoN0RsRVZFMCIsIlg1YyI6W10sIlg1dCI6bnVsbCwiWDV0UzI1NiI6bnVsbCwiWDV1IjpudWxsLCJZIjoiMjhmNEtLS0hyZ3dfM2Z4SlJsX1c0eExkcm5FUXVPQWNfZ0wyN0tNc0NSOCIsIktleVNpemUiOjI1NiwiSGFzUHJpdmF0ZUtleSI6ZmFsc2UsIkNyeXB0b1Byb3ZpZGVyRmFjdG9yeSI6eyJDcnlwdG9Qcm92aWRlckNhY2hlIjp7fSwiQ3VzdG9tQ3J5cHRvUHJvdmlkZXIiOm51bGwsIkNhY2hlU2lnbmF0dXJlUHJvdmlkZXJzIjp0cnVlfX0
       - SERVICE__AUTHSERVICE__API__PORT=80
       - SERVICE__AUTHSERVICE__GRPC__PORT=7001
-      - SERVICE__FAKEPAYSERVICE__GRPC__HOST=fakepayservice
-      - SERVICE__FAKEPAYSERVICE__GRPC__PORT=7003
+      - SERVICE__PAYMENTSERVICE__GRPC__HOST=paymentservice
+      - SERVICE__PAYMENTSERVICE__GRPC__PORT=7004
     volumes:
       - ../../src/tmpdata/auth:/data
   cmsservice:
@@ -38,23 +37,27 @@ services:
       - JWT_PUB_KEY=eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjpudWxsLCJEUCI6bnVsbCwiRFEiOm51bGwsIkUiOm51bGwsIksiOm51bGwsIktleUlkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS2V5T3BzIjpbXSwiS2lkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS3R5IjoiRUMiLCJOIjpudWxsLCJPdGgiOm51bGwsIlAiOm51bGwsIlEiOm51bGwsIlFJIjpudWxsLCJVc2UiOiJzaWciLCJYIjoiVDNCQzlQUlNkamFIcEV4VXF6Z1RpMWt5X2pvMG9YSHMtbVNoN0RsRVZFMCIsIlg1YyI6W10sIlg1dCI6bnVsbCwiWDV0UzI1NiI6bnVsbCwiWDV1IjpudWxsLCJZIjoiMjhmNEtLS0hyZ3dfM2Z4SlJsX1c0eExkcm5FUXVPQWNfZ0wyN0tNc0NSOCIsIktleVNpemUiOjI1NiwiSGFzUHJpdmF0ZUtleSI6ZmFsc2UsIkNyeXB0b1Byb3ZpZGVyRmFjdG9yeSI6eyJDcnlwdG9Qcm92aWRlckNhY2hlIjp7fSwiQ3VzdG9tQ3J5cHRvUHJvdmlkZXIiOm51bGwsIkNhY2hlU2lnbmF0dXJlUHJvdmlkZXJzIjp0cnVlfX0
       - SERVICE__CMSSERVICE__API__PORT=80
       - SERVICE__CMSSERVICE__GRPC__PORT=7002
+      - SERVICE__STATSSERVICE__GRPC__HOST=statsservice
+      - SERVICE__STATSSERVICE__GRPC__PORT=7010
     volumes:
       - ../../src/tmpdata/cms:/data
-  fakepayservice:
-    image: opennetwork/fakepayments-service:linux-amd64
+  paymentservice:
+    image: opennetwork/payment-service:linux-amd64
     expose:
       - "80"
     ports:
-      - "7003:7003"
+      - "7004:7004"
     environment:
       - VIRTUAL_HOST=localhost
       - VIRTUAL_PORT=80
-      - VIRTUAL_PATH=~^/api/fakepay
+      - VIRTUAL_PATH=~^/api/payment
       - JWT_PUB_KEY=eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjpudWxsLCJEUCI6bnVsbCwiRFEiOm51bGwsIkUiOm51bGwsIksiOm51bGwsIktleUlkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS2V5T3BzIjpbXSwiS2lkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS3R5IjoiRUMiLCJOIjpudWxsLCJPdGgiOm51bGwsIlAiOm51bGwsIlEiOm51bGwsIlFJIjpudWxsLCJVc2UiOiJzaWciLCJYIjoiVDNCQzlQUlNkamFIcEV4VXF6Z1RpMWt5X2pvMG9YSHMtbVNoN0RsRVZFMCIsIlg1YyI6W10sIlg1dCI6bnVsbCwiWDV0UzI1NiI6bnVsbCwiWDV1IjpudWxsLCJZIjoiMjhmNEtLS0hyZ3dfM2Z4SlJsX1c0eExkcm5FUXVPQWNfZ0wyN0tNc0NSOCIsIktleVNpemUiOjI1NiwiSGFzUHJpdmF0ZUtleSI6ZmFsc2UsIkNyeXB0b1Byb3ZpZGVyRmFjdG9yeSI6eyJDcnlwdG9Qcm92aWRlckNhY2hlIjp7fSwiQ3VzdG9tQ3J5cHRvUHJvdmlkZXIiOm51bGwsIkNhY2hlU2lnbmF0dXJlUHJvdmlkZXJzIjp0cnVlfX0
-      - SERVICE__FAKEPAYSERVICE__API__PORT=80
-      - SERVICE__FAKEPAYSERVICE__GRPC__PORT=7003
+      - SERVICE__PAYMENTSERVICE__API__PORT=80
+      - SERVICE__PAYMENTSERVICE__GRPC__PORT=7004
+      - SERVICE__AUTHSERVICE__GRPC__HOST=authservice
+      - SERVICE__AUTHSERVICE__GRPC__PORT=7001
     volumes:
-      - ../../src/tmpdata/fakepay:/data
+      - ../../src/tmpdata/payment:/data
   settingsservice:
     image: opennetwork/simplesettings-service:linux-amd64
     expose:
@@ -90,19 +93,14 @@ services:
       - ../../src/tmpdata/stats:/data
   eventdb:
     image: eventstore/eventstore:21.10.8-buster-slim
-    expose:
-      - "1113"
     ports:
       - "2113:2113"
     environment:
       - EVENTSTORE_CLUSTER_SIZE=1
       - EVENTSTORE_RUN_PROJECTIONS=All
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
-      - EVENTSTORE_EXT_TCP_PORT=1113
       - EVENTSTORE_HTTP_PORT=2113
       - EVENTSTORE_INSECURE=true
-      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
-      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
     volumes:
       - ../../src/tmpdata/eventdb/data:/var/lib/eventstore
       - ../../src/tmpdata/eventdb/logs:/var/log/eventstore

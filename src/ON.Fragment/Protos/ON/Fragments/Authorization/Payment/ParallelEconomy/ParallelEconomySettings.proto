@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.ParallelEconomy;
+
+message ParallelEconomyPublicSettings {
+  bool Enabled = 1;
+  bool IsTest = 2;
+}
+
+message ParallelEconomyOwnerSettings {
+  string UserId = 1;
+  string UserApiKey = 2;
+  string LocationId = 3;
+  string ProductId = 4;
+}

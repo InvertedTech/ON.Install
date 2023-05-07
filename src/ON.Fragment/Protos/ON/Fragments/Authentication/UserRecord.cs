@@ -24,6 +24,24 @@ namespace ON.Fragments.Authentication
             get => Public.UserIDGuid;
             set => Public.UserIDGuid = value;
         }
+
+        public UserSearchRecord ToUserSearchRecord()
+        {
+            var record =  new UserSearchRecord()
+            {
+                UserID = Public.UserID,
+                UserName = Public.Data.UserName,
+                DisplayName = Public.Data.DisplayName,
+                CreatedOnUTC = Public.CreatedOnUTC,
+                ModifiedOnUTC = Public.ModifiedOnUTC,
+                DisabledOnUTC = Public.DisabledOnUTC,
+            };
+
+            record.Emails.AddRange(record.Emails);
+            record.Roles.AddRange(record.Roles);
+
+            return record;
+        }
     }
 
     public sealed partial class UserPublicRecord : pb::IMessage<UserPublicRecord>

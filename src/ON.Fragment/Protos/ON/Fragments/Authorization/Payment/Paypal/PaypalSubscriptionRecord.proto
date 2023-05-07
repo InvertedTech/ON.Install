@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Paypal;
+
+import "google/protobuf/timestamp.proto";
+import "Protos/ON/Fragments/Authorization/Payment/SharedTypes.proto";
+
+message PaypalSubscriptionFullRecord {
+	PaypalSubscriptionRecord Subscription = 1;
+	repeated PaypalPaymentRecord Payments = 2;
+}
+
+message PaypalSubscriptionRecord {
+  string UserID = 1; // Guid for the user
+  string SubscriptionID = 2; // Guid for the Subscription
+  string PaypalSubscriptionID = 3;
+  uint32 AmountCents = 4;
+  SubscriptionStatus Status = 5;
+  google.protobuf.Timestamp CreatedOnUTC = 11;
+  google.protobuf.Timestamp LastPaidUTC = 12;
+  google.protobuf.Timestamp PaidThruUTC = 13;
+  google.protobuf.Timestamp RenewsOnUTC = 14;
+  google.protobuf.Timestamp CanceledOnUTC = 15;
+  google.protobuf.Timestamp ChangedOnUTC = 16;
+}
+
+message PaypalPaymentRecord {
+  string UserID = 1; // Guid for the user
+  string SubscriptionID = 2; // Guid for the Subscription
+  string PaymentID = 3; // Guid for the Payment
+  string PaypalPaymentID = 4;
+  uint32 AmountCents = 5;
+  PaymentStatus Status = 6;
+  google.protobuf.Timestamp CreatedOnUTC = 11;
+  google.protobuf.Timestamp PaidOnUTC = 12;
+  google.protobuf.Timestamp PaidThruUTC = 13;
+  google.protobuf.Timestamp ChangedOnUTC = 14;
+}

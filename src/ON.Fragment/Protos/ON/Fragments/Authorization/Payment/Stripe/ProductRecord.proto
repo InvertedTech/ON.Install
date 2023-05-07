@@ -1,0 +1,15 @@
+﻿syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Stripe;
+
+message ProductRecord {
+	string ProductId = 1;
+	string PriceId = 2;
+	string CheckoutUrl = 3;
+	string Name = 4;
+	int32 Price = 5;
+}
+
+message ProductList {
+	repeated ProductRecord Records = 1;
+}

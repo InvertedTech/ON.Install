@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,43 +15,33 @@ namespace ON.SimpleWeb.Controllers
     {
         private readonly ILogger<SubscriptionPaypalController> logger;
         private readonly PaymentsService paymentsService;
-        private readonly AccountService acctsService;
         private readonly ONUserHelper userHelper;
 
-        public SubscriptionPaypalController(ILogger<SubscriptionPaypalController> logger, PaymentsService paymentsService, AccountService acctsService, ONUserHelper userHelper)
+        public SubscriptionPaypalController(ILogger<SubscriptionPaypalController> logger, PaymentsService paymentsService, ONUserHelper userHelper)
         {
             this.logger = logger;
             this.paymentsService = paymentsService;
-            this.acctsService = acctsService;
             this.userHelper = userHelper;
         }
 
-        [HttpGet("")]
-        public async Task<IActionResult> OverviewGet()
+        [HttpGet("cancel/{id}")]
+        public async Task<IActionResult> Cancel(string id, string reason = null)
         {
-            var rec = await paymentsService.GetCurrentRecord();
-            if (rec == null)
-                return View("Main", null);
-            return View("Main", new CurrentViewModel(rec.Level, acctsService, rec.CanceledOnUTC != null));
-        }
+            if (Guid.TryParse(id, out var subscriptionId))
+                await paymentsService.CancelSubscription(subscriptionId, reason ?? "No reason");
 
-        [HttpGet("cancel")]
-        public async Task<IActionResult> Cancel(string reason = null)
-        {
-            await paymentsService.CancelSubscription(reason ?? "No reason");
-
-            return RedirectToAction(nameof(OverviewGet));
+            return Redirect("/settings/refreshtoken?url=/subscription/");
         }
 
         [HttpGet("new")]
         public async Task<IActionResult> New(string subId)
         {
             if (string.IsNullOrWhiteSpace(subId))
-                return RedirectToAction(nameof(OverviewGet));
+                return Redirect("/settings/refreshtoken?url=/subscription/");
 
             await paymentsService.NewSubscription(subId);
 
-            return Redirect("/settings/refreshtoken?url=/subscription/paypal");
+            return Redirect("/settings/refreshtoken?url=/subscription/");
         }
     }
 }

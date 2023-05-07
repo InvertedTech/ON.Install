@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Crypto;
+
+message CryptoNewDetails {
+  BitcoinNewDetails Bitcoin = 1;
+}
+
+message BitcoinNewDetails {
+  string BitcoinRecieveAddress = 1;
+  uint32 SatoshiPerMonth = 2;
+}
+

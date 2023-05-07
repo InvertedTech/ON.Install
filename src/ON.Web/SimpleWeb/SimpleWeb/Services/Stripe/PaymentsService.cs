@@ -1,7 +1,7 @@
 ﻿using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
-using ON.Fragments.Authorization.Payments.Stripe;
+using ON.Fragments.Authorization.Payment.Stripe;
 using ON.Settings;
 using System.Threading.Tasks;
 
@@ -34,7 +34,7 @@ namespace ON.SimpleWeb.Services.Stripe
                 Reason = reason
             };
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.StripePaymentsServiceChannel);
+            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
             var reply = await client.CancelOwnSubscriptionAsync(req, GetMetadata());
             return reply;
         }
@@ -44,13 +44,13 @@ namespace ON.SimpleWeb.Services.Stripe
             if (!IsLoggedIn)
                 return null;
 
-            if (nameHelper.StripePaymentsServiceChannel == null)
+            if (nameHelper.PaymentServiceChannel == null)
                 return null;
 
-            logger.LogWarning($"******Trying to hopefully connect to PaymentService at:({nameHelper.StripePaymentsServiceChannel.Target})******");
+            logger.LogWarning($"******Trying to hopefully connect to PaymentService at:({nameHelper.PaymentServiceChannel.Target})******");
 
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.StripePaymentsServiceChannel);
+            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
             var reply = await client.GetOwnSubscriptionRecordAsync(new GetOwnSubscriptionRecordRequest(), GetMetadata());
             return reply.Record;
         }
@@ -68,7 +68,7 @@ namespace ON.SimpleWeb.Services.Stripe
                 CustomerId = customerId,
             };
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.StripePaymentsServiceChannel);
+            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
             var reply = await client.NewOwnSubscriptionAsync(req, GetMetadata());
             return reply;
         }
@@ -82,7 +82,7 @@ namespace ON.SimpleWeb.Services.Stripe
             {
                 CustomerId = customerId
             };
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.StripePaymentsServiceChannel);
+            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
             var reply = await client.CreateBillingPortalAsync(req, GetMetadata());
 
             return reply;
@@ -107,7 +107,7 @@ namespace ON.SimpleWeb.Services.Stripe
             {
                 PriceId = priceId
             };
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.StripePaymentsServiceChannel);
+            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
             var reply = await client.CreateCheckoutSessionAsync(req, GetMetadata());
 
             return reply;

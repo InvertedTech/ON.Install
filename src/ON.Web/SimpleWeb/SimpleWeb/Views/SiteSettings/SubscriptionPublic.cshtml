@@ -14,9 +14,17 @@
             <th>Name</th>
             <th>Description</th>
         </tr>
-        @foreach (var tiers in Model.Tiers.OrderBy(t => t.Amount))
+        @foreach (var tiers in Model.Tiers.OrderBy(t => t.AmountCents))
         {
             @await Html.PartialAsync("SubscriptionTier", tiers)
         }
     </table>
+
+    <ul class="list-group">
+        @await Html.PartialAsync("SubscriptionPublicFake", Model.Fake ?? new())
+        @await Html.PartialAsync("SubscriptionPublicCrypto", Model.Crypto ?? new())
+        @await Html.PartialAsync("SubscriptionPublicPE", Model.ParallelEconomy ?? new())
+        @await Html.PartialAsync("SubscriptionPublicStripe", Model.Stripe ?? new())
+        @await Html.PartialAsync("SubscriptionPublicPaypal", Model.Paypal ?? new())
+    </ul>
 </li>

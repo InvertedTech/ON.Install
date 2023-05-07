@@ -100,14 +100,21 @@ namespace ON.Content.SimpleCMS.Service
         [AllowAnonymous]
         public override async Task<GetAllContentResponse> GetAllContent(GetAllContentRequest request, ServerCallContext context)
         {
+            var possiblyIDs = request.PossibleContentIDs.ToList();
             var searchCatId = request.CategoryId;
             var searchChanId = request.ChannelId;
+            var searchAuthorId = request.AuthorId;
             var searchTag = request.Tag;
+            var searchLiveOnly = request.OnlyLive;
 
+            if (!possiblyIDs.Any())
+                possiblyIDs = null;
             if (string.IsNullOrWhiteSpace(searchCatId))
                 searchCatId = null;
             if (string.IsNullOrWhiteSpace(searchChanId))
                 searchChanId = null;
+            if (string.IsNullOrWhiteSpace(searchAuthorId))
+                searchAuthorId = null;
             if (string.IsNullOrWhiteSpace(searchTag))
                 searchTag = null;
 
@@ -118,6 +125,10 @@ namespace ON.Content.SimpleCMS.Service
             {
                 if (!CanShowInList(rec, null))
                     continue;
+
+                if (possiblyIDs != null)
+                    if (!possiblyIDs.Contains(rec.Public.ContentID))
+                        continue;
 
                 if (request.SubscriptionSearch != null)
                 {
@@ -135,8 +146,16 @@ namespace ON.Content.SimpleCMS.Service
                     if (!rec.Public.Data.ChannelIds.Contains(searchChanId))
                         continue;
 
+                if (searchAuthorId != null)
+                    if (rec.Public.Data.AuthorID != searchAuthorId)
+                        continue;
+
                 if (searchTag != null)
                     if (!rec.Public.Data.Tags.Select(t => t.ToLower()).Contains(searchTag.ToLower()))
+                        continue;
+
+                if (searchLiveOnly)
+                    if (!(rec.Public.Data.Video?.IsLive ?? false))
                         continue;
 
                 var listRec = rec.Public.ToContentListRecord();
@@ -155,12 +174,13 @@ namespace ON.Content.SimpleCMS.Service
 
             if (request.PageSize > 0)
             {
+                res.PageOffsetStart = request.PageOffset;
+
                 var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
                 res.Records.Clear();
                 res.Records.AddRange(page);
             }
 
-            res.PageOffsetStart = request.PageOffset;
             res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
 
             return res;
@@ -169,10 +189,14 @@ namespace ON.Content.SimpleCMS.Service
         [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
         public override async Task<GetAllContentAdminResponse> GetAllContentAdmin(GetAllContentAdminRequest request, ServerCallContext context)
         {
+            var possiblyIDs = request.PossibleContentIDs.ToList();
             var searchCatId = request.CategoryId;
             var searchChanId = request.ChannelId;
             var searchTag = request.Tag;
+            var searchLiveOnly = request.OnlyLive;
 
+            if (!possiblyIDs.Any())
+                possiblyIDs = null;
             if (string.IsNullOrWhiteSpace(searchCatId))
                 searchCatId = null;
             if (string.IsNullOrWhiteSpace(searchChanId))
@@ -196,6 +220,10 @@ namespace ON.Content.SimpleCMS.Service
                         continue;
                 }
 
+                if (possiblyIDs != null)
+                    if (!possiblyIDs.Contains(rec.Public.ContentID))
+                        continue;
+
                 if (request.SubscriptionSearch != null)
                 {
                     if (rec.Public.Data.SubscriptionLevel < request.SubscriptionSearch.MinimumLevel)
@@ -216,6 +244,10 @@ namespace ON.Content.SimpleCMS.Service
                     if (!rec.Public.Data.Tags.Select(t => t.ToLower()).Contains(searchTag.ToLower()))
                         continue;
 
+                if (searchLiveOnly)
+                    if (!(rec.Public.Data.Video?.IsLive ?? false))
+                        continue;
+
                 var listRec = rec.Public.ToContentListRecord();
 
                 if (request.ContentType != ContentType.None)
@@ -232,12 +264,13 @@ namespace ON.Content.SimpleCMS.Service
 
             if (request.PageSize > 0)
             {
+                res.PageOffsetStart = request.PageOffset;
+
                 var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
                 res.Records.Clear();
                 res.Records.AddRange(page);
             }
 
-            res.PageOffsetStart = request.PageOffset;
             res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
 
             return res;
@@ -262,7 +295,7 @@ namespace ON.Content.SimpleCMS.Service
                     return new();
 
                 if (!CanShowContent(rec, user))
-                    rec.Public.Data.ClearContentDataOneof();
+                    ClearPublicData(rec.Public.Data);
 
                 //await statsClient.RecordView(contentId, user);
 
@@ -293,7 +326,7 @@ namespace ON.Content.SimpleCMS.Service
                 return new();
 
             if (!CanShowContent(rec, user))
-                rec.Public.Data.ClearContentDataOneof();
+                ClearPublicData(rec.Public.Data);
 
             return new() { Record = rec.Public };
         }
@@ -327,6 +360,61 @@ namespace ON.Content.SimpleCMS.Service
 
             var res = new GetRecentTagsResponse();
             res.Tags.AddRange(allTags.Take(num));
+            return res;
+        }
+
+        [AllowAnonymous]
+        public override async Task<GetRelatedContentResponse> GetRelatedContent(GetRelatedContentRequest request, ServerCallContext context)
+        {
+            var user = ONUserHelper.ParseUser(context.GetHttpContext());
+
+            Guid contentId = request.ContentID.ToGuid();
+            if (contentId == Guid.Empty)
+                return new ();
+
+            var curRec = await dataProvider.GetById(contentId);
+            if (curRec == null)
+                return new();
+
+            if (!CanShowInList(curRec, user))
+                return new();
+
+            var res = new GetRelatedContentResponse();
+
+            List<ContentListRecord> list = new();
+            await foreach (var rec in dataProvider.GetAll())
+            {
+                if (!CanShowInList(rec, null))
+                    continue;
+
+                if (rec.Public.ContentID == request.ContentID)
+                    continue;
+
+                var listRec = rec.Public.ToContentListRecord();
+
+                if (curRec.Public.Data.GetContentType() != ContentType.None)
+                {
+                    if (listRec.ContentType != curRec.Public.Data.GetContentType())
+                        continue;
+                }
+
+                list.Add(listRec);
+            }
+
+            res.Records.AddRange(list.OrderByDescending(r => r.PublishOnUTC));
+            res.PageTotalItems = (uint)res.Records.Count;
+
+            if (request.PageSize > 0)
+            {
+                res.PageOffsetStart = request.PageOffset;
+
+                var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
+                res.Records.Clear();
+                res.Records.AddRange(page);
+            }
+
+            res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
+
             return res;
         }
 
@@ -372,6 +460,91 @@ namespace ON.Content.SimpleCMS.Service
             await dataProvider.Save(record);
 
             return new() { Record = record };
+        }
+
+        [AllowAnonymous]
+        public override async Task<SearchContentResponse> SearchContent(SearchContentRequest request, ServerCallContext context)
+        {
+            var searchQueryBits = Array.Empty<string>();
+            var searchCatId = request.CategoryId;
+            var searchChanId = request.ChannelId;
+            var searchTag = request.Tag;
+            var searchLiveOnly = request.OnlyLive;
+
+            if (!string.IsNullOrWhiteSpace(request.Query))
+                searchQueryBits = request.Query.ToLower().Replace("\"", " ").Split(' ', StringSplitOptions.RemoveEmptyEntries).ToArray();
+
+            if (string.IsNullOrWhiteSpace(searchCatId))
+                searchCatId = null;
+            if (string.IsNullOrWhiteSpace(searchChanId))
+                searchChanId = null;
+            if (string.IsNullOrWhiteSpace(searchTag))
+                searchTag = null;
+
+            var res = new SearchContentResponse();
+
+            List<ContentListRecord> list = new();
+            await foreach (var rec in dataProvider.GetAll())
+            {
+                if (!CanShowInList(rec, null))
+                    continue;
+
+                if (request.SubscriptionSearch != null)
+                {
+                    if (rec.Public.Data.SubscriptionLevel < request.SubscriptionSearch.MinimumLevel)
+                        continue;
+                    if (rec.Public.Data.SubscriptionLevel > request.SubscriptionSearch.MaximumLevel)
+                        continue;
+                }
+
+                if (searchCatId != null)
+                    if (!rec.Public.Data.CategoryIds.Contains(searchCatId))
+                        continue;
+
+                if (searchChanId != null)
+                    if (!rec.Public.Data.ChannelIds.Contains(searchChanId))
+                        continue;
+
+                if (searchTag != null)
+                    if (!rec.Public.Data.Tags.Select(t => t.ToLower()).Contains(searchTag.ToLower()))
+                        continue;
+
+                if (searchLiveOnly)
+                    if (!(rec.Public.Data.Video?.IsLive ?? false))
+                        continue;
+
+                var listRec = rec.Public.ToContentListRecord();
+
+                if (request.ContentType != ContentType.None)
+                {
+                    if (listRec.ContentType != request.ContentType)
+                        continue;
+                }
+
+                if (searchQueryBits.Length > 0)
+                {
+                    if (!MeetsQuery(searchQueryBits, rec))
+                        continue;
+                }
+
+                list.Add(listRec);
+            }
+
+            res.Records.AddRange(list.OrderByDescending(r => r.PublishOnUTC));
+            res.PageTotalItems = (uint)res.Records.Count;
+
+            if (request.PageSize > 0)
+            {
+                res.PageOffsetStart = request.PageOffset;
+
+                var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
+                res.Records.Clear();
+                res.Records.AddRange(page);
+            }
+
+            res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
+
+            return res;
         }
 
         [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]
@@ -430,7 +603,7 @@ namespace ON.Content.SimpleCMS.Service
 
         private bool CanShowContent(ContentRecord rec, ONUser user)
         {
-            if (user.IsWriterOrHigher)
+            if (user?.IsWriterOrHigher ?? false)
                 return true;
 
             if (!CanShowInList(rec, user))
@@ -455,6 +628,29 @@ namespace ON.Content.SimpleCMS.Service
                 return false;
 
             return true;
+        }
+
+        private void ClearPublicData(ContentPublicData data)
+        {
+            switch (data.ContentDataOneofCase)
+            {
+                case ContentPublicData.ContentDataOneofOneofCase.Audio:
+                    data.Audio.AudioAssetID = "";
+                    data.Audio.HtmlBody = "";
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Picture:
+                    data.Picture.HtmlBody = "";
+                    data.Picture.ImageAssetIDs.Clear();
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Video:
+                    data.Video.HtmlBody = "";
+                    data.Video.RumbleVideoId = "";
+                    data.Video.YoutubeVideoId = "";
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Written:
+                    data.Written.HtmlBody = "";
+                    break;
+            }
         }
 
         private bool IsValid(ContentPublicData pubData, ContentPrivateData privData)
@@ -545,6 +741,47 @@ namespace ON.Content.SimpleCMS.Service
                 return false;
 
             return true;
+        }
+
+        private bool MeetsQuery(string[] searchQueryBits, ContentRecord rec)
+        {
+            if (MeetsQuery(searchQueryBits, rec.Public.Data.Title.ToLower()))
+                return true;
+
+            if (MeetsQuery(searchQueryBits, rec.Public.Data.Description.ToLower()))
+                return true;
+
+            switch (rec.Public.Data.ContentDataOneofCase)
+            {
+                case ContentPublicData.ContentDataOneofOneofCase.Audio:
+                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Audio.HtmlBody.ToLower()))
+                        return true;
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Picture:
+                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Picture.HtmlBody.ToLower()))
+                        return true;
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Written:
+                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Written.HtmlBody.ToLower()))
+                        return true;
+                    break;
+                case ContentPublicData.ContentDataOneofOneofCase.Video:
+                    if (MeetsQuery(searchQueryBits, rec.Public.Data.Video.HtmlBody.ToLower()))
+                        return true;
+                    break;
+                default:
+                    break;
+            }
+
+            return false;
+        }
+
+        private bool MeetsQuery(string[] searchQueryBits, string haystack)
+        {
+            foreach (string bit in searchQueryBits)
+                if (haystack.Contains(bit))
+                    return true;
+            return false;
         }
     }
 }

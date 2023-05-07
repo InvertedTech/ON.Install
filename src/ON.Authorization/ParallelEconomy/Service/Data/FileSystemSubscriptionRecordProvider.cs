@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using ON.Authorization.ParallelEconomy.Service.Models;
 using ON.Fragments.Authorization;
-using ON.Fragments.Authorization.Payments.ParallelEconomy;
+using ON.Fragments.Authorization.Payment.ParallelEconomy;
 using System;
 using System.Collections.Generic;
 using System.IO;

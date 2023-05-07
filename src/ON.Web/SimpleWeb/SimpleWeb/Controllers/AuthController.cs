@@ -229,7 +229,7 @@ namespace ON.SimpleWeb.Controllers
         }
 
         [HttpPost("/settings/profile")]
-        public async Task<IActionResult> UpdateProfilePic(IFormFile? file)
+        public async Task<IActionResult> UpdateProfilePic(IFormFile file)
         {
             if (file == null) return RedirectToAction(nameof(SettingsGet));
             if (file.Length == 0) return RedirectToAction(nameof(SettingsGet));

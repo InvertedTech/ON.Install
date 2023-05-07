@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ON.Fragments.Content;
+
+import "Protos/ON/Fragments/Content/AudioAssetRecord.proto";
+import "Protos/ON/Fragments/Content/ImageAssetRecord.proto";
+
+message AssetRecord {
+  oneof AssetRecord_oneof
+  {
+    AudioAssetRecord Audio = 1;
+    ImageAssetRecord Image = 2;
+  }
+}

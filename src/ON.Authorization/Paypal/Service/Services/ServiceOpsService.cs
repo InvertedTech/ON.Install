@@ -19,17 +19,17 @@ namespace ON.Authorization.Paypal.Service
             this.logger = logger;
         }
 
-        public override async Task<ServiceStatusResponse> ServiceStatus(ServiceStatusRequest request, ServerCallContext context)
+        public override Task<ServiceStatusResponse> ServiceStatus(ServiceStatusRequest request, ServerCallContext context)
         {
-            return new() { Status = await ServiceStatus(settingsClient) };
+            return Task.FromResult(new ServiceStatusResponse() { Status = ServiceStatus(settingsClient) });
         }
 
-        public static async Task<OnlineStatus> ServiceStatus(SettingsClient settingsClient)
+        public static OnlineStatus ServiceStatus(SettingsClient settingsClient)
         {
-            if (!(await settingsClient.GetOwnerData()).Subscription.Paypal.Enabled)
+            if (!settingsClient.OwnerData.Subscription.Paypal.Enabled)
                 return ServiceStatusResponse.Types.OnlineStatus.Offline;
 
-            if (!(await settingsClient.GetOwnerData()).Subscription.Paypal.IsValid)
+            if (!settingsClient.OwnerData.Subscription.Paypal.IsValid)
                 return ServiceStatusResponse.Types.OnlineStatus.Faulted;
 
             return ServiceStatusResponse.Types.OnlineStatus.Online;

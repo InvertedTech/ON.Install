@@ -33,21 +33,21 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         private async Task LoadIndex()
         {
-            await foreach(var r in GetAll())
+            await foreach (var r in GetAll())
             {
-                loginIndex.TryAdd(r.Normal.Public.Data.UserName, r.UserIDGuid);
+                loginIndex.TryAdd(r.Normal.Public.Data.UserName.ToLower(), r.UserIDGuid);
             }
         }
 
         public Task<bool> ChangeLoginIndex(string oldLoginName, string newLoginName, Guid id)
         {
-            if (!loginIndex.ContainsKey(oldLoginName))
+            if (!loginIndex.ContainsKey(oldLoginName.ToLower()))
                 return Task.FromResult(false);
 
-            if (!loginIndex.TryAdd(newLoginName, id))
+            if (!loginIndex.TryAdd(newLoginName.ToLower(), id))
                 return Task.FromResult(false);
 
-            loginIndex.TryRemove(oldLoginName, out var dummy);
+            loginIndex.TryRemove(oldLoginName.ToLower(), out var dummy);
 
             return Task.FromResult(true);
         }
@@ -60,7 +60,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             if (fd.Exists)
                 return false;
 
-            if (!loginIndex.TryAdd(user.Normal.Public.Data.UserName, id))
+            if (!loginIndex.TryAdd(user.Normal.Public.Data.UserName.ToLower(), id))
                 return false;
 
             await File.WriteAllBytesAsync(fd.FullName, user.ToByteArray());
@@ -77,7 +77,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             var rec = UserRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
             fd.Delete();
 
-            loginIndex.TryRemove(rec.Normal.Public.Data.UserName, out var dummy);
+            loginIndex.TryRemove(rec.Normal.Public.Data.UserName.ToLower(), out var dummy);
 
             return true;
         }
@@ -90,7 +90,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         public Task<bool> Exists(string loginName)
         {
-            return Task.FromResult(loginIndex.TryGetValue(loginName, out var dummy));
+            return Task.FromResult(loginIndex.TryGetValue(loginName.ToLower(), out var dummy));
         }
 
         public async IAsyncEnumerable<UserRecord> GetAll()
@@ -115,7 +115,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         public async Task<UserRecord> GetByLogin(string loginName)
         {
-            if (loginIndex.TryGetValue(loginName, out var id))
+            if (loginIndex.TryGetValue(loginName.ToLower(), out var id))
                 return await GetById(id);
 
             return null;
@@ -123,9 +123,13 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
         public async Task Save(UserRecord user)
         {
+            user.Normal.Public.Data.UserName = user.Normal.Public.Data.UserName.ToLower();
+
             var id = user.UserIDGuid;
             var fd = GetDataFilePath(id);
             await File.WriteAllBytesAsync(fd.FullName, user.ToByteArray());
+
+            loginIndex.AddOrUpdate(user.Normal.Public.Data.UserName.ToLower(), id, (k, v) => id);
         }
 
         private IEnumerable<FileInfo> GetAllDataFiles()

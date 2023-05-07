@@ -154,6 +154,14 @@ namespace ON.SimpleWeb.Services
             await client.PublishContentAsync(req, GetMetadata());
         }
 
+        public async Task<IEnumerable<ContentListRecord>> Search(string query)
+        {
+            var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
+            var res = await client.SearchContentAsync(new() { Query = query }, GetMetadata());
+
+            return res?.Records?.ToList() ?? Enumerable.Empty<ContentListRecord>();
+        }
+
         public async Task UnpublishContent(Guid contentId)
         {
             if (!User.CanPublish)

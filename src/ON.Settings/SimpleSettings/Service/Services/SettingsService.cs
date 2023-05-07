@@ -42,6 +42,8 @@ namespace ON.Settings.SimpleSettings.Service.Services
         public override async Task<GetAdminDataResponse> GetAdminData(GetAdminDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
+            if (record == null)
+                return new() { };
 
             return new()
             {
@@ -54,13 +56,16 @@ namespace ON.Settings.SimpleSettings.Service.Services
         public override async Task<GetAdminNewerDataResponse> GetAdminNewerData(GetAdminNewerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
-            if (record.Public.VersionNum == request.VersionNum)
+            if (record == null)
+                return new() { };
+
+            if (record?.Public?.VersionNum == request.VersionNum)
                 record = null;
 
             return new()
             {
-                Public = record.Public,
-                Private = record.Private,
+                Public = record?.Public,
+                Private = record?.Private,
             };
         }
 
@@ -68,12 +73,14 @@ namespace ON.Settings.SimpleSettings.Service.Services
         public override async Task<GetOwnerDataResponse> GetOwnerData(GetOwnerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
+            if (record == null)
+                return new() { };
 
             return new()
             {
-                Public = record.Public,
-                Private = record.Private,
-                Owner = record.Owner,
+                Public = record?.Public,
+                Private = record?.Private,
+                Owner = record?.Owner,
             };
         }
 
@@ -81,7 +88,10 @@ namespace ON.Settings.SimpleSettings.Service.Services
         public override async Task<GetOwnerNewerDataResponse> GetOwnerNewerData(GetOwnerNewerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
-            if (record.Public.VersionNum == request.VersionNum)
+            if (record == null)
+                return new() { };
+
+            if (record?.Public?.VersionNum == request.VersionNum)
                 record = null;
 
             return new()
@@ -96,18 +106,23 @@ namespace ON.Settings.SimpleSettings.Service.Services
         public override async Task<GetPublicDataResponse> GetPublicData(GetPublicDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
+            if (record == null)
+                return new() { };
 
-            return new() { Public = record.Public };
+            return new() { Public = record?.Public };
         }
 
         [AllowAnonymous]
         public override async Task<GetPublicNewerDataResponse> GetPublicNewerData(GetPublicNewerDataRequest request, ServerCallContext context)
         {
             var record = await dataProvider.Get();
-            if (record.Public.VersionNum == request.VersionNum)
+            if (record == null)
+                return new() { };
+
+            if (record?.Public?.VersionNum == request.VersionNum)
                 record.Public = null;
 
-            return new() { Public = record.Public };
+            return new() { Public = record?.Public };
         }
 
         [Authorize(Roles = ONUser.ROLE_OWNER)]
@@ -257,6 +272,87 @@ namespace ON.Settings.SimpleSettings.Service.Services
 
                 var record = await dataProvider.Get();
                 record.Public.Comments = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_OWNER)]
+        public override async Task<ModifyNotificationOwnerDataResponse> ModifyNotificationOwnerData(ModifyNotificationOwnerDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Owner.Notification = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<ModifyNotificationPrivateDataResponse> ModifyNotificationPrivateData(ModifyNotificationPrivateDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Private.Notification = request.Data;
+
+                record.Public.VersionNum++;
+                record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new() { Error = ModifyResponseErrorType.NoError };
+            }
+            catch
+            {
+                return new() { Error = ModifyResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<ModifyNotificationPublicDataResponse> ModifyNotificationPublicData(ModifyNotificationPublicDataRequest request, ServerCallContext context)
+        {
+            try
+            {
+                if (request.Data == null)
+                    return new() { Error = ModifyResponseErrorType.UnknownError };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+
+                var record = await dataProvider.Get();
+                record.Public.Notification = request.Data;
 
                 record.Public.VersionNum++;
                 record.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
@@ -466,6 +562,26 @@ namespace ON.Settings.SimpleSettings.Service.Services
                     Subscription = new()
                     {
                         AllowOther = true,
+                        ParallelEconomy = new()
+                        {
+                            Enabled = false,
+                        },
+                        Stripe = new()
+                        {
+                            Enabled = false,
+                        },
+                        Paypal = new()
+                        {
+                            Enabled = false,
+                        },
+                        Crypto = new()
+                        {
+                            Enabled = false,
+                        },
+                        Fake = new()
+                        {
+                            Enabled = true,
+                        }
                     },
                     CMS = new()
                     {
@@ -491,22 +607,9 @@ namespace ON.Settings.SimpleSettings.Service.Services
                     Personalization = new() { },
                     Subscription = new()
                     {
-                        ParallelEconomy = new()
-                        {
-                            Enabled = false,
-                        },
-                        Stripe = new()
-                        {
-                            Enabled = false,
-                        },
-                        Paypal = new()
-                        {
-                            Enabled = false,
-                        },
-                        Fake = new()
-                        {
-                            Enabled = true,
-                        }
+                        ParallelEconomy = new(),
+                        Stripe = new(),
+                        Paypal = new(),
                     },
                 }
             };
@@ -516,28 +619,28 @@ namespace ON.Settings.SimpleSettings.Service.Services
                 Name = "Basic",
                 Description = "You're basic bro...",
                 Color = "orange",
-                Amount = 5,
+                AmountCents = 500,
             });
             record.Public.Subscription.Tiers.Add(new SubscriptionTier()
             {
                 Name = "Bronze",
                 Description = "meh...",
                 Color = "bronze",
-                Amount = 10,
+                AmountCents = 1000,
             });
             record.Public.Subscription.Tiers.Add(new SubscriptionTier()
             {
                 Name = "Silver",
                 Description = "Nice...",
                 Color = "silver",
-                Amount = 25,
+                AmountCents = 2500,
             });
             record.Public.Subscription.Tiers.Add(new SubscriptionTier()
             {
                 Name = "Gold",
                 Description = "You rock...",
                 Color = "gold",
-                Amount = 50,
+                AmountCents = 5000,
             });
 
             record.Private.Comments.BlackList.AddRange(new[] { "fuck", "shit", "cunt" });

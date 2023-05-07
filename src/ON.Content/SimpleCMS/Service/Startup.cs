@@ -89,6 +89,7 @@ namespace ON.Content.SimpleCMS.Service
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<AssetService>();
+                endpoints.MapGrpcService<AssetBackupService>();
                 endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ContentService>();
                 endpoints.MapGrpcService<ServiceOpsService>();

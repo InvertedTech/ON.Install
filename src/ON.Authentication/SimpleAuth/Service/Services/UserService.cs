@@ -61,8 +61,9 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (user == null)
                 return new AuthenticateUserResponse();
 
-            var hash = ComputeSaltedHash(request.Password, user.Server.PasswordSalt.Span);
-            if (!CryptographicOperations.FixedTimeEquals(user.Server.PasswordHash.Span, hash))
+            bool isCorrect = await IsPasswordCorrect(request.Password, user);
+
+            if (!isCorrect)
                 return new AuthenticateUserResponse();
 
             var otherClaims = await claimsClient.GetOtherClaims(user.UserIDGuid);
@@ -275,8 +276,9 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                         ModifiedOnUTC = now,
                         Data = new()
                         {
-                            UserName = request.UserName,
+                            UserName = request.UserName.ToLower(),
                             DisplayName = request.DisplayName,
+                            Bio = request.Bio,
                         },
                     },
                     Private = new()
@@ -304,7 +306,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     Error = CreateUserResponse.Types.CreateUserResponseErrorType.UnknownError
                 };
 
-            if (await dataProvider.Exists(user.Normal.Public.Data.UserName))
+            if (await dataProvider.Exists(user.Normal.Public.Data.UserName.ToLower()))
                 return new CreateUserResponse
                 {
                     Error = CreateUserResponse.Types.CreateUserResponseErrorType.UserNameTaken
@@ -472,6 +474,17 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return new() { Record = record?.Normal.Public };
         }
 
+        [AllowAnonymous]
+        public override async Task<GetOtherPublicUserByUserNameResponse> GetOtherPublicUserByUserName(GetOtherPublicUserByUserNameRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            var record = await dataProvider.GetByLogin(request.UserName);
+
+            return new() { Record = record?.Normal.Public };
+        }
+
         public override async Task<GetOwnUserResponse> GetOwnUser(GetOwnUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -528,6 +541,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 if (!IsUserNameValid(request.UserName))
                     return new() { Error = "User Name not valid" };
 
+                request.UserName = request.UserName.ToLower();
+
                 if (!IsDisplayNameValid(request.DisplayName))
                     return new() { Error = "Display Name not valid" };
 
@@ -541,6 +556,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.Normal.Public.Data.DisplayName = request.DisplayName;
+                record.Normal.Public.Data.Bio = request.Bio;
 
                 record.Normal.Private.ModifiedBy = userToken.Id.ToString();
                 record.Normal.Private.Data.Emails.Clear();
@@ -609,6 +625,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return new ModifyOwnUserResponse() { Error = "Display Name not valid" };
 
                 record.Normal.Public.Data.DisplayName = request.DisplayName;
+                record.Normal.Public.Data.Bio = request.Bio;
                 record.Normal.Private.Data.Emails.Clear();
                 record.Normal.Private.Data.Emails.AddRange(request.Emails);
 
@@ -657,6 +674,76 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             }
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<SearchUsersAdminResponse> SearchUsersAdmin(SearchUsersAdminRequest request, ServerCallContext context)
+        {
+            var minDateValue = new DateTime(2000, 1, 1);
+
+            var possibleIDs = request.UserIDs.ToList();
+            var possibleRoles = request.Roles.ToList();
+            var searchSearchString = request.SearchString;
+            var searchCreatedBefore = request.CreatedBefore;
+            var searchCreatedAfter = request.CreatedAfter;
+            var searchIncludeDeleted = request.IncludeDeleted;
+
+            if (!possibleIDs.Any())
+                possibleIDs = null;
+            if (!possibleRoles.Any())
+                possibleRoles = null;
+            if (string.IsNullOrWhiteSpace(searchSearchString))
+                searchSearchString = null;
+
+            var res = new SearchUsersAdminResponse();
+
+            List<UserSearchRecord> list = new();
+            await foreach (var rec in dataProvider.GetAll())
+            {
+                if (possibleIDs != null)
+                    if (!possibleIDs.Contains(rec.Normal.Public.UserID))
+                        continue;
+
+                if (possibleRoles != null)
+                    if (!possibleRoles.Any(possibleRole => rec.Normal.Private.Roles.Any(role => possibleRole.Contains(role))))
+                        continue;
+
+                if (searchCreatedBefore != null)
+                    if (rec.Normal.Public.CreatedOnUTC < searchCreatedBefore)
+                        continue;
+
+                if (searchCreatedAfter != null)
+                    if (rec.Normal.Public.CreatedOnUTC > searchCreatedAfter)
+                        continue;
+
+                if (!searchIncludeDeleted)
+                    if (rec.Normal.Public.DisabledOnUTC != null)
+                        continue;
+
+                if (searchSearchString != null)
+                    if (!rec.Normal.Public.Data.UserName.Contains(searchSearchString, StringComparison.InvariantCultureIgnoreCase) && !rec.Normal.Public.Data.DisplayName.Contains(searchSearchString, StringComparison.InvariantCultureIgnoreCase))
+                        continue;
+
+                var listRec = rec.Normal.ToUserSearchRecord();
+
+                list.Add(listRec);
+            }
+
+            res.Records.AddRange(list.OrderBy(r => r.DisplayName));
+            res.PageTotalItems = (uint)res.Records.Count;
+
+            if (request.PageSize > 0)
+            {
+                res.PageOffsetStart = request.PageOffset;
+
+                var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
+                res.Records.Clear();
+                res.Records.AddRange(page);
+            }
+
+            res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
+
+            return res;
+        }
+
         private async Task<bool> AmIReallyAdmin(ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
@@ -672,6 +759,35 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 return false;
 
             return true;
+        }
+
+        private async Task<bool> IsPasswordCorrect(string password, UserRecord user)
+        {
+            var hash = ComputeSaltedHash(password, user.Server.PasswordSalt.Span);
+            if (CryptographicOperations.FixedTimeEquals(user.Server.PasswordHash.Span, hash))
+                return true;
+
+            if (string.IsNullOrEmpty(user.Server.OldPasswordAlgorithm) || string.IsNullOrEmpty(user.Server.OldPassword))
+                return false;
+
+            if (user.Server.OldPasswordAlgorithm == "Wordpress")
+            {
+                if (!CryptSharp.Core.PhpassCrypter.CheckPassword(password, user.Server.OldPassword))
+                    return false;
+
+                byte[] salt = RandomNumberGenerator.GetBytes(16);
+                user.Server.PasswordSalt = ByteString.CopyFrom(salt);
+                user.Server.PasswordHash = ByteString.CopyFrom(ComputeSaltedHash(password, salt));
+
+                user.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                user.Normal.Private.ModifiedBy = user.Normal.Public.UserID;
+
+                await dataProvider.Save(user);
+
+                return true;
+            }
+
+            return false;
         }
 
         private bool IsValid(UserNormalRecord user)
@@ -710,7 +826,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             if (userName.Length < 4 || userName.Length > 20)
                 return false;
 
-            var regex = new Regex(@"^[a-zA-Z0-9]+$");
+            var regex = new Regex(@"^[a-z0-9]+$");
             if (!regex.IsMatch(userName))
                 return false;
 

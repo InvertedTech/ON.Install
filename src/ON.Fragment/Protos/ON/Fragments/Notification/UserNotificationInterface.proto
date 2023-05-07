@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package ON.Fragments.Notification;
+
+import "google/api/annotations.proto";
+import "Protos/ON/Fragments/Notification/UserNotificationSettingsRecord.proto";
+
+// Service for User Notification fragment interface
+service UserNotificationInterface {
+  rpc GetAllTokens (GetAllTokensRequest) returns (GetAllTokensResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/notification/tokens"
+      body: "*"
+    };
+  }
+
+  rpc GetRecord (GetRecordRequest) returns (GetRecordResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/notification/user"
+    };
+  }
+
+  rpc ModifyNormalRecord (ModifyNormalRecordRequest) returns (ModifyNormalRecordResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/notification/user/normal"
+      body: "*"
+    };
+  }
+
+  rpc RegisterNewToken (RegisterNewTokenRequest) returns (RegisterNewTokenResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/notification/register"
+      body: "*"
+    };
+  }
+
+  rpc UnRegisterNewToken (UnRegisterNewTokenRequest) returns (UnRegisterNewTokenResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/notification/unregister"
+      body: "*"
+    };
+  }
+}
+  
+message GetAllTokensRequest {
+  bool IncludeDisabledPush = 1;
+}
+  
+message GetAllTokensResponse {
+  repeated string TokenIDs = 1;
+}
+  
+message GetRecordRequest {
+}
+  
+message GetRecordResponse {
+  UserNotificationSettingsRecord Record = 1;
+}
+  
+message ModifyNormalRecordRequest {
+  UserNotificationSettingsNormalRecord Record = 1;
+}
+  
+message ModifyNormalRecordResponse {
+  string Error = 100;
+}
+
+message RegisterNewTokenRequest {
+  string TokenID = 1;
+}
+  
+message RegisterNewTokenResponse {
+  string Error = 100;
+}
+
+message UnRegisterNewTokenRequest {
+  string TokenID = 1;
+}
+  
+message UnRegisterNewTokenResponse {
+  string Error = 100;
+}

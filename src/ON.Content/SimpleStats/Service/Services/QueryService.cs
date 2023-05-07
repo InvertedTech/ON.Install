@@ -5,6 +5,7 @@ using ON.Authentication;
 using ON.Content.SimpleStats.Service.Data;
 using ON.Fragments.Content.Stats;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ON.Content.SimpleStats.Service.Services
@@ -27,12 +28,15 @@ namespace ON.Content.SimpleStats.Service.Services
             this.uPrvDb = uPrvDb;
         }
 
+        [AllowAnonymous]
         public override async Task<GetContentStatsResponse> GetContentStats(GetContentStatsRequest request, ServerCallContext context)
         {
             if (!Guid.TryParse(request.ContentID, out var contentId))
                 return new();
 
             bool isLiked = false, isSaved = false, isViewed = false;
+            float progress = 0;
+
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             if (userToken != null && userToken.IsLoggedIn)
             {
@@ -42,6 +46,10 @@ namespace ON.Content.SimpleStats.Service.Services
                     isLiked = userRecord.Likes.Contains(request.ContentID);
                     isSaved = userRecord.Saves.Contains(request.ContentID);
                     isViewed = userRecord.Views.Contains(request.ContentID);
+
+                    var rec = userRecord.ProgressRecords.FirstOrDefault(r => r.ContentID == request.ContentID);
+                    if (rec != null)
+                        progress = rec.Progress;
                 }
             }
 
@@ -51,9 +59,11 @@ namespace ON.Content.SimpleStats.Service.Services
                 LikedByUser = isLiked,
                 SavedByUser = isSaved,
                 ViewedByUser = isViewed,
+                ProgressByUser = progress,
             };
         }
 
+        [AllowAnonymous]
         public override async Task<GetOtherUserStatsResponse> GetOtherUserStats(GetOtherUserStatsRequest request, ServerCallContext context)
         {
             if (!Guid.TryParse(request.UserID, out var userId))
@@ -75,6 +85,46 @@ namespace ON.Content.SimpleStats.Service.Services
 
             var ret = new GetOwnUserLikesResponse();
             ret.LikedContentIDs.AddRange(record.Likes);
+
+            return ret;
+        }
+
+        public override async Task<GetOwnUserProgressHistoryResponse> GetOwnUserProgressHistory(GetOwnUserProgressHistoryRequest request, ServerCallContext context)
+        {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null || !userToken.IsLoggedIn)
+                return new();
+
+            var possiblyIDs = request.PossibleContentIDs.ToList();
+            if (!possiblyIDs.Any())
+                possiblyIDs = null;
+
+            var record = await uPrvDb.GetById(userToken.Id);
+
+            var ret = new GetOwnUserProgressHistoryResponse();
+
+            if (record?.ProgressRecords != null)
+                ret.Records.AddRange(record.ProgressRecords.OrderByDescending(r => r.UpdatedOnUTC));
+
+            if (possiblyIDs != null)
+            {
+                var filtered = ret.Records.Where(r => possiblyIDs.Contains(r.ContentID)).ToArray();
+                ret.Records.Clear();
+                ret.Records.AddRange(filtered);
+            }
+
+            ret.PageTotalItems = (uint)ret.Records.Count();
+
+            if (request.PageSize > 0)
+            {
+                ret.PageOffsetStart = request.PageOffset;
+
+                var page = ret.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToArray();
+                ret.Records.Clear();
+                ret.Records.AddRange(page);
+            }
+
+            ret.PageOffsetEnd = ret.PageOffsetStart + (uint)ret.Records.Count;
 
             return ret;
         }

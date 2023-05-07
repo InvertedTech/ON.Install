@@ -31,15 +31,17 @@ namespace ON.SimpleWeb
             services.AddHttpContextAccessor();
             services.AddControllersWithViews();
 
+            services.Configure<SettingsClientSettings>(Configuration.GetSection("SettingsClientSettings"));
+
             services.AddScoped<AssetService>();
             services.AddScoped<ContentService>();
             services.AddScoped<FakePaymentsService>();
+            services.AddScoped<MainPaymentsService>();
             services.AddScoped<UserService>();
             services.AddScoped<Services.Paypal.PaymentsService>();
 
             services.AddSingleton<HtmlSubscriptionTierHelper>();
             services.AddSingleton<SettingsService>();
-            services.AddSingleton<Services.Paypal.AccountService>();
 
             services.AddJwtAuthentication();
             services.AddSettingsHelpers();

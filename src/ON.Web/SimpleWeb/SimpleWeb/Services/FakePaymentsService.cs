@@ -1,7 +1,7 @@
 ﻿using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
-using ON.Fragments.Authorization.Payments.Fake;
+using ON.Fragments.Authorization.Payment.Fake;
 using ON.Settings;
 using System.Threading.Tasks;
 
@@ -24,34 +24,49 @@ namespace ON.SimpleWeb.Services
 
         public bool IsLoggedIn { get => User != null; }
 
-        public async Task<SubscriptionRecord> GetCurrentRecord()
+        public async Task<FakeSubscriptionRecord> GetCurrentRecord()
         {
             if (!IsLoggedIn)
                 return null;
 
-            if (nameHelper.FakePaymentsServiceChannel == null)
+            if (nameHelper.PaymentServiceChannel == null)
                 return null;
 
-            logger.LogWarning($"******Trying to hopefully connect to PaymentService at:({nameHelper.FakePaymentsServiceChannel.Target})******");
+            logger.LogWarning($"******Trying to hopefully connect to PaymentService at:({nameHelper.PaymentServiceChannel.Target})******");
 
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.FakePaymentsServiceChannel);
-            var reply = await client.GetOwnSubscriptionRecordAsync(new GetOwnSubscriptionRecordRequest(), GetMetadata());
+            var client = new FakeInterface.FakeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.FakeGetOwnSubscriptionRecordAsync(new FakeGetOwnSubscriptionRecordRequest(), GetMetadata());
             return reply.Record;
         }
 
-        public async Task<ChangeOwnSubscriptionRecordResponse> ChangeCurrentSubscriptionLevel(uint level)
+        public async Task<FakeCancelOwnSubscriptionResponse> CancelSubscription(string reason)
         {
             if (!IsLoggedIn)
                 return null;
 
-            var req = new ChangeOwnSubscriptionRecordRequest()
+            var req = new FakeCancelOwnSubscriptionRequest()
             {
-                Level = level
+                Reason = reason
             };
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.FakePaymentsServiceChannel);
-            var reply = await client.ChangeOwnSubscriptionRecordAsync(req, GetMetadata());
+            var client = new FakeInterface.FakeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.FakeCancelOwnSubscriptionAsync(req, GetMetadata());
+            return reply;
+        }
+
+        public async Task<FakeNewOwnSubscriptionResponse> ChangeCurrentSubscriptionLevel(uint level)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            var req = new FakeNewOwnSubscriptionRequest()
+            {
+                AmountCents = level
+            };
+
+            var client = new FakeInterface.FakeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.FakeNewOwnSubscriptionAsync(req, GetMetadata());
             return reply;
         }
 

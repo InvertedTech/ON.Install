@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using ON.Fragments.Authorization.Payments.Stripe;
+using ON.Fragments.Authorization.Payment.Stripe;
 using ON.Settings;
 using System.Linq;
 
@@ -25,10 +25,10 @@ namespace ON.SimpleWeb.Services.Stripe
 
         private GetAccountDetailsResponse GetDetails()
         {
-            if (nameHelper.StripePaymentsServiceChannel == null)
+            if (nameHelper.PaymentServiceChannel == null)
                 return null;
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.StripePaymentsServiceChannel);
+            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
             var reply = client.GetAccountDetails(new GetAccountDetailsRequest());
             return reply;
         }

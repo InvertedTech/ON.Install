@@ -11,10 +11,10 @@ namespace ON.SimpleWeb.Models.Subscription.Paypal
         {
         }
 
-        public CurrentViewModel(uint level, AccountService acctService, bool isCancelled)
+        public CurrentViewModel(uint level, bool isCancelled)
         {
             Level = level;
-            Name = acctService.Plans.OrderBy(t => t.Value).FirstOrDefault(t => t.Value >= level)?.Name ?? "";
+            //Name = acctService.Plans.OrderBy(t => t.Value).FirstOrDefault(t => t.Value >= level)?.Name ?? "";
             IsCancelled = isCancelled;
         }
 

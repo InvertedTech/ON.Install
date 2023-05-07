@@ -2,7 +2,7 @@
   "profiles": {
     "ON.SimpleWeb": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
+      "dotnetRunMessages": true,
       "launchBrowser": true,
       "applicationUrl": "http://localhost:80",
       "environmentVariables": {
@@ -12,10 +12,8 @@
         "SERVICE__AUTHSERVICE__GRPC__PORT": "7001",
         "SERVICE__CMSSERVICE__GRPC__HOST": "localhost",
         "SERVICE__CMSSERVICE__GRPC__PORT": "7002",
-        "SERVICE__FAKEPAYSERVICE__GRPC__HOST": "localhost",
-        "SERVICE__FAKEPAYSERVICE__GRPC__PORT": "7003",
-        "SERVICE__PAYPALSERVICE__GRPC__HOST": "localhost",
-        "SERVICE__PAYPALSERVICE__GRPC__PORT": "7004",
+        "SERVICE__PAYMENTSERVICE__GRPC__HOST": "localhost",
+        "SERVICE__PAYMENTSERVICE__GRPC__PORT": "7004",
         "SERVICE__SETTINGSSERVICE__GRPC__HOST": "localhost",
         "SERVICE__SETTINGSSERVICE__GRPC__PORT": "7009"
       }

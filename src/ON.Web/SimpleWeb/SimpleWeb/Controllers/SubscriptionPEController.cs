@@ -31,16 +31,16 @@ namespace ON.Authorization.ParallelEconomy.Web.Controllers
             var rec = await paymentsService.GetCurrentRecord();
             if (rec == null)
                 return View("Main", null);
-            return View("Main", new CurrentViewModel(rec.Level, acctsService, rec.CanceledOnUTC != null));
+            return View("Main", new CurrentViewModel(rec.AmountCents, acctsService, rec.CanceledOnUTC != null));
         }
 
-        [HttpGet("newintent")]
-        public async Task<IActionResult> NewIntent(int level)
-        {
-            var res = await paymentsService.StartNewSubscription((uint)level);
+        //[HttpGet("newintent")]
+        //public async Task<IActionResult> NewIntent(int level)
+        //{
+        //    var res = await paymentsService.StartNewSubscription((uint)level);
 
-            return View("New", new NewViewModel(res.ClientToken, acctsService.IsTest));
-        }
+        //    return View("New", new NewViewModel(res.ClientToken, acctsService.IsTest));
+        //}
 
         [HttpGet("cancel")]
         public async Task<IActionResult> Cancel(string reason = null)

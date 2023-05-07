@@ -20,35 +20,35 @@ namespace ON.Authorization.ParallelEconomy.Service
             this.paymentProvider = paymentProvider;
         }
 
-        public override async Task<GetClaimsResponse> GetClaims(GetClaimsRequest request, ServerCallContext context)
-        {
-            if (request.UserID == null)
-                return new GetClaimsResponse();
+        //public override async Task<GetClaimsResponse> GetClaims(GetClaimsRequest request, ServerCallContext context)
+        //{
+        //    if (request.UserID == null)
+        //        return new GetClaimsResponse();
 
-            var rec = await paymentProvider.GetById(new Guid(request.UserID.Span));
+        //    var rec = await paymentProvider.GetById(new Guid(request.UserID.Span));
 
-            if (rec == null || rec.Level < 1)
-                return new GetClaimsResponse();
+        //    if (rec == null || rec.Level < 1)
+        //        return new GetClaimsResponse();
 
-            if (rec.PaidThruUTC.ToDateTime() < DateTime.UtcNow)
-                return new GetClaimsResponse();
+        //    if (rec.PaidThruUTC.ToDateTime() < DateTime.UtcNow)
+        //        return new GetClaimsResponse();
 
-            var res = new GetClaimsResponse();
+        //    var res = new GetClaimsResponse();
 
-            res.Claims.Add(new ClaimRecord()
-            {
-                Name = ONUser.SubscriptionLevelType,
-                Value = rec.Level.ToString(),
-                ExpiresOnUTC = rec.PaidThruUTC
-            });
-            res.Claims.Add(new ClaimRecord()
-            {
-                Name = ONUser.SubscriptionProviderType,
-                Value = "paralleleconomy",
-                ExpiresOnUTC = rec.PaidThruUTC
-            });
+        //    res.Claims.Add(new ClaimRecord()
+        //    {
+        //        Name = ONUser.SubscriptionLevelType,
+        //        Value = rec.Level.ToString(),
+        //        ExpiresOnUTC = rec.PaidThruUTC
+        //    });
+        //    res.Claims.Add(new ClaimRecord()
+        //    {
+        //        Name = ONUser.SubscriptionProviderType,
+        //        Value = "paralleleconomy",
+        //        ExpiresOnUTC = rec.PaidThruUTC
+        //    });
 
-            return res;
-        }
+        //    return res;
+        //}
     }
 }

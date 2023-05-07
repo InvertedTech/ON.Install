@@ -1,53 +1,45 @@
 ﻿@using ON.SimpleWeb.Models.Subscription.Main
 @inject ON.Settings.SettingsClient settingsClient;
+@inject ON.Settings.SubscriptionTierHelper subTierHelper
 @model IndexViewModel
 @{
     ViewData["Title"] = "My Subscriptions";
-    var subSet = (await settingsClient.GetOwnerData()).Subscription;
+    var subSet = settingsClient.PublicData?.Subscription;
 }
 
 <h1>My Subscriptions</h1>
 
-@if (Model.IsSubscribed)
+@if (!Model.HasActiveSubscription)
 {
     <p>
-        My subscription level: @(Model.SubscriptionLevelLabel)
+        Pick your subscription level.
     </p>
-    <p>
-        <a href="/subscription/@(Model.SubscriptionProvider)">Change my subscription</a>
-    </p>
+    <ul>
+        @foreach (var level in subTierHelper.GetAll())
+        {
+            <li><a href="/subscription/new/@level.AmountCents">@level.Label</a></li>
+        }
+    </ul>
 }
-else
-{
-    <p>
-        My subscription level: None
-    </p>
-    <p>
-        Pick a payment provider below to sign up!
-    </p>
-    @if (subSet?.Fake?.Enabled ?? false)
-    {
-        <p>
-            <a href="/subscription/fake">*Dev Only* Fake Payment Provider</a>
-        </p>
-    }
-    @if (subSet?.ParallelEconomy?.Enabled ?? false)
-    {
-        <p>
-            <a href="/subscription/pe">Parallel Economy (credit/debit cards)</a>
-        </p>
-    }
-    @if (subSet?.Stripe?.Enabled ?? false)
-    {
-        <p>
-            <a href="/subscription/stripe">Stripe (credit/debit cards)</a>
-        </p>
-    }
-    @if (subSet?.Paypal?.Enabled ?? false)
-    {
-        <p>
-            <a href="/subscription/paypal">Paypal</a>
-        </p>
-    }
 
-}
+<br />
+<br />
+<br />
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Created</th>
+            <th>Status</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    @foreach (var sub in Model.Subscriptions)
+    {
+        <tr>
+            <td><a asp-action="Single" asp-route-subId="@sub.SubscriptionId.ToString()">@sub.StartedOnUTC.ToShortDateString()</a></td>
+            <td>@sub.StatusPretty</td>
+            <td>$@((sub.AmountCents / 100.0).ToString("###,##0.00"))</td>
+        </tr>
+    }
+</table>

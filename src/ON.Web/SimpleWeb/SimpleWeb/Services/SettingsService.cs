@@ -28,7 +28,16 @@ namespace ON.SimpleWeb.Services
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifyCMSPublicDataAsync(new() { Data = vm }, GetMetadata(user));
 
-            settingsClient.Flush();
+            return res.Error;
+        }
+
+        public async Task<ModifyResponseErrorType> Modify(NotificationOwnerRecord vm, ONUser user)
+        {
+            if (vm == null)
+                return ModifyResponseErrorType.UnknownError;
+
+            var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
+            var res = await client.ModifyNotificationOwnerDataAsync(new() { Data = vm }, GetMetadata(user));
 
             return res.Error;
         }
@@ -41,8 +50,6 @@ namespace ON.SimpleWeb.Services
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifyPersonalizationPublicDataAsync(new() { Data = vm }, GetMetadata(user));
 
-            settingsClient.Flush();
-
             return res.Error;
         }
 
@@ -54,8 +61,6 @@ namespace ON.SimpleWeb.Services
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifySubscriptionPublicDataAsync(new() { Data = vm }, GetMetadata(user));
 
-            settingsClient.Flush();
-
             return res.Error;
         }
 
@@ -66,8 +71,6 @@ namespace ON.SimpleWeb.Services
 
             var client = new SettingsInterface.SettingsInterfaceClient(nameHelper.SettingsServiceChannel);
             var res = await client.ModifySubscriptionOwnerDataAsync(new() { Data = vm }, GetMetadata(user));
-
-            settingsClient.Flush();
 
             return res.Error;
         }
