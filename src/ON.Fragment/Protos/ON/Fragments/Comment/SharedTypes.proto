@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ON.Fragments.Comments;
+package ON.Fragments.Comment;
 
 enum CommentOrder {
     Liked = 0;

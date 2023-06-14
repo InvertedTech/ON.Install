@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package ON.Fragments.Comment;
+
+import "google/protobuf/timestamp.proto";
+
+// Content record data
+message CommentRecord {
+  CommentPublicRecord Public = 1;
+  CommentPrivateRecord Private = 2;
+}
+
+message CommentPublicRecord {
+  string CommentID = 1;        // Guid for the comment record
+  string ParentCommentID = 2;  // Guid for the parent comment record
+  string ContentID = 3;        // Guid for the content record
+  string UserID = 4;           // Guid for the user posting the comment
+  google.protobuf.Timestamp CreatedOnUTC = 11;  // UTC timestamp when content was created
+  google.protobuf.Timestamp ModifiedOnUTC = 12; // UTC timestamp when content record was last modified
+  google.protobuf.Timestamp PinnedOnUTC = 13;   // UTC timestamp when content was pinned
+  google.protobuf.Timestamp DeletedOnUTC = 14;  // UTC timestamp when content was deleted
+
+  CommentPublicData Data = 21;
+}
+
+message CommentPrivateRecord {
+  string CreatedBy = 11;
+  string ModifiedBy = 12;
+  string PinnedBy = 13;
+  string DeletedBy = 14;
+
+  CommentPrivateData Data = 21;
+}
+
+message CommentPublicData {
+  string CommentText = 1;
+  string Url = 2;
+  uint32 Likes = 3;
+}
+
+message CommentPrivateData {
+  repeated string LikedByUserIDs = 3;
+  string OldContentID = 51;
+}
