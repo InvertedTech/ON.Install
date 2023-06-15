@@ -34,11 +34,9 @@ message CommentPrivateRecord {
 
 message CommentPublicData {
   string CommentText = 1;
-  string Url = 2;
-  uint32 Likes = 3;
+  uint32 Likes = 2;
 }
 
 message CommentPrivateData {
   repeated string LikedByUserIDs = 3;
-  string OldContentID = 51;
 }

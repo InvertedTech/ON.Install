@@ -8,17 +8,17 @@ import "Protos/ON/Fragments/Comment/SharedTypes.proto";
 
 // Service for Asset fragment interface
 service CommentInterface {
+  rpc AdminDeleteComment (AdminDeleteCommentRequest) returns (AdminDeleteCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/admin/{ContentID}/{CommentID}/delete"
+    };
+  }
   rpc AdminEditComment (AdminEditCommentRequest) returns (AdminEditCommentResponse)
   {
     option (google.api.http) = {
       post: "/api/comment/admin/{ContentID}/{CommentID}/edit"
       body: "*"
-    };
-  }
-  rpc AdminDeleteComment (AdminDeleteCommentRequest) returns (AdminDeleteCommentResponse)
-  {
-    option (google.api.http) = {
-      post: "/api/comment/admin/{ContentID}/{CommentID}/delete"
     };
   }
   rpc AdminPinComment (AdminPinCommentRequest) returns (AdminPinCommentResponse)
@@ -53,6 +53,12 @@ service CommentInterface {
       body: "*"
     };
   }
+  rpc DeleteOwnComment (DeleteOwnCommentRequest) returns (DeleteOwnCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/{ContentID}/{CommentID}/delete"
+    };
+  }
   rpc EditComment (EditCommentRequest) returns (EditCommentResponse)
   {
     option (google.api.http) = {
@@ -64,6 +70,12 @@ service CommentInterface {
   {
     option (google.api.http) = {
       get: "/api/comment/{ContentID}"
+    };
+  }
+  rpc GetSubComments (GetCommentsRequest) returns (GetCommentsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/comment/{ContentID}/{CommentID}"
     };
   }
   rpc LikeComment (LikeCommentRequest) returns (LikeCommentResponse)
@@ -80,6 +92,15 @@ service CommentInterface {
   }
 }
 
+message AdminDeleteCommentRequest {
+  string ContentID = 1;
+  string CommentID = 2;
+}
+
+message AdminDeleteCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
 message AdminEditCommentRequest {
   string ContentID = 1;
   string CommentID = 2;
@@ -90,20 +111,13 @@ message AdminEditCommentResponse {
   CommentPublicRecord Record = 1;
 }
 
-message AdminDeleteCommentRequest {
-  string ContentID = 1;
-  string CommentID = 2;
-}
-
-message AdminDeleteCommentResponse {
-}
-
 message AdminPinCommentRequest {
   string ContentID = 1;
   string CommentID = 2;
 }
 
 message AdminPinCommentResponse {
+  CommentPublicRecord Record = 1;
 }
 
 message AdminUnDeleteCommentRequest {
@@ -112,6 +126,7 @@ message AdminUnDeleteCommentRequest {
 }
 
 message AdminUnDeleteCommentResponse {
+  CommentPublicRecord Record = 1;
 }
 
 message AdminUnPinCommentRequest {
@@ -120,6 +135,7 @@ message AdminUnPinCommentRequest {
 }
 
 message AdminUnPinCommentResponse {
+  CommentPublicRecord Record = 1;
 }
 
 message CreateCommentRequest {
@@ -129,6 +145,15 @@ message CreateCommentRequest {
 }
 
 message CreateCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
+message DeleteOwnCommentRequest {
+  string ContentID = 1;
+  string CommentID = 2;
+}
+
+message DeleteOwnCommentResponse {
   CommentPublicRecord Record = 1;
 }
 
@@ -144,7 +169,7 @@ message EditCommentResponse {
 
 message GetCommentsRequest {
   string ContentID = 1;
-  string CommentID = 2;
+  string ParentCommentID = 2;
   CommentOrder Order = 3;
 }
   
@@ -158,6 +183,7 @@ message LikeCommentRequest {
 }
 
 message LikeCommentResponse {
+  CommentPublicRecord Record = 1;
 }
 
 message UnLikeCommentRequest {
@@ -166,5 +192,6 @@ message UnLikeCommentRequest {
 }
 
 message UnLikeCommentResponse {
+  CommentPublicRecord Record = 1;
 }
 

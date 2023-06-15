@@ -17,5 +17,6 @@ enum CommentRestrictionMinimumEnum {
     Anonymous = 0;
     Subscriber = 1;
     PaidSubscriber = 2;
-    None = 3;
+    CommentModerator = 3;
+    AdminOnly = 4;
 }
