@@ -50,12 +50,12 @@ namespace ON.Content.SimpleComment.Service
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("cms", new OpenApiInfo { Title = "SimpleComment API" });
+                c.SwaggerDoc("comment", new OpenApiInfo { Title = "SimpleComment API" });
             });
             services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            //services.AddSingleton<ICommentDataProvider, MemCachedFileSystemContentDataProvider>();
+            services.AddSingleton<ICommentDataProvider, FileSystemCommentDataProvider>();
             //services.AddSingleton<FileSystemCommentDataProvider>();
 
             services.Configure<SettingsClientSettings>(Configuration.GetSection("SettingsClientSettings"));

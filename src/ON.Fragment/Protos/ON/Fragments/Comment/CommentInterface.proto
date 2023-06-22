@@ -11,90 +11,89 @@ service CommentInterface {
   rpc AdminDeleteComment (AdminDeleteCommentRequest) returns (AdminDeleteCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/admin/{ContentID}/{CommentID}/delete"
+      post: "/api/comment/admin/{CommentID}/delete"
     };
   }
   rpc AdminEditComment (AdminEditCommentRequest) returns (AdminEditCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/admin/{ContentID}/{CommentID}/edit"
+      post: "/api/comment/admin/{CommentID}/edit"
       body: "*"
     };
   }
   rpc AdminPinComment (AdminPinCommentRequest) returns (AdminPinCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/admin/{ContentID}/{CommentID}/pin"
+      post: "/api/comment/admin/{CommentID}/pin"
     };
   }
   rpc AdminUnDeleteComment (AdminUnDeleteCommentRequest) returns (AdminUnDeleteCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/admin/{ContentID}/{CommentID}/undelete"
+      post: "/api/comment/admin/{CommentID}/undelete"
     };
   }
   rpc AdminUnPinComment (AdminUnPinCommentRequest) returns (AdminUnPinCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/admin/{ContentID}/{CommentID}/unpin"
+      post: "/api/comment/admin/{CommentID}/unpin"
     };
   }
-  rpc CreateComment (CreateCommentRequest) returns (CreateCommentResponse)
+  rpc CreateCommentForContent (CreateCommentForContentRequest) returns (CreateCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/{ContentID}/create"
+      post: "/api/comment/content/{ContentID}/create"
       body: "*"
     };
   }
-  rpc CreateSubComment (CreateCommentRequest) returns (CreateCommentResponse)
+  rpc CreateCommentForComment (CreateCommentForCommentRequest) returns (CreateCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/{ContentID}/{CommentID}/create"
+      post: "/api/comment/{ParentCommentID}/create"
       body: "*"
     };
   }
   rpc DeleteOwnComment (DeleteOwnCommentRequest) returns (DeleteOwnCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/{ContentID}/{CommentID}/delete"
+      post: "/api/comment/{CommentID}/delete"
     };
   }
   rpc EditComment (EditCommentRequest) returns (EditCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/{ContentID}/{CommentID}/edit"
+      post: "/api/comment/{CommentID}/edit"
       body: "*"
     };
   }
-  rpc GetComments (GetCommentsRequest) returns (GetCommentsResponse)
+  rpc GetCommentsForContent (GetCommentsForContentRequest) returns (GetCommentsResponse)
   {
     option (google.api.http) = {
-      get: "/api/comment/{ContentID}"
+      get: "/api/comment/content/{ContentID}"
     };
   }
-  rpc GetSubComments (GetCommentsRequest) returns (GetCommentsResponse)
+  rpc GetCommentsForComment (GetCommentsForCommentRequest) returns (GetCommentsResponse)
   {
     option (google.api.http) = {
-      get: "/api/comment/{ContentID}/{CommentID}"
+      get: "/api/comment/{ParentCommentID}"
     };
   }
   rpc LikeComment (LikeCommentRequest) returns (LikeCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/{ContentID}/{CommentID}/like"
+      post: "/api/comment/{CommentID}/like"
     };
   }
   rpc UnLikeComment (UnLikeCommentRequest) returns (UnLikeCommentResponse)
   {
     option (google.api.http) = {
-      post: "/api/comment/{ContentID}/{CommentID}/unlike"
+      post: "/api/comment/{CommentID}/unlike"
     };
   }
 }
 
 message AdminDeleteCommentRequest {
-  string ContentID = 1;
-  string CommentID = 2;
+  string CommentID = 1;
 }
 
 message AdminDeleteCommentResponse {
@@ -102,9 +101,8 @@ message AdminDeleteCommentResponse {
 }
 
 message AdminEditCommentRequest {
-  string ContentID = 1;
-  string CommentID = 2;
-  string Text = 3;
+  string CommentID = 1;
+  string Text = 2;
 }
 
 message AdminEditCommentResponse {
@@ -112,8 +110,7 @@ message AdminEditCommentResponse {
 }
 
 message AdminPinCommentRequest {
-  string ContentID = 1;
-  string CommentID = 2;
+  string CommentID = 1;
 }
 
 message AdminPinCommentResponse {
@@ -121,8 +118,7 @@ message AdminPinCommentResponse {
 }
 
 message AdminUnDeleteCommentRequest {
-  string ContentID = 1;
-  string CommentID = 2;
+  string CommentID = 1;
 }
 
 message AdminUnDeleteCommentResponse {
@@ -130,18 +126,21 @@ message AdminUnDeleteCommentResponse {
 }
 
 message AdminUnPinCommentRequest {
-  string ContentID = 1;
-  string CommentID = 2;
+  string CommentID = 1;
 }
 
 message AdminUnPinCommentResponse {
   CommentPublicRecord Record = 1;
 }
 
-message CreateCommentRequest {
+message CreateCommentForContentRequest {
   string ContentID = 1;
-  string ParentID = 2;
-  string Text = 3;
+  string Text = 2;
+}
+
+message CreateCommentForCommentRequest {
+  string ParentCommentID = 1;
+  string Text = 2;
 }
 
 message CreateCommentResponse {
@@ -149,8 +148,7 @@ message CreateCommentResponse {
 }
 
 message DeleteOwnCommentRequest {
-  string ContentID = 1;
-  string CommentID = 2;
+  string CommentID = 1;
 }
 
 message DeleteOwnCommentResponse {
@@ -158,28 +156,39 @@ message DeleteOwnCommentResponse {
 }
 
 message EditCommentRequest {
-  string ContentID = 1;
-  string CommentID = 2;
-  string Text = 3;
+  string CommentID = 1;
+  string Text = 2;
 }
 
 message EditCommentResponse {
   CommentPublicRecord Record = 1;
 }
 
-message GetCommentsRequest {
+message GetCommentsForContentRequest {
   string ContentID = 1;
-  string ParentCommentID = 2;
-  CommentOrder Order = 3;
+  SearchOptions Options = 2;
 }
-  
+
+message GetCommentsForCommentRequest {
+  string ParentCommentID = 1;
+  SearchOptions Options = 2;
+}
+
+message SearchOptions {
+  CommentOrder Order = 1;
+  uint32 PageSize = 2;
+  uint32 PageOffset = 3;
+}
+
 message GetCommentsResponse {
-  repeated CommentPublicRecord Record = 1;
+  repeated CommentPublicRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
 }
 
 message LikeCommentRequest {
-  string ContentID = 1;
-  string CommentID = 2;
+  string CommentID = 1;
 }
 
 message LikeCommentResponse {
@@ -187,11 +196,9 @@ message LikeCommentResponse {
 }
 
 message UnLikeCommentRequest {
-  string ContentID = 1;
-  string CommentID = 2;
+  string CommentID = 1;
 }
 
 message UnLikeCommentResponse {
   CommentPublicRecord Record = 1;
 }
-

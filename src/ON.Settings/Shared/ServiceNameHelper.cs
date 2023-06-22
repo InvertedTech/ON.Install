@@ -2,9 +2,6 @@
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
 using ON.Fragments.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ON.Settings
@@ -12,11 +9,12 @@ namespace ON.Settings
     public class ServiceNameHelper
     {
         public readonly GrpcChannel ContentServiceChannel;
-        public readonly Channel SettingsServiceChannel;
-        public readonly Channel UserServiceChannel;
+        public readonly Channel CommentServiceChannel;
         public readonly Channel NotificationServiceChannel;
         public readonly Channel PaymentServiceChannel;
+        public readonly Channel SettingsServiceChannel;
         public readonly Channel StatsServiceChannel;
+        public readonly Channel UserServiceChannel;
 
         public readonly string ServiceToken;
 
@@ -31,6 +29,10 @@ namespace ON.Settings
             var uri = configuration.GetServiceUri("authservice", "grpc");
             if (uri != null)
                 UserServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+
+            uri = configuration.GetServiceUri("commentservice", "grpc");
+            if (uri != null)
+                CommentServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
 
             uri = configuration.GetServiceUri("settingsservice", "grpc");
             if (uri != null)

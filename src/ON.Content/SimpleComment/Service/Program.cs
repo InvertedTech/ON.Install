@@ -11,7 +11,7 @@ namespace ON.Content.SimpleComment.Service
 {
     public class Program
     {
-        public const string SERVICE_NAME = "CMSSERVICE";
+        public const string SERVICE_NAME = "COMMENTSERVICE";
         public const string API_PORT_NAME = "SERVICE__" + SERVICE_NAME + "__API__PORT";
         public const string GRPC_PORT_NAME = "SERVICE__" + SERVICE_NAME + "__GRPC__PORT";
 
