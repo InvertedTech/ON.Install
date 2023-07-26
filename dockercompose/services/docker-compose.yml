@@ -22,6 +22,7 @@ services:
       - SERVICE__AUTHSERVICE__GRPC__PORT=7001
       - SERVICE__PAYMENTSERVICE__GRPC__HOST=paymentservice
       - SERVICE__PAYMENTSERVICE__GRPC__PORT=7004
+      - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       - ../../src/tmpdata/auth:/data
   cmsservice:
