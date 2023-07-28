@@ -106,6 +106,8 @@ namespace ON.Content.SimpleCMS.Service
             var searchAuthorId = request.AuthorId;
             var searchTag = request.Tag;
             var searchLiveOnly = request.OnlyLive;
+            var searchPublishedAfterUTC = request.PublishedAfterUTC;
+            var searchPublishedBeforeUTC = request.PublishedBeforeUTC;
 
             if (!possiblyIDs.Any())
                 possiblyIDs = null;
@@ -156,6 +158,14 @@ namespace ON.Content.SimpleCMS.Service
 
                 if (searchLiveOnly)
                     if (!(rec.Public.Data.Video?.IsLive ?? false))
+                        continue;
+
+                if (searchPublishedAfterUTC != null)
+                    if (rec.Public.PublishOnUTC < searchPublishedAfterUTC)
+                        continue;
+
+                if (searchPublishedBeforeUTC != null)
+                    if (rec.Public.PublishOnUTC > searchPublishedBeforeUTC)
                         continue;
 
                 var listRec = rec.Public.ToContentListRecord();

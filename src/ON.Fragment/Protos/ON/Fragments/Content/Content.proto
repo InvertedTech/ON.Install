@@ -147,6 +147,8 @@ message GetAllContentRequest {
   string Tag = 14;
   string AuthorId = 15;
   bool OnlyLive = 16;
+  google.protobuf.Timestamp PublishedAfterUTC = 21;
+  google.protobuf.Timestamp PublishedBeforeUTC = 22;
 }
   
 message GetAllContentResponse {
