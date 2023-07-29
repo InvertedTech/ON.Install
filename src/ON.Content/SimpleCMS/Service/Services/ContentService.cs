@@ -356,12 +356,30 @@ namespace ON.Content.SimpleCMS.Service
         }
 
         [AllowAnonymous]
+        public override async Task<GetRecentCategoriesResponse> GetRecentCategories(GetRecentCategoriesRequest request, ServerCallContext context)
+        {
+            int num = Math.Min((int)request.NumCategories, 100);
+
+            List<string> allCategories = new();
+            await foreach (var rec in dataProvider.GetAll().Where(r => r.Public.PublishOnUTC != null).OrderByDescending(r => r.Public.PublishOnUTC))
+            {
+                allCategories.AddRange(rec.Public.Data.CategoryIds.Where(c => !allCategories.Contains(c)));
+                if (allCategories.Count > num)
+                    break;
+            }
+
+            var res = new GetRecentCategoriesResponse();
+            res.CategoryIds.AddRange(allCategories.Take(num));
+            return res;
+        }
+
+        [AllowAnonymous]
         public override async Task<GetRecentTagsResponse> GetRecentTags(GetRecentTagsRequest request, ServerCallContext context)
         {
             int num = Math.Min((int)request.NumTags, 100);
 
             List<string> allTags = new();
-            await foreach (var rec in dataProvider.GetAll())
+            await foreach (var rec in dataProvider.GetAll().Where(r => r.Public.PublishOnUTC != null).OrderByDescending(r=> r.Public.PublishOnUTC))
             {
                 allTags.AddRange(rec.Public.Data.Tags.Where(t => !allTags.Contains(t)));
                 if (allTags.Count > num)
