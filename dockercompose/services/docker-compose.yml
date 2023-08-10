@@ -8,6 +8,8 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
   authservice:
     image: opennetwork/simpleauth-service:linux-amd64
+    depends_on:
+      - "eventdb"
     expose:
       - "80"
     ports:
@@ -22,11 +24,16 @@ services:
       - SERVICE__AUTHSERVICE__GRPC__PORT=7001
       - SERVICE__PAYMENTSERVICE__GRPC__HOST=paymentservice
       - SERVICE__PAYMENTSERVICE__GRPC__PORT=7004
+      - SERVICE__SETTINGSSERVICE__GRPC__HOST=settingsservice
+      - SERVICE__SETTINGSSERVICE__GRPC__PORT=7009
       - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       - ../../src/tmpdata/auth:/data
   cmsservice:
     image: opennetwork/simplecms-service:linux-amd64
+    depends_on:
+      - "authservice"
+      - "statsservice"
     expose:
       - "80"
     ports:
@@ -38,12 +45,17 @@ services:
       - JWT_PUB_KEY=eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjpudWxsLCJEUCI6bnVsbCwiRFEiOm51bGwsIkUiOm51bGwsIksiOm51bGwsIktleUlkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS2V5T3BzIjpbXSwiS2lkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS3R5IjoiRUMiLCJOIjpudWxsLCJPdGgiOm51bGwsIlAiOm51bGwsIlEiOm51bGwsIlFJIjpudWxsLCJVc2UiOiJzaWciLCJYIjoiVDNCQzlQUlNkamFIcEV4VXF6Z1RpMWt5X2pvMG9YSHMtbVNoN0RsRVZFMCIsIlg1YyI6W10sIlg1dCI6bnVsbCwiWDV0UzI1NiI6bnVsbCwiWDV1IjpudWxsLCJZIjoiMjhmNEtLS0hyZ3dfM2Z4SlJsX1c0eExkcm5FUXVPQWNfZ0wyN0tNc0NSOCIsIktleVNpemUiOjI1NiwiSGFzUHJpdmF0ZUtleSI6ZmFsc2UsIkNyeXB0b1Byb3ZpZGVyRmFjdG9yeSI6eyJDcnlwdG9Qcm92aWRlckNhY2hlIjp7fSwiQ3VzdG9tQ3J5cHRvUHJvdmlkZXIiOm51bGwsIkNhY2hlU2lnbmF0dXJlUHJvdmlkZXJzIjp0cnVlfX0
       - SERVICE__CMSSERVICE__API__PORT=80
       - SERVICE__CMSSERVICE__GRPC__PORT=7002
+      - SERVICE__SETTINGSSERVICE__GRPC__HOST=settingsservice
+      - SERVICE__SETTINGSSERVICE__GRPC__PORT=7009
       - SERVICE__STATSSERVICE__GRPC__HOST=statsservice
       - SERVICE__STATSSERVICE__GRPC__PORT=7010
     volumes:
       - ../../src/tmpdata/cms:/data
   commentservice:
     image: opennetwork/simplecomment-service:linux-amd64
+    depends_on:
+      - "authservice"
+      - "eventdb"
     expose:
       - "80"
     ports:
@@ -53,14 +65,20 @@ services:
       - VIRTUAL_PORT=80
       - VIRTUAL_PATH=~^/api/comment
       - JWT_PUB_KEY=eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjpudWxsLCJEUCI6bnVsbCwiRFEiOm51bGwsIkUiOm51bGwsIksiOm51bGwsIktleUlkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS2V5T3BzIjpbXSwiS2lkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS3R5IjoiRUMiLCJOIjpudWxsLCJPdGgiOm51bGwsIlAiOm51bGwsIlEiOm51bGwsIlFJIjpudWxsLCJVc2UiOiJzaWciLCJYIjoiVDNCQzlQUlNkamFIcEV4VXF6Z1RpMWt5X2pvMG9YSHMtbVNoN0RsRVZFMCIsIlg1YyI6W10sIlg1dCI6bnVsbCwiWDV0UzI1NiI6bnVsbCwiWDV1IjpudWxsLCJZIjoiMjhmNEtLS0hyZ3dfM2Z4SlJsX1c0eExkcm5FUXVPQWNfZ0wyN0tNc0NSOCIsIktleVNpemUiOjI1NiwiSGFzUHJpdmF0ZUtleSI6ZmFsc2UsIkNyeXB0b1Byb3ZpZGVyRmFjdG9yeSI6eyJDcnlwdG9Qcm92aWRlckNhY2hlIjp7fSwiQ3VzdG9tQ3J5cHRvUHJvdmlkZXIiOm51bGwsIkNhY2hlU2lnbmF0dXJlUHJvdmlkZXJzIjp0cnVlfX0
+      - SERVICE__AUTHSERVICE__GRPC__HOST=authservice
+      - SERVICE__AUTHSERVICE__GRPC__PORT=7001
       - SERVICE__COMMENTSERVICE__API__PORT=80
       - SERVICE__COMMENTSERVICE__GRPC__PORT=7012
+      - SERVICE__SETTINGSSERVICE__GRPC__HOST=settingsservice
+      - SERVICE__SETTINGSSERVICE__GRPC__PORT=7009
       - SERVICE__STATSSERVICE__GRPC__HOST=statsservice
       - SERVICE__STATSSERVICE__GRPC__PORT=7010
     volumes:
       - ../../src/tmpdata/comment:/data
   paymentservice:
     image: opennetwork/payment-service:linux-amd64
+    depends_on:
+      - "authservice"
     expose:
       - "80"
     ports:
@@ -74,10 +92,15 @@ services:
       - SERVICE__PAYMENTSERVICE__GRPC__PORT=7004
       - SERVICE__AUTHSERVICE__GRPC__HOST=authservice
       - SERVICE__AUTHSERVICE__GRPC__PORT=7001
+      - SERVICE__SETTINGSSERVICE__GRPC__HOST=settingsservice
+      - SERVICE__SETTINGSSERVICE__GRPC__PORT=7009
     volumes:
       - ../../src/tmpdata/payment:/data
   settingsservice:
     image: opennetwork/simplesettings-service:linux-amd64
+    depends_on:
+      - "authservice"
+      - "eventdb"
     expose:
       - "80"
     ports:
@@ -87,6 +110,8 @@ services:
       - VIRTUAL_PORT=80
       - VIRTUAL_PATH=~^/api/settings
       - JWT_PUB_KEY=eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjpudWxsLCJEUCI6bnVsbCwiRFEiOm51bGwsIkUiOm51bGwsIksiOm51bGwsIktleUlkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS2V5T3BzIjpbXSwiS2lkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS3R5IjoiRUMiLCJOIjpudWxsLCJPdGgiOm51bGwsIlAiOm51bGwsIlEiOm51bGwsIlFJIjpudWxsLCJVc2UiOiJzaWciLCJYIjoiVDNCQzlQUlNkamFIcEV4VXF6Z1RpMWt5X2pvMG9YSHMtbVNoN0RsRVZFMCIsIlg1YyI6W10sIlg1dCI6bnVsbCwiWDV0UzI1NiI6bnVsbCwiWDV1IjpudWxsLCJZIjoiMjhmNEtLS0hyZ3dfM2Z4SlJsX1c0eExkcm5FUXVPQWNfZ0wyN0tNc0NSOCIsIktleVNpemUiOjI1NiwiSGFzUHJpdmF0ZUtleSI6ZmFsc2UsIkNyeXB0b1Byb3ZpZGVyRmFjdG9yeSI6eyJDcnlwdG9Qcm92aWRlckNhY2hlIjp7fSwiQ3VzdG9tQ3J5cHRvUHJvdmlkZXIiOm51bGwsIkNhY2hlU2lnbmF0dXJlUHJvdmlkZXJzIjp0cnVlfX0
+      - SERVICE__AUTHSERVICE__GRPC__HOST=authservice
+      - SERVICE__AUTHSERVICE__GRPC__PORT=7001
       - SERVICE__SETTINGSSERVICE__API__PORT=80
       - SERVICE__SETTINGSSERVICE__GRPC__PORT=7009
     volumes:
@@ -94,6 +119,7 @@ services:
   statsservice:
     image: opennetwork/simplestats-service:linux-amd64
     depends_on:
+      - "authservice"
       - "eventdb"
     expose:
       - "80"
@@ -104,6 +130,8 @@ services:
       - VIRTUAL_PORT=80
       - VIRTUAL_PATH=~^/api/stats
       - JWT_PUB_KEY=eyJBZGRpdGlvbmFsRGF0YSI6e30sIkFsZyI6IkVTMjU2IiwiQ3J2IjoiUC0yNTYiLCJEIjpudWxsLCJEUCI6bnVsbCwiRFEiOm51bGwsIkUiOm51bGwsIksiOm51bGwsIktleUlkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS2V5T3BzIjpbXSwiS2lkIjoiZjYwYjIzZDctYTdiYy00MmNjLWE0YjQtZTdiZjI0ODZiYzg5IiwiS3R5IjoiRUMiLCJOIjpudWxsLCJPdGgiOm51bGwsIlAiOm51bGwsIlEiOm51bGwsIlFJIjpudWxsLCJVc2UiOiJzaWciLCJYIjoiVDNCQzlQUlNkamFIcEV4VXF6Z1RpMWt5X2pvMG9YSHMtbVNoN0RsRVZFMCIsIlg1YyI6W10sIlg1dCI6bnVsbCwiWDV0UzI1NiI6bnVsbCwiWDV1IjpudWxsLCJZIjoiMjhmNEtLS0hyZ3dfM2Z4SlJsX1c0eExkcm5FUXVPQWNfZ0wyN0tNc0NSOCIsIktleVNpemUiOjI1NiwiSGFzUHJpdmF0ZUtleSI6ZmFsc2UsIkNyeXB0b1Byb3ZpZGVyRmFjdG9yeSI6eyJDcnlwdG9Qcm92aWRlckNhY2hlIjp7fSwiQ3VzdG9tQ3J5cHRvUHJvdmlkZXIiOm51bGwsIkNhY2hlU2lnbmF0dXJlUHJvdmlkZXJzIjp0cnVlfX0
+      - SERVICE__AUTHSERVICE__GRPC__HOST=authservice
+      - SERVICE__AUTHSERVICE__GRPC__PORT=7001
       - SERVICE__STATSSERVICE__API__PORT=80
       - SERVICE__STATSSERVICE__GRPC__PORT=7010
     restart: always

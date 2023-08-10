@@ -46,10 +46,17 @@ namespace ON.SimpleWeb.Services
 
         public async Task<IEnumerable<CommentPublicRecord>> GetAllForContent(Guid contentID)
         {
-            var client = new CommentInterface.CommentInterfaceClient(nameHelper.CommentServiceChannel);
-            var res = await client.GetCommentsForContentAsync(new() { ContentID = contentID.ToString(), Options = new() { Order = CommentOrder.Liked } }, GetMetadata());
+            try
+            {
+                var client = new CommentInterface.CommentInterfaceClient(nameHelper.CommentServiceChannel);
+                var res = await client.GetCommentsForContentAsync(new() { ContentID = contentID.ToString(), Options = new() { Order = CommentOrder.Liked } }, GetMetadata());
 
-            return res?.Records?.ToList() ?? Enumerable.Empty<CommentPublicRecord>();
+                return res?.Records?.ToList() ?? Enumerable.Empty<CommentPublicRecord>();
+            }
+            catch
+            {
+                return Enumerable.Empty<CommentPublicRecord>();
+            }
         }
 
         private Metadata GetMetadata()
