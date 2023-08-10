@@ -271,6 +271,9 @@ namespace ON.Content.SimpleComment.Service
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
             var contentId = request.ContentID.ToGuid();
 
+            if (request.Options == null)
+                request.Options = new SearchOptions { Order = CommentOrder.Liked };
+
             return await FilterResults(dataProvider.GetByContentId(contentId), request.Options, user);
         }
 
@@ -279,6 +282,9 @@ namespace ON.Content.SimpleComment.Service
         {
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
             var parentId = request.ParentCommentID.ToGuid();
+
+            if (request.Options == null)
+                request.Options = new SearchOptions { Order = CommentOrder.Liked };
 
             return await FilterResults(dataProvider.GetByParentId(parentId), request.Options, user);
         }
@@ -375,7 +381,7 @@ namespace ON.Content.SimpleComment.Service
 
         private bool CanShowInList(CommentRecord rec, ONUser user)
         {
-            if (user.IsCommentModeratorOrHigher)
+            if (user?.IsCommentModeratorOrHigher == true)
                 return true;
 
             return rec.Public.DeletedOnUTC != null;
@@ -393,13 +399,13 @@ namespace ON.Content.SimpleComment.Service
             }
             catch (RegexMatchTimeoutException)
             {
-                return String.Empty;
+                return string.Empty;
             }
         }
 
         private bool CanCreateComment(ONUser user)
         {
-            if (user.IsAdminOrHigher)
+            if (user?.IsAdminOrHigher == true)
                 return true;
 
             switch (commentRestrictionMinimum.Minimum)

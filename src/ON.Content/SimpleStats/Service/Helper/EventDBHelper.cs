@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using ON.Content.SimpleStats.Service.Models;
 using ON.Fragments.Content.Stats;
 using ON.Fragments.Settings;
+using ON.Settings;
 using System;
 using System.Reflection;
 using System.Text;
@@ -15,13 +16,11 @@ namespace ON.Content.SimpleStats.Service.Helper
 {
     public class EventDBHelper
     {
-        private readonly string connStr;
         private EventStoreClient client;
 
         public EventDBHelper(IOptions<AppSettings> settings)
         {
-            connStr = settings.Value.EventDBConnStr;
-            var clientSettings = EventStoreClientSettings.Create(connStr);
+            var clientSettings = EventStoreClientSettings.Create(SettingsClient.ConnectionString);
             client = new EventStoreClient(clientSettings);
         }
 

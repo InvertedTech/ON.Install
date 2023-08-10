@@ -40,7 +40,6 @@ namespace ON.Authorization.Payment.Service
 
             services.Configure<FakeM.AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<PaypalM.AppSettings>(Configuration.GetSection("AppSettings"));
-            services.Configure<SettingsClientSettings>(Configuration.GetSection("SettingsClientSettings"));
 
             services.AddFakeHelpers();
             services.AddPaypalHelpers();

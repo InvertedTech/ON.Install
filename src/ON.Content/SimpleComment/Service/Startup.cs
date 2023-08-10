@@ -58,7 +58,6 @@ namespace ON.Content.SimpleComment.Service
             services.AddSingleton<ICommentDataProvider, FileSystemCommentDataProvider>();
             //services.AddSingleton<FileSystemCommentDataProvider>();
 
-            services.Configure<SettingsClientSettings>(Configuration.GetSection("SettingsClientSettings"));
             services.AddSettingsHelpers();
 
             services.AddJwtAuthentication();
