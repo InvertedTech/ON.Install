@@ -1,0 +1,14 @@
+﻿@model ON.SimpleWeb.Models.Comment.AddCommentViewModel
+@using userHelper = ON.Authentication.ONUserHelper;
+@using commentHelper = ON.SimpleWeb.Services.CommentService;
+
+<form method="post" class="needs-validation" asp-action="AddComment" asp-controller="Comment">
+    <input type="hidden" asp-for="ContentID" />
+    <div class="form-group">
+        <label asp-for="CommentText"></label>
+        <textarea class="form-control" asp-for="CommentText"></textarea>
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-primary">Add Comment</button>
+</form>

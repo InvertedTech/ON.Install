@@ -1,0 +1,202 @@
+syntax = "proto3";
+
+package ON.Fragments.Comment;
+
+import "google/api/annotations.proto";
+import "Protos/ON/Fragments/Comment/CommentRecord.proto";
+import "Protos/ON/Fragments/Comment/SharedTypes.proto";
+
+// Service for Asset fragment interface
+service CommentInterface {
+  rpc AdminDeleteComment (AdminDeleteCommentRequest) returns (AdminDeleteCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/admin/{CommentID}/delete"
+    };
+  }
+  rpc AdminEditComment (AdminEditCommentRequest) returns (AdminEditCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/admin/{CommentID}/edit"
+      body: "*"
+    };
+  }
+  rpc AdminPinComment (AdminPinCommentRequest) returns (AdminPinCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/admin/{CommentID}/pin"
+    };
+  }
+  rpc AdminUnDeleteComment (AdminUnDeleteCommentRequest) returns (AdminUnDeleteCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/admin/{CommentID}/undelete"
+    };
+  }
+  rpc AdminUnPinComment (AdminUnPinCommentRequest) returns (AdminUnPinCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/admin/{CommentID}/unpin"
+    };
+  }
+  rpc CreateCommentForContent (CreateCommentForContentRequest) returns (CreateCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/content/{ContentID}/create"
+      body: "*"
+    };
+  }
+  rpc CreateCommentForComment (CreateCommentForCommentRequest) returns (CreateCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/{ParentCommentID}/create"
+      body: "*"
+    };
+  }
+  rpc DeleteOwnComment (DeleteOwnCommentRequest) returns (DeleteOwnCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/{CommentID}/delete"
+    };
+  }
+  rpc EditComment (EditCommentRequest) returns (EditCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/{CommentID}/edit"
+      body: "*"
+    };
+  }
+  rpc GetCommentsForContent (GetCommentsForContentRequest) returns (GetCommentsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/comment/content/{ContentID}"
+    };
+  }
+  rpc GetCommentsForComment (GetCommentsForCommentRequest) returns (GetCommentsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/comment/{ParentCommentID}"
+    };
+  }
+  rpc LikeComment (LikeCommentRequest) returns (LikeCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/{CommentID}/like"
+    };
+  }
+  rpc UnLikeComment (UnLikeCommentRequest) returns (UnLikeCommentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/comment/{CommentID}/unlike"
+    };
+  }
+}
+
+message AdminDeleteCommentRequest {
+  string CommentID = 1;
+}
+
+message AdminDeleteCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
+message AdminEditCommentRequest {
+  string CommentID = 1;
+  string Text = 2;
+}
+
+message AdminEditCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
+message AdminPinCommentRequest {
+  string CommentID = 1;
+}
+
+message AdminPinCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
+message AdminUnDeleteCommentRequest {
+  string CommentID = 1;
+}
+
+message AdminUnDeleteCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
+message AdminUnPinCommentRequest {
+  string CommentID = 1;
+}
+
+message AdminUnPinCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
+message CreateCommentForContentRequest {
+  string ContentID = 1;
+  string Text = 2;
+}
+
+message CreateCommentForCommentRequest {
+  string ParentCommentID = 1;
+  string Text = 2;
+}
+
+message CreateCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
+message DeleteOwnCommentRequest {
+  string CommentID = 1;
+}
+
+message DeleteOwnCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
+message EditCommentRequest {
+  string CommentID = 1;
+  string Text = 2;
+}
+
+message EditCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
+message GetCommentsForContentRequest {
+  string ContentID = 1;
+  CommentOrder Order = 11;
+  uint32 PageSize = 12;
+  uint32 PageOffset = 13;
+}
+
+message GetCommentsForCommentRequest {
+  string ParentCommentID = 1;
+  CommentOrder Order = 11;
+  uint32 PageSize = 12;
+  uint32 PageOffset = 13;
+}
+
+message GetCommentsResponse {
+  repeated CommentPublicRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+
+message LikeCommentRequest {
+  string CommentID = 1;
+}
+
+message LikeCommentResponse {
+  CommentPublicRecord Record = 1;
+}
+
+message UnLikeCommentRequest {
+  string CommentID = 1;
+}
+
+message UnLikeCommentResponse {
+  CommentPublicRecord Record = 1;
+}

@@ -21,11 +21,11 @@ namespace ON.Settings.SimpleSettings.Service.Data
         private EventStoreClient client;
         private string streamName = "simplesettings";
 
-        public EventDBSettingsDataProvider(ILogger<EventDBSettingsDataProvider> logger, IOptions<AppSettings> settings)
+        public EventDBSettingsDataProvider(ILogger<EventDBSettingsDataProvider> logger)
         {
             this.logger = logger;
 
-            var clientSettings = EventStoreClientSettings.Create(settings.Value.EventDBConnStr);
+            var clientSettings = EventStoreClientSettings.Create(SettingsClient.ConnectionString);
             client = new EventStoreClient(clientSettings);
         }
 

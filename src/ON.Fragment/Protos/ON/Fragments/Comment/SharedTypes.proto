@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ON.Fragments.Comments;
+package ON.Fragments.Comment;
 
 enum CommentOrder {
     Liked = 0;
@@ -17,5 +17,6 @@ enum CommentRestrictionMinimumEnum {
     Anonymous = 0;
     Subscriber = 1;
     PaidSubscriber = 2;
-    None = 3;
+    CommentModerator = 3;
+    AdminOnly = 4;
 }

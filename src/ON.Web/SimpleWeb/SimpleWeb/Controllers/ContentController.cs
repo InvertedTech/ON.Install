@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.SimpleWeb.Models;
 using ON.SimpleWeb.Models.CMS;
+using ON.SimpleWeb.Models.Comment;
 using ON.SimpleWeb.Services;
 
 namespace ON.SimpleWeb.Controllers
@@ -17,14 +18,16 @@ namespace ON.SimpleWeb.Controllers
     [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
     public class ContentController : Controller
     {
-        private readonly ILogger<HomeController> logger;
+        private readonly ILogger logger;
         private readonly ContentService contentService;
+        private readonly CommentService commentService;
         private readonly ONUserHelper userHelper;
 
-        public ContentController(ILogger<HomeController> logger, ContentService contentService, ONUserHelper userHelper)
+        public ContentController(ILogger<ContentController> logger, ContentService contentService, CommentService commentService, ONUserHelper userHelper)
         {
             this.logger = logger;
             this.contentService = contentService;
+            this.commentService = commentService;
             this.userHelper = userHelper;
         }
 
@@ -36,14 +39,29 @@ namespace ON.SimpleWeb.Controllers
             if (!Guid.TryParse(id, out contentId))
                 return NotFound();
 
-            var res = await contentService.GetContent(contentId);
-            if (res == null)
+            var resContent = await contentService.GetContent(contentId);
+            if (resContent == null)
                 return NotFound();
 
-            if (res.Data.ContentDataOneofCase == Fragments.Content.ContentPublicData.ContentDataOneofOneofCase.Video)
-                return View("ViewVideo", res);
-            if (res.Data.ContentDataOneofCase == Fragments.Content.ContentPublicData.ContentDataOneofOneofCase.Written)
-                return View("ViewWritten", res);
+            var resComment = await commentService.GetAllForContent(contentId);
+
+            var vm = new ViewContentViewModel()
+            {
+                Record = resContent,
+                Comments = new()
+                {
+                    Records = resComment.ToList(),
+                    NewComment = new()
+                    {
+                        ContentID = resContent.ContentID,
+                    }
+                }
+            };
+
+            if (resContent.Data.ContentDataOneofCase == Fragments.Content.ContentPublicData.ContentDataOneofOneofCase.Video)
+                return View("ViewVideo", vm);
+            if (resContent.Data.ContentDataOneofCase == Fragments.Content.ContentPublicData.ContentDataOneofOneofCase.Written)
+                return View("ViewWritten", vm);
             return NotFound();
         }
 

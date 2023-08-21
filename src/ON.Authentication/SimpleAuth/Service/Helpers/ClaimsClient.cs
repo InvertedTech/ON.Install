@@ -1,7 +1,5 @@
 ﻿using Grpc.Core;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using ON.Fragments.Authentication;
 using ON.Fragments.Authorization;
 using System;
 using System.Collections.Generic;
@@ -12,7 +10,11 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 {
     public class ClaimsClient
     {
-        private readonly ILogger<ClaimsClient> logger;
+        public const string CLAIMS_SERVICE_LIST = "CLAIMS_SERVICE_LIST";
+        public const string CHANNEL_NAME_CHAT = "chat";
+        public const string CHANNEL_NAME_PAYMENT = "payment";
+
+        private readonly ILogger logger;
         private readonly ServiceNameHelper nameHelper;
         public readonly ONUser User;
 
@@ -27,8 +29,7 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 
         public async Task<IEnumerable<ClaimRecord>> GetOtherClaims(Guid userId)
         {
-            List<Channel> channels = new List<Channel>();
-            channels.Add(nameHelper.PaymentServiceChannel);
+            List<Channel> channels = GetChannels();
 
             var tasks = channels.Select(c => GetOtherClaims(userId, c));
 
@@ -77,6 +78,34 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
             }
 
             return new ClaimRecord[0];
+        }
+
+        private List<Channel> GetChannels()
+        {
+            List<Channel> channels = new List<Channel>();
+
+            var channelNames = GetStringFromEnvVar(CLAIMS_SERVICE_LIST)?.Split(',') ?? new string[0];
+            foreach (var name in channelNames)
+            {
+                switch(name)
+                {
+                    case CHANNEL_NAME_CHAT:
+                        channels.Add(nameHelper.ChatServiceChannel);
+                        break;
+                    case CHANNEL_NAME_PAYMENT:
+                        channels.Add(nameHelper.PaymentServiceChannel);
+                        break;
+                }
+            }
+
+            return channels;
+        }
+
+        private string GetStringFromEnvVar(string varName)
+        {
+            var envVar = Environment.GetEnvironmentVariable(varName, EnvironmentVariableTarget.Process);
+
+            return envVar;
         }
     }
 }

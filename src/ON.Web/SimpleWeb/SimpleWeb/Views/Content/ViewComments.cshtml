@@ -1,0 +1,14 @@
+﻿@model ON.SimpleWeb.Models.Comment.ViewCommentsViewModel;
+@using ON.SimpleWeb.Models.Comment;
+@using userHelper = ON.Authentication.ONUserHelper;
+@using commentHelper = ON.SimpleWeb.Services.CommentService;
+
+
+@foreach (var record in Model.Records)
+{
+    <p>
+        @(record.Data.CommentText)
+    </p>
+}
+@await Html.PartialAsync("AddComment", Model.NewComment)
+

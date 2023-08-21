@@ -106,6 +106,8 @@ namespace ON.Content.SimpleCMS.Service
             var searchAuthorId = request.AuthorId;
             var searchTag = request.Tag;
             var searchLiveOnly = request.OnlyLive;
+            var searchPublishedAfterUTC = request.PublishedAfterUTC;
+            var searchPublishedBeforeUTC = request.PublishedBeforeUTC;
 
             if (!possiblyIDs.Any())
                 possiblyIDs = null;
@@ -156,6 +158,14 @@ namespace ON.Content.SimpleCMS.Service
 
                 if (searchLiveOnly)
                     if (!(rec.Public.Data.Video?.IsLive ?? false))
+                        continue;
+
+                if (searchPublishedAfterUTC != null)
+                    if (rec.Public.PublishOnUTC < searchPublishedAfterUTC)
+                        continue;
+
+                if (searchPublishedBeforeUTC != null)
+                    if (rec.Public.PublishOnUTC > searchPublishedBeforeUTC)
                         continue;
 
                 var listRec = rec.Public.ToContentListRecord();
@@ -346,12 +356,30 @@ namespace ON.Content.SimpleCMS.Service
         }
 
         [AllowAnonymous]
+        public override async Task<GetRecentCategoriesResponse> GetRecentCategories(GetRecentCategoriesRequest request, ServerCallContext context)
+        {
+            int num = Math.Min((int)request.NumCategories, 100);
+
+            List<string> allCategories = new();
+            await foreach (var rec in dataProvider.GetAll().Where(r => r.Public.PublishOnUTC != null).OrderByDescending(r => r.Public.PublishOnUTC))
+            {
+                allCategories.AddRange(rec.Public.Data.CategoryIds.Where(c => !allCategories.Contains(c)));
+                if (allCategories.Count > num)
+                    break;
+            }
+
+            var res = new GetRecentCategoriesResponse();
+            res.CategoryIds.AddRange(allCategories.Take(num));
+            return res;
+        }
+
+        [AllowAnonymous]
         public override async Task<GetRecentTagsResponse> GetRecentTags(GetRecentTagsRequest request, ServerCallContext context)
         {
             int num = Math.Min((int)request.NumTags, 100);
 
             List<string> allTags = new();
-            await foreach (var rec in dataProvider.GetAll())
+            await foreach (var rec in dataProvider.GetAll().Where(r => r.Public.PublishOnUTC != null).OrderByDescending(r=> r.Public.PublishOnUTC))
             {
                 allTags.AddRange(rec.Public.Data.Tags.Where(t => !allTags.Contains(t)));
                 if (allTags.Count > num)

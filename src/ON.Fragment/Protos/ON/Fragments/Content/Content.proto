@@ -58,6 +58,12 @@ service ContentInterface {
       get: "/api/cms/admin/content/{ContentID}"
     };
   }
+  rpc GetRecentCategories (GetRecentCategoriesRequest) returns (GetRecentCategoriesResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/categories/recent"
+    };
+  }
   rpc GetRecentTags (GetRecentTagsRequest) returns (GetRecentTagsResponse)
   {
     option (google.api.http) = {
@@ -147,6 +153,8 @@ message GetAllContentRequest {
   string Tag = 14;
   string AuthorId = 15;
   bool OnlyLive = 16;
+  google.protobuf.Timestamp PublishedAfterUTC = 21;
+  google.protobuf.Timestamp PublishedBeforeUTC = 22;
 }
   
 message GetAllContentResponse {
@@ -198,6 +206,14 @@ message GetContentAdminRequest {
   
 message GetContentAdminResponse {
   ContentRecord Record = 1;
+}
+
+message GetRecentCategoriesRequest {
+  uint32 NumCategories = 1;
+}
+  
+message GetRecentCategoriesResponse {
+  repeated string CategoryIds = 1;
 }
 
 message GetRecentTagsRequest {

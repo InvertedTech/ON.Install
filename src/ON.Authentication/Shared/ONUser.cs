@@ -22,11 +22,14 @@ namespace ON.Authentication
 
         public const string ROLE_CAN_BACKUP = ROLE_OWNER + "," + ROLE_BACKUP;
         public const string ROLE_CAN_CREATE_CONTENT = ROLE_CAN_PUBLISH + "," + ROLE_CONTENT_WRITER;
+        public const string ROLE_CAN_MODERATE_COMMENT = ROLE_IS_COMMENT_APPELLATE_JUDGE_OR_HIGHER;
         public const string ROLE_CAN_PUBLISH = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_CONTENT_PUBLISHER;
         public const string ROLE_IS_ADMIN_OR_OWNER = ROLE_OWNER + "," + ROLE_ADMIN;
         public const string ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_SERVICE;
         public const string ROLE_IS_OWNER_OR_SERVICE = ROLE_SERVICE + "," + ROLE_OWNER;
         public const string ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE_OR_BOT = ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE + "," + ROLE_BOT_VERIFICATION;
+        public const string ROLE_IS_COMMENT_MODERATOR_OR_HIGHER = ROLE_IS_COMMENT_APPELLATE_JUDGE_OR_HIGHER + "," + ROLE_COMMENT_MODERATOR;
+        public const string ROLE_IS_COMMENT_APPELLATE_JUDGE_OR_HIGHER = ROLE_IS_ADMIN_OR_OWNER + "," + ROLE_COMMENT_APPELLATE_JUDGE;
 
         public Guid Id { get; set; } = Guid.Empty;
         public const string IdType = "Id";
@@ -59,6 +62,10 @@ namespace ON.Authentication
         public bool IsPublisherOrHigher { get => IsPublisher || IsAdminOrHigher; }
         public bool IsWriter { get => IsInRole(ROLE_CONTENT_WRITER); }
         public bool IsWriterOrHigher { get => IsWriter || IsPublisherOrHigher; }
+        public bool IsCommentModerator { get => IsInRole(ROLE_COMMENT_MODERATOR); }
+        public bool IsCommentModeratorOrHigher { get => IsCommentModerator || IsPublisherOrHigher; }
+        public bool IsCommentAppellateJudge { get => IsInRole(ROLE_COMMENT_APPELLATE_JUDGE); }
+        public bool IsCommentAppellateJudgeOrHigher { get => IsCommentAppellateJudge || IsAdminOrHigher; }
 
         public bool CanPublish { get => IsPublisherOrHigher; }
         public bool CanCreateContent { get => IsWriterOrHigher; }

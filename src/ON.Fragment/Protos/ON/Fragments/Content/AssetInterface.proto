@@ -35,6 +35,9 @@ service AssetInterface {
       get: "/api/cms/admin/asset/old/{OldAssetID}"
     };
   }
+  rpc GetListOfIDs (GetListOfIDsRequest) returns (stream GetListOfIDsResponse)
+  {
+  }
   rpc GetListOfOldContentIDs (GetListOfOldContentIDsRequest) returns (stream GetListOfOldContentIDsResponse)
   {
   }
@@ -80,9 +83,17 @@ message GetAssetByOldContentIDResponse {
   AssetRecord Record = 1;
 }
 
+message GetListOfIDsRequest {
+}
+
+message GetListOfIDsResponse {
+  string AssetID = 1;
+  google.protobuf.Timestamp ModifiedOnUTC = 2;
+}
+
 message GetListOfOldContentIDsRequest {
 }
-  
+
 message GetListOfOldContentIDsResponse {
   string AssetID = 1;
   string OldAssetID = 2;

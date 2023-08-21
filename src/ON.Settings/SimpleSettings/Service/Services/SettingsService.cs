@@ -547,10 +547,10 @@ namespace ON.Settings.SimpleSettings.Service.Services
                     {
                         AllowLinks = false,
                         ExplicitModeEnabled = true,
-                        DefaultOrder = Fragments.Comments.CommentOrder.Liked,
+                        DefaultOrder = Fragments.Comment.CommentOrder.Liked,
                         DefaultRestriction = new()
                         {
-                            Minimum = Fragments.Comments.CommentRestrictionMinimumEnum.Subscriber,
+                            Minimum = Fragments.Comment.CommentRestrictionMinimumEnum.Subscriber,
                         },
                     },
                     Personalization = new()

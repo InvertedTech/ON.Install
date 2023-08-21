@@ -1,33 +1,38 @@
-﻿@model ON.Fragments.Content.ContentPublicRecord
+﻿@model ViewContentViewModel
+@using ON.SimpleWeb.Models.CMS;
 @using userHelper = ON.Authentication.ONUserHelper;
 @{
-    ViewData["Title"] = Model.Data.Title;
+    ViewData["Title"] = Model.Record.Data.Title;
 }
 
 @if (userHelper.MyUser?.IsWriterOrHigher ?? false)
 {
     <p>
-        <a class="btn btn-primary" href="/content/@(Model.ContentID)/edit">Edit</a>
+        <a class="btn btn-primary" href="/content/@(Model.Record.ContentID)/edit">Edit</a>
     </p>
     <br />
 }
 
 
-<h1>@Model.Data.Title</h1>
+<h1>@Model.Record.Data.Title</h1>
 
-<h5>@Model.Data.Description</h5>
+<h5>@Model.Record.Data.Description</h5>
 
-<em>By: @Model.Data.Author</em>
+<em>By: @Model.Record.Data.Author</em>
 
-@if (Model.Data.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
+@if (Model.Record.Data.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
 {
-    @Html.Raw(Model.Data.Written.HtmlBody)
+    @Html.Raw(Model.Record.Data.Written.HtmlBody)
+
+    @await Html.PartialAsync("ViewComments", Model.Comments)
 }
 else
 {
-    if (Model.Data.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    if (Model.Record.Data.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
     {
-        @Html.Raw(Model.Data.Written.HtmlBody)
+        @Html.Raw(Model.Record.Data.Written.HtmlBody)
+
+        @await Html.PartialAsync("ViewComments", Model.Comments)
     }
     else
     {

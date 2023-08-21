@@ -163,6 +163,39 @@ namespace ON.Content.SimpleCMS.Service
         }
 
         [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public async override Task GetListOfIDs(GetListOfIDsRequest request, IServerStreamWriter<GetListOfIDsResponse> responseStream, ServerCallContext context)
+        {
+            try
+            {
+                await foreach (var r in dataProvider.GetAll())
+                {
+                    switch (r.AssetRecordOneofCase)
+                    {
+                        case AssetRecord.AssetRecordOneofOneofCase.Audio:
+                            if (r.Audio.Private.Data.OldAssetID != "")
+                                await responseStream.WriteAsync(new()
+                                {
+                                    AssetID = r.Audio.Public.AssetID,
+                                    ModifiedOnUTC = r.Audio.Public.ModifiedOnUTC,
+                                });
+                            break;
+                        case AssetRecord.AssetRecordOneofOneofCase.Image:
+                            if (r.Image.Private.Data.OldAssetID != "")
+                                await responseStream.WriteAsync(new()
+                                {
+                                    AssetID = r.Image.Public.AssetID,
+                                    ModifiedOnUTC = r.Image.Public.ModifiedOnUTC,
+                                });
+                            break;
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public async override Task GetListOfOldContentIDs(GetListOfOldContentIDsRequest request, IServerStreamWriter<GetListOfOldContentIDsResponse> responseStream, ServerCallContext context)
         {
             try

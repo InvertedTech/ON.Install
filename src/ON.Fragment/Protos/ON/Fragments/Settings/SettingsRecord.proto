@@ -10,7 +10,7 @@ import "Protos/ON/Fragments/Authorization/Payment/ParallelEconomy/ParallelEconom
 import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeSettings.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Paypal/PaypalSettings.proto";
 import "Protos/ON/Fragments/Content/SharedTypes.proto";
-import "Protos/ON/Fragments/Comments/SharedTypes.proto";
+import "Protos/ON/Fragments/Comment/SharedTypes.proto";
 import "Protos/ON/Fragments/Notification/NotificationSettings.proto";
 
 // User authentication data
@@ -84,8 +84,8 @@ message SubscriptionOwnerRecord {
 
 message CommentsPublicRecord {
   bool AllowLinks = 1;
-  ON.Fragments.Comments.CommentOrder DefaultOrder = 2;
-  ON.Fragments.Comments.CommentRestrictionMinimum DefaultRestriction = 3;
+  ON.Fragments.Comment.CommentOrder DefaultOrder = 2;
+  ON.Fragments.Comment.CommentRestrictionMinimum DefaultRestriction = 3;
   bool ExplicitModeEnabled = 4;
 }
 
