@@ -49,7 +49,7 @@ namespace ON.SimpleWeb.Services
             try
             {
                 var client = new CommentInterface.CommentInterfaceClient(nameHelper.CommentServiceChannel);
-                var res = await client.GetCommentsForContentAsync(new() { ContentID = contentID.ToString(), Options = new() { Order = CommentOrder.Liked } }, GetMetadata());
+                var res = await client.GetCommentsForContentAsync(new() { ContentID = contentID.ToString(), Order = CommentOrder.Liked }, GetMetadata());
 
                 return res?.Records?.ToList() ?? Enumerable.Empty<CommentPublicRecord>();
             }

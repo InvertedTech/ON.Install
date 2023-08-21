@@ -10,11 +10,18 @@ namespace ON.Authentication.SimpleAuth.Service.Helpers
 {
     public class ServiceNameHelper
     {
+        public readonly Channel ChatServiceChannel;
         public readonly Channel PaymentServiceChannel;
 
         public ServiceNameHelper(IConfiguration configuration, ILogger<ServiceNameHelper> logger)
         {
-            var uri = configuration.GetServiceUri("paymentservice", "grpc");
+            Uri uri;
+
+            uri = configuration.GetServiceUri("chatservice", "grpc");
+            if (uri != null)
+                ChatServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+
+            uri = configuration.GetServiceUri("paymentservice", "grpc");
             if (uri != null)
                 PaymentServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
         }

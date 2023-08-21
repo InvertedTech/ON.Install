@@ -166,18 +166,16 @@ message EditCommentResponse {
 
 message GetCommentsForContentRequest {
   string ContentID = 1;
-  SearchOptions Options = 2;
+  CommentOrder Order = 11;
+  uint32 PageSize = 12;
+  uint32 PageOffset = 13;
 }
 
 message GetCommentsForCommentRequest {
   string ParentCommentID = 1;
-  SearchOptions Options = 2;
-}
-
-message SearchOptions {
-  CommentOrder Order = 1;
-  uint32 PageSize = 2;
-  uint32 PageOffset = 3;
+  CommentOrder Order = 11;
+  uint32 PageSize = 12;
+  uint32 PageOffset = 13;
 }
 
 message GetCommentsResponse {

@@ -271,10 +271,7 @@ namespace ON.Content.SimpleComment.Service
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
             var contentId = request.ContentID.ToGuid();
 
-            if (request.Options == null)
-                request.Options = new SearchOptions { Order = CommentOrder.Liked };
-
-            return await FilterResults(dataProvider.GetByContentId(contentId), request.Options, user);
+            return await FilterResults(dataProvider.GetByContentId(contentId), request.Order, request.PageSize, request.PageOffset, user);
         }
 
         [AllowAnonymous]
@@ -283,13 +280,10 @@ namespace ON.Content.SimpleComment.Service
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
             var parentId = request.ParentCommentID.ToGuid();
 
-            if (request.Options == null)
-                request.Options = new SearchOptions { Order = CommentOrder.Liked };
-
-            return await FilterResults(dataProvider.GetByParentId(parentId), request.Options, user);
+            return await FilterResults(dataProvider.GetByParentId(parentId), request.Order, request.PageSize, request.PageOffset, user);
         }
 
-        private async Task<GetCommentsResponse> FilterResults(IAsyncEnumerable<CommentRecord> results, SearchOptions options, ONUser user)
+        private async Task<GetCommentsResponse> FilterResults(IAsyncEnumerable<CommentRecord> results, CommentOrder order, uint pageSize, uint pageOffset, ONUser user)
         {
             GetCommentsResponse res = new GetCommentsResponse();
 
@@ -302,7 +296,7 @@ namespace ON.Content.SimpleComment.Service
                 list.Add(rec.Public);
             }
 
-            switch (options.Order)
+            switch (order)
             {
                 case CommentOrder.Liked:
                     res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC).OrderByDescending(r => r.Data.Likes).OrderByDescending(r => r.PinnedOnUTC));
@@ -317,11 +311,11 @@ namespace ON.Content.SimpleComment.Service
 
             res.PageTotalItems = (uint)res.Records.Count;
 
-            if (options.PageSize > 0)
+            if (pageSize > 0)
             {
-                res.PageOffsetStart = options.PageOffset;
+                res.PageOffsetStart = pageOffset;
 
-                var page = res.Records.Skip((int)options.PageOffset).Take((int)options.PageSize).ToList();
+                var page = res.Records.Skip((int)pageOffset).Take((int)pageSize).ToList();
                 res.Records.Clear();
                 res.Records.AddRange(page);
             }
