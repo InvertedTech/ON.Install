@@ -261,6 +261,7 @@ message CreateUserResponse {
     NoError = 0;
     UnknownError = -1;
     UserNameTaken = 1;
+    EmailTaken = 2;
   }
 }
 
