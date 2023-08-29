@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using ON.Authentication;
 using ON.Content.SimpleComment.Service.Data;
+using ON.Content.SimpleComment.Service.Helper;
 using ON.Fragments.Comment;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
@@ -23,13 +25,15 @@ namespace ON.Content.SimpleComment.Service
     {
         private readonly ILogger logger;
         private readonly ICommentDataProvider dataProvider;
+        private readonly UserDataHelper userDataHelper;
         private readonly SettingsClient settings;
         private readonly CommentRestrictionMinimum commentRestrictionMinimum;
 
-        public CommentService(ILogger<CommentService> logger, ICommentDataProvider dataProvider, SettingsClient settings)
+        public CommentService(ILogger<CommentService> logger, ICommentDataProvider dataProvider, UserDataHelper userDataHelper, SettingsClient settings)
         {
             this.logger = logger;
             this.dataProvider = dataProvider;
+            this.userDataHelper = userDataHelper;
             this.settings = settings;
 
             commentRestrictionMinimum = settings.PublicData.Comments.DefaultRestriction;
@@ -271,7 +275,34 @@ namespace ON.Content.SimpleComment.Service
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
             var contentId = request.ContentID.ToGuid();
 
-            return await FilterResults(dataProvider.GetByContentId(contentId), request.Order, request.PageSize, request.PageOffset, user);
+            List<CommentResponseRecord> targetList = new();
+            Dictionary<string, uint> childList = new();
+            var results = dataProvider.GetByContentId(contentId);
+            await foreach (var rec in results)
+            {
+                if (!CanShowInList(rec, user)) continue;
+
+                if (string.IsNullOrEmpty(rec.Public.ParentCommentID))
+                {
+                    var converted = ToCommentResponseRecord(rec, user);
+                    targetList.Add(converted);
+                    continue;
+                }
+
+                var key = rec.Public.ParentCommentID;
+                if (childList.TryGetValue(key, out uint value))
+                    childList[key] = value + 1;
+                else
+                    childList[key] = 1;
+            }
+
+            foreach(var rec in targetList)
+            {
+                if (childList.TryGetValue(rec.CommentID, out uint value))
+                    rec.NumReplies = value;
+            }
+
+            return FilterResults(targetList, request.Order, request.PageSize, request.PageOffset, user);
         }
 
         [AllowAnonymous]
@@ -280,26 +311,35 @@ namespace ON.Content.SimpleComment.Service
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
             var parentId = request.ParentCommentID.ToGuid();
 
-            return await FilterResults(dataProvider.GetByParentId(parentId), request.Order, request.PageSize, request.PageOffset, user);
-        }
+            var parentRecord = await dataProvider.Get(parentId);
+            if (!CanShowInList(parentRecord, user))
+                return new();
 
-        private async Task<GetCommentsResponse> FilterResults(IAsyncEnumerable<CommentRecord> results, CommentOrder order, uint pageSize, uint pageOffset, ONUser user)
-        {
-            GetCommentsResponse res = new GetCommentsResponse();
-
-            List<CommentPublicRecord> list = new();
+            List<CommentResponseRecord> targetList = new();
+            var results = dataProvider.GetByParentId(parentId);
             await foreach (var rec in results)
             {
-                if (!CanShowInList(rec, user))
-                    continue;
+                if (!CanShowInList(rec, user)) continue;
 
-                list.Add(rec.Public);
+                    var converted = ToCommentResponseRecord(rec, user);
+                    targetList.Add(converted);
             }
+
+            var res = FilterResults(targetList, request.Order, request.PageSize, request.PageOffset, user);
+            res.Parent = ToCommentResponseRecord(parentRecord, user);
+            res.Parent.NumReplies = (uint)res.Records.Count;
+
+            return res;
+        }
+
+        private GetCommentsResponse FilterResults(List<CommentResponseRecord> list, CommentOrder order, uint pageSize, uint pageOffset, ONUser user)
+        {
+            GetCommentsResponse res = new GetCommentsResponse();
 
             switch (order)
             {
                 case CommentOrder.Liked:
-                    res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC).OrderByDescending(r => r.Data.Likes).OrderByDescending(r => r.PinnedOnUTC));
+                    res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC).OrderByDescending(r => r.Likes).OrderByDescending(r => r.PinnedOnUTC));
                     break;
                 case CommentOrder.Newest:
                     res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC).OrderByDescending(r => r.PinnedOnUTC));
@@ -375,10 +415,10 @@ namespace ON.Content.SimpleComment.Service
 
         private bool CanShowInList(CommentRecord rec, ONUser user)
         {
-            if (user?.IsCommentModeratorOrHigher == true)
-                return true;
+            //if (user?.IsCommentModeratorOrHigher == true)
+            //    return true;
 
-            return rec.Public.DeletedOnUTC != null;
+            return rec.Public.DeletedOnUTC == null;
         }
 
         private string CleanText(string text)
@@ -417,6 +457,33 @@ namespace ON.Content.SimpleComment.Service
             }
 
             return false;
+        }
+
+        private CommentResponseRecord ToCommentResponseRecord(CommentRecord r, ONUser user)
+        {
+            var record = new CommentResponseRecord
+            {
+                ContentID = r.Public.ContentID,
+                CommentID = r.Public.CommentID,
+                CommentText = r.Public.Data.CommentText,
+                CreatedOnUTC = r.Public.CreatedOnUTC,
+                ModifiedOnUTC = r.Public.ModifiedOnUTC,
+                PinnedOnUTC = r.Public.PinnedOnUTC,
+                UserID = r.Public.UserID,
+                UserDisplayName = userDataHelper.GetRecord(r.Public.UserID).DisplayName,
+                Likes = r.Public.Data.Likes,
+                LikedByUser = r.Private.Data.LikedByUserIDs.Contains(user.Id.ToString()),
+                NumReplies = 0,
+            };
+
+            return record;
+        }
+
+        private List<CommentResponseRecord> ToCommentResponseRecord(IOrderedEnumerable<CommentRecord> recordsIn, ONUser user)
+        {
+            var records = recordsIn.Select(r => ToCommentResponseRecord(r, user)).ToList();
+
+            return records;
         }
     }
 }

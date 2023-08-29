@@ -1,0 +1,22 @@
+﻿@model ViewRepliesViewModel
+@using ON.SimpleWeb.Models.Comment;
+@using userHelper = ON.Authentication.ONUserHelper;
+@{
+    ViewData["Title"] = Model.MainComment.CommentText;
+}
+
+<h2>Replies to</h2>
+<p>
+    By: @(Model.MainComment.UserDisplayName) at: @(Model.MainComment.CreatedOnUTC.ToDateTime().ToString("yyy-MM-dd HH:mm"))
+    <br />
+    @(Model.MainComment.CommentText)
+</p>
+
+<hr />
+
+<h4>Replies</h4>
+
+@await Html.PartialAsync("ViewComments", Model.ViewComments)
+
+@await Html.PartialAsync("AddComment", Model.ViewComments.NewComment)
+

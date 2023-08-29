@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ON.Authentication;
 using ON.Content.SimpleComment.Service.Data;
+using ON.Content.SimpleComment.Service.Helper;
 using ON.Content.SimpleComment.Service.Models;
 using ON.Settings;
 
@@ -56,6 +57,7 @@ namespace ON.Content.SimpleComment.Service
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<ICommentDataProvider, FileSystemCommentDataProvider>();
+            services.AddSingleton<UserDataHelper>();
             //services.AddSingleton<FileSystemCommentDataProvider>();
 
             services.AddSettingsHelpers();
