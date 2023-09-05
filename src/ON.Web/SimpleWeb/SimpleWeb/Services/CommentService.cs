@@ -44,18 +44,50 @@ namespace ON.SimpleWeb.Services
             return res;
         }
 
-        public async Task<IEnumerable<CommentPublicRecord>> GetAllForContent(Guid contentID)
+        public async Task<CreateCommentResponse> CreateCommentReply(AddCommentViewModel vm)
+        {
+            if (!User.CanCreateContent)
+                return null;
+
+            var req = new CreateCommentForCommentRequest
+            {
+                ParentCommentID = vm.ParentCommentID,
+                Text = vm.CommentText,
+            };
+
+            var client = new CommentInterface.CommentInterfaceClient(nameHelper.CommentServiceChannel);
+            var res = await client.CreateCommentForCommentAsync(req, GetMetadata());
+
+            return res;
+        }
+
+        public async Task<IEnumerable<CommentResponseRecord>> GetAllForContent(Guid contentID)
         {
             try
             {
                 var client = new CommentInterface.CommentInterfaceClient(nameHelper.CommentServiceChannel);
                 var res = await client.GetCommentsForContentAsync(new() { ContentID = contentID.ToString(), Order = CommentOrder.Liked }, GetMetadata());
 
-                return res?.Records?.ToList() ?? Enumerable.Empty<CommentPublicRecord>();
+                return res?.Records?.ToList() ?? Enumerable.Empty<CommentResponseRecord>();
             }
             catch
             {
-                return Enumerable.Empty<CommentPublicRecord>();
+                return Enumerable.Empty<CommentResponseRecord>();
+            }
+        }
+
+        public async Task<GetCommentsResponse> GetAllForComment(Guid parentCommentID)
+        {
+            try
+            {
+                var client = new CommentInterface.CommentInterfaceClient(nameHelper.CommentServiceChannel);
+                var res = await client.GetCommentsForCommentAsync(new() { ParentCommentID = parentCommentID.ToString(), Order = CommentOrder.Liked }, GetMetadata());
+
+                return res ?? new();
+            }
+            catch
+            {
+                return new();
             }
         }
 

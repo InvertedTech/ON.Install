@@ -18,6 +18,7 @@ namespace ON.Authentication.SimpleAuth.Service.Data
     {
         private readonly DirectoryInfo dataDir;
         private readonly ILogger logger;
+        private readonly ConcurrentDictionary<string, Guid> emailIndex = new();
         private readonly ConcurrentDictionary<string, Guid> loginIndex = new();
 
         public FileSystemUserDataProvider(IOptions<AppSettings> settings, ILogger<FileSystemUserDataProvider> logger)
@@ -36,7 +37,30 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             await foreach (var r in GetAll())
             {
                 loginIndex.TryAdd(r.Normal.Public.Data.UserName.ToLower(), r.UserIDGuid);
+
+                foreach (var e in r.Normal.Private.Data.Emails)
+                    emailIndex.TryAdd(e.ToLower(), r.UserIDGuid);
             }
+        }
+
+        public Task<bool> ChangeEmailIndex(string[] emails, Guid id)
+        {
+            foreach (var e in emails)
+            {
+                if (!emailIndex.TryGetValue(e.ToLower(), out var eId)) continue;
+                if (eId == id) continue;
+
+                return Task.FromResult(false);
+            }
+
+            var toDel = emailIndex.Where(kv => kv.Value == id).Select(kv => kv.Key).ToArray();
+            foreach (var email in toDel)
+                emailIndex.TryRemove(email, out var dummy);
+
+            foreach (var email in emails)
+                emailIndex.TryAdd(email.ToLower(), id);
+
+            return Task.FromResult(true);
         }
 
         public Task<bool> ChangeLoginIndex(string oldLoginName, string newLoginName, Guid id)
@@ -79,6 +103,9 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
             loginIndex.TryRemove(rec.Normal.Public.Data.UserName.ToLower(), out var dummy);
 
+            foreach (var e in rec.Normal.Private.Data.Emails)
+                emailIndex.TryRemove(e.ToLower(), out var dummy2);
+
             return true;
         }
 
@@ -88,7 +115,21 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             return Task.FromResult(fd.Exists);
         }
 
-        public Task<bool> Exists(string loginName)
+        public Task<bool> EmailExists(string email)
+        {
+            return Task.FromResult(emailIndex.TryGetValue(email.ToLower(), out var dummy));
+        }
+
+        public Task<bool> EmailsExist(string[] emails)
+        {
+            foreach (var email in emails)
+                if (EmailExists(email).Result)
+                    return Task.FromResult(true);
+
+            return Task.FromResult(false);
+        }
+
+        public Task<bool> LoginExists(string loginName)
         {
             return Task.FromResult(loginIndex.TryGetValue(loginName.ToLower(), out var dummy));
         }
@@ -113,6 +154,14 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             return UserRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(fd.FullName));
         }
 
+        public async Task<UserRecord> GetByEmail(string email)
+        {
+            if (emailIndex.TryGetValue(email.ToLower(), out var id))
+                return await GetById(id);
+
+            return null;
+        }
+
         public async Task<UserRecord> GetByLogin(string loginName)
         {
             if (loginIndex.TryGetValue(loginName.ToLower(), out var id))
@@ -130,6 +179,9 @@ namespace ON.Authentication.SimpleAuth.Service.Data
             await File.WriteAllBytesAsync(fd.FullName, user.ToByteArray());
 
             loginIndex.AddOrUpdate(user.Normal.Public.Data.UserName.ToLower(), id, (k, v) => id);
+
+            foreach (var e in user.Normal.Private.Data.Emails)
+                emailIndex.AddOrUpdate(e.ToLower(), id, (k, v) => id);
         }
 
         private IEnumerable<FileInfo> GetAllDataFiles()

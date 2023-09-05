@@ -3,6 +3,7 @@ syntax = "proto3";
 package ON.Fragments.Comment;
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 import "Protos/ON/Fragments/Comment/CommentRecord.proto";
 import "Protos/ON/Fragments/Comment/SharedTypes.proto";
 
@@ -179,10 +180,26 @@ message GetCommentsForCommentRequest {
 }
 
 message GetCommentsResponse {
-  repeated CommentPublicRecord Records = 1;
+  CommentResponseRecord Parent = 1;
+  repeated CommentResponseRecord Records = 2;
   uint32 PageOffsetStart = 11;
   uint32 PageOffsetEnd = 12;
   uint32 PageTotalItems = 13;
+}
+
+message CommentResponseRecord {
+  string ContentID = 1;        // Guid for the content record
+  string CommentID = 2;        // Guid for the comment record
+  string UserID = 3;           // Guid for the user posting the comment
+  string UserDisplayName = 4;  // Guid for the user posting the comment
+  google.protobuf.Timestamp CreatedOnUTC = 11;  // UTC timestamp when content was created
+  google.protobuf.Timestamp ModifiedOnUTC = 12; // UTC timestamp when content record was last modified
+  google.protobuf.Timestamp PinnedOnUTC = 13;   // UTC timestamp when content was pinned
+
+  string CommentText = 21;
+  uint32 Likes = 22;
+  bool LikedByUser = 23;
+  uint32 NumReplies = 24;
 }
 
 message LikeCommentRequest {

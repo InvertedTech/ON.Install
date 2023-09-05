@@ -6,6 +6,7 @@ namespace ON.SimpleWeb.Models.Comment
     public class AddCommentViewModel
     {
         public string ContentID { get; set; }
+        public string ParentCommentID { get; set; }
 
         [Display(Name = "Comment")]
         [Required]

@@ -59,7 +59,11 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
             var user = await dataProvider.GetByLogin(request.UserName);
             if (user == null)
-                return new AuthenticateUserResponse();
+            {
+                user = await dataProvider.GetByEmail(request.UserName);
+                if (user == null)
+                    return new AuthenticateUserResponse();
+            }
 
             bool isCorrect = await IsPasswordCorrect(request.Password, user);
 
@@ -306,10 +310,16 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     Error = CreateUserResponse.Types.CreateUserResponseErrorType.UnknownError
                 };
 
-            if (await dataProvider.Exists(user.Normal.Public.Data.UserName.ToLower()))
+            if (await dataProvider.LoginExists(user.Normal.Public.Data.UserName.ToLower()))
                 return new CreateUserResponse
                 {
                     Error = CreateUserResponse.Types.CreateUserResponseErrorType.UserNameTaken
+                };
+
+            if (await dataProvider.EmailsExist(user.Normal.Private.Data.Emails.ToArray()))
+                return new CreateUserResponse
+                {
+                    Error = CreateUserResponse.Types.CreateUserResponseErrorType.EmailTaken
                 };
 
             var res = await dataProvider.Create(user);
@@ -554,13 +564,21 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     record.Normal.Public.Data.UserName = request.UserName;
                 }
 
+
+                if (!record.Normal.Private.Data.Emails.SequenceEqual(request.Emails))
+                {
+                    if (!await dataProvider.ChangeEmailIndex(request.Emails.ToArray(), userId))
+                        return new ModifyOtherUserResponse() { Error = "Email address taken" };
+
+                    record.Normal.Private.Data.Emails.Clear();
+                    record.Normal.Private.Data.Emails.AddRange(request.Emails);
+                }
+
                 record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.Normal.Public.Data.DisplayName = request.DisplayName;
                 record.Normal.Public.Data.Bio = request.Bio;
 
                 record.Normal.Private.ModifiedBy = userToken.Id.ToString();
-                record.Normal.Private.Data.Emails.Clear();
-                record.Normal.Private.Data.Emails.AddRange(request.Emails);
 
                 await dataProvider.Save(record);
 
@@ -889,7 +907,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
         private async Task EnsureDevOwnerLogin()
         {
-            if (await dataProvider.Exists("owner"))
+            if (await dataProvider.LoginExists("owner"))
                 return;
 
             var date = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);

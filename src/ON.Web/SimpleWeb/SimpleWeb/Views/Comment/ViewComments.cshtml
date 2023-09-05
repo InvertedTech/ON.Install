@@ -11,9 +11,5 @@
         By: @(record.UserDisplayName) at: @(record.CreatedOnUTC.ToDateTime().ToString("yyy-MM-dd HH:mm"))
         <br />
         @(record.CommentText)
-        <br />
-        <a asp-action="Replies" asp-controller="Comment" asp-route-id="@(record.CommentID)">Replies (@(record.NumReplies))</a>
     </p>
 }
-@await Html.PartialAsync("AddComment", Model.NewComment)
-
