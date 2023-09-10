@@ -32,6 +32,8 @@ namespace ON.SimpleWeb.Models.Auth
         [Required, DataType(DataType.EmailAddress), EmailAddress]
         public string Email { get; set; }
 
+        public List<TOTPDeviceLimited> TotpDevices { get; internal set; }
+
         public string ErrorMessage { get; set; }
         public string SuccessMessage { get; set; }
     }

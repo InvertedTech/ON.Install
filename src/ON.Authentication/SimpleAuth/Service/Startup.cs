@@ -9,6 +9,7 @@ using ON.Authentication.SimpleAuth.Service.Data;
 using ON.Authentication.SimpleAuth.Service.Helpers;
 using ON.Authentication.SimpleAuth.Service.Models;
 using ON.Authentication.SimpleAuth.Service.Services;
+using ON.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,9 +48,9 @@ namespace ON.Authentication.SimpleAuth.Service
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IUserDataProvider, FileSystemUserDataProvider>();
             services.AddScoped<ClaimsClient>();
-            services.AddSingleton<ServiceNameHelper>();
             services.AddSingleton<OfflineHelper>();
 
+            services.AddSettingsHelpers();
             services.AddJwtAuthentication();
 
             Console.WriteLine("*** Loading pubkey: ("+ JwtExtensions.GetPublicKey()+ ")  ***");

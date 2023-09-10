@@ -1,14 +1,20 @@
 ﻿using Grpc.Core;
+using Grpc.Core.Logging;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using ON.Fragments.Authentication;
+using System;
 using System.Threading.Tasks;
 
 namespace ON.Settings
 {
     public class ServiceNameHelper
     {
+        private readonly ILogger<ServiceNameHelper> logger;
+
         public readonly GrpcChannel ContentServiceChannel;
+        public readonly Channel ChatServiceChannel;
         public readonly Channel CommentServiceChannel;
         public readonly Channel NotificationServiceChannel;
         public readonly Channel PaymentServiceChannel;
@@ -18,8 +24,10 @@ namespace ON.Settings
 
         public readonly string ServiceToken;
 
-        public ServiceNameHelper(IConfiguration configuration)
+        public ServiceNameHelper(IConfiguration configuration, ILogger<ServiceNameHelper> logger)
         {
+            this.logger = logger;
+
             var options = new GrpcChannelOptions
             {
                 MaxReceiveMessageSize = null,
@@ -29,6 +37,10 @@ namespace ON.Settings
             var uri = configuration.GetServiceUri("authservice", "grpc");
             if (uri != null)
                 UserServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
+
+            uri = configuration.GetServiceUri("chatservice", "grpc");
+            if (uri != null)
+                ChatServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
 
             uri = configuration.GetServiceUri("commentservice", "grpc");
             if (uri != null)
@@ -54,15 +66,23 @@ namespace ON.Settings
             if (uri != null)
                 StatsServiceChannel = new Channel(uri.Host, uri.Port, ChannelCredentials.Insecure);
 
-            ServiceToken = GetServiceToken().Result;
+            ServiceToken = GetServiceToken();
         }
 
-        private async Task<string> GetServiceToken()
+        private string GetServiceToken()
         {
-            var client = new ServiceInterface.ServiceInterfaceClient(UserServiceChannel);
-            var reply = await client.AuthenticateServiceAsync(new());
+            try
+            {
+                var client = new ServiceInterface.ServiceInterfaceClient(UserServiceChannel);
+                var reply = client.AuthenticateService(new(), null, DateTime.UtcNow.AddSeconds(5));
 
-            return reply.BearerToken;
+                return reply?.BearerToken;
+            }
+            catch(Exception ex)
+            {
+                logger.LogError(ex, "Error in ON.Settings.ServiceNameHelper.GetServiceToken");
+                return null;
+            }
         }
     }
 }

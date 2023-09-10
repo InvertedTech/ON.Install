@@ -59,6 +59,25 @@
     </form>
 </p>
 
+<p>
+    <h3> -- MFA Devices -- </h3>
+    <a asp-action="NewTotp">Add device</a>
+    <table>
+        <tr>
+            <th>Device Name</th>
+            <th>Created On</th>
+        </tr>
+        @foreach (var device in Model.TotpDevices)
+        {
+            <tr>
+                <td>@device.DeviceName</td>
+                <td>@device.CreatedOnUTC.ToDateTime().ToString()</td>
+                <td><a asp-action="DisableTotp" asp-route-id="@device.TotpID">Disable</a></td>
+            </tr>
+        }
+    </table>
+</p>
+
 @section scripts
     {
     <partial name="_ValidationScriptsPartial" />

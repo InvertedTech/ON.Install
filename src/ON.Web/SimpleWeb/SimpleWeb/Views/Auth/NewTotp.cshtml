@@ -1,0 +1,32 @@
+﻿@model ON.SimpleWeb.Models.Auth.NewTotpViewModel
+@{
+    ViewData["Title"] = "New MFA Device";
+}
+
+<h1>New MFA Device</h1>
+<br />
+
+@if (!string.IsNullOrEmpty(Model?.ErrorMessage))
+{
+    <h2 style="color: red;">@Model.ErrorMessage</h2>
+}
+
+@if (!string.IsNullOrEmpty(Model?.SuccessMessage))
+{
+    <h2 style="color: green;">@Model.SuccessMessage</h2>
+}
+
+<form asp-action="NewTotpPost" method="post" class="needs-validation" novalidate>
+    <div class="form-group">
+        <label asp-for="DeviceName"></label>
+        <input class="form-control" asp-for="DeviceName" />
+        <span asp-validation-for="DeviceName"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+}

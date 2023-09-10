@@ -29,13 +29,14 @@ namespace ON.SimpleWeb.Services
 
         public bool IsLoggedIn { get => User != null; }
 
-        public async Task<string> AuthenticateUser(string loginName, string password)
+        public async Task<string> AuthenticateUser(string loginName, string password, string mfaCode)
         {
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.AuthenticateUserAsync(new AuthenticateUserRequest
             {
-                UserName = loginName,
-                Password = password,
+                UserName = loginName ?? "",
+                Password = password ?? "",
+                MFACode = mfaCode ?? "",
             });
 
             return reply.BearerToken;
@@ -81,6 +82,71 @@ namespace ON.SimpleWeb.Services
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.CreateUserAsync(req);
 
+            return reply;
+        }
+
+        public async Task<DisableOtherTotpResponse> DisableOtherTotp(Guid userId, Guid totpId)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            if (nameHelper.UserServiceChannel == null)
+                return null;
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.DisableOtherTotpAsync(new() { UserID = userId.ToString(), TotpID = totpId.ToString() }, GetMetadata());
+            return reply;
+        }
+
+        public async Task<DisableOwnTotpResponse> DisableOwnTotp(Guid totpId)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            if (nameHelper.UserServiceChannel == null)
+                return null;
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.DisableOwnTotpAsync(new() { TotpID = totpId.ToString() }, GetMetadata());
+            return reply;
+        }
+
+        public async Task<GenerateOtherTotpResponse> GenerateOtherTotp(string deviceName)
+        {
+            var req = new GenerateOtherTotpRequest
+            {
+                DeviceName = deviceName,
+            };
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.GenerateOtherTotpAsync(req, GetMetadata());
+
+            return reply;
+        }
+
+        public async Task<GenerateOwnTotpResponse> GenerateOwnTotp(string deviceName)
+        {
+            var req = new GenerateOwnTotpRequest
+            {
+                DeviceName = deviceName,
+            };
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.GenerateOwnTotpAsync(req, GetMetadata());
+
+            return reply;
+        }
+
+        public async Task<GetOwnTotpListResponse> GetOwnTotp()
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            if (nameHelper.UserServiceChannel == null)
+                return null;
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.GetOwnTotpListAsync(new(), GetMetadata());
             return reply;
         }
 
@@ -250,6 +316,35 @@ namespace ON.SimpleWeb.Services
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.RenewTokenAsync(req, GetMetadata());
             return reply?.BearerToken;
+        }
+
+        public async Task<VerifyOtherTotpResponse> VerifyOtherTotp(Guid userID, Guid totpID, string code)
+        {
+            var req = new VerifyOtherTotpRequest
+            {
+                UserID = userID.ToString(),
+                TotpID = totpID.ToString(),
+                Code = code,
+            };
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.VerifyOtherTotpAsync(req, GetMetadata());
+
+            return reply;
+        }
+
+        public async Task<VerifyOwnTotpResponse> VerifyOwnTotp(Guid totpID, string code)
+        {
+            var req = new VerifyOwnTotpRequest
+            {
+                TotpID = totpID.ToString(),
+                Code = code,
+            };
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.VerifyOwnTotpAsync(req, GetMetadata());
+
+            return reply;
         }
 
         private Metadata GetMetadata()

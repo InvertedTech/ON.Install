@@ -50,6 +50,17 @@ message UserPrivateData {
 message UserServerRecord {
   bytes PasswordHash = 1;     // Password hash bytes
   bytes PasswordSalt = 2;     // Password salt bytes
+  repeated TOTPDevice TOTPDevices = 10;
   string OldPassword = 51;
   string OldPasswordAlgorithm = 52;
+}
+
+// TOTP Record for MFA compliant with IETF RFC 6238
+message TOTPDevice {
+  string TotpID = 1;
+  string DeviceName = 2;  // Name of the device
+  bytes Key = 3;          // Key used by TOTP algorithm
+  google.protobuf.Timestamp CreatedOnUTC = 4;  // UTC timestamp when the record was created
+  google.protobuf.Timestamp VerifiedOnUTC = 5; // UTC timestamp when the record was verified
+  google.protobuf.Timestamp DisabledOnUTC = 6; // UTC timestamp when the record was disabled, null = not disabled
 }

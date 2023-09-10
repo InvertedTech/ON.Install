@@ -62,6 +62,13 @@ service UserInterface {
     };
   }
 
+  rpc DisableOtherTotp (DisableOtherTotpRequest) returns (DisableOtherTotpResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/totp/{UserID}/{TotpID}/disable"
+    };
+  }
+
   // Disable another user.  Requires current user to be an admin.
   rpc DisableOtherUser (DisableEnableOtherUserRequest) returns (DisableEnableOtherUserResponse)
   {
@@ -70,11 +77,34 @@ service UserInterface {
     };
   }
 
+  rpc DisableOwnTotp (DisableOwnTotpRequest) returns (DisableOwnTotpResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/totp/{TotpID}/disable"
+    };
+  }
+
   // Enable another user.  Requires current user to be an admin.
   rpc EnableOtherUser (DisableEnableOtherUserRequest) returns (DisableEnableOtherUserResponse)
   {
     option (google.api.http) = {
       post: "/api/auth/admin/user/{UserID}/enable"
+    };
+  }
+
+  rpc GenerateOtherTotp (GenerateOtherTotpRequest) returns (GenerateOtherTotpResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/totp/{UserID}"
+      body: "*"
+    };
+  }
+
+  rpc GenerateOwnTotp (GenerateOwnTotpRequest) returns (GenerateOwnTotpResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/totp"
+      body: "*"
     };
   }
 
@@ -88,6 +118,13 @@ service UserInterface {
 
   rpc GetListOfOldUserIDs (GetListOfOldUserIDsRequest) returns (stream GetListOfOldUserIDsResponse)
   {
+  }
+
+  rpc GetOtherTotpList (GetOtherTotpListRequest) returns (GetOtherTotpListResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/admin/totp/{UserID}"
+    };
   }
 
   // Get User record
@@ -111,6 +148,13 @@ service UserInterface {
   {
     option (google.api.http) = {
       get: "/api/auth/username/{UserName}"
+    };
+  }
+
+  rpc GetOwnTotpList (GetOwnTotpListRequest) returns (GetOwnTotpListResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/totp"
     };
   }
 
@@ -171,11 +215,28 @@ service UserInterface {
       get: "/api/auth/admin/search"
     };
   }
+
+  rpc VerifyOtherTotp (VerifyOtherTotpRequest) returns (VerifyOtherTotpResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/admin/totp/{UserID}/{TotpID}/verify"
+      body: "*"
+    };
+  }
+
+  rpc VerifyOwnTotp (VerifyOwnTotpRequest) returns (VerifyOwnTotpResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/auth/totp/{TotpID}/verify"
+      body: "*"
+    };
+  }
 }
   
 message AuthenticateUserRequest {
   string UserName = 1;
   string Password = 2;
+  string MFACode = 3;
 }
   
 message AuthenticateUserResponse {
@@ -278,6 +339,46 @@ message DisableEnableOtherUserResponse {
   }
 }
 
+message DisableOtherTotpRequest {
+  string UserID = 1;
+  string TotpID = 2;
+}
+
+message DisableOtherTotpResponse {
+  string Error = 10;
+}
+
+message DisableOwnTotpRequest {
+  string TotpID = 1;
+}
+
+message DisableOwnTotpResponse {
+  string Error = 10;
+}
+
+message GenerateOtherTotpRequest {
+  string UserID = 1;
+  string DeviceName = 2;
+}
+
+message GenerateOtherTotpResponse {
+  string TotpID = 1;
+  string Key = 2;
+  string QRCode = 3;
+  string Error = 10;
+}
+
+message GenerateOwnTotpRequest {
+  string DeviceName = 1;
+}
+
+message GenerateOwnTotpResponse {
+  string TotpID = 1;
+  string Key = 2;
+  string QRCode = 3;
+  string Error = 10;
+}
+
 message GetAllUsersRequest {
   uint32 PageSize = 1;
   uint32 PageOffset = 2;
@@ -321,6 +422,21 @@ message GetOtherPublicUserByUserNameRequest {
   
 message GetOtherPublicUserByUserNameResponse {
   UserPublicRecord Record = 1;
+}
+
+message GetOtherTotpListRequest {
+  string UserID = 1;
+}
+
+message GetOtherTotpListResponse {
+  repeated TOTPDeviceLimited Devices = 1;
+}
+
+message GetOwnTotpListRequest {
+}
+
+message GetOwnTotpListResponse {
+  repeated TOTPDeviceLimited Devices = 1;
 }
 
 message GetOwnUserRequest {
@@ -402,6 +518,12 @@ message SearchUsersAdminResponse {
   uint32 PageTotalItems = 13;
 }
 
+message TOTPDeviceLimited {
+  string TotpID = 1;
+  string DeviceName = 2;  // Name of the device
+  google.protobuf.Timestamp CreatedOnUTC = 3;  // UTC timestamp when the record was created
+}
+
 message UserSearchRecord {
   string UserID = 1;
   string UserName = 2;                // User name of the user
@@ -411,4 +533,23 @@ message UserSearchRecord {
   google.protobuf.Timestamp CreatedOnUTC = 11;   // UTC timestamp when user was created
   google.protobuf.Timestamp ModifiedOnUTC = 12;  // UTC timestamp when user record was last modified
   google.protobuf.Timestamp DisabledOnUTC = 13;  // UTC timestamp when user was disabled, null = not disabled
+}
+
+message VerifyOtherTotpRequest {
+  string UserID = 1;
+  string TotpID = 2;
+  string Code = 3;
+}
+
+message VerifyOtherTotpResponse {
+  string Error = 10;
+}
+
+message VerifyOwnTotpRequest {
+  string TotpID = 1;
+  string Code = 2;
+}
+
+message VerifyOwnTotpResponse {
+  string Error = 10;
 }

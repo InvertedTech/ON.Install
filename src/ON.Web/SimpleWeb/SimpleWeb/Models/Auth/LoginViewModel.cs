@@ -17,6 +17,10 @@ namespace ON.SimpleWeb.Models.Auth
         [Display(Name = "Password"), DataType(DataType.Password)]
         public string Password { get; set; }
 
+        [StringLength(6, ErrorMessage = "MFA Code must be 6 digits.", MinimumLength = 6)]
+        [Display(Name = "MFA Code (if setup)")]
+        public string MFACode { get; set; }
+
         public string ErrorMessage { get; set; }
     }
 }

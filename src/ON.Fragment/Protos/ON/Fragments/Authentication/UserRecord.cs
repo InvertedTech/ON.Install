@@ -52,4 +52,17 @@ namespace ON.Fragments.Authentication
             set => UserID = value.ToString();
         }
     }
+
+    public sealed partial class TOTPDevice : pb::IMessage<TOTPDevice>
+    {
+        public TOTPDeviceLimited ToLimited()
+        {
+            return new ()
+            {
+                TotpID = TotpID,
+                DeviceName = DeviceName,
+                CreatedOnUTC = CreatedOnUTC,
+            };
+        }
+    }
 }

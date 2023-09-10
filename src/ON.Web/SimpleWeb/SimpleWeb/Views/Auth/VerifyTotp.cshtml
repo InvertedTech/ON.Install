@@ -1,0 +1,53 @@
+﻿@model ON.SimpleWeb.Models.Auth.VerifyTotpViewModel
+@{
+    ViewData["Title"] = "Verify MFA Device";
+}
+
+<h1>Verify MFA Device</h1>
+<br />
+
+@if (!string.IsNullOrEmpty(Model?.ErrorMessage))
+{
+    <h2 style="color: red;">@Model.ErrorMessage</h2>
+}
+
+@if (!string.IsNullOrEmpty(Model?.SuccessMessage))
+{
+    <h2 style="color: green;">@Model.SuccessMessage</h2>
+}
+
+<form asp-action="VerifyTotp" method="post" class="needs-validation" novalidate>
+    <input type="hidden" asp-for="TotpID" />
+    <input type="hidden" asp-for="DeviceName" />
+    <input type="hidden" asp-for="QRCode" />
+    <input type="hidden" asp-for="Key" />
+    <div class="form-group">
+        <label asp-for="DeviceName"></label>
+        <input class="form-control" asp-for="DeviceName" disabled="disabled" />
+    </div>
+    <div class="form-group">
+        Use your authentication app and scan the QR Code below to add it to your application
+        <br />
+        <img src="@Model.QRCode" />
+    </div>
+    <div class="form-group">
+        OR alternatively manually add the key below
+        <br />
+        @Model.Key
+    </div>
+    <div class="form-group">
+        -- then enter the rotating code from your authentication app below to verify your new device --
+    </div>
+    <div class="form-group">
+        <label asp-for="Code"></label>
+        <input class="form-control" asp-for="Code" />
+        <span asp-validation-for="Code"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Verify</button>
+</form>
+
+@section scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+}

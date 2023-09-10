@@ -1,6 +1,8 @@
+using Google.Authenticator;
 using Google.Protobuf;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using ON.Authentication.SimpleAuth.Service.Data;
@@ -9,6 +11,7 @@ using ON.Fragments.Authentication;
 using ON.Fragments.Authorization;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
+using ON.Settings;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -20,6 +23,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static Google.Rpc.Context.AttributeContext.Types;
 
 namespace ON.Authentication.SimpleAuth.Service.Services
 {
@@ -31,14 +35,17 @@ namespace ON.Authentication.SimpleAuth.Service.Services
         private readonly SigningCredentials creds;
         private readonly IUserDataProvider dataProvider;
         private readonly ClaimsClient claimsClient;
+        private readonly SettingsClient settingsClient;
         private static readonly HashAlgorithm hasher = SHA256.Create();
+        private static readonly RandomNumberGenerator rng = RandomNumberGenerator.Create();
 
-        public UserService(OfflineHelper offlineHelper, ILogger<ServiceOpsService> logger, IUserDataProvider dataProvider, ClaimsClient claimsClient)
+        public UserService(OfflineHelper offlineHelper, ILogger<ServiceOpsService> logger, IUserDataProvider dataProvider, ClaimsClient claimsClient, SettingsClient settingsClient)
         {
             this.offlineHelper = offlineHelper;
             this.logger = logger;
             this.dataProvider = dataProvider;
             this.claimsClient = claimsClient;
+            this.settingsClient = settingsClient;
 
             creds = new SigningCredentials(JwtExtensions.GetPrivateKey(), SecurityAlgorithms.EcdsaSha256);
 
@@ -68,6 +75,9 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             bool isCorrect = await IsPasswordCorrect(request.Password, user);
 
             if (!isCorrect)
+                return new AuthenticateUserResponse();
+
+            if (!ValidateTotp(user.Server?.TOTPDevices, request.MFACode))
                 return new AuthenticateUserResponse();
 
             var otherClaims = await claimsClient.GetOtherClaims(user.UserIDGuid);
@@ -365,6 +375,78 @@ namespace ON.Authentication.SimpleAuth.Service.Services
         }
 
         [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<DisableOtherTotpResponse> DisableOtherTotp(DisableOtherTotpRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            try
+            {
+                if (!await AmIReallyAdmin(context))
+                    return new() { Error = "Admin only" };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "Not logged in" };
+
+                var record = await dataProvider.GetById(request.UserID.ToGuid());
+                if (record == null)
+                    return new() { Error = "User not found" };
+
+                var totp = record.Server.TOTPDevices.FirstOrDefault(r => r.TotpID == request.TotpID);
+                if (totp == null)
+                    return new() { Error = "Device not found" };
+
+                totp.DisabledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Normal.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error in DisableOtherTotp");
+                return new();
+            }
+        }
+
+        public override async Task<DisableOwnTotpResponse> DisableOwnTotp(DisableOwnTotpRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "Not logged in" };
+
+                var record = await dataProvider.GetById(userToken.Id);
+                if (record == null)
+                    return new() { Error = "Not logged in" };
+
+                var totp = record.Server.TOTPDevices.FirstOrDefault(r => r.TotpID == request.TotpID);
+                if (totp == null)
+                    return new() { Error = "Device not found" };
+
+                totp.DisabledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Normal.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error in DisableOwnTotp");
+                return new();
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
         public override async Task<DisableEnableOtherUserResponse> EnableOtherUser(DisableEnableOtherUserRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
@@ -390,6 +472,126 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             catch
             {
                 return new DisableEnableOtherUserResponse { Error = DisableEnableOtherUserResponse.Types.DisableEnableOtherUserResponseErrorType.UnknownError };
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<GenerateOtherTotpResponse> GenerateOtherTotp(GenerateOtherTotpRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new() { Error = "Offline" };
+
+            try
+            {
+                if (!await AmIReallyAdmin(context))
+                    return new() { Error = "Admin only" };
+
+                var deviceName = request.DeviceName?.Trim();
+                if (string.IsNullOrWhiteSpace(deviceName))
+                    return new() { Error = "Device Name required" };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "Not logged in" };
+
+                var record = await dataProvider.GetById(request.UserID.ToGuid());
+                if (record == null)
+                    return new() { Error = "User not found" };
+
+
+                if (record.Server.TOTPDevices.Where(r => r.DisabledOnUTC != null).Where(r => r.DeviceName.ToLower() == deviceName.ToLower()).Any())
+                    return new() { Error = "Device Name already exists" };
+
+                byte[] key = new byte[10];
+                rng.GetBytes(key);
+
+                TOTPDevice totp = new()
+                {
+                    TotpID = Guid.NewGuid().ToString(),
+                    DeviceName = deviceName,
+                    Key = ByteString.CopyFrom(key),
+                    CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow)
+                };
+
+                record.Server.TOTPDevices.Add(totp);
+
+                record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Normal.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                SetupCode setupInfo = tfa.GenerateSetupCode(settingsClient.PublicData.Personalization.Title, record.Normal.Public.Data.UserName, key);
+
+                return new()
+                {
+                    TotpID = totp.TotpID,
+                    Key = setupInfo.ManualEntryKey,
+                    QRCode = setupInfo.QrCodeSetupImageUrl
+                };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error in GenerateOwnTotp");
+                return new() { Error = "Unknown Error" };
+            }
+        }
+
+        public override async Task<GenerateOwnTotpResponse> GenerateOwnTotp(GenerateOwnTotpRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new() { Error = "Offline" };
+
+            try
+            {
+                var deviceName = request.DeviceName?.Trim();
+                if (string.IsNullOrWhiteSpace(deviceName))
+                    return new() { Error = "Device Name required" };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "Not logged in" };
+
+                var record = await dataProvider.GetById(userToken.Id);
+                if (record == null)
+                    return new() { Error = "Not logged in" };
+
+
+                if (record.Server.TOTPDevices.Where(r => r.DisabledOnUTC != null).Where(r => r.DeviceName.ToLower() == deviceName.ToLower()).Any())
+                    return new() { Error = "Device Name already exists" };
+
+                byte[] key = new byte[10];
+                rng.GetBytes(key);
+
+                TOTPDevice totp = new()
+                {
+                    TotpID = Guid.NewGuid().ToString(),
+                    DeviceName = deviceName,
+                    Key = ByteString.CopyFrom(key),
+                    CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow)
+                };
+
+                record.Server.TOTPDevices.Add(totp);
+
+                record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Normal.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                SetupCode setupInfo = tfa.GenerateSetupCode(settingsClient.PublicData.Personalization.Title, record.Normal.Public.Data.UserName, key);
+
+                return new()
+                {
+                    TotpID = totp.TotpID,
+                    Key = setupInfo.ManualEntryKey,
+                    QRCode = setupInfo.QrCodeSetupImageUrl
+                };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error in GenerateOwnTotp");
+                return new() { Error = "Unknown Error" };
             }
         }
 
@@ -493,6 +695,60 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             var record = await dataProvider.GetByLogin(request.UserName);
 
             return new() { Record = record?.Normal.Public };
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<GetOtherTotpListResponse> GetOtherTotpList(GetOtherTotpListRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            try
+            {
+                if (!await AmIReallyAdmin(context))
+                    return new();
+
+                var record = await dataProvider.GetById(request.UserID.ToGuid());
+                if (record == null)
+                    return new();
+
+                var ret = new GetOtherTotpListResponse();
+                ret.Devices.AddRange(record.Server.TOTPDevices.Where(r => r.VerifiedOnUTC != null).Where(r => r.DisabledOnUTC == null).Select(r => r.ToLimited()));
+
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error in GetOtherTotpList");
+                return new();
+            }
+        }
+
+        public override async Task<GetOwnTotpListResponse> GetOwnTotpList(GetOwnTotpListRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new();
+
+                var record = await dataProvider.GetById(userToken.Id);
+                if (record == null)
+                    return new();
+
+                var ret = new GetOwnTotpListResponse();
+                ret.Devices.AddRange(record.Server.TOTPDevices.Where(r => r.VerifiedOnUTC != null).Where(r => r.DisabledOnUTC == null).Select(r => r.ToLimited()));
+
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error in GetOwnTotpList");
+                return new();
+            }
         }
 
         public override async Task<GetOwnUserResponse> GetOwnUser(GetOwnUserRequest request, ServerCallContext context)
@@ -762,6 +1018,92 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return res;
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<VerifyOtherTotpResponse> VerifyOtherTotp(VerifyOtherTotpRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            try
+            {
+                if (!await AmIReallyAdmin(context))
+                    return new() { Error = "Admin only" };
+
+                if (string.IsNullOrWhiteSpace(request?.Code))
+                    return new() { Error = "Code is required" };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "Not logged in" };
+
+                var record = await dataProvider.GetById(request.UserID.ToGuid());
+                if (record == null)
+                    return new() { Error = "User not found" };
+
+                var totp = record.Server.TOTPDevices.FirstOrDefault(r => r.TotpID == request.TotpID);
+                if (totp == null)
+                    return new() { Error = "Device not found" };
+
+                TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                if (!tfa.ValidateTwoFactorPIN(totp.Key.ToByteArray(), request.Code.Trim()))
+                    return new() { Error = "Code is not valid" };
+
+                totp.VerifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Normal.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error in VerifyOtherTotp");
+                return new();
+            }
+        }
+
+        public override async Task<VerifyOwnTotpResponse> VerifyOwnTotp(VerifyOwnTotpRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request?.Code))
+                    return new() { Error = "Code is required" };
+
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "Not logged in" };
+
+                var record = await dataProvider.GetById(userToken.Id);
+                if (record == null)
+                    return new() { Error = "Not logged in" };
+
+                var totp = record.Server.TOTPDevices.FirstOrDefault(r => r.TotpID == request.TotpID);
+                if (totp == null)
+                    return new() { Error = "Device not found" };
+
+                TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+                if (!tfa.ValidateTwoFactorPIN(totp.Key.ToByteArray(), request.Code.Trim()))
+                    return new() { Error = "Code is not valid" };
+
+                totp.VerifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.Normal.Private.ModifiedBy = userToken.Id.ToString();
+
+                await dataProvider.Save(record);
+
+                return new();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error in VerifyOwnTotp");
+                return new();
+            }
+        }
+
         private async Task<bool> AmIReallyAdmin(ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
@@ -903,6 +1245,29 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        private bool ValidateTotp(IEnumerable<TOTPDevice> devices, string code)
+        {
+            var validDevices = devices?.Where(d => d.VerifiedOnUTC != null && d.DisabledOnUTC == null) ?? Enumerable.Empty<TOTPDevice>();
+
+            // If there are no TOTP Devices then don't require one
+            if (!validDevices.Any())
+                return true;
+
+            code = code?.Trim() ?? "";
+
+            foreach (var device in validDevices)
+                if (IsValidTotp(device, code))
+                    return true;
+
+            return false;
+        }
+
+        private bool IsValidTotp(TOTPDevice device, string code)
+        {
+            TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
+            return tfa.ValidateTwoFactorPIN(device.Key.ToByteArray(), code);
         }
 
         private async Task EnsureDevOwnerLogin()
