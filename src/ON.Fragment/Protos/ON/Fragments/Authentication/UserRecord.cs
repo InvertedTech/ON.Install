@@ -55,6 +55,10 @@ namespace ON.Fragments.Authentication
 
     public sealed partial class TOTPDevice : pb::IMessage<TOTPDevice>
     {
+        public bool IsValid => IsVerified && !IsDisabled;
+        public bool IsVerified => VerifiedOnUTC != null;
+        public bool IsDisabled => DisabledOnUTC != null;
+
         public TOTPDeviceLimited ToLimited()
         {
             return new ()

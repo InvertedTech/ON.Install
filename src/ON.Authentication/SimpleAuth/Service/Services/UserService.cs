@@ -499,7 +499,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return new() { Error = "User not found" };
 
 
-                if (record.Server.TOTPDevices.Where(r => r.DisabledOnUTC != null).Where(r => r.DeviceName.ToLower() == deviceName.ToLower()).Any())
+                if (record.Server.TOTPDevices.Where(r => r.IsValid).Where(r => r.DeviceName.ToLower() == deviceName.ToLower()).Any())
                     return new() { Error = "Device Name already exists" };
 
                 byte[] key = new byte[10];
@@ -557,7 +557,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return new() { Error = "Not logged in" };
 
 
-                if (record.Server.TOTPDevices.Where(r => r.DisabledOnUTC != null).Where(r => r.DeviceName.ToLower() == deviceName.ToLower()).Any())
+                if (record.Server.TOTPDevices.Where(r => r.IsValid).Where(r => r.DeviceName.ToLower() == deviceName.ToLower()).Any())
                     return new() { Error = "Device Name already exists" };
 
                 byte[] key = new byte[10];
@@ -713,7 +713,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return new();
 
                 var ret = new GetOtherTotpListResponse();
-                ret.Devices.AddRange(record.Server.TOTPDevices.Where(r => r.VerifiedOnUTC != null).Where(r => r.DisabledOnUTC == null).Select(r => r.ToLimited()));
+                ret.Devices.AddRange(record.Server.TOTPDevices.Where(r => r.IsValid).Select(r => r.ToLimited()));
 
                 return ret;
             }
@@ -740,7 +740,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                     return new();
 
                 var ret = new GetOwnTotpListResponse();
-                ret.Devices.AddRange(record.Server.TOTPDevices.Where(r => r.VerifiedOnUTC != null).Where(r => r.DisabledOnUTC == null).Select(r => r.ToLimited()));
+                ret.Devices.AddRange(record.Server.TOTPDevices.Where(r => r.IsValid).Select(r => r.ToLimited()));
 
                 return ret;
             }
@@ -1249,7 +1249,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
         private bool ValidateTotp(IEnumerable<TOTPDevice> devices, string code)
         {
-            var validDevices = devices?.Where(d => d.VerifiedOnUTC != null && d.DisabledOnUTC == null) ?? Enumerable.Empty<TOTPDevice>();
+            var validDevices = devices?.Where(d => d.IsValid) ?? Enumerable.Empty<TOTPDevice>();
 
             // If there are no TOTP Devices then don't require one
             if (!validDevices.Any())
