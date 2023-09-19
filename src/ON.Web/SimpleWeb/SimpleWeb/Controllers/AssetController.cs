@@ -122,6 +122,7 @@ namespace ON.SimpleWeb.Controllers
         {
             var res = await assetService.SearchImages(new()
             {
+                AssetType = AssetType.Image,
                 PageSize = ITEMS_PER_PAGE,
                 PageOffset = (uint)((pageNum - 1) * ITEMS_PER_PAGE),
                 Query = s ?? "",
