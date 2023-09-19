@@ -57,8 +57,9 @@ namespace ON.Content.SimpleCMS.Service
             services.AddGrpcSwagger();
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-            services.AddSingleton<IAssetDataProvider, FileSystemAssetDataProvider>();
+            services.AddSingleton<IAssetDataProvider, MemCachedFileSystemAssetDataProvider>();
             services.AddSingleton<IContentDataProvider, MemCachedFileSystemContentDataProvider>();
+            services.AddSingleton<FileSystemAssetDataProvider>();
             services.AddSingleton<FileSystemContentDataProvider>();
             services.AddSingleton<StatsClient>();
 

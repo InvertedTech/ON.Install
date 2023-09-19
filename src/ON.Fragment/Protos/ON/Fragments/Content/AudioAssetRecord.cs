@@ -14,6 +14,8 @@ namespace ON.Fragments.Content
         {
             get => Public.AssetIDGuid;
         }
+
+        public AssetListRecord ToAssetListRecord() => Public.ToAssetListRecord();
     }
 
     public sealed partial class AudioAssetPublicRecord : pb::IMessage<AudioAssetPublicRecord>

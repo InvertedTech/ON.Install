@@ -239,22 +239,22 @@ namespace ON.Content.SimpleCMS.Service
             var res = new SearchAssetResponse();
 
             List<AssetListRecord> list = new();
-            await foreach (var rec in dataProvider.GetAll())
+            await foreach (var rec in dataProvider.GetAllShort())
             {
                 AssetListRecord listRec = null;
-                switch (rec.AssetRecordOneofCase)
+                switch (rec.AssetType)
                 {
-                    case AssetRecord.AssetRecordOneofOneofCase.Audio:
+                    case AssetType.Audio:
                         if (request.AssetType == AssetType.Image)
                             continue;
 
-                        listRec = rec.Audio.Public.ToAssetListRecord();
+                        listRec = rec;
                         break;
-                    case AssetRecord.AssetRecordOneofOneofCase.Image:
+                    case AssetType.Image:
                         if (request.AssetType == AssetType.Audio)
                             continue;
 
-                        listRec = rec.Image.Public.ToAssetListRecord();
+                        listRec = rec;
                         break;
                 }
 

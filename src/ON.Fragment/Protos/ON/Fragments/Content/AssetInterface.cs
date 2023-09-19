@@ -41,5 +41,18 @@ namespace ON.Fragments.Content
                 }
             }
         }
+
+        public AssetListRecord ToAssetListRecord()
+        {
+            switch (AssetRecordOneofCase)
+            {
+                case AssetRecordOneofOneofCase.Audio:
+                    return Audio.ToAssetListRecord();
+                case AssetRecordOneofOneofCase.Image:
+                    return Image.ToAssetListRecord();
+                default:
+                    return null;
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace ON.Content.SimpleCMS.Service.Data
     public interface IAssetDataProvider
     {
         IAsyncEnumerable<AssetRecord> GetAll();
+        IAsyncEnumerable<AssetListRecord> GetAllShort();
         Task<AssetRecord> GetById(Guid assetId);
         Task<AssetRecord> GetByOldAssetId(string oldAssetId);
         Task<bool> Delete(Guid assetId);
