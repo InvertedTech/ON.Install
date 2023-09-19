@@ -1,0 +1,32 @@
+﻿@inject ON.SimpleWeb.Helper.HtmlSubscriptionTierHelper subHelper;
+@model ON.SimpleWeb.Models.Asset.ImageSearchViewModel;
+@{
+    ViewData["Title"] = "Manage Articles";
+}
+
+<a href="/image/new" class="btn btn-primary">New Image</a>
+<br />
+<br />
+<br />
+
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Caption</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    @foreach (var record in Model.Records)
+    {
+        <tr>
+            <td>
+                <a href="/image/@(record.AssetID)/detail">@record.Title</a>
+            </td>
+            <td>@record.Caption</td>
+            <td>@record.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</td>
+            <td><img src="/image/@(record.AssetID)" alt="@record.Caption" title="@record.Caption" /></td>
+        </tr>
+
+    }
+</table>

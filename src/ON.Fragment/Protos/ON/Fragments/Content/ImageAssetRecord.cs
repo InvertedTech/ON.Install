@@ -23,5 +23,21 @@ namespace ON.Fragments.Content
             get => AssetID.ToGuid();
             set => AssetID = value.ToString();
         }
+
+        public AssetListRecord ToAssetListRecord()
+        {
+            var rec = new AssetListRecord()
+            {
+                AssetID = AssetID,
+                CreatedOnUTC = CreatedOnUTC,
+                Title = Data.Title,
+                Caption = Data.Caption,
+                AssetType = AssetType.Image,
+                Height = Data.Height,
+                Width = Data.Width,
+            };
+
+            return rec;
+        }
     }
 }

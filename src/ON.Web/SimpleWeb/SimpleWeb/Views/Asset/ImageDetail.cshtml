@@ -1,0 +1,33 @@
+﻿@model ON.SimpleWeb.Models.Asset.ImageDetailViewModel
+@{
+    ViewData["Title"] = "Image Detail";
+}
+
+<a asp-action="ImageLibrary">&lt;&lt;&lt; Back</a>
+<br />
+<br />
+
+@*<a href="/image/@Model.Id/edit" class="btn btn-primary">Edit Image</a>
+<br />
+<br />
+*@
+
+<h1>Image Detail</h1>
+<br />
+
+<table>
+    <tr>
+        <td colspan="2">
+            <img src="/image/@Model.Id" alt="@Model.Caption" title="@Model.Caption" style="max-width: 800px;" />
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Title</strong></td>
+        <td>@Model.Title</td>
+    </tr>
+    <tr>
+        <td><strong>Caption</strong></td>
+        <td>@Model.Caption</td>
+    </tr>
+</table>
+
