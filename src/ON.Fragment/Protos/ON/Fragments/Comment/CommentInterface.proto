@@ -108,6 +108,7 @@ message AdminEditCommentRequest {
 
 message AdminEditCommentResponse {
   CommentPublicRecord Record = 1;
+  string Error = 2;
 }
 
 message AdminPinCommentRequest {
@@ -146,6 +147,7 @@ message CreateCommentForCommentRequest {
 
 message CreateCommentResponse {
   CommentPublicRecord Record = 1;
+  string Error = 2;
 }
 
 message DeleteOwnCommentRequest {
@@ -163,6 +165,7 @@ message EditCommentRequest {
 
 message EditCommentResponse {
   CommentPublicRecord Record = 1;
+  string Error = 2;
 }
 
 message GetCommentsForContentRequest {

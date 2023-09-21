@@ -16,6 +16,7 @@ using ON.Fragments.Comment;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
 using ON.Settings;
+using static System.Net.Mime.MediaTypeNames;
 using static Google.Rpc.Context.AttributeContext.Types;
 
 namespace ON.Content.SimpleComment.Service
@@ -28,6 +29,8 @@ namespace ON.Content.SimpleComment.Service
         private readonly UserDataHelper userDataHelper;
         private readonly SettingsClient settings;
         private readonly CommentRestrictionMinimum commentRestrictionMinimum;
+
+        private const int MAX_COMMENT_LENGTH = 500;
 
         public CommentService(ILogger<CommentService> logger, ICommentDataProvider dataProvider, UserDataHelper userDataHelper, SettingsClient settings)
         {
@@ -67,7 +70,11 @@ namespace ON.Content.SimpleComment.Service
             if (record == null)
                 return new();
 
-            record.Public.Data.CommentText = CleanText(request.Text);
+            var text = CleanText(request.Text).Trim();
+            if (text.Length > MAX_COMMENT_LENGTH)
+                return new() { Error = $"Length must be less than {MAX_COMMENT_LENGTH}" };
+
+            record.Public.Data.CommentText = text;
 
             record.Public.ModifiedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
             record.Private.ModifiedBy = user.Id.ToString();
@@ -136,15 +143,18 @@ namespace ON.Content.SimpleComment.Service
         {
             var contentId = request.ContentID.ToGuid();
             if (contentId == Guid.Empty)
-                return new();
+                return new() { Error = $"ContentID missing" };
 
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
             if (!CanCreateComment(user))
-                return new();
+                return new() { Error = $"Access Denied" };
 
             var text = CleanText(request.Text).Trim();
             if (text.Length == 0)
-                return new();
+                return new() { Error = $"No comment text" };
+
+            if (text.Length > MAX_COMMENT_LENGTH)
+                return new() { Error = $"Length must be less than {MAX_COMMENT_LENGTH}"};
 
             CommentRecord record = new()
             {
@@ -189,6 +199,9 @@ namespace ON.Content.SimpleComment.Service
             var text = CleanText(request.Text).Trim();
             if (text.Length == 0)
                 return new();
+
+            if (text.Length > MAX_COMMENT_LENGTH)
+                return new() { Error = $"Length must be less than {MAX_COMMENT_LENGTH}" };
 
             CommentRecord record = new()
             {
@@ -259,6 +272,9 @@ namespace ON.Content.SimpleComment.Service
             var text = CleanText(request.Text).Trim();
             if (text.Length == 0)
                 return new();
+
+            if (text.Length > MAX_COMMENT_LENGTH)
+                return new() { Error = $"Length must be less than {MAX_COMMENT_LENGTH}" };
 
             record.Public.Data.CommentText = text;
             record.Public.ModifiedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
