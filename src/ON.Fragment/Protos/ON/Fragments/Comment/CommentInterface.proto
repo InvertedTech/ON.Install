@@ -194,7 +194,8 @@ message CommentResponseRecord {
   string ContentID = 1;        // Guid for the content record
   string CommentID = 2;        // Guid for the comment record
   string UserID = 3;           // Guid for the user posting the comment
-  string UserDisplayName = 4;  // Guid for the user posting the comment
+  string UserName = 4;
+  string UserDisplayName = 5;
   google.protobuf.Timestamp CreatedOnUTC = 11;  // UTC timestamp when content was created
   google.protobuf.Timestamp ModifiedOnUTC = 12; // UTC timestamp when content record was last modified
   google.protobuf.Timestamp PinnedOnUTC = 13;   // UTC timestamp when content was pinned
