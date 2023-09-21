@@ -296,7 +296,13 @@ namespace ON.Content.SimpleComment.Service
             var results = dataProvider.GetByContentId(contentId);
             await foreach (var rec in results)
             {
-                if (!CanShowInList(rec, user)) continue;
+                if (!CanShowInList(rec, user))
+                {
+                    if (rec.Public.UserID == rec.Private.DeletedBy)
+                        rec.Public.Data.CommentText = "Removed by user";
+                    else
+                        rec.Public.Data.CommentText = "Removed by moderator";
+                }
 
                 if (string.IsNullOrEmpty(rec.Public.ParentCommentID))
                 {
@@ -364,6 +370,10 @@ namespace ON.Content.SimpleComment.Service
                     res.Records.AddRange(list.OrderBy(r => r.CreatedOnUTC).OrderByDescending(r => r.PinnedOnUTC));
                     break;
             }
+
+            var returnableRecords = res.Records.Where(r => r.DeletedOnUTC == null || r.NumReplies > 0).ToList();
+            res.Records.Clear();
+            res.Records.AddRange(returnableRecords);
 
             res.PageTotalItems = (uint)res.Records.Count;
 
@@ -485,6 +495,7 @@ namespace ON.Content.SimpleComment.Service
                 CreatedOnUTC = r.Public.CreatedOnUTC,
                 ModifiedOnUTC = r.Public.ModifiedOnUTC,
                 PinnedOnUTC = r.Public.PinnedOnUTC,
+                DeletedOnUTC = r.Public.DeletedOnUTC,
                 UserID = r.Public.UserID,
                 UserDisplayName = userDataHelper.GetRecord(r.Public.UserID).DisplayName,
                 Likes = r.Public.Data.Likes,

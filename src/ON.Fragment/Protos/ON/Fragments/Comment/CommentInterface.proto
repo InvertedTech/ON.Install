@@ -198,6 +198,7 @@ message CommentResponseRecord {
   google.protobuf.Timestamp CreatedOnUTC = 11;  // UTC timestamp when content was created
   google.protobuf.Timestamp ModifiedOnUTC = 12; // UTC timestamp when content record was last modified
   google.protobuf.Timestamp PinnedOnUTC = 13;   // UTC timestamp when content was pinned
+  google.protobuf.Timestamp DeletedOnUTC = 14;  // UTC timestamp when content record was last deleted
 
   string CommentText = 21;
   uint32 Likes = 22;
