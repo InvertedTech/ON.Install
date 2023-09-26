@@ -19,6 +19,9 @@ services:
       - VIRTUAL_PATH=~^/api/auth
       - JWT_PRIV_KEY=$JWT_PRIV_KEY
       - JWT_PUB_KEY=$JWT_PUB_KEY
+    logging:
+      options:
+        max-size: "10m"
     restart: always
     volumes:
       - ${DATA_LOC}/auth:/data

@@ -17,6 +17,9 @@ services:
       - VIRTUAL_PORT=80
       - VIRTUAL_PATH=~^/api/settings
       - JWT_PUB_KEY=$JWT_PUB_KEY
+    logging:
+      options:
+        max-size: "10m"
     restart: always
     volumes:
       - ${DATA_LOC}/settings:/data

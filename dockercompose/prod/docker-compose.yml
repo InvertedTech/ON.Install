@@ -12,6 +12,9 @@ services:
     image: nginxproxy/nginx-proxy:dev-alpine
     ports:
       - "80:80"
+    logging:
+      options:
+        max-size: "10m"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
   eventdb:
@@ -24,6 +27,9 @@ services:
       - EVENTSTORE_START_STANDARD_PROJECTIONS=true
       - EVENTSTORE_HTTP_PORT=2113
       - EVENTSTORE_INSECURE=true
+    logging:
+      options:
+        max-size: "10m"
     volumes:
       - ./data/eventdb/data:/var/lib/eventstore
       - ./data/eventdb/logs:/var/log/eventstore

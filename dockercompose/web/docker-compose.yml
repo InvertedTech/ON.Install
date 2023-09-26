@@ -11,3 +11,6 @@ services:
       - SERVICE1_TOR_SERVICE_HOSTS=80:web:80
       - SERVICE1_TOR_SERVICE_VERSION=3
       - SERVICE1_TOR_SERVICE_KEY=PT0gZWQyNTUxOXYxLXNlY3JldDogdHlwZTAgPT0AAACoJv33hb1ZZ2hkEDs9iQLblAr2uMI/PgYWtn/J2dTHbqeYcdj6a7/g5ISIcq6oNbnaMVhueke7e71M/NRFdI6h
+    logging:
+      options:
+        max-size: "10m"
