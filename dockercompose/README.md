@@ -18,9 +18,12 @@ docker-compose up -d
 ```
 
 Navigate to:  
-http://localhost:8001/api/auth/index.html  
-http://localhost:8001/api/cms/index.html  
-http://localhost:8001/api/fakepay/index.html
+http://localhost:8001/api/auth/index.html
+http://localhost:8001/api/comment/index.html
+http://localhost:8001/api/cms/index.html
+http://localhost:8001/api/payment/index.html
+http://localhost:8001/api/settings/index.html
+http://localhost:8001/api/stats/index.html
 
 ### Web
 
