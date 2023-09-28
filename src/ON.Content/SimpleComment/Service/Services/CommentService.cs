@@ -61,30 +61,6 @@ namespace ON.Content.SimpleComment.Service
         }
 
         [Authorize(Roles = ONUser.ROLE_CAN_MODERATE_COMMENT)]
-        public override async Task<AdminEditCommentResponse> AdminEditComment(AdminEditCommentRequest request, ServerCallContext context)
-        {
-            var user = ONUserHelper.ParseUser(context.GetHttpContext());
-
-            var commentId = request.CommentID.ToGuid();
-            var record = await dataProvider.Get(commentId);
-            if (record == null)
-                return new();
-
-            var text = CleanText(request.Text).Trim();
-            if (text.Length > MAX_COMMENT_LENGTH)
-                return new() { Error = $"Length must be less than {MAX_COMMENT_LENGTH}" };
-
-            record.Public.Data.CommentText = text;
-
-            record.Public.ModifiedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
-            record.Private.ModifiedBy = user.Id.ToString();
-
-            await dataProvider.Update(record);
-
-            return new() { Record = record.Public };
-        }
-
-        [Authorize(Roles = ONUser.ROLE_CAN_MODERATE_COMMENT)]
         public override async Task<AdminPinCommentResponse> AdminPinComment(AdminPinCommentRequest request, ServerCallContext context)
         {
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
@@ -277,6 +253,8 @@ namespace ON.Content.SimpleComment.Service
                 return new() { Error = $"Length must be less than {MAX_COMMENT_LENGTH}" };
 
             record.Public.Data.CommentText = text;
+            record.Public.Data.Likes = 0;
+            record.Private.Data.LikedByUserIDs.Clear();
             record.Public.ModifiedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
             record.Private.ModifiedBy = user.Id.ToString();
 

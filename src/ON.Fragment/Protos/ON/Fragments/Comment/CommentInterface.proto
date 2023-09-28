@@ -15,13 +15,6 @@ service CommentInterface {
       post: "/api/comment/admin/{CommentID}/delete"
     };
   }
-  rpc AdminEditComment (AdminEditCommentRequest) returns (AdminEditCommentResponse)
-  {
-    option (google.api.http) = {
-      post: "/api/comment/admin/{CommentID}/edit"
-      body: "*"
-    };
-  }
   rpc AdminPinComment (AdminPinCommentRequest) returns (AdminPinCommentResponse)
   {
     option (google.api.http) = {
@@ -99,16 +92,6 @@ message AdminDeleteCommentRequest {
 
 message AdminDeleteCommentResponse {
   CommentPublicRecord Record = 1;
-}
-
-message AdminEditCommentRequest {
-  string CommentID = 1;
-  string Text = 2;
-}
-
-message AdminEditCommentResponse {
-  CommentPublicRecord Record = 1;
-  string Error = 2;
 }
 
 message AdminPinCommentRequest {
