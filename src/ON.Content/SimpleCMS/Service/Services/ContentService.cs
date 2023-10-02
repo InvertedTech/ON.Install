@@ -757,9 +757,6 @@ namespace ON.Content.SimpleCMS.Service
             if (privData == null)
                 return false;
 
-            if (string.IsNullOrWhiteSpace(pubData.HtmlBody))
-                return false;
-
             return true;
         }
 
