@@ -179,7 +179,7 @@ namespace ON.Content.SimpleCMS.Service
                 list.Add(listRec);
             }
 
-            res.Records.AddRange(list.OrderByDescending(r => r.PublishOnUTC));
+            res.Records.AddRange(list.OrderByDescending(r => r.PublishOnUTC).OrderByDescending(r=>r.PinnedOnUTC));
             res.PageTotalItems = (uint)res.Records.Count;
 
             if (request.PageSize > 0)
