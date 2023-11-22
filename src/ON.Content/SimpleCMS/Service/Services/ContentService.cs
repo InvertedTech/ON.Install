@@ -551,7 +551,7 @@ namespace ON.Content.SimpleCMS.Service
 
                 if (searchQueryBits.Length > 0)
                 {
-                    if (!MeetsQuery(searchQueryBits, rec))
+                    if (!MeetsQuery(searchQueryBits, request.Query, rec))
                         continue;
                 }
 
@@ -768,7 +768,7 @@ namespace ON.Content.SimpleCMS.Service
             return true;
         }
 
-        private bool MeetsQuery(string[] searchQueryBits, ContentRecord rec)
+        private bool MeetsQuery(string[] searchQueryBits, string searchQuery, ContentRecord rec)
         {
             if (MeetsQuery(searchQueryBits, rec.Public.Data.Title.ToLower()))
                 return true;
@@ -792,6 +792,10 @@ namespace ON.Content.SimpleCMS.Service
                     break;
                 case ContentPublicData.ContentDataOneofOneofCase.Video:
                     if (MeetsQuery(searchQueryBits, rec.Public.Data.Video.HtmlBody.ToLower()))
+                        return true;
+                    if (rec.Public.Data.Video.YoutubeVideoId == searchQuery)
+                        return true;
+                    if (rec.Public.Data.Video.RumbleVideoId == searchQuery)
                         return true;
                     break;
                 default:
