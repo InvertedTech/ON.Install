@@ -130,7 +130,10 @@ namespace InstallerApp
 
         private async Task AppendLog(string str)
         {
-            await File.AppendAllTextAsync(LogFile.FullName, str + "\n");
+            lock (LogFile.FullName)
+            {
+                File.AppendAllText(LogFile.FullName, str + "\n");
+            }
         }
 
         private async Task WaitOnTask(Task t, TextBlock txt)

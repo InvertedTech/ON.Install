@@ -27,21 +27,27 @@ namespace InstallerApp.Deploy
 
                 var record = new UserRecord()
                 {
-                    Public = new UserRecord.Types.PublicData()
+                    Normal = new()
                     {
-                        UserID = Guid.NewGuid().ToString(),
-                        UserName = "admin",
-                        DisplayName = "Admin",
-                        CreatedOnUTC = date,
-                        ModifiedOnUTC = date,
-                    },
-                    Private = new UserRecord.Types.PrivateData()
+                        Public = new()
+                        {
+                            UserID = Guid.NewGuid().ToString(),
+                            CreatedOnUTC = date,
+                            ModifiedOnUTC = date,
+                            Data = new()
+                            {
+                                UserName = "admin",
+                                DisplayName = "Admin",
+                            },
+                        },
+                        Private = new()
+                    }
                 };
-                record.Public.Roles.Add("admin");
+                record.Normal.Private.Roles.Add("admin");
 
                 byte[] salt = RandomNumberGenerator.GetBytes(16);
-                record.Private.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
-                record.Private.PasswordHash = Google.Protobuf.ByteString.CopyFrom(ComputeSaltedHash(Encoding.UTF8.GetBytes(password), salt));
+                record.Server.PasswordSalt = Google.Protobuf.ByteString.CopyFrom(salt);
+                record.Server.PasswordHash = Google.Protobuf.ByteString.CopyFrom(ComputeSaltedHash(Encoding.UTF8.GetBytes(password), salt));
 
                 await window.backup.RestoreOneAuth(new UserBackupDataRecord()
                 {

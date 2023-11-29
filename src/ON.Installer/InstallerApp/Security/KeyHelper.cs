@@ -82,18 +82,39 @@ namespace InstallerApp.Security
 
             var parameters = key.ExportParameters(true);
 
-            bytes.AddRange(Convert.FromHexString("6f70656e7373682d6b65792d763100000000046e6f6e65000000046e6f6e650000000000000001000000680000001365636473612d736861322d6e69737470323536000000086e697374703235360000004104"));
+            bytes.AddRange(Convert.FromHexString("6f70656e7373682d6b65792d7631")); // openssh-key-v1
+            bytes.AddRange(Convert.FromHexString("00"));        // null
+            bytes.AddRange(Convert.FromHexString("00000004"));
+            bytes.AddRange(Convert.FromHexString("6e6f6e65"));  // none
+            bytes.AddRange(Convert.FromHexString("00000004"));  // 4 bytes
+            bytes.AddRange(Convert.FromHexString("6e6f6e65"));  // none
+            bytes.AddRange(Convert.FromHexString("00000000"));
+            bytes.AddRange(Convert.FromHexString("00000001"));  // 1 byte
+            bytes.AddRange(Convert.FromHexString("00000068"));  // 104 bytes
+            bytes.AddRange(Convert.FromHexString("00000013"));  // 19 bytes
+            bytes.AddRange(Convert.FromHexString("65636473612d736861322d6e69737470323536")); //ecdsa-sha2-nistp256
+            bytes.AddRange(Convert.FromHexString("00000008"));  // 8 bytes
+            bytes.AddRange(Convert.FromHexString("6e69737470323536")); //nistp256
+            bytes.AddRange(Convert.FromHexString("00000041"));  //65 bytes
+            bytes.AddRange(Convert.FromHexString("04"));
             bytes.AddRange(parameters.Q.X);
             bytes.AddRange(parameters.Q.Y);
             bytes.AddRange(Convert.FromHexString("000000b0"));
             bytes.AddRange(checkint);
             bytes.AddRange(checkint);
-            bytes.AddRange(Convert.FromHexString("0000001365636473612d736861322d6e69737470323536000000086e697374703235360000004104"));
+            bytes.AddRange(Convert.FromHexString("00000013"));  // 19 bytes
+            bytes.AddRange(Convert.FromHexString("65636473612d736861322d6e69737470323536")); //ecdsa-sha2-nistp256
+            bytes.AddRange(Convert.FromHexString("00000008"));  // 8 bytes
+            bytes.AddRange(Convert.FromHexString("6e69737470323536")); //nistp256
+            bytes.AddRange(Convert.FromHexString("00000041"));  //65 bytes
+            bytes.AddRange(Convert.FromHexString("04"));
             bytes.AddRange(parameters.Q.X);
             bytes.AddRange(parameters.Q.Y);
-            bytes.AddRange(Convert.FromHexString("00000020"));
+            bytes.AddRange(Convert.FromHexString("0000002100"));
             bytes.AddRange(parameters.D);
-            bytes.AddRange(Convert.FromHexString("0000001265636473612d6b65792d3230313930393230010203040506"));
+            bytes.AddRange(Convert.FromHexString("00000012"));
+            bytes.AddRange(Convert.FromHexString("65636473612d6b65792d3230313930393230"));
+            bytes.AddRange(Convert.FromHexString("0102030405"));
 
             var sb = new StringBuilder();
             sb.Append("-----BEGIN OPENSSH PRIVATE KEY-----\n");

@@ -5,8 +5,8 @@ variable sshPriv {}
 resource null_resource prepareForDockerComposeYaml {
   provisioner remote-exec {
     inline = [
-      "mkdir ~/onf/",
-      "mkdir ~/onf/data",
+      "mkdir ~/it/",
+      "mkdir ~/it/data",
     ]
   }
 
@@ -23,7 +23,7 @@ resource null_resource copyDockerComposeYaml {
 
   provisioner file {
     source      = "docker-compose.yml"
-    destination = "~/onf/docker-compose.yml"
+    destination = "~/it/docker-compose.yml"
   }
 
   connection {
@@ -43,7 +43,7 @@ resource null_resource copyJson {
 
   provisioner file {
     source      = "defaults.json"
-    destination = "~/onf/data/defaults.json"
+    destination = "~/it/data/defaults.json"
   }
 
   connection {
@@ -62,7 +62,7 @@ resource null_resource copyJson {
 resource null_resource runDockerComposeYaml {
   provisioner remote-exec {
     inline = [
-      "cd ~/onf/",
+      "cd ~/it/",
       "sudo docker-compose up -d",
     ]
   }
