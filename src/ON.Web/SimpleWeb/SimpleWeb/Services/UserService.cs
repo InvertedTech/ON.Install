@@ -9,6 +9,7 @@ using System;
 using ON.Settings;
 using Google.Protobuf;
 using System.IO;
+using ON.SimpleWeb.Models.Auth.Admin;
 
 namespace ON.SimpleWeb.Services
 {
@@ -52,6 +53,19 @@ namespace ON.SimpleWeb.Services
 
             var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
             var reply = await client.ChangeOwnPasswordAsync(req, GetMetadata());
+            return reply.Error;
+        }
+
+        public async Task<ChangeOtherPasswordResponse.Types.ChangeOtherPasswordResponseErrorType> ChangePasswordOtherUser(Guid userId, ChangeOtherPasswordViewModel vm)
+        {
+            var req = new ChangeOtherPasswordRequest()
+            {
+                UserID = userId.ToString(),
+                NewPassword = vm.NewPassword,
+            };
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.ChangeOtherPasswordAsync(req, GetMetadata());
             return reply.Error;
         }
 

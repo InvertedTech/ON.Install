@@ -39,6 +39,27 @@ namespace ON.SimpleWeb.Controllers
             return View(v);
         }
 
+        [HttpGet("{id}/password")]
+        public async Task<IActionResult> ChangeOtherPassword(string id)
+        {
+            var userId = Guid.Parse(id);
+            var r = await userService.GetOtherUser(userId);
+            if (r == null)
+                return RedirectToAction(nameof(ListUsers));
+
+            var vm = new ChangeOtherPasswordViewModel();
+
+            return View(vm);
+        }
+
+        [HttpPost("{id}/password")]
+        public async Task<IActionResult> ChangeOtherPasswordPost(string id, ChangeOtherPasswordViewModel vm)
+        {
+            await userService.ChangePasswordOtherUser(id.ToGuid(), vm);
+
+            return RedirectToAction(nameof(EditUser), new { id });
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> EditUser(string id)
         {
