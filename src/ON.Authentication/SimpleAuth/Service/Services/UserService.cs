@@ -1241,7 +1241,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             tokenDescriptor.Claims = new Dictionary<string, object>();
 
             foreach (var c in user.ToClaims())
-                tokenDescriptor.Claims.Add(c.Type, c.Value);
+                tokenDescriptor.Claims[c.Type] = c.Value;
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
