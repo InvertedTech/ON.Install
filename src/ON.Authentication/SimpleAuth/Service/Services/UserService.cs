@@ -1232,18 +1232,12 @@ namespace ON.Authentication.SimpleAuth.Service.Services
         private string GenerateToken(ONUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = creds
-            };
 
-            tokenDescriptor.Claims = new Dictionary<string, object>();
+            var tokenExpiration = DateTime.UtcNow.AddDays(7);
+            var claims = user.ToClaims().ToArray();
+            var subject = new ClaimsIdentity(claims);
+            var token = tokenHandler.CreateJwtSecurityToken(null, null, subject, null, tokenExpiration, DateTime.UtcNow, creds);
 
-            foreach (var c in user.ToClaims())
-                tokenDescriptor.Claims[c.Type] = c.Value;
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
 

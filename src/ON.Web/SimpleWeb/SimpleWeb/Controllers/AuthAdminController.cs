@@ -103,7 +103,8 @@ namespace ON.SimpleWeb.Controllers
 
             vm = new EditUserViewModel(user)
             {
-                SuccessMessage = "Settings updated Successfully"
+                SuccessMessage = "Settings updated Successfully",
+                TotpDevices = totps?.Devices?.ToList() ?? new()
             };
 
             return View("EditUser", vm);
