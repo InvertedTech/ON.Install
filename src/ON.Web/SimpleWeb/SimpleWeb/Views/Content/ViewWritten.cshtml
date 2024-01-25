@@ -20,6 +20,19 @@
 
 <em>By: @Model.Record.Data.Author</em>
 
+<br />
+<br />
+@if (Model.Stats.SavedByUser)
+{
+    <a href="/content/@(Model.Record.ContentID)/unsave">Unsave Article</a>
+}
+else
+{
+    <a href="/content/@(Model.Record.ContentID)/save">Save Article</a>
+}
+<br />
+<br />
+
 @if (Model.Record.Data.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
 {
     @Html.Raw(Model.Record.Data.Written.HtmlBody)

@@ -21,11 +21,11 @@ namespace ON.SimpleWeb.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly ILogger<HomeController> logger;
+        private readonly ILogger<AuthController> logger;
         private readonly UserService userService;
         private readonly ONUserHelper userHelper;
 
-        public AuthController(ILogger<HomeController> logger, UserService userService, ONUserHelper userHelper)
+        public AuthController(ILogger<AuthController> logger, UserService userService, ONUserHelper userHelper)
         {
             this.logger = logger;
             this.userService = userService;

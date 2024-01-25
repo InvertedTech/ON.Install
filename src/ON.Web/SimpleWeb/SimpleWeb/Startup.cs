@@ -36,6 +36,7 @@ namespace ON.SimpleWeb
             services.AddScoped<ContentService>();
             services.AddScoped<FakePaymentsService>();
             services.AddScoped<MainPaymentsService>();
+            services.AddScoped<StatsService>();
             services.AddScoped<UserService>();
             services.AddScoped<Services.Paypal.PaymentsService>();
 

@@ -109,6 +109,17 @@ namespace ON.SimpleWeb.Services
             return res?.Records?.ToList() ?? Enumerable.Empty<ContentListRecord>();
         }
 
+        public async Task<IEnumerable<ContentListRecord>> GetAllByIds(IEnumerable<string> contentIds)
+        {
+            var req = new GetAllContentRequest();
+            req.PossibleContentIDs.AddRange(contentIds);
+
+            var client = new ContentInterface.ContentInterfaceClient(nameHelper.ContentServiceChannel);
+            var res = await client.GetAllContentAsync(req, GetMetadata());
+
+            return res?.Records?.ToList() ?? Enumerable.Empty<ContentListRecord>();
+        }
+
         public async Task<ContentPublicRecord> GetContent(Guid contentId)
         {
             var req = new GetContentRequest
