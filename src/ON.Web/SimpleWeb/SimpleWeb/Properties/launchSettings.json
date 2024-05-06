@@ -4,6 +4,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
+      "launchUrl": "image/search",
       "applicationUrl": "http://localhost:80",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
@@ -17,7 +18,9 @@
         "SERVICE__PAYMENTSERVICE__GRPC__HOST": "localhost",
         "SERVICE__PAYMENTSERVICE__GRPC__PORT": "7004",
         "SERVICE__SETTINGSSERVICE__GRPC__HOST": "localhost",
-        "SERVICE__SETTINGSSERVICE__GRPC__PORT": "7009"
+        "SERVICE__SETTINGSSERVICE__GRPC__PORT": "7009",
+        "SERVICE__STATSSERVICE__GRPC__HOST": "localhost",
+        "SERVICE__STATSSERVICE__GRPC__PORT": "7010"
       }
     }
   }

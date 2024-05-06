@@ -44,6 +44,14 @@ namespace ON.Content.SimpleCMS.Service.Data
             }
         }
 
+        public async IAsyncEnumerable<AssetListRecord> GetAllShort()
+        {
+            foreach (var file in assetDir.GetFiles())
+            {
+                yield return AssetRecord.Parser.ParseFrom(await File.ReadAllBytesAsync(file.FullName)).ToAssetListRecord();
+            }
+        }
+
         public async Task<AssetRecord> GetById(Guid assetId)
         {
             var fd = GetContentFilePath(assetId);

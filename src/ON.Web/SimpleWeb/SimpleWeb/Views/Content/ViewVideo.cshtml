@@ -1,49 +1,62 @@
-﻿@model ON.Fragments.Content.ContentPublicRecord
+﻿@model ON.SimpleWeb.Models.CMS.ViewContentViewModel
 @using userHelper = ON.Authentication.ONUserHelper;
 @{
-    ViewData["Title"] = Model.Data.Title;
+    ViewData["Title"] = Model.Record.Data.Title;
 }
 
 @if (userHelper.MyUser?.IsWriterOrHigher ?? false)
 {
     <p>
-        <a class="btn btn-primary" href="/content/@(Model.ContentID)/edit">Edit</a>
+        <a class="btn btn-primary" href="/content/@(Model.Record.ContentID)/edit">Edit</a>
     </p>
     <br />
 }
 
 
-<h1>@Model.Data.Title</h1>
+<h1>@Model.Record.Data.Title</h1>
 
-<h5>@Model.Data.Description</h5>
+<h5>@Model.Record.Data.Description</h5>
 
-<em>By: @Model.Data.Author</em>
+<em>By: @Model.Record.Data.Author</em>
 
-@if (Model.Data.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
+<br />
+<br />
+@if (Model.Stats.SavedByUser)
 {
-    @if (Model.Data.Video.RumbleVideoId != "")
-    {
-        <iframe loading="lazy" class="rumble" width="100%" height="100%" src="https://rumble.com/embed/@Model.Data.Video.RumbleVideoId" frameborder="0" allowfullscreen style="min-height:500px"></iframe>
-    }
-    else if (Model.Data.Video.YoutubeVideoId != "")
-    {
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/@Model.Data.Video.YoutubeVideoId" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="youtubeframe" style="min-height:500px"></iframe>
-    }
-    @Html.Raw(Model.Data.Video.HtmlBody)
+    <a href="/content/@(Model.Record.ContentID)/unsave">Unsave Video</a>
 }
 else
 {
-    if (Model.Data.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    <a href="/content/@(Model.Record.ContentID)/save">Save Video</a>
+}
+<br />
+<br />
+
+@if (Model.Record.Data.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
+{
+    @if (Model.Record.Data.Video.RumbleVideoId != "")
     {
-        @if (Model.Data.Video.RumbleVideoId != "")
+        <iframe loading="lazy" class="rumble" width="100%" height="100%" src="https://rumble.com/embed/@Model.Record.Data.Video.RumbleVideoId" frameborder="0" allowfullscreen style="min-height:500px"></iframe>
+    }
+    else if (Model.Record.Data.Video.YoutubeVideoId != "")
+    {
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/@Model.Record.Data.Video.YoutubeVideoId" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="youtubeframe" style="min-height:500px"></iframe>
+    }
+    @Html.Raw(Model.Record.Data.Video.HtmlBody)
+}
+else
+{
+    if (Model.Record.Data.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    {
+        @if (Model.Record.Data.Video.RumbleVideoId != "")
         {
-            <iframe loading="lazy" class="rumble" width="100%" height="100%" src="https://rumble.com/embed/@Model.Data.Video.RumbleVideoId" frameborder="0" allowfullscreen style="min-height:500px"></iframe>
+            <iframe loading="lazy" class="rumble" width="100%" height="100%" src="https://rumble.com/embed/@Model.Record.Data.Video.RumbleVideoId" frameborder="0" allowfullscreen style="min-height:500px"></iframe>
         }
-        else if (Model.Data.Video.YoutubeVideoId != "")
+        else if (Model.Record.Data.Video.YoutubeVideoId != "")
         {
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/@Model.Data.Video.YoutubeVideoId" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="youtubeframe" style="min-height:500px"></iframe>
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/@Model.Record.Data.Video.YoutubeVideoId" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="youtubeframe" style="min-height:500px"></iframe>
         }
-        @Html.Raw(Model.Data.Video.HtmlBody)
+        @Html.Raw(Model.Record.Data.Video.HtmlBody)
     }
     else
     {

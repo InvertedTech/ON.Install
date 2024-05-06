@@ -16,6 +16,7 @@ using ON.Fragments.Comment;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
 using ON.Settings;
+using static System.Net.Mime.MediaTypeNames;
 using static Google.Rpc.Context.AttributeContext.Types;
 
 namespace ON.Content.SimpleComment.Service
@@ -28,6 +29,8 @@ namespace ON.Content.SimpleComment.Service
         private readonly UserDataHelper userDataHelper;
         private readonly SettingsClient settings;
         private readonly CommentRestrictionMinimum commentRestrictionMinimum;
+
+        private const int MAX_COMMENT_LENGTH = 500;
 
         public CommentService(ILogger<CommentService> logger, ICommentDataProvider dataProvider, UserDataHelper userDataHelper, SettingsClient settings)
         {
@@ -51,26 +54,6 @@ namespace ON.Content.SimpleComment.Service
 
             record.Public.DeletedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
             record.Private.DeletedBy = user.Id.ToString();
-
-            await dataProvider.Update(record);
-
-            return new() { Record = record.Public };
-        }
-
-        [Authorize(Roles = ONUser.ROLE_CAN_MODERATE_COMMENT)]
-        public override async Task<AdminEditCommentResponse> AdminEditComment(AdminEditCommentRequest request, ServerCallContext context)
-        {
-            var user = ONUserHelper.ParseUser(context.GetHttpContext());
-
-            var commentId = request.CommentID.ToGuid();
-            var record = await dataProvider.Get(commentId);
-            if (record == null)
-                return new();
-
-            record.Public.Data.CommentText = CleanText(request.Text);
-
-            record.Public.ModifiedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
-            record.Private.ModifiedBy = user.Id.ToString();
 
             await dataProvider.Update(record);
 
@@ -136,15 +119,18 @@ namespace ON.Content.SimpleComment.Service
         {
             var contentId = request.ContentID.ToGuid();
             if (contentId == Guid.Empty)
-                return new();
+                return new() { Error = $"ContentID missing" };
 
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
             if (!CanCreateComment(user))
-                return new();
+                return new() { Error = $"Access Denied" };
 
             var text = CleanText(request.Text).Trim();
             if (text.Length == 0)
-                return new();
+                return new() { Error = $"No comment text" };
+
+            if (text.Length > MAX_COMMENT_LENGTH)
+                return new() { Error = $"Length must be less than {MAX_COMMENT_LENGTH}" };
 
             CommentRecord record = new()
             {
@@ -180,7 +166,7 @@ namespace ON.Content.SimpleComment.Service
             var parentId = request.ParentCommentID.ToGuid();
             var parent = await dataProvider.Get(parentId);
             if (parent == null)
-                return new ();
+                return new();
 
             var user = ONUserHelper.ParseUser(context.GetHttpContext());
             if (!CanCreateComment(user))
@@ -189,6 +175,9 @@ namespace ON.Content.SimpleComment.Service
             var text = CleanText(request.Text).Trim();
             if (text.Length == 0)
                 return new();
+
+            if (text.Length > MAX_COMMENT_LENGTH)
+                return new() { Error = $"Length must be less than {MAX_COMMENT_LENGTH}" };
 
             CommentRecord record = new()
             {
@@ -260,7 +249,12 @@ namespace ON.Content.SimpleComment.Service
             if (text.Length == 0)
                 return new();
 
+            if (text.Length > MAX_COMMENT_LENGTH)
+                return new() { Error = $"Length must be less than {MAX_COMMENT_LENGTH}" };
+
             record.Public.Data.CommentText = text;
+            record.Public.Data.Likes = 0;
+            record.Private.Data.LikedByUserIDs.Clear();
             record.Public.ModifiedOnUTC = Timestamp.FromDateTimeOffset(DateTimeOffset.UtcNow);
             record.Private.ModifiedBy = user.Id.ToString();
 
@@ -280,14 +274,15 @@ namespace ON.Content.SimpleComment.Service
             var results = dataProvider.GetByContentId(contentId);
             await foreach (var rec in results)
             {
-                if (!CanShowInList(rec, user)) continue;
-
                 if (string.IsNullOrEmpty(rec.Public.ParentCommentID))
                 {
                     var converted = ToCommentResponseRecord(rec, user);
                     targetList.Add(converted);
                     continue;
                 }
+
+                if (rec.Public.DeletedOnUTC != null)
+                    continue;
 
                 var key = rec.Public.ParentCommentID;
                 if (childList.TryGetValue(key, out uint value))
@@ -296,11 +291,13 @@ namespace ON.Content.SimpleComment.Service
                     childList[key] = 1;
             }
 
-            foreach(var rec in targetList)
+            foreach (var rec in targetList)
             {
                 if (childList.TryGetValue(rec.CommentID, out uint value))
                     rec.NumReplies = value;
             }
+
+            targetList = targetList.Where(r => r.DeletedOnUTC == null || r.Likes > 0).ToList();
 
             return FilterResults(targetList, request.Order, request.PageSize, request.PageOffset, user);
         }
@@ -312,17 +309,16 @@ namespace ON.Content.SimpleComment.Service
             var parentId = request.ParentCommentID.ToGuid();
 
             var parentRecord = await dataProvider.Get(parentId);
-            if (!CanShowInList(parentRecord, user))
-                return new();
 
             List<CommentResponseRecord> targetList = new();
             var results = dataProvider.GetByParentId(parentId);
             await foreach (var rec in results)
             {
-                if (!CanShowInList(rec, user)) continue;
+                if (rec.Public.DeletedOnUTC != null)
+                    continue;
 
-                    var converted = ToCommentResponseRecord(rec, user);
-                    targetList.Add(converted);
+                var converted = ToCommentResponseRecord(rec, user);
+                targetList.Add(converted);
             }
 
             var res = FilterResults(targetList, request.Order, request.PageSize, request.PageOffset, user);
@@ -348,6 +344,10 @@ namespace ON.Content.SimpleComment.Service
                     res.Records.AddRange(list.OrderBy(r => r.CreatedOnUTC).OrderByDescending(r => r.PinnedOnUTC));
                     break;
             }
+
+            var returnableRecords = res.Records.Where(r => r.DeletedOnUTC == null || r.NumReplies > 0).ToList();
+            res.Records.Clear();
+            res.Records.AddRange(returnableRecords);
 
             res.PageTotalItems = (uint)res.Records.Count;
 
@@ -413,14 +413,6 @@ namespace ON.Content.SimpleComment.Service
             return new() { Record = record.Public };
         }
 
-        private bool CanShowInList(CommentRecord rec, ONUser user)
-        {
-            //if (user?.IsCommentModeratorOrHigher == true)
-            //    return true;
-
-            return rec.Public.DeletedOnUTC == null;
-        }
-
         private string CleanText(string text)
         {
             if (text == null)
@@ -469,12 +461,27 @@ namespace ON.Content.SimpleComment.Service
                 CreatedOnUTC = r.Public.CreatedOnUTC,
                 ModifiedOnUTC = r.Public.ModifiedOnUTC,
                 PinnedOnUTC = r.Public.PinnedOnUTC,
+                DeletedOnUTC = r.Public.DeletedOnUTC,
                 UserID = r.Public.UserID,
-                UserDisplayName = userDataHelper.GetRecord(r.Public.UserID).DisplayName,
+                UserName = userDataHelper.GetRecord(r.Public.UserID)?.UserName,
+                UserDisplayName = userDataHelper.GetRecord(r.Public.UserID)?.DisplayName,
                 Likes = r.Public.Data.Likes,
                 LikedByUser = r.Private.Data.LikedByUserIDs.Contains(user.Id.ToString()),
                 NumReplies = 0,
             };
+
+            if (record.DeletedOnUTC != null)
+            {
+                if (record.UserID == r.Private.DeletedBy)
+                    record.CommentText = "Removed by user";
+                else
+                    record.CommentText = "Removed by moderator";
+
+                record.UserID = "";
+                record.UserDisplayName = "";
+                record.Likes = 0;
+                record.LikedByUser = false;
+            }
 
             return record;
         }

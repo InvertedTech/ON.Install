@@ -1,0 +1,27 @@
+version: '3'
+services:
+  authservice:
+    image: opennetwork/simpleauth-service:linux-amd64
+    depends_on:
+      - paymentservice
+      - settingsservice
+    expose:
+      - 80
+    ports:
+      - $AUTH_PORT:$AUTH_PORT
+    env_file:
+      - environment.${ENVIRONMENT_FILE}.env
+      - ports.env
+      - services.${SERVICES_FILE}.env
+    environment:
+      - VIRTUAL_HOST=$VIRTUAL_HOST
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=~^/api/auth
+      - JWT_PRIV_KEY=$JWT_PRIV_KEY
+      - JWT_PUB_KEY=$JWT_PUB_KEY
+    logging:
+      options:
+        max-size: "10m"
+    restart: always
+    volumes:
+      - ${DATA_LOC}/auth:/data

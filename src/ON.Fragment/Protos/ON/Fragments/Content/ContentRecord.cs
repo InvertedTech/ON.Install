@@ -52,6 +52,7 @@ namespace ON.Fragments.Content
                 ContentID = ContentID,
                 CreatedOnUTC = CreatedOnUTC,
                 PublishOnUTC = PublishOnUTC,
+                PinnedOnUTC = PinnedOnUTC,
                 Title = Data.Title,
                 Description = Data.Description,
                 SubscriptionLevel = Data.SubscriptionLevel,

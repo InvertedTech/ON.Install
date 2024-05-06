@@ -41,6 +41,12 @@ service AssetInterface {
   rpc GetListOfOldContentIDs (GetListOfOldContentIDsRequest) returns (stream GetListOfOldContentIDsResponse)
   {
   }
+  rpc SearchAsset (SearchAssetRequest) returns (SearchAssetResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/admin/asset/search"
+    };
+  }
 }
   
 message CreateAssetRequest {
@@ -100,3 +106,33 @@ message GetListOfOldContentIDsResponse {
   google.protobuf.Timestamp ModifiedOnUTC = 3;
 }
 
+message SearchAssetRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  string Query = 6;
+  AssetType AssetType = 11;
+}
+
+message SearchAssetResponse {
+  repeated AssetListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+
+enum AssetType {
+  None = 0;
+  Audio = 1;
+  Image = 2;
+}
+
+message AssetListRecord {
+  string AssetID = 1;                         // Guid for the asset record
+  google.protobuf.Timestamp CreatedOnUTC = 2; // UTC timestamp when content was created
+  string Title = 3;
+  string Caption = 4;
+  AssetType AssetType = 10;
+  uint32 Height = 20;
+  uint32 Width = 21;
+  uint32 LengthSeconds = 30;
+}

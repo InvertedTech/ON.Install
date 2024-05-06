@@ -1,0 +1,26 @@
+version: '3'
+services:
+  statsservice:
+    image: opennetwork/simplestats-service:linux-amd64
+    depends_on:
+      - authservice
+      - eventdb
+    expose:
+      - 80
+    ports:
+      - $STATS_PORT:$STATS_PORT
+    env_file:
+      - environment.${ENVIRONMENT_FILE}.env
+      - ports.env
+      - services.${SERVICES_FILE}.env
+    environment:
+      - VIRTUAL_HOST=$VIRTUAL_HOST
+      - VIRTUAL_PORT=80
+      - VIRTUAL_PATH=~^/api/stats
+      - JWT_PUB_KEY=$JWT_PUB_KEY
+    logging:
+      options:
+        max-size: "10m"
+    restart: always
+    volumes:
+      - ${DATA_LOC}/stats:/data

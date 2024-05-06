@@ -1,0 +1,41 @@
+﻿@model ON.SimpleWeb.Models.Asset.EditImageViewModel
+@{
+    ViewData["Title"] = "Edit Image";
+}
+
+<a asp-action="ImageLibrary">&lt;&lt;&lt; Back</a>
+<br />
+<br />
+
+<h1>Edit Image</h1>
+<br />
+
+@if (!string.IsNullOrEmpty(Model?.ErrorMessage))
+{
+    <h2 style="color: red;">@Model.ErrorMessage</h2>
+}
+
+@if (!string.IsNullOrEmpty(Model?.SuccessMessage))
+{
+    <h2 style="color: green;">@Model.SuccessMessage</h2>
+}
+
+<form method="post" class="needs-validation" enctype="multipart/form-data" novalidate>
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input class="form-control" asp-for="Title" />
+        <span asp-validation-for="Title"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Caption"></label>
+        <input class="form-control" asp-for="Caption" />
+        <span asp-validation-for="Caption"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="File"></label><br />
+        <input asp-for="File" /><br />
+        <span asp-validation-for="File"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>

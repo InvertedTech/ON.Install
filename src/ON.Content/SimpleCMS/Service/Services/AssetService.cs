@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Google.Api;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,6 @@ using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ON.Content.SimpleCMS.Service
 {
@@ -230,6 +228,65 @@ namespace ON.Content.SimpleCMS.Service
             }
         }
 
+        [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
+        public override async Task<SearchAssetResponse> SearchAsset(SearchAssetRequest request, ServerCallContext context)
+        {
+            var searchQueryBits = Array.Empty<string>();
+
+            if (!string.IsNullOrWhiteSpace(request.Query))
+                searchQueryBits = request.Query.ToLower().Replace("\"", " ").Split(' ', StringSplitOptions.RemoveEmptyEntries).ToArray();
+
+            var res = new SearchAssetResponse();
+
+            List<AssetListRecord> list = new();
+            await foreach (var rec in dataProvider.GetAllShort())
+            {
+                AssetListRecord listRec = null;
+                switch (rec.AssetType)
+                {
+                    case AssetType.Audio:
+                        if (request.AssetType == AssetType.Image)
+                            continue;
+
+                        listRec = rec;
+                        break;
+                    case AssetType.Image:
+                        if (request.AssetType == AssetType.Audio)
+                            continue;
+
+                        listRec = rec;
+                        break;
+                }
+
+                if (listRec == null)
+                    continue;
+
+                if (searchQueryBits.Length > 0)
+                {
+                    if (!MeetsQuery(searchQueryBits, listRec))
+                        continue;
+                }
+
+                list.Add(listRec);
+            }
+
+            res.Records.AddRange(list.OrderByDescending(r => r.CreatedOnUTC));
+            res.PageTotalItems = (uint)res.Records.Count;
+
+            if (request.PageSize > 0)
+            {
+                res.PageOffsetStart = request.PageOffset;
+
+                var page = res.Records.Skip((int)request.PageOffset).Take((int)request.PageSize).ToList();
+                res.Records.Clear();
+                res.Records.AddRange(page);
+            }
+
+            res.PageOffsetEnd = res.PageOffsetStart + (uint)res.Records.Count;
+
+            return res;
+        }
+
         private bool IsValid(CreateAssetRequest request)
         {
             if (request == null)
@@ -270,6 +327,25 @@ namespace ON.Content.SimpleCMS.Service
                 image.Private = new();
 
             return true;
+        }
+
+        private bool MeetsQuery(string[] searchQueryBits, AssetListRecord rec)
+        {
+            if (MeetsQuery(searchQueryBits, rec.Title.ToLower()))
+                return true;
+
+            if (MeetsQuery(searchQueryBits, rec.Caption.ToLower()))
+                return true;
+
+            return false;
+        }
+
+        private bool MeetsQuery(string[] searchQueryBits, string haystack)
+        {
+            foreach (string bit in searchQueryBits)
+                if (haystack.Contains(bit))
+                    return true;
+            return false;
         }
     }
 }

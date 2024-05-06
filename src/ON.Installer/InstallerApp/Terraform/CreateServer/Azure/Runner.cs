@@ -23,11 +23,11 @@ namespace InstallerApp.Terraform.CreateServer.Azure
                 await window.resHelper.SaveCreateAzure(targetD);
             }
 
-            var ssh = Security.SshHelper.CreateRSAKey("temp@onf");
+            var ssh = Security.SshHelper.CreateRSAKey("temp@it");
             var envVars = new Dictionary<string, string>();
-            envVars["prefix"] = "onf-" + window.MyModel.DNS.Name.Replace(".", "-");
+            envVars["prefix"] = "it-" + window.MyModel.DNS.Name.Replace(".", "-");
             envVars["location"] = "centralus";
-            envVars["username"] = "onfadmin";
+            envVars["username"] = "itadmin";
             envVars["sshPub"] = ssh.pubKey;
 
 

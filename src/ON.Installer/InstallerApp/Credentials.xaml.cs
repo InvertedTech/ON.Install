@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ON.Installer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,15 @@ namespace InstallerApp
     /// </summary>
     public partial class Credentials : Page
     {
+        public CredentialsModel MyModel { get; set; }
+
         public Credentials()
         {
+            MyModel = MainWindow.MainModel.Credentials;
+
             InitializeComponent();
+
+            DataContext = MyModel;
         }
     }
 }

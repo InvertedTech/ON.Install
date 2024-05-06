@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
+using ON.Fragments.Generic;
 using ON.SimpleWeb.Models;
 using ON.SimpleWeb.Models.Auth;
 using ON.SimpleWeb.Models.CMS;
@@ -19,11 +21,11 @@ namespace ON.SimpleWeb.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly ILogger<HomeController> logger;
+        private readonly ILogger<AuthController> logger;
         private readonly UserService userService;
         private readonly ONUserHelper userHelper;
 
-        public AuthController(ILogger<HomeController> logger, UserService userService, ONUserHelper userHelper)
+        public AuthController(ILogger<AuthController> logger, UserService userService, ONUserHelper userHelper)
         {
             this.logger = logger;
             this.userService = userService;
@@ -67,6 +69,15 @@ namespace ON.SimpleWeb.Controllers
             }
         }
 
+
+        [HttpGet("/settings/totp/{id}/disable")]
+        public async Task<IActionResult> DisableTotp(string id)
+        {
+            await userService.DisableOwnTotp(id.ToGuid());
+
+            return RedirectToAction(nameof(SettingsGet));
+        }
+
         [AllowAnonymous]
         [HttpGet("/login")]
         public IActionResult LoginGet()
@@ -85,7 +96,7 @@ namespace ON.SimpleWeb.Controllers
                 return View("Login", vm);
             }
 
-            var token = await userService.AuthenticateUser(vm.LoginName, vm.Password);
+            var token = await userService.AuthenticateUser(vm.LoginName, vm.Password, vm.MFACode);
             if (string.IsNullOrEmpty(token))
             {
                 vm.ErrorMessage = "Your login/password is not correct.";
@@ -107,6 +118,39 @@ namespace ON.SimpleWeb.Controllers
         {
             Response.Cookies.Delete(JwtExtensions.JWT_COOKIE_NAME);
             return RedirectToAction(nameof(LoginGet));
+        }
+
+        [HttpGet("/settings/totp/new")]
+        public IActionResult NewTotp()
+        {
+            return View("NewTotp");
+        }
+
+        [HttpPost("/settings/totp/new")]
+        public async Task<IActionResult> NewTotpPost(NewTotpViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                vm.ErrorMessage = ModelState.Values.FirstOrDefault()?.Errors?.FirstOrDefault()?.ErrorMessage;
+                return View("NewTotp", vm);
+            }
+
+            var res = await userService.GenerateOwnTotp(vm.DeviceName);
+            if (!string.IsNullOrWhiteSpace(res?.Error))
+            {
+                vm.ErrorMessage = res?.Error ?? "An unknown error occured";
+                return View("NewTotp", vm);
+            }
+
+            VerifyTotpViewModel vm2 = new()
+            {
+                TotpID = res.TotpID,
+                DeviceName = vm.DeviceName,
+                QRCode = res.QRCode,
+                Key = res.Key,
+            };
+
+            return View("VerifyTotp", vm2);
         }
 
         [HttpGet("/settings/refreshtoken")]
@@ -175,6 +219,9 @@ namespace ON.SimpleWeb.Controllers
 
             var vm = new SettingsViewModel(user);
 
+            var totps = await userService.GetOwnTotp();
+            vm.TotpDevices = totps?.Devices?.ToList() ?? new();
+
             return View("Settings", vm);
         }
 
@@ -186,6 +233,10 @@ namespace ON.SimpleWeb.Controllers
             {
                 vm.ErrorMessage = ModelState.Values.FirstOrDefault(v => v.ValidationState == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid)
                                         ?.Errors?.FirstOrDefault()?.ErrorMessage;
+
+                var totps2 = await userService.GetOwnTotp();
+                vm.TotpDevices = totps2?.Devices?.ToList() ?? new();
+
                 return View("Settings", vm);
             }
 
@@ -193,6 +244,10 @@ namespace ON.SimpleWeb.Controllers
             if (!string.IsNullOrEmpty(res.Error))
             {
                 vm.ErrorMessage = res.Error;
+
+                var totps2 = await userService.GetOwnTotp();
+                vm.TotpDevices = totps2?.Devices?.ToList() ?? new();
+
                 return View("Settings", vm);
             }
 
@@ -214,6 +269,9 @@ namespace ON.SimpleWeb.Controllers
             {
                 SuccessMessage = "Settings updated Successfully"
             };
+
+            var totps = await userService.GetOwnTotp();
+            vm.TotpDevices = totps?.Devices?.ToList() ?? new();
 
             return View("Settings", vm);
         }
@@ -253,6 +311,25 @@ namespace ON.SimpleWeb.Controllers
                 return NotFound();
 
             return base.File(user.Data.ProfileImagePNG.ToArray(), "image/png"); ;
+        }
+
+        [HttpPost("/settings/totp/verify")]
+        public async Task<IActionResult> VerifyTotp(VerifyTotpViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                vm.ErrorMessage = ModelState.Values.FirstOrDefault(s => s.ValidationState == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid)?.Errors?.FirstOrDefault()?.ErrorMessage;
+                return View("VerifyTotp", vm);
+            }
+
+            var res = await userService.VerifyOwnTotp(vm.TotpID.ToGuid(), vm.Code);
+            if (!string.IsNullOrWhiteSpace(res?.Error))
+            {
+                vm.ErrorMessage = res?.Error ?? "An unknown error occured";
+                return View("VerifyTotp", vm);
+            }
+
+            return RedirectToAction(nameof(SettingsGet));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

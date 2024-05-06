@@ -179,7 +179,7 @@ namespace ON.Content.SimpleCMS.Service
                 list.Add(listRec);
             }
 
-            res.Records.AddRange(list.OrderByDescending(r => r.PublishOnUTC));
+            res.Records.AddRange(list.OrderByDescending(r => r.PublishOnUTC).OrderByDescending(r=>r.PinnedOnUTC));
             res.PageTotalItems = (uint)res.Records.Count;
 
             if (request.PageSize > 0)
@@ -551,7 +551,7 @@ namespace ON.Content.SimpleCMS.Service
 
                 if (searchQueryBits.Length > 0)
                 {
-                    if (!MeetsQuery(searchQueryBits, rec))
+                    if (!MeetsQuery(searchQueryBits, request.Query, rec))
                         continue;
                 }
 
@@ -757,9 +757,6 @@ namespace ON.Content.SimpleCMS.Service
             if (privData == null)
                 return false;
 
-            if (string.IsNullOrWhiteSpace(pubData.HtmlBody))
-                return false;
-
             return true;
         }
 
@@ -771,7 +768,7 @@ namespace ON.Content.SimpleCMS.Service
             return true;
         }
 
-        private bool MeetsQuery(string[] searchQueryBits, ContentRecord rec)
+        private bool MeetsQuery(string[] searchQueryBits, string searchQuery, ContentRecord rec)
         {
             if (MeetsQuery(searchQueryBits, rec.Public.Data.Title.ToLower()))
                 return true;
@@ -795,6 +792,10 @@ namespace ON.Content.SimpleCMS.Service
                     break;
                 case ContentPublicData.ContentDataOneofOneofCase.Video:
                     if (MeetsQuery(searchQueryBits, rec.Public.Data.Video.HtmlBody.ToLower()))
+                        return true;
+                    if (rec.Public.Data.Video.YoutubeVideoId == searchQuery)
+                        return true;
+                    if (rec.Public.Data.Video.RumbleVideoId == searchQuery)
                         return true;
                     break;
                 default:

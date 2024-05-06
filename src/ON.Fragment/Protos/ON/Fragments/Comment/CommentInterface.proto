@@ -15,13 +15,6 @@ service CommentInterface {
       post: "/api/comment/admin/{CommentID}/delete"
     };
   }
-  rpc AdminEditComment (AdminEditCommentRequest) returns (AdminEditCommentResponse)
-  {
-    option (google.api.http) = {
-      post: "/api/comment/admin/{CommentID}/edit"
-      body: "*"
-    };
-  }
   rpc AdminPinComment (AdminPinCommentRequest) returns (AdminPinCommentResponse)
   {
     option (google.api.http) = {
@@ -101,15 +94,6 @@ message AdminDeleteCommentResponse {
   CommentPublicRecord Record = 1;
 }
 
-message AdminEditCommentRequest {
-  string CommentID = 1;
-  string Text = 2;
-}
-
-message AdminEditCommentResponse {
-  CommentPublicRecord Record = 1;
-}
-
 message AdminPinCommentRequest {
   string CommentID = 1;
 }
@@ -146,6 +130,7 @@ message CreateCommentForCommentRequest {
 
 message CreateCommentResponse {
   CommentPublicRecord Record = 1;
+  string Error = 2;
 }
 
 message DeleteOwnCommentRequest {
@@ -163,6 +148,7 @@ message EditCommentRequest {
 
 message EditCommentResponse {
   CommentPublicRecord Record = 1;
+  string Error = 2;
 }
 
 message GetCommentsForContentRequest {
@@ -191,10 +177,12 @@ message CommentResponseRecord {
   string ContentID = 1;        // Guid for the content record
   string CommentID = 2;        // Guid for the comment record
   string UserID = 3;           // Guid for the user posting the comment
-  string UserDisplayName = 4;  // Guid for the user posting the comment
+  string UserName = 4;
+  string UserDisplayName = 5;
   google.protobuf.Timestamp CreatedOnUTC = 11;  // UTC timestamp when content was created
   google.protobuf.Timestamp ModifiedOnUTC = 12; // UTC timestamp when content record was last modified
   google.protobuf.Timestamp PinnedOnUTC = 13;   // UTC timestamp when content was pinned
+  google.protobuf.Timestamp DeletedOnUTC = 14;  // UTC timestamp when content record was last deleted
 
   string CommentText = 21;
   uint32 Likes = 22;

@@ -21,13 +21,15 @@ namespace ON.SimpleWeb.Controllers
         private readonly ILogger logger;
         private readonly ContentService contentService;
         private readonly CommentService commentService;
+        private readonly StatsService statsService;
         private readonly ONUserHelper userHelper;
 
-        public ContentController(ILogger<ContentController> logger, ContentService contentService, CommentService commentService, ONUserHelper userHelper)
+        public ContentController(ILogger<ContentController> logger, ContentService contentService, CommentService commentService, StatsService statsService, ONUserHelper userHelper)
         {
             this.logger = logger;
             this.contentService = contentService;
             this.commentService = commentService;
+            this.statsService = statsService;
             this.userHelper = userHelper;
         }
 
@@ -43,6 +45,7 @@ namespace ON.SimpleWeb.Controllers
             if (resContent == null)
                 return NotFound();
 
+            var resStats = await statsService.GetContentStats(contentId);
             var resComment = await commentService.GetAllForContent(contentId);
 
             var vm = new ViewContentViewModel()
@@ -55,7 +58,8 @@ namespace ON.SimpleWeb.Controllers
                     {
                         ContentID = resContent.ContentID,
                     }
-                }
+                },
+                Stats = resStats ?? new(),
             };
 
             if (resContent.Data.ContentDataOneofCase == Fragments.Content.ContentPublicData.ContentDataOneofOneofCase.Video)
@@ -255,6 +259,40 @@ namespace ON.SimpleWeb.Controllers
             await contentService.UnpublishContent(contentId);
 
             return Redirect("/content/manage");
+        }
+
+        [Authorize()]
+        [HttpGet("/content/{id}/save")]
+        public async Task<IActionResult> Save(string id)
+        {
+            Guid contentId;
+            if (!Guid.TryParse(id, out contentId))
+                return RedirectToAction(nameof(Get), new { id });
+
+            var resContent = await contentService.GetContent(contentId);
+            if (resContent == null)
+                return RedirectToAction(nameof(Get), new { id });
+
+            var resSave = await statsService.Save(resContent);
+
+            return RedirectToAction(nameof(Get), new { id });
+        }
+
+        [Authorize()]
+        [HttpGet("/content/{id}/unsave")]
+        public async Task<IActionResult> Unsave(string id)
+        {
+            Guid contentId;
+            if (!Guid.TryParse(id, out contentId))
+                return RedirectToAction(nameof(Get), new { id });
+
+            var resContent = await contentService.GetContent(contentId);
+            if (resContent == null)
+                return RedirectToAction(nameof(Get), new { id });
+
+            var resSave = await statsService.Unsave(resContent);
+
+            return RedirectToAction(nameof(Get), new { id });
         }
 
         [AllowAnonymous]

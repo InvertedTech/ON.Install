@@ -6,31 +6,31 @@
 <h1>Update User Settings</h1>
 <br />
 
-@if(!string.IsNullOrEmpty(Model?.ErrorMessage))
+@if (!string.IsNullOrEmpty(Model?.ErrorMessage))
 {
     <h2 style="color: red;">@Model.ErrorMessage</h2>
 }
 
-@if(!string.IsNullOrEmpty(Model?.SuccessMessage))
+@if (!string.IsNullOrEmpty(Model?.SuccessMessage))
 {
     <h2 style="color: green;">@Model.SuccessMessage</h2>
 }
 
 <form method="post" class="needs-validation" novalidate>
-  <div class="form-group">
-    <label asp-for="UserName"></label>
-    <input class="form-control" asp-for="UserName" />
-  </div>
-  <div class="form-group">
-    <label asp-for="DisplayName"></label>
-    <input class="form-control" asp-for="DisplayName" />
-    <span asp-validation-for="DisplayName"></span>
-  </div>
-  <div class="form-group">
-    <label asp-for="Email"></label>
-    <input class="form-control" asp-for="Email" />
-    <span asp-validation-for="Email"></span>
-  </div>
+    <div class="form-group">
+        <label asp-for="UserName"></label>
+        <input class="form-control" asp-for="UserName" />
+    </div>
+    <div class="form-group">
+        <label asp-for="DisplayName"></label>
+        <input class="form-control" asp-for="DisplayName" />
+        <span asp-validation-for="DisplayName"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input class="form-control" asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div>
     <div class="form-group">
         <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" asp-for="IsOwner" />
@@ -59,7 +59,7 @@
     </div>
     <br />
 
-  <button type="submit" class="btn btn-primary">Update</button>
+    <button type="submit" class="btn btn-primary">Update</button>
 </form>
 
 <br />
@@ -69,12 +69,30 @@
     <img src="/profile/pic/@Model.UserID" />
 </p>
 
-@*<p>
- <h4> -- or --</h4>
- <a class="btn btn-primary" asp-area="" asp-controller="changepassword" asp-action="">Change user's password</a>
+<p>
+    <h3> -- or --</h3>
+    <a class="btn btn-primary" asp-action="ChangeOtherPassword" asp-route-id="@Model.UserID">Change user's password</a>
 </p>
-*@
+
+<p>
+    <h3> -- MFA Devices -- </h3>
+    <table>
+        <tr>
+            <th>Device Name</th>
+            <th>Created On</th>
+        </tr>
+        @foreach (var device in Model.TotpDevices)
+        {
+            <tr>
+                <td>@device.DeviceName</td>
+                <td>@device.CreatedOnUTC.ToDateTime().ToString()</td>
+                <td><a asp-action="DisableTotp" asp-route-id="@Model.UserID" asp-route-totpid="@device.TotpID">Disable</a></td>
+            </tr>
+        }
+    </table>
+</p>
+
 @section scripts
-{
+    {
     <partial name="_ValidationScriptsPartial" />
 }

@@ -4,6 +4,11 @@ using ON.Fragments.Content;
 using System.Threading.Tasks;
 using System;
 using ON.Settings;
+using System.Collections.Generic;
+using System.Linq;
+using Google.Protobuf;
+using Microsoft.AspNetCore.Http;
+using ON.SimpleWeb.Models.Asset;
 
 namespace ON.SimpleWeb.Services
 {
@@ -30,6 +35,60 @@ namespace ON.SimpleWeb.Services
             var res = await client.GetAssetAsync(req, GetMetadata());
 
             return res?.Image;
+        }
+
+        public async Task<CreateAssetResponse> CreateImage(string title, string caption, IFormFile file)
+        {
+            using var stream = file.OpenReadStream();
+            CreateAssetRequest req = new()
+            {
+                Image = new()
+                {
+                    Public = new()
+                    {
+                        Title = title,
+                        Caption = caption,
+                        MimeType = file.ContentType,
+                        Data = await ByteString.FromStreamAsync(stream)
+                    }
+                }
+            };
+
+            var client = new AssetInterface.AssetInterfaceClient(nameHelper.ContentServiceChannel);
+            var res = await client.CreateAssetAsync(req, GetMetadata());
+
+            return res;
+        }
+
+        //public async Task<CreateAssetResponse> EditImage(EditImageViewModel vm)
+        //{
+        //    using var stream = file.OpenReadStream();
+        //    CreateAssetRequest req = new()
+        //    {
+        //        Image = new()
+        //        {
+        //            Public = new()
+        //            {
+        //                Title = title,
+        //                Caption = caption,
+        //                MimeType = file.ContentType,
+        //                Data = await ByteString.FromStreamAsync(stream)
+        //            }
+        //        }
+        //    };
+
+        //    var client = new AssetInterface.AssetInterfaceClient(nameHelper.ContentServiceChannel);
+        //    var res = await client.ed(req, GetMetadata());
+
+        //    return res;
+        //}
+
+        public async Task<SearchAssetResponse> SearchImages(SearchAssetRequest req)
+        {
+            var client = new AssetInterface.AssetInterfaceClient(nameHelper.ContentServiceChannel);
+            var res = await client.SearchAssetAsync(req, GetMetadata());
+
+            return res;
         }
 
         private Metadata GetMetadata()

@@ -22,7 +22,7 @@ namespace InstallerApp.Terraform.CreateServer.Digitalocean
             targetD.Create();
             await window.resHelper.SaveCreateDigitalocean(targetD);
 
-            string prefix = "onf-" + window.MyModel.DNS.Name.Replace(".", "-");
+            string prefix = "it-" + window.MyModel.DNS.Name.Replace(".", "-");
 
             var ssh = window.keyHelper.DeriveEcSshKey();
             var sshName = prefix;
