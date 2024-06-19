@@ -1,0 +1,51 @@
+﻿@model ViewViewModel
+@using ON.SimpleWeb.Models.Page;
+@using userHelper = ON.Authentication.ONUserHelper;
+@{
+    ViewData["Title"] = Model.Record.Data.Title;
+}
+
+@if (userHelper.MyUser?.IsWriterOrHigher ?? false)
+{
+    <p>
+        <a class="btn btn-primary" href="/page/@(Model.Record.PageID)/edit">Edit</a>
+    </p>
+    <br />
+}
+
+
+<h1>@Model.Record.Data.Title</h1>
+
+<h5>@Model.Record.Data.Description</h5>
+
+<em>By: @Model.Record.Data.Author</em>
+
+<br />
+<br />
+<br />
+
+@if (Model.Record.Data.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
+{
+    @Html.Raw(Model.Record.Data.HtmlBody)
+}
+else
+{
+    if (Model.Record.Data.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    {
+        @Html.Raw(Model.Record.Data.HtmlBody)
+    }
+    else
+    {
+        <br />
+        <br />
+        if (userHelper.MyUser == null)
+        {
+            <pre>To see the page <a href="/register">sign up</a> for an account</pre>
+        }
+        else
+        {
+            <pre>To see the page change your <a href="/subscription">subscription</a>  level</pre>
+        }
+    }
+}
+
