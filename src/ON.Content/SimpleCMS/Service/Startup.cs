@@ -59,8 +59,10 @@ namespace ON.Content.SimpleCMS.Service
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.AddSingleton<IAssetDataProvider, MemCachedFileSystemAssetDataProvider>();
             services.AddSingleton<IContentDataProvider, MemCachedFileSystemContentDataProvider>();
+            services.AddSingleton<IPageDataProvider, MemCachedFileSystemPageDataProvider>();
             services.AddSingleton<FileSystemAssetDataProvider>();
             services.AddSingleton<FileSystemContentDataProvider>();
+            services.AddSingleton<FileSystemPageDataProvider>();
             services.AddSingleton<StatsClient>();
 
             services.AddJwtAuthentication();
@@ -93,6 +95,7 @@ namespace ON.Content.SimpleCMS.Service
                 endpoints.MapGrpcService<AssetBackupService>();
                 endpoints.MapGrpcService<BackupService>();
                 endpoints.MapGrpcService<ContentService>();
+                endpoints.MapGrpcService<PageService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
 
                 endpoints.MapControllerRoute(

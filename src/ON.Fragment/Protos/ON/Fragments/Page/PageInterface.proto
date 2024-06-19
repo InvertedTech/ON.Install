@@ -1,0 +1,231 @@
+syntax = "proto3";
+
+package ON.Fragments.Page;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "Protos/ON/Fragments/Page/PageRecord.proto";
+
+// Service for Page fragment interface
+service PageInterface {
+  rpc CreatePage (CreatePageRequest) returns (CreatePageResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/page"
+      body: "*"
+    };
+  }
+  rpc DeletePage (DeletePageRequest) returns (DeletePageResponse)
+  {
+    option (google.api.http) = {
+      delete: "/api/cms/admin/page/{PageID}"
+    };
+  }
+  rpc GetAllPages (GetAllPagesRequest) returns (GetAllPagesResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/page"
+    };
+  }
+  rpc GetAllPagesAdmin (GetAllPagesAdminRequest) returns (GetAllPagesAdminResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/admin/page"
+    };
+  }
+  rpc GetPage (GetPageRequest) returns (GetPageResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/page/{PageID}"
+    };
+  }
+  rpc GetPageByUrl (GetPageByUrlRequest) returns (GetPageByUrlResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/page/url"
+    };
+  }
+  rpc GetPageAdmin (GetPageAdminRequest) returns (GetPageAdminResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/admin/page/{PageID}"
+    };
+  }
+  rpc ModifyPage (ModifyPageRequest) returns (ModifyPageResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/page/{PageID}"
+      body: "*"
+    };
+  }
+  rpc PublishPage (PublishPageRequest) returns (PublishPageResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/page/{PageID}/publish"
+      body: "*"
+    };
+  }
+  rpc SearchPage (SearchPageRequest) returns (SearchPageResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/page/search"
+    };
+  }
+  rpc UndeletePage (UndeletePageRequest) returns (UndeletePageResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/page/{PageID}/undelete"
+    };
+  }
+  rpc UnpublishPage (UnpublishPageRequest) returns (UnpublishPageResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/page/{PageID}/unpublish"
+    };
+  }
+}
+  
+message CreatePageRequest {
+  PagePublicData Public = 1;
+  PagePrivateData Private = 2;
+}
+  
+message CreatePageResponse {
+  PageRecord Record = 1;
+}
+
+message DeletePageRequest {
+  string PageID = 1;   // Guid for the page record
+}
+  
+message DeletePageResponse {
+  PageRecord Record = 1;
+}
+  
+message GetAllPagesRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  repeated string PossiblePageIDs = 6;
+  SubscriptionLevelSearch SubscriptionSearch = 10;
+  string Tag = 11;
+  string AuthorId = 15;
+  google.protobuf.Timestamp PublishedAfterUTC = 21;
+  google.protobuf.Timestamp PublishedBeforeUTC = 22;
+}
+  
+message GetAllPagesResponse {
+  repeated PageListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+  
+message GetAllPagesAdminRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  repeated string PossiblePageIDs = 6;
+  SubscriptionLevelSearch SubscriptionSearch = 10;
+  string Tag = 11;
+  bool Deleted = 21;
+}
+  
+message GetAllPagesAdminResponse {
+  repeated PageListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+  
+message GetPageRequest {
+  string PageID = 1;   // Guid for the page record
+}
+  
+message GetPageResponse {
+  PagePublicRecord Record = 1;
+}
+  
+message GetPageByUrlRequest {
+  string PageUrl = 1;
+}
+  
+message GetPageByUrlResponse {
+  PagePublicRecord Record = 1;
+}
+  
+message GetPageAdminRequest {
+  string PageID = 1;   // Guid for the page record
+}
+  
+message GetPageAdminResponse {
+  PageRecord Record = 1;
+}
+
+message ModifyPageRequest {
+  string PageID = 1;   // Guid for the page record
+  PagePublicData Public = 2;
+  PagePrivateData Private = 3;
+}
+  
+message ModifyPageResponse {
+  PageRecord Record = 1;
+}
+
+message PageListRecord {
+  string PageID = 1;                         // Guid for the page record
+  google.protobuf.Timestamp CreatedOnUTC = 2;   // UTC timestamp when page was created
+  google.protobuf.Timestamp PublishOnUTC = 3; // UTC timestamp when page was published
+  google.protobuf.Timestamp PinnedOnUTC = 4; // UTC timestamp when page was published
+  string Title = 10;
+  string Description = 11;
+  uint32 SubscriptionLevel = 12;
+  string URL = 13;
+  string Author = 14;
+  string AuthorID = 15;
+  string FeaturedImageAssetID = 20;
+}
+
+message PublishPageRequest {
+  string PageID = 1;   // Guid for the page record
+  google.protobuf.Timestamp PublishOnUTC = 3; // UTC timestamp when page was or will be published
+}
+  
+message PublishPageResponse {
+  PageRecord Record = 1;
+}
+  
+message SearchPageRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  string Query = 6;
+  SubscriptionLevelSearch SubscriptionSearch = 10;
+  string Tag = 11;
+}
+  
+message SearchPageResponse {
+  repeated PageListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+  
+message UndeletePageRequest {
+  string PageID = 1;   // Guid for the page record
+}
+  
+message UndeletePageResponse {
+  PageRecord Record = 1;
+}
+  
+message UnpublishPageRequest {
+  string PageID = 1;   // Guid for the page record
+}
+  
+message UnpublishPageResponse {
+  PageRecord Record = 1;
+}
+  
+message SubscriptionLevelSearch {
+  uint32 MinimumLevel = 1;
+  uint32 MaximumLevel = 2;
+}
+  
