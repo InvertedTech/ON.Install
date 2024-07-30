@@ -125,6 +125,8 @@ message ChannelRecord {
   string DisplayName = 3;
   string UrlStub = 4;
   string ImageAssetId = 5;
+  string YoutubeUrl = 101;
+  string RumbleUrl = 102;
 
   string OldChannelId = 1001;
 }

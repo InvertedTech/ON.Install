@@ -8,6 +8,9 @@ namespace ON.Settings.SimpleSettings.Service.Models
         public string ParentChannelId { get; set; }
         public string DisplayName { get; set; }
         public string UrlStub { get; set; }
+        public string ImageAssetId { get; set; }
+        public string YoutubeUrl { get; set; }
+        public string RumbleUrl { get; set; }
 
         public bool IsValid()
         {
@@ -37,6 +40,9 @@ namespace ON.Settings.SimpleSettings.Service.Models
                 DisplayName = DisplayName,
                 UrlStub = UrlStub,
                 ParentChannelId = ParentChannelId,
+                ImageAssetId = ImageAssetId,
+                YoutubeUrl = YoutubeUrl,
+                RumbleUrl = RumbleUrl,
             };
         }
     }

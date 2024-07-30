@@ -1,0 +1,58 @@
+﻿@using ON.SimpleWeb.Models.Subscription.Main
+@inject ON.SimpleWeb.Helper.HtmlSubscriptionTierHelper subHelper;
+@model ON.SimpleWeb.Models.Page.ManageViewModel
+@using userHelper = ON.Authentication.ONUserHelper;
+@{
+    ViewData["Title"] = "Manage Pages";
+}
+
+<a href="/page/new" class="btn btn-primary">New Page</a>
+
+<br />
+<br />
+
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Subscription</th>
+        </tr>
+    </thead>
+    @foreach (var record in Model.Records)
+    {
+        <tr>
+            <td>
+                <a href="/page/@(record.PageID)">@record.Title</a>
+            </td>
+            <td>@record.CreatedOnUTC.ToDateTime().ToLocalTime().ToString("yyyy-MM-dd h:mm tt")</td>
+            <td>
+                @if (record.PublishOnUTC != null)
+                {
+                    @if (userHelper.MyUser.CanPublish)
+                    {
+                        <a href="/page/@(record.PageID)/unpublish">Published</a>
+                    }
+                    else
+                    {
+                        <span>Published</span>
+                    }
+                }
+                else
+                {
+                    @if (userHelper.MyUser.CanPublish)
+                    {
+                        <a href="/page/@(record.PageID)/publish">Not Published</a>
+                    }
+                    else
+                    {
+                        <span>Not Published</span>
+                    }
+                }
+            </td>
+            <td>@subHelper.FromAmount(record.SubscriptionLevel)?.Label</td>
+        </tr>
+
+    }
+</table>

@@ -32,6 +32,7 @@
     <None Remove="Protos\ON\Fragments\Content\AssetRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\AudioAssetRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\ImageAssetRecord.proto" />
+    <None Remove="Protos\ON\Fragments\Content\Page.proto" />
     <None Remove="Protos\ON\Fragments\Content\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Content\StatsInterface.proto" />
     <None Remove="Protos\ON\Fragments\Content\StatsRecords.proto" />
@@ -44,6 +45,7 @@
     <None Remove="Protos\ON\Fragments\Notification\NotificationUserRecord.proto" />
     <None Remove="Protos\ON\Fragments\Notification\UserNotificationInterface.proto" />
     <None Remove="Protos\ON\Fragments\Notification\UserNotificationSettingsRecord.proto" />
+    <None Remove="Protos\ON\Fragments\Page\PageRecord.proto" />
     <None Remove="Protos\ON\Fragments\Settings\Backup.proto" />
     <None Remove="Protos\ON\Fragments\Settings\NotificationSettings.proto" />
     <None Remove="Protos\ON\Fragments\Settings\SettingsInterface.proto" />
@@ -93,6 +95,8 @@
     <Protobuf Include="Protos\ON\Fragments\Comment\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Content\AssetBackup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\AssetRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Page\PageRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Page\PageInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsSaveInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsProgressInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsViewInterface.proto" />

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package ON.Fragments.Page;
+
+import "google/protobuf/timestamp.proto";
+
+// Content record data
+message PageRecord {
+  PagePublicRecord Public = 1;
+  PagePrivateRecord Private = 2;
+}
+
+message PagePublicRecord {
+  string PageID = 1;   // Guid for the page record
+  google.protobuf.Timestamp CreatedOnUTC = 2;  // UTC timestamp when page was created
+  google.protobuf.Timestamp ModifiedOnUTC = 3; // UTC timestamp when page record was last modified
+  google.protobuf.Timestamp PublishOnUTC = 4;  // UTC timestamp when page was or will be published
+  google.protobuf.Timestamp PinnedOnUTC = 5;   // UTC timestamp when page was pinned
+  google.protobuf.Timestamp DeletedOnUTC = 6;   // UTC timestamp when page was deleted
+
+  PagePublicData Data = 21;
+}
+
+message PagePrivateRecord {
+  string CreatedBy = 2;
+  string ModifiedBy = 3;
+  string PublishedBy = 4;
+  string PinnedBy = 5;
+  string DeletedBy = 6;
+
+  PagePrivateData Data = 21;
+}
+
+message PagePublicData {
+  string Title = 1;
+  string Description = 2;
+  string Author = 3;
+  string AuthorID = 13;
+  string URL = 4;
+  string FeaturedImageAssetID = 6;
+  uint32 SubscriptionLevel = 7;
+  repeated string Tags = 8;
+  string HtmlBody = 11;
+}
+
+message PagePrivateData {
+  string OldPageID = 51;
+}
