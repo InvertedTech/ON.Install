@@ -675,7 +675,7 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return new() { Record = record?.Normal };
         }
 
-        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE_OR_BOT)]
         public override async Task<GetOtherUserByEmailResponse> GetOtherUserByEmail(GetOtherUserByEmailRequest request, ServerCallContext context)
         {
             if (offlineHelper.IsOffline)
