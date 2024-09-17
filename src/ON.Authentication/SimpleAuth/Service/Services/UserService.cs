@@ -675,6 +675,17 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return new() { Record = record?.Normal };
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE)]
+        public override async Task<GetOtherUserByEmailResponse> GetOtherUserByEmail(GetOtherUserByEmailRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            var record = await dataProvider.GetByEmail(request.Email);
+
+            return new() { Record = record?.Normal };
+        }
+
         [AllowAnonymous]
         public override async Task<GetOtherPublicUserResponse> GetOtherPublicUser(GetOtherPublicUserRequest request, ServerCallContext context)
         {

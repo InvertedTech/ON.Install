@@ -135,6 +135,14 @@ service UserInterface {
     };
   }
 
+  // Get User record
+  rpc GetOtherUserByEmail (GetOtherUserByEmailRequest) returns (GetOtherUserByEmailResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/admin/userByEmail/{Email}"
+    };
+  }
+
   // Get User public record
   rpc GetOtherPublicUser (GetOtherPublicUserRequest) returns (GetOtherPublicUserResponse)
   {
@@ -405,6 +413,14 @@ message GetOtherUserRequest {
 }
   
 message GetOtherUserResponse {
+  UserNormalRecord Record = 1;
+}
+
+message GetOtherUserByEmailRequest {
+  string Email = 1;                   // Email for the user
+}
+  
+message GetOtherUserByEmailResponse {
   UserNormalRecord Record = 1;
 }
 
