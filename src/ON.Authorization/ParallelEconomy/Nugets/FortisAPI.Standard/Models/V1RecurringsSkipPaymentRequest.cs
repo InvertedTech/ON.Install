@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1RecurringsSkipPaymentRequest.
     /// </summary>
-    public class V1RecurringsSkipPaymentRequest
+    public class V1RecurringsSkipPaymentRequest : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="V1RecurringsSkipPaymentRequest"/> class.
@@ -65,19 +66,18 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1RecurringsSkipPaymentRequest other &&
-                this.SkipCount.Equals(other.SkipCount);
+            return obj is V1RecurringsSkipPaymentRequest other &&                this.SkipCount.Equals(other.SkipCount);
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.SkipCount = {this.SkipCount}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

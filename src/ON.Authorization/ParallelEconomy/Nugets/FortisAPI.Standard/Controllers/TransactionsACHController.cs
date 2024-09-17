@@ -12,15 +12,16 @@ namespace FortisAPI.Standard.Controllers
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using APIMatic.Core;
+    using APIMatic.Core.Types;
+    using APIMatic.Core.Utilities;
+    using APIMatic.Core.Utilities.Date.Xml;
     using FortisAPI.Standard;
-    using FortisAPI.Standard.Authentication;
     using FortisAPI.Standard.Exceptions;
     using FortisAPI.Standard.Http.Client;
-    using FortisAPI.Standard.Http.Request;
-    using FortisAPI.Standard.Http.Request.Configuration;
-    using FortisAPI.Standard.Http.Response;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json.Converters;
+    using System.Net.Http;
 
     /// <summary>
     /// TransactionsACHController.
@@ -30,313 +31,279 @@ namespace FortisAPI.Standard.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="TransactionsACHController"/> class.
         /// </summary>
-        /// <param name="config"> config instance. </param>
-        /// <param name="httpClient"> httpClient. </param>
-        /// <param name="authManagers"> authManager. </param>
-        /// <param name="httpCallBack"> httpCallBack. </param>
-        internal TransactionsACHController(IConfiguration config, IHttpClient httpClient, IDictionary<string, IAuthManager> authManagers, HttpCallBack httpCallBack = null)
-            : base(config, httpClient, authManagers, httpCallBack)
-        {
-        }
+        internal TransactionsACHController(GlobalConfiguration globalConfiguration) : base(globalConfiguration) { }
 
         /// <summary>
         /// Create a new keyed ACH credit transaction.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
         public Models.ResponseTransaction ACHCredit(
-                Models.V1TransactionsAchCreditKeyedRequest body)
-        {
-            Task<Models.ResponseTransaction> t = this.ACHCreditAsync(body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+                Models.V1TransactionsAchCreditKeyedRequest body,
+                List<Models.Expand54Enum> expand = null)
+            => CoreHelper.RunTask(ACHCreditAsync(body, expand));
 
         /// <summary>
         /// Create a new keyed ACH credit transaction.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
         /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
         public async Task<Models.ResponseTransaction> ACHCreditAsync(
                 Models.V1TransactionsAchCreditKeyedRequest body,
+                List<Models.Expand54Enum> expand = null,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
+            => await CreateApiCall<Models.ResponseTransaction>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/transactions/ach/credit/keyed")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/transactions/ach/credit/keyed");
+        /// <summary>
+        /// Create a new ACH credit transaction using previous transaction id.
+        /// </summary>
+        /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
+        /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
+        public Models.ResponseTransaction ACHCreditPreviousTransaction(
+                Models.V1TransactionsAchCreditPrevTrxnRequest body,
+                List<Models.Expand54Enum> expand = null)
+            => CoreHelper.RunTask(ACHCreditPreviousTransactionAsync(body, expand));
 
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PostBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseTransaction>(response.Body);
-        }
+        /// <summary>
+        /// Create a new ACH credit transaction using previous transaction id.
+        /// </summary>
+        /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
+        /// <param name="cancellationToken"> cancellationToken. </param>
+        /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
+        public async Task<Models.ResponseTransaction> ACHCreditPreviousTransactionAsync(
+                Models.V1TransactionsAchCreditPrevTrxnRequest body,
+                List<Models.Expand54Enum> expand = null,
+                CancellationToken cancellationToken = default)
+            => await CreateApiCall<Models.ResponseTransaction>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/transactions/ach/credit/prev-trxn")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         /// <summary>
         /// Create a new tokenized ACH credit transaction.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
         public Models.ResponseTransaction ACHCreditTokenized(
-                Models.V1TransactionsAchCreditTokenRequest body)
-        {
-            Task<Models.ResponseTransaction> t = this.ACHCreditTokenizedAsync(body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+                Models.V1TransactionsAchCreditTokenRequest body,
+                List<Models.Expand54Enum> expand = null)
+            => CoreHelper.RunTask(ACHCreditTokenizedAsync(body, expand));
 
         /// <summary>
         /// Create a new tokenized ACH credit transaction.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
         /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
         public async Task<Models.ResponseTransaction> ACHCreditTokenizedAsync(
                 Models.V1TransactionsAchCreditTokenRequest body,
+                List<Models.Expand54Enum> expand = null,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
-
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/transactions/ach/credit/token");
-
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PostBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseTransaction>(response.Body);
-        }
+            => await CreateApiCall<Models.ResponseTransaction>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/transactions/ach/credit/token")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         /// <summary>
         /// Create a new keyed ACH debit transaction.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
         public Models.ResponseTransaction ACHDebit(
-                Models.V1TransactionsAchDebitKeyedRequest body)
-        {
-            Task<Models.ResponseTransaction> t = this.ACHDebitAsync(body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+                Models.V1TransactionsAchDebitKeyedRequest body,
+                List<Models.Expand54Enum> expand = null)
+            => CoreHelper.RunTask(ACHDebitAsync(body, expand));
 
         /// <summary>
         /// Create a new keyed ACH debit transaction.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
         /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
         public async Task<Models.ResponseTransaction> ACHDebitAsync(
                 Models.V1TransactionsAchDebitKeyedRequest body,
+                List<Models.Expand54Enum> expand = null,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
+            => await CreateApiCall<Models.ResponseTransaction>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/transactions/ach/debit/keyed")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/transactions/ach/debit/keyed");
+        /// <summary>
+        /// Create a new ACH debit transaction using previous transaction id.
+        /// </summary>
+        /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
+        /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
+        public Models.ResponseTransaction ACHDebitPreviousTransaction(
+                Models.V1TransactionsAchDebitPrevTrxnRequest body,
+                List<Models.Expand54Enum> expand = null)
+            => CoreHelper.RunTask(ACHDebitPreviousTransactionAsync(body, expand));
 
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PostBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseTransaction>(response.Body);
-        }
+        /// <summary>
+        /// Create a new ACH debit transaction using previous transaction id.
+        /// </summary>
+        /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
+        /// <param name="cancellationToken"> cancellationToken. </param>
+        /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
+        public async Task<Models.ResponseTransaction> ACHDebitPreviousTransactionAsync(
+                Models.V1TransactionsAchDebitPrevTrxnRequest body,
+                List<Models.Expand54Enum> expand = null,
+                CancellationToken cancellationToken = default)
+            => await CreateApiCall<Models.ResponseTransaction>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/transactions/ach/debit/prev-trxn")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         /// <summary>
         /// Create a new tokenized ACH debit transaction.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
         public Models.ResponseTransaction ACHDebitTokenized(
-                Models.V1TransactionsAchDebitTokenRequest body)
-        {
-            Task<Models.ResponseTransaction> t = this.ACHDebitTokenizedAsync(body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+                Models.V1TransactionsAchDebitTokenRequest body,
+                List<Models.Expand54Enum> expand = null)
+            => CoreHelper.RunTask(ACHDebitTokenizedAsync(body, expand));
 
         /// <summary>
         /// Create a new tokenized ACH debit transaction.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
         /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
         public async Task<Models.ResponseTransaction> ACHDebitTokenizedAsync(
                 Models.V1TransactionsAchDebitTokenRequest body,
+                List<Models.Expand54Enum> expand = null,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
+            => await CreateApiCall<Models.ResponseTransaction>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/transactions/ach/debit/token")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/transactions/ach/debit/token");
+        /// <summary>
+        /// Create a new ACH refund transaction using previous transaction id.
+        /// </summary>
+        /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
+        /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
+        public Models.ResponseTransaction ACHRefundPreviousTransaction(
+                Models.V1TransactionsAchRefundPrevTrxnRequest body,
+                List<Models.Expand54Enum> expand = null)
+            => CoreHelper.RunTask(ACHRefundPreviousTransactionAsync(body, expand));
 
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PostBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseTransaction>(response.Body);
-        }
+        /// <summary>
+        /// Create a new ACH refund transaction using previous transaction id.
+        /// </summary>
+        /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
+        /// <param name="cancellationToken"> cancellationToken. </param>
+        /// <returns>Returns the Models.ResponseTransaction response from the API call.</returns>
+        public async Task<Models.ResponseTransaction> ACHRefundPreviousTransactionAsync(
+                Models.V1TransactionsAchRefundPrevTrxnRequest body,
+                List<Models.Expand54Enum> expand = null,
+                CancellationToken cancellationToken = default)
+            => await CreateApiCall<Models.ResponseTransaction>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/transactions/ach/refund/prev-trxn")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
     }
 }

@@ -12,15 +12,16 @@ namespace FortisAPI.Standard.Controllers
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using APIMatic.Core;
+    using APIMatic.Core.Types;
+    using APIMatic.Core.Utilities;
+    using APIMatic.Core.Utilities.Date.Xml;
     using FortisAPI.Standard;
-    using FortisAPI.Standard.Authentication;
     using FortisAPI.Standard.Exceptions;
     using FortisAPI.Standard.Http.Client;
-    using FortisAPI.Standard.Http.Request;
-    using FortisAPI.Standard.Http.Request.Configuration;
-    using FortisAPI.Standard.Http.Response;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json.Converters;
+    using System.Net.Http;
 
     /// <summary>
     /// OnBoardingController.
@@ -30,14 +31,7 @@ namespace FortisAPI.Standard.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="OnBoardingController"/> class.
         /// </summary>
-        /// <param name="config"> config instance. </param>
-        /// <param name="httpClient"> httpClient. </param>
-        /// <param name="authManagers"> authManager. </param>
-        /// <param name="httpCallBack"> httpCallBack. </param>
-        internal OnBoardingController(IConfiguration config, IHttpClient httpClient, IDictionary<string, IAuthManager> authManagers, HttpCallBack httpCallBack = null)
-            : base(config, httpClient, authManagers, httpCallBack)
-        {
-        }
+        internal OnBoardingController(GlobalConfiguration globalConfiguration) : base(globalConfiguration) { }
 
         /// <summary>
         /// This method can be used to pre-populate data on the Merchant Processing Application (MPA), a form that prospective merchants must complete and sign prior to approval. Using this method will reduce the effort required by the merchant at boarding time, in scenarios where data about the prospective merchant has already been collected. This method will return an Application ID, which can be sent to a prospective merchant to obtain and complete the pre-filled application.
@@ -47,11 +41,7 @@ namespace FortisAPI.Standard.Controllers
         /// <returns>Returns the Models.ResponseOnboarding response from the API call.</returns>
         public Models.ResponseOnboarding MerchantBoarding(
                 Models.V1OnboardingRequest body)
-        {
-            Task<Models.ResponseOnboarding> t = this.MerchantBoardingAsync(body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+            => CoreHelper.RunTask(MerchantBoardingAsync(body));
 
         /// <summary>
         /// This method can be used to pre-populate data on the Merchant Processing Application (MPA), a form that prospective merchants must complete and sign prior to approval. Using this method will reduce the effort required by the merchant at boarding time, in scenarios where data about the prospective merchant has already been collected. This method will return an Application ID, which can be sent to a prospective merchant to obtain and complete the pre-filled application.
@@ -63,57 +53,20 @@ namespace FortisAPI.Standard.Controllers
         public async Task<Models.ResponseOnboarding> MerchantBoardingAsync(
                 Models.V1OnboardingRequest body,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
-
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/onboarding");
-
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PostBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseOnboarding>(response.Body);
-        }
+            => await CreateApiCall<Models.ResponseOnboarding>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/onboarding")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
     }
 }

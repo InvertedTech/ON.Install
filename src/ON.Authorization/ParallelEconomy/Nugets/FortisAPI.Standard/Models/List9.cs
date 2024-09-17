@@ -10,7 +10,9 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
+    using FortisAPI.Standard.Http.Client;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
@@ -18,50 +20,66 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// List9.
     /// </summary>
-    public class List9
+    public class List9 : BaseModel
     {
-        private string defaultProductTransactionId;
-        private string terminalCvmId;
-        private string macAddress;
-        private string locationApiId;
-        private string terminalApiId;
-        private string headerLine1;
-        private string headerLine2;
-        private string headerLine3;
-        private string headerLine4;
-        private string headerLine5;
-        private string trailerLine1;
-        private string trailerLine2;
-        private string trailerLine3;
-        private string trailerLine4;
-        private string trailerLine5;
-        private string defaultCheckin;
-        private string defaultCheckout;
-        private double? defaultRoomRate;
-        private string defaultRoomNumber;
-        private Models.CommunicationTypeEnum? communicationType;
+        private string locationId;
+        private string ccProductTransactionId;
+        private string achProductTransactionId;
+        private bool? bankFundedOnlyOverride;
+        private string email;
+        private string contactId;
+        private string contactApiId;
+        private string quickInvoiceApiId;
+        private string customerId;
+        private string expireDate;
+        private string invoiceNumber;
+        private string itemHeader;
+        private string itemFooter;
+        private double? amountDue;
+        private string notificationEmail;
+        private Models.StatusIdEnum? statusId;
+        private Models.StatusCode12Enum? statusCode;
+        private string note;
+        private int? notificationDaysBeforeDueDate;
+        private int? notificationDaysAfterDueDate;
+        private double? remainingBalance;
+        private int? singlePaymentMinAmount;
+        private int? singlePaymentMaxAmount;
+        private string cellPhone;
+        private string createdUserId;
+        private string modifiedUserId;
+        private int? paymentStatusId;
+        private string paymentUrl;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
-            { "default_product_transaction_id", false },
-            { "terminal_cvm_id", false },
-            { "mac_address", false },
-            { "location_api_id", false },
-            { "terminal_api_id", false },
-            { "header_line_1", false },
-            { "header_line_2", false },
-            { "header_line_3", false },
-            { "header_line_4", false },
-            { "header_line_5", false },
-            { "trailer_line_1", false },
-            { "trailer_line_2", false },
-            { "trailer_line_3", false },
-            { "trailer_line_4", false },
-            { "trailer_line_5", false },
-            { "default_checkin", false },
-            { "default_checkout", false },
-            { "default_room_rate", false },
-            { "default_room_number", false },
-            { "communication_type", false },
+            { "location_id", false },
+            { "cc_product_transaction_id", false },
+            { "ach_product_transaction_id", false },
+            { "bank_funded_only_override", false },
+            { "email", false },
+            { "contact_id", false },
+            { "contact_api_id", false },
+            { "quick_invoice_api_id", false },
+            { "customer_id", false },
+            { "expire_date", false },
+            { "invoice_number", false },
+            { "item_header", false },
+            { "item_footer", false },
+            { "amount_due", false },
+            { "notification_email", false },
+            { "status_id", false },
+            { "status_code", false },
+            { "note", false },
+            { "notification_days_before_due_date", false },
+            { "notification_days_after_due_date", false },
+            { "remaining_balance", false },
+            { "single_payment_min_amount", false },
+            { "single_payment_max_amount", true },
+            { "cell_phone", false },
+            { "created_user_id", false },
+            { "modified_user_id", false },
+            { "payment_status_id", false },
+            { "payment_url", false },
         };
 
         /// <summary>
@@ -74,692 +92,792 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="List9"/> class.
         /// </summary>
-        /// <param name="locationId">location_id.</param>
-        /// <param name="terminalApplicationId">terminal_application_id.</param>
-        /// <param name="terminalManufacturerCode">terminal_manufacturer_code.</param>
         /// <param name="title">title.</param>
-        /// <param name="localIpAddress">local_ip_address.</param>
-        /// <param name="port">port.</param>
-        /// <param name="serialNumber">serial_number.</param>
-        /// <param name="terminalNumber">terminal_number.</param>
-        /// <param name="debit">debit.</param>
-        /// <param name="emv">emv.</param>
-        /// <param name="cashbackEnable">cashback_enable.</param>
-        /// <param name="printEnable">print_enable.</param>
-        /// <param name="sigCaptureEnable">sig_capture_enable.</param>
+        /// <param name="dueDate">due_date.</param>
+        /// <param name="itemList">item_list.</param>
         /// <param name="id">id.</param>
         /// <param name="createdTs">created_ts.</param>
         /// <param name="modifiedTs">modified_ts.</param>
-        /// <param name="lastRegistrationTs">last_registration_ts.</param>
+        /// <param name="locationId">location_id.</param>
+        /// <param name="ccProductTransactionId">cc_product_transaction_id.</param>
+        /// <param name="achProductTransactionId">ach_product_transaction_id.</param>
+        /// <param name="allowOverpayment">allow_overpayment.</param>
+        /// <param name="bankFundedOnlyOverride">bank_funded_only_override.</param>
+        /// <param name="email">email.</param>
+        /// <param name="contactId">contact_id.</param>
+        /// <param name="contactApiId">contact_api_id.</param>
+        /// <param name="quickInvoiceApiId">quick_invoice_api_id.</param>
+        /// <param name="customerId">customer_id.</param>
+        /// <param name="expireDate">expire_date.</param>
+        /// <param name="allowPartialPay">allow_partial_pay.</param>
+        /// <param name="attachFilesToEmail">attach_files_to_email.</param>
+        /// <param name="sendEmail">send_email.</param>
+        /// <param name="invoiceNumber">invoice_number.</param>
+        /// <param name="itemHeader">item_header.</param>
+        /// <param name="itemFooter">item_footer.</param>
+        /// <param name="amountDue">amount_due.</param>
+        /// <param name="notificationEmail">notification_email.</param>
+        /// <param name="statusId">status_id.</param>
+        /// <param name="statusCode">status_code.</param>
+        /// <param name="note">note.</param>
+        /// <param name="notificationDaysBeforeDueDate">notification_days_before_due_date.</param>
+        /// <param name="notificationDaysAfterDueDate">notification_days_after_due_date.</param>
+        /// <param name="notificationOnDueDate">notification_on_due_date.</param>
+        /// <param name="sendTextToPay">send_text_to_pay.</param>
+        /// <param name="files">files.</param>
+        /// <param name="remainingBalance">remaining_balance.</param>
+        /// <param name="singlePaymentMinAmount">single_payment_min_amount.</param>
+        /// <param name="singlePaymentMaxAmount">single_payment_max_amount.</param>
+        /// <param name="cellPhone">cell_phone.</param>
+        /// <param name="tags">tags.</param>
         /// <param name="createdUserId">created_user_id.</param>
         /// <param name="modifiedUserId">modified_user_id.</param>
-        /// <param name="defaultProductTransactionId">default_product_transaction_id.</param>
-        /// <param name="terminalCvmId">terminal_cvm_id.</param>
-        /// <param name="macAddress">mac_address.</param>
-        /// <param name="terminalTimeouts">terminal_timeouts.</param>
-        /// <param name="tipPercents">tip_percents.</param>
-        /// <param name="locationApiId">location_api_id.</param>
-        /// <param name="terminalApiId">terminal_api_id.</param>
-        /// <param name="headerLine1">header_line_1.</param>
-        /// <param name="headerLine2">header_line_2.</param>
-        /// <param name="headerLine3">header_line_3.</param>
-        /// <param name="headerLine4">header_line_4.</param>
-        /// <param name="headerLine5">header_line_5.</param>
-        /// <param name="trailerLine1">trailer_line_1.</param>
-        /// <param name="trailerLine2">trailer_line_2.</param>
-        /// <param name="trailerLine3">trailer_line_3.</param>
-        /// <param name="trailerLine4">trailer_line_4.</param>
-        /// <param name="trailerLine5">trailer_line_5.</param>
-        /// <param name="defaultCheckin">default_checkin.</param>
-        /// <param name="defaultCheckout">default_checkout.</param>
-        /// <param name="defaultRoomRate">default_room_rate.</param>
-        /// <param name="defaultRoomNumber">default_room_number.</param>
-        /// <param name="isProvisioned">is_provisioned.</param>
-        /// <param name="tipEnable">tip_enable.</param>
-        /// <param name="validatedDecryption">validated_decryption.</param>
-        /// <param name="communicationType">communication_type.</param>
+        /// <param name="active">active.</param>
+        /// <param name="paymentStatusId">payment_status_id.</param>
+        /// <param name="isActive">is_active.</param>
+        /// <param name="quickInvoiceSetting">quick_invoice_setting.</param>
+        /// <param name="quickInvoiceViews">quick_invoice_views.</param>
+        /// <param name="location">location.</param>
+        /// <param name="createdUser">created_user.</param>
+        /// <param name="modifiedUser">modified_user.</param>
+        /// <param name="changelogs">changelogs.</param>
+        /// <param name="contact">contact.</param>
+        /// <param name="logEmails">log_emails.</param>
+        /// <param name="logSms">log_sms.</param>
+        /// <param name="transactions">transactions.</param>
+        /// <param name="ccProductTransaction">cc_product_transaction.</param>
+        /// <param name="achProductTransaction">ach_product_transaction.</param>
+        /// <param name="emailBlacklist">email_blacklist.</param>
+        /// <param name="smsBlacklist">sms_blacklist.</param>
+        /// <param name="paymentUrl">payment_url.</param>
         public List9(
-            string locationId,
-            string terminalApplicationId,
-            Models.TerminalManufacturerCodeEnum terminalManufacturerCode,
             string title,
-            string localIpAddress,
-            int port,
-            string serialNumber,
-            string terminalNumber,
-            bool debit,
-            bool emv,
-            bool cashbackEnable,
-            bool printEnable,
-            bool sigCaptureEnable,
+            string dueDate,
+            List<Models.ItemList> itemList,
             string id,
             int createdTs,
             int modifiedTs,
-            int lastRegistrationTs,
-            string createdUserId,
-            string modifiedUserId,
-            string defaultProductTransactionId = null,
-            string terminalCvmId = null,
-            string macAddress = null,
-            Models.TerminalTimeouts terminalTimeouts = null,
-            Models.TipPercents tipPercents = null,
-            string locationApiId = null,
-            string terminalApiId = null,
-            string headerLine1 = null,
-            string headerLine2 = null,
-            string headerLine3 = null,
-            string headerLine4 = null,
-            string headerLine5 = null,
-            string trailerLine1 = null,
-            string trailerLine2 = null,
-            string trailerLine3 = null,
-            string trailerLine4 = null,
-            string trailerLine5 = null,
-            string defaultCheckin = null,
-            string defaultCheckout = null,
-            double? defaultRoomRate = null,
-            string defaultRoomNumber = null,
-            bool? isProvisioned = null,
-            bool? tipEnable = null,
-            bool? validatedDecryption = null,
-            Models.CommunicationTypeEnum? communicationType = null)
+            string locationId = null,
+            string ccProductTransactionId = null,
+            string achProductTransactionId = null,
+            bool? allowOverpayment = null,
+            bool? bankFundedOnlyOverride = null,
+            string email = null,
+            string contactId = null,
+            string contactApiId = null,
+            string quickInvoiceApiId = null,
+            string customerId = null,
+            string expireDate = null,
+            bool? allowPartialPay = null,
+            bool? attachFilesToEmail = null,
+            bool? sendEmail = null,
+            string invoiceNumber = null,
+            string itemHeader = null,
+            string itemFooter = null,
+            double? amountDue = null,
+            string notificationEmail = null,
+            Models.StatusIdEnum? statusId = null,
+            Models.StatusCode12Enum? statusCode = null,
+            string note = null,
+            int? notificationDaysBeforeDueDate = null,
+            int? notificationDaysAfterDueDate = null,
+            bool? notificationOnDueDate = null,
+            bool? sendTextToPay = null,
+            List<Models.File> files = null,
+            double? remainingBalance = null,
+            int? singlePaymentMinAmount = null,
+            int? singlePaymentMaxAmount = 999999999,
+            string cellPhone = null,
+            List<Models.Tag> tags = null,
+            string createdUserId = null,
+            string modifiedUserId = null,
+            bool? active = null,
+            int? paymentStatusId = null,
+            bool? isActive = null,
+            Models.QuickInvoiceSetting quickInvoiceSetting = null,
+            List<Models.QuickInvoiceView> quickInvoiceViews = null,
+            Models.Location location = null,
+            Models.CreatedUser createdUser = null,
+            Models.ModifiedUser modifiedUser = null,
+            List<Models.Changelog> changelogs = null,
+            Models.Contact1 contact = null,
+            List<Models.LogEmail> logEmails = null,
+            Models.LogSms logSms = null,
+            List<Models.Transaction> transactions = null,
+            Models.CcProductTransaction ccProductTransaction = null,
+            Models.AchProductTransaction achProductTransaction = null,
+            Models.EmailBlacklist emailBlacklist = null,
+            Models.SmsBlacklist smsBlacklist = null,
+            string paymentUrl = null)
         {
-            this.LocationId = locationId;
-            if (defaultProductTransactionId != null)
+            if (locationId != null)
             {
-                this.DefaultProductTransactionId = defaultProductTransactionId;
+                this.LocationId = locationId;
             }
 
-            this.TerminalApplicationId = terminalApplicationId;
-            if (terminalCvmId != null)
-            {
-                this.TerminalCvmId = terminalCvmId;
-            }
-
-            this.TerminalManufacturerCode = terminalManufacturerCode;
             this.Title = title;
-            if (macAddress != null)
+            if (ccProductTransactionId != null)
             {
-                this.MacAddress = macAddress;
+                this.CcProductTransactionId = ccProductTransactionId;
             }
 
-            this.LocalIpAddress = localIpAddress;
-            this.Port = port;
-            this.SerialNumber = serialNumber;
-            this.TerminalNumber = terminalNumber;
-            this.TerminalTimeouts = terminalTimeouts;
-            this.TipPercents = tipPercents;
-            if (locationApiId != null)
+            if (achProductTransactionId != null)
             {
-                this.LocationApiId = locationApiId;
+                this.AchProductTransactionId = achProductTransactionId;
             }
 
-            if (terminalApiId != null)
+            this.DueDate = dueDate;
+            this.ItemList = itemList;
+            this.AllowOverpayment = allowOverpayment;
+            if (bankFundedOnlyOverride != null)
             {
-                this.TerminalApiId = terminalApiId;
+                this.BankFundedOnlyOverride = bankFundedOnlyOverride;
             }
 
-            if (headerLine1 != null)
+            if (email != null)
             {
-                this.HeaderLine1 = headerLine1;
+                this.Email = email;
             }
 
-            if (headerLine2 != null)
+            if (contactId != null)
             {
-                this.HeaderLine2 = headerLine2;
+                this.ContactId = contactId;
             }
 
-            if (headerLine3 != null)
+            if (contactApiId != null)
             {
-                this.HeaderLine3 = headerLine3;
+                this.ContactApiId = contactApiId;
             }
 
-            if (headerLine4 != null)
+            if (quickInvoiceApiId != null)
             {
-                this.HeaderLine4 = headerLine4;
+                this.QuickInvoiceApiId = quickInvoiceApiId;
             }
 
-            if (headerLine5 != null)
+            if (customerId != null)
             {
-                this.HeaderLine5 = headerLine5;
+                this.CustomerId = customerId;
             }
 
-            if (trailerLine1 != null)
+            if (expireDate != null)
             {
-                this.TrailerLine1 = trailerLine1;
+                this.ExpireDate = expireDate;
             }
 
-            if (trailerLine2 != null)
+            this.AllowPartialPay = allowPartialPay;
+            this.AttachFilesToEmail = attachFilesToEmail;
+            this.SendEmail = sendEmail;
+            if (invoiceNumber != null)
             {
-                this.TrailerLine2 = trailerLine2;
+                this.InvoiceNumber = invoiceNumber;
             }
 
-            if (trailerLine3 != null)
+            if (itemHeader != null)
             {
-                this.TrailerLine3 = trailerLine3;
+                this.ItemHeader = itemHeader;
             }
 
-            if (trailerLine4 != null)
+            if (itemFooter != null)
             {
-                this.TrailerLine4 = trailerLine4;
+                this.ItemFooter = itemFooter;
             }
 
-            if (trailerLine5 != null)
+            if (amountDue != null)
             {
-                this.TrailerLine5 = trailerLine5;
+                this.AmountDue = amountDue;
             }
 
-            if (defaultCheckin != null)
+            if (notificationEmail != null)
             {
-                this.DefaultCheckin = defaultCheckin;
+                this.NotificationEmail = notificationEmail;
             }
 
-            if (defaultCheckout != null)
+            if (statusId != null)
             {
-                this.DefaultCheckout = defaultCheckout;
+                this.StatusId = statusId;
             }
 
-            if (defaultRoomRate != null)
+            if (statusCode != null)
             {
-                this.DefaultRoomRate = defaultRoomRate;
+                this.StatusCode = statusCode;
             }
 
-            if (defaultRoomNumber != null)
+            if (note != null)
             {
-                this.DefaultRoomNumber = defaultRoomNumber;
+                this.Note = note;
             }
 
-            this.Debit = debit;
-            this.Emv = emv;
-            this.CashbackEnable = cashbackEnable;
-            this.PrintEnable = printEnable;
-            this.SigCaptureEnable = sigCaptureEnable;
-            this.IsProvisioned = isProvisioned;
-            this.TipEnable = tipEnable;
-            this.ValidatedDecryption = validatedDecryption;
-            if (communicationType != null)
+            if (notificationDaysBeforeDueDate != null)
             {
-                this.CommunicationType = communicationType;
+                this.NotificationDaysBeforeDueDate = notificationDaysBeforeDueDate;
             }
 
+            if (notificationDaysAfterDueDate != null)
+            {
+                this.NotificationDaysAfterDueDate = notificationDaysAfterDueDate;
+            }
+
+            this.NotificationOnDueDate = notificationOnDueDate;
+            this.SendTextToPay = sendTextToPay;
+            this.Files = files;
+            if (remainingBalance != null)
+            {
+                this.RemainingBalance = remainingBalance;
+            }
+
+            if (singlePaymentMinAmount != null)
+            {
+                this.SinglePaymentMinAmount = singlePaymentMinAmount;
+            }
+
+            this.SinglePaymentMaxAmount = singlePaymentMaxAmount;
+            if (cellPhone != null)
+            {
+                this.CellPhone = cellPhone;
+            }
+
+            this.Tags = tags;
             this.Id = id;
             this.CreatedTs = createdTs;
             this.ModifiedTs = modifiedTs;
-            this.LastRegistrationTs = lastRegistrationTs;
-            this.CreatedUserId = createdUserId;
-            this.ModifiedUserId = modifiedUserId;
+            if (createdUserId != null)
+            {
+                this.CreatedUserId = createdUserId;
+            }
+
+            if (modifiedUserId != null)
+            {
+                this.ModifiedUserId = modifiedUserId;
+            }
+
+            this.Active = active;
+            if (paymentStatusId != null)
+            {
+                this.PaymentStatusId = paymentStatusId;
+            }
+
+            this.IsActive = isActive;
+            this.QuickInvoiceSetting = quickInvoiceSetting;
+            this.QuickInvoiceViews = quickInvoiceViews;
+            this.Location = location;
+            this.CreatedUser = createdUser;
+            this.ModifiedUser = modifiedUser;
+            this.Changelogs = changelogs;
+            this.Contact = contact;
+            this.LogEmails = logEmails;
+            this.LogSms = logSms;
+            this.Transactions = transactions;
+            this.CcProductTransaction = ccProductTransaction;
+            this.AchProductTransaction = achProductTransaction;
+            this.EmailBlacklist = emailBlacklist;
+            this.SmsBlacklist = smsBlacklist;
+            if (paymentUrl != null)
+            {
+                this.PaymentUrl = paymentUrl;
+            }
+
         }
 
         /// <summary>
         /// Location ID
         /// </summary>
         [JsonProperty("location_id")]
-        public string LocationId { get; set; }
-
-        /// <summary>
-        /// Product Transaction ID
-        /// </summary>
-        [JsonProperty("default_product_transaction_id")]
-        public string DefaultProductTransactionId
+        public string LocationId
         {
             get
             {
-                return this.defaultProductTransactionId;
+                return this.locationId;
             }
 
             set
             {
-                this.shouldSerialize["default_product_transaction_id"] = true;
-                this.defaultProductTransactionId = value;
+                this.shouldSerialize["location_id"] = true;
+                this.locationId = value;
             }
         }
 
         /// <summary>
-        /// Terminal Application ID
-        /// </summary>
-        [JsonProperty("terminal_application_id")]
-        public string TerminalApplicationId { get; set; }
-
-        /// <summary>
-        /// Terminal CVM ID
-        /// </summary>
-        [JsonProperty("terminal_cvm_id")]
-        public string TerminalCvmId
-        {
-            get
-            {
-                return this.terminalCvmId;
-            }
-
-            set
-            {
-                this.shouldSerialize["terminal_cvm_id"] = true;
-                this.terminalCvmId = value;
-            }
-        }
-
-        /// <summary>
-        /// Terminal Manufacturer Code
-        /// </summary>
-        [JsonProperty("terminal_manufacturer_code")]
-        public Models.TerminalManufacturerCodeEnum TerminalManufacturerCode { get; set; }
-
-        /// <summary>
-        /// Terminal Name
+        /// Title
         /// </summary>
         [JsonProperty("title")]
         public string Title { get; set; }
 
         /// <summary>
-        /// Terminal MAC Address
+        /// Transaction ID
         /// </summary>
-        [JsonProperty("mac_address")]
-        public string MacAddress
+        [JsonProperty("cc_product_transaction_id")]
+        public string CcProductTransactionId
         {
             get
             {
-                return this.macAddress;
+                return this.ccProductTransactionId;
             }
 
             set
             {
-                this.shouldSerialize["mac_address"] = true;
-                this.macAddress = value;
+                this.shouldSerialize["cc_product_transaction_id"] = true;
+                this.ccProductTransactionId = value;
             }
         }
 
         /// <summary>
-        /// Terminal Local IP Address
+        /// ACH Product Transaction Id
         /// </summary>
-        [JsonProperty("local_ip_address")]
-        public string LocalIpAddress { get; set; }
-
-        /// <summary>
-        /// Terminal Port
-        /// </summary>
-        [JsonProperty("port")]
-        public int Port { get; set; }
-
-        /// <summary>
-        /// Terminal Serial Number
-        /// </summary>
-        [JsonProperty("serial_number")]
-        public string SerialNumber { get; set; }
-
-        /// <summary>
-        /// Terminal Number
-        /// </summary>
-        [JsonProperty("terminal_number")]
-        public string TerminalNumber { get; set; }
-
-        /// <summary>
-        /// The following options outlines some configurable timeout values that can be used to customize the experience at the terminal for the cardholder.
-        /// </summary>
-        [JsonProperty("terminal_timeouts", NullValueHandling = NullValueHandling.Ignore)]
-        public Models.TerminalTimeouts TerminalTimeouts { get; set; }
-
-        /// <summary>
-        /// A JSON of tip percents the JSON MUST contain only these three fields: percent_1, percent_2, percent_3
-        /// </summary>
-        [JsonProperty("tip_percents", NullValueHandling = NullValueHandling.Ignore)]
-        public Models.TipPercents TipPercents { get; set; }
-
-        /// <summary>
-        /// Location Api ID
-        /// </summary>
-        [JsonProperty("location_api_id")]
-        public string LocationApiId
+        [JsonProperty("ach_product_transaction_id")]
+        public string AchProductTransactionId
         {
             get
             {
-                return this.locationApiId;
+                return this.achProductTransactionId;
             }
 
             set
             {
-                this.shouldSerialize["location_api_id"] = true;
-                this.locationApiId = value;
+                this.shouldSerialize["ach_product_transaction_id"] = true;
+                this.achProductTransactionId = value;
             }
         }
 
         /// <summary>
-        /// Terminal Api ID
+        /// Due Date, Format: Y-m-d
         /// </summary>
-        [JsonProperty("terminal_api_id")]
-        public string TerminalApiId
+        [JsonProperty("due_date")]
+        public string DueDate { get; set; }
+
+        /// <summary>
+        /// Item List
+        /// </summary>
+        [JsonProperty("item_list")]
+        public List<Models.ItemList> ItemList { get; set; }
+
+        /// <summary>
+        /// Allow Overpayment.
+        /// </summary>
+        [JsonProperty("allow_overpayment", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? AllowOverpayment { get; set; }
+
+        /// <summary>
+        /// Bank Funded Only override
+        /// </summary>
+        [JsonProperty("bank_funded_only_override")]
+        public bool? BankFundedOnlyOverride
         {
             get
             {
-                return this.terminalApiId;
+                return this.bankFundedOnlyOverride;
             }
 
             set
             {
-                this.shouldSerialize["terminal_api_id"] = true;
-                this.terminalApiId = value;
+                this.shouldSerialize["bank_funded_only_override"] = true;
+                this.bankFundedOnlyOverride = value;
             }
         }
 
         /// <summary>
-        /// Header Line 1
+        /// Email
         /// </summary>
-        [JsonProperty("header_line_1")]
-        public string HeaderLine1
+        [JsonProperty("email")]
+        public string Email
         {
             get
             {
-                return this.headerLine1;
+                return this.email;
             }
 
             set
             {
-                this.shouldSerialize["header_line_1"] = true;
-                this.headerLine1 = value;
+                this.shouldSerialize["email"] = true;
+                this.email = value;
             }
         }
 
         /// <summary>
-        /// Header Line 2
+        /// Contact ID
         /// </summary>
-        [JsonProperty("header_line_2")]
-        public string HeaderLine2
+        [JsonProperty("contact_id")]
+        public string ContactId
         {
             get
             {
-                return this.headerLine2;
+                return this.contactId;
             }
 
             set
             {
-                this.shouldSerialize["header_line_2"] = true;
-                this.headerLine2 = value;
+                this.shouldSerialize["contact_id"] = true;
+                this.contactId = value;
             }
         }
 
         /// <summary>
-        /// Header Line 3
+        /// Contact API Id
         /// </summary>
-        [JsonProperty("header_line_3")]
-        public string HeaderLine3
+        [JsonProperty("contact_api_id")]
+        public string ContactApiId
         {
             get
             {
-                return this.headerLine3;
+                return this.contactApiId;
             }
 
             set
             {
-                this.shouldSerialize["header_line_3"] = true;
-                this.headerLine3 = value;
+                this.shouldSerialize["contact_api_id"] = true;
+                this.contactApiId = value;
             }
         }
 
         /// <summary>
-        /// Header Line 4
+        /// Quick Invoice API Id
         /// </summary>
-        [JsonProperty("header_line_4")]
-        public string HeaderLine4
+        [JsonProperty("quick_invoice_api_id")]
+        public string QuickInvoiceApiId
         {
             get
             {
-                return this.headerLine4;
+                return this.quickInvoiceApiId;
             }
 
             set
             {
-                this.shouldSerialize["header_line_4"] = true;
-                this.headerLine4 = value;
+                this.shouldSerialize["quick_invoice_api_id"] = true;
+                this.quickInvoiceApiId = value;
             }
         }
 
         /// <summary>
-        /// Header Line 5
+        /// Customer Id
         /// </summary>
-        [JsonProperty("header_line_5")]
-        public string HeaderLine5
+        [JsonProperty("customer_id")]
+        public string CustomerId
         {
             get
             {
-                return this.headerLine5;
+                return this.customerId;
             }
 
             set
             {
-                this.shouldSerialize["header_line_5"] = true;
-                this.headerLine5 = value;
+                this.shouldSerialize["customer_id"] = true;
+                this.customerId = value;
             }
         }
 
         /// <summary>
-        /// Trailer Line 1
+        /// Expire Date.
         /// </summary>
-        [JsonProperty("trailer_line_1")]
-        public string TrailerLine1
+        [JsonProperty("expire_date")]
+        public string ExpireDate
         {
             get
             {
-                return this.trailerLine1;
+                return this.expireDate;
             }
 
             set
             {
-                this.shouldSerialize["trailer_line_1"] = true;
-                this.trailerLine1 = value;
+                this.shouldSerialize["expire_date"] = true;
+                this.expireDate = value;
             }
         }
 
         /// <summary>
-        /// Trailer Line 2
+        /// Allow partial pay
         /// </summary>
-        [JsonProperty("trailer_line_2")]
-        public string TrailerLine2
+        [JsonProperty("allow_partial_pay", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? AllowPartialPay { get; set; }
+
+        /// <summary>
+        /// Attach Files to Email
+        /// </summary>
+        [JsonProperty("attach_files_to_email", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? AttachFilesToEmail { get; set; }
+
+        /// <summary>
+        /// Send Email
+        /// </summary>
+        [JsonProperty("send_email", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? SendEmail { get; set; }
+
+        /// <summary>
+        /// Invoice number
+        /// </summary>
+        [JsonProperty("invoice_number")]
+        public string InvoiceNumber
         {
             get
             {
-                return this.trailerLine2;
+                return this.invoiceNumber;
             }
 
             set
             {
-                this.shouldSerialize["trailer_line_2"] = true;
-                this.trailerLine2 = value;
+                this.shouldSerialize["invoice_number"] = true;
+                this.invoiceNumber = value;
             }
         }
 
         /// <summary>
-        /// Trailer Line 3
+        /// Item Header
         /// </summary>
-        [JsonProperty("trailer_line_3")]
-        public string TrailerLine3
+        [JsonProperty("item_header")]
+        public string ItemHeader
         {
             get
             {
-                return this.trailerLine3;
+                return this.itemHeader;
             }
 
             set
             {
-                this.shouldSerialize["trailer_line_3"] = true;
-                this.trailerLine3 = value;
+                this.shouldSerialize["item_header"] = true;
+                this.itemHeader = value;
             }
         }
 
         /// <summary>
-        /// Trailer Line 4
+        /// Item footer
         /// </summary>
-        [JsonProperty("trailer_line_4")]
-        public string TrailerLine4
+        [JsonProperty("item_footer")]
+        public string ItemFooter
         {
             get
             {
-                return this.trailerLine4;
+                return this.itemFooter;
             }
 
             set
             {
-                this.shouldSerialize["trailer_line_4"] = true;
-                this.trailerLine4 = value;
+                this.shouldSerialize["item_footer"] = true;
+                this.itemFooter = value;
             }
         }
 
         /// <summary>
-        /// Trailer Line 5
+        /// Amount Due
         /// </summary>
-        [JsonProperty("trailer_line_5")]
-        public string TrailerLine5
+        [JsonProperty("amount_due")]
+        public double? AmountDue
         {
             get
             {
-                return this.trailerLine5;
+                return this.amountDue;
             }
 
             set
             {
-                this.shouldSerialize["trailer_line_5"] = true;
-                this.trailerLine5 = value;
+                this.shouldSerialize["amount_due"] = true;
+                this.amountDue = value;
             }
         }
 
         /// <summary>
-        /// Default Checkin
+        /// Notification email
         /// </summary>
-        [JsonProperty("default_checkin")]
-        public string DefaultCheckin
+        [JsonProperty("notification_email")]
+        public string NotificationEmail
         {
             get
             {
-                return this.defaultCheckin;
+                return this.notificationEmail;
             }
 
             set
             {
-                this.shouldSerialize["default_checkin"] = true;
-                this.defaultCheckin = value;
+                this.shouldSerialize["notification_email"] = true;
+                this.notificationEmail = value;
             }
         }
 
         /// <summary>
-        /// Default Checkout
+        /// (DEPRECATED) Status Id
         /// </summary>
-        [JsonProperty("default_checkout")]
-        public string DefaultCheckout
+        [JsonProperty("status_id")]
+        public Models.StatusIdEnum? StatusId
         {
             get
             {
-                return this.defaultCheckout;
+                return this.statusId;
             }
 
             set
             {
-                this.shouldSerialize["default_checkout"] = true;
-                this.defaultCheckout = value;
+                this.shouldSerialize["status_id"] = true;
+                this.statusId = value;
             }
         }
 
         /// <summary>
-        /// Default Room Rate
+        /// Status Code
         /// </summary>
-        [JsonProperty("default_room_rate")]
-        public double? DefaultRoomRate
+        [JsonProperty("status_code")]
+        public Models.StatusCode12Enum? StatusCode
         {
             get
             {
-                return this.defaultRoomRate;
+                return this.statusCode;
             }
 
             set
             {
-                this.shouldSerialize["default_room_rate"] = true;
-                this.defaultRoomRate = value;
+                this.shouldSerialize["status_code"] = true;
+                this.statusCode = value;
             }
         }
 
         /// <summary>
-        /// Default Room Number
+        /// Note
         /// </summary>
-        [JsonProperty("default_room_number")]
-        public string DefaultRoomNumber
+        [JsonProperty("note")]
+        public string Note
         {
             get
             {
-                return this.defaultRoomNumber;
+                return this.note;
             }
 
             set
             {
-                this.shouldSerialize["default_room_number"] = true;
-                this.defaultRoomNumber = value;
+                this.shouldSerialize["note"] = true;
+                this.note = value;
             }
         }
 
         /// <summary>
-        /// Debit
+        /// Notification days before due date
         /// </summary>
-        [JsonProperty("debit")]
-        public bool Debit { get; set; }
-
-        /// <summary>
-        /// EMV
-        /// </summary>
-        [JsonProperty("emv")]
-        public bool Emv { get; set; }
-
-        /// <summary>
-        /// Cashback Enable
-        /// </summary>
-        [JsonProperty("cashback_enable")]
-        public bool CashbackEnable { get; set; }
-
-        /// <summary>
-        /// Print Enable
-        /// </summary>
-        [JsonProperty("print_enable")]
-        public bool PrintEnable { get; set; }
-
-        /// <summary>
-        /// Sig Capture Enable
-        /// </summary>
-        [JsonProperty("sig_capture_enable")]
-        public bool SigCaptureEnable { get; set; }
-
-        /// <summary>
-        /// Is Provisioned
-        /// </summary>
-        [JsonProperty("is_provisioned", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? IsProvisioned { get; set; }
-
-        /// <summary>
-        /// Tip Enable
-        /// </summary>
-        [JsonProperty("tip_enable", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? TipEnable { get; set; }
-
-        /// <summary>
-        /// Validated Decryption
-        /// </summary>
-        [JsonProperty("validated_decryption", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? ValidatedDecryption { get; set; }
-
-        /// <summary>
-        /// Communication Type
-        /// </summary>
-        [JsonProperty("communication_type", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.CommunicationTypeEnum? CommunicationType
+        [JsonProperty("notification_days_before_due_date")]
+        public int? NotificationDaysBeforeDueDate
         {
             get
             {
-                return this.communicationType;
+                return this.notificationDaysBeforeDueDate;
             }
 
             set
             {
-                this.shouldSerialize["communication_type"] = true;
-                this.communicationType = value;
+                this.shouldSerialize["notification_days_before_due_date"] = true;
+                this.notificationDaysBeforeDueDate = value;
             }
         }
 
         /// <summary>
-        /// Terminal ID
+        /// Notification days after due date
+        /// </summary>
+        [JsonProperty("notification_days_after_due_date")]
+        public int? NotificationDaysAfterDueDate
+        {
+            get
+            {
+                return this.notificationDaysAfterDueDate;
+            }
+
+            set
+            {
+                this.shouldSerialize["notification_days_after_due_date"] = true;
+                this.notificationDaysAfterDueDate = value;
+            }
+        }
+
+        /// <summary>
+        /// Notification on due date
+        /// </summary>
+        [JsonProperty("notification_on_due_date", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? NotificationOnDueDate { get; set; }
+
+        /// <summary>
+        /// Send Text To Pay
+        /// </summary>
+        [JsonProperty("send_text_to_pay", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? SendTextToPay { get; set; }
+
+        /// <summary>
+        /// File Information on `expand`
+        /// </summary>
+        [JsonProperty("files", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.File> Files { get; set; }
+
+        /// <summary>
+        /// Remaining Balance
+        /// </summary>
+        [JsonProperty("remaining_balance")]
+        public double? RemainingBalance
+        {
+            get
+            {
+                return this.remainingBalance;
+            }
+
+            set
+            {
+                this.shouldSerialize["remaining_balance"] = true;
+                this.remainingBalance = value;
+            }
+        }
+
+        /// <summary>
+        /// Single Payment Min Amount
+        /// </summary>
+        [JsonProperty("single_payment_min_amount")]
+        public int? SinglePaymentMinAmount
+        {
+            get
+            {
+                return this.singlePaymentMinAmount;
+            }
+
+            set
+            {
+                this.shouldSerialize["single_payment_min_amount"] = true;
+                this.singlePaymentMinAmount = value;
+            }
+        }
+
+        /// <summary>
+        /// Single Payment Max Amount
+        /// </summary>
+        [JsonProperty("single_payment_max_amount")]
+        public int? SinglePaymentMaxAmount
+        {
+            get
+            {
+                return this.singlePaymentMaxAmount;
+            }
+
+            set
+            {
+                this.shouldSerialize["single_payment_max_amount"] = true;
+                this.singlePaymentMaxAmount = value;
+            }
+        }
+
+        /// <summary>
+        /// Cell Phone
+        /// </summary>
+        [JsonProperty("cell_phone")]
+        public string CellPhone
+        {
+            get
+            {
+                return this.cellPhone;
+            }
+
+            set
+            {
+                this.shouldSerialize["cell_phone"] = true;
+                this.cellPhone = value;
+            }
+        }
+
+        /// <summary>
+        /// Tag Information on `expand`
+        /// </summary>
+        [JsonProperty("tags", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.Tag> Tags { get; set; }
+
+        /// <summary>
+        /// Quick Invoice ID
         /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -777,22 +895,172 @@ namespace FortisAPI.Standard.Models
         public int ModifiedTs { get; set; }
 
         /// <summary>
-        /// Modified Time Stamp
-        /// </summary>
-        [JsonProperty("last_registration_ts")]
-        public int LastRegistrationTs { get; set; }
-
-        /// <summary>
-        /// User ID Created the register
+        /// Created User Id
         /// </summary>
         [JsonProperty("created_user_id")]
-        public string CreatedUserId { get; set; }
+        public string CreatedUserId
+        {
+            get
+            {
+                return this.createdUserId;
+            }
+
+            set
+            {
+                this.shouldSerialize["created_user_id"] = true;
+                this.createdUserId = value;
+            }
+        }
 
         /// <summary>
-        /// Last User ID that updated the register
+        /// Modified User Id
         /// </summary>
         [JsonProperty("modified_user_id")]
-        public string ModifiedUserId { get; set; }
+        public string ModifiedUserId
+        {
+            get
+            {
+                return this.modifiedUserId;
+            }
+
+            set
+            {
+                this.shouldSerialize["modified_user_id"] = true;
+                this.modifiedUserId = value;
+            }
+        }
+
+        /// <summary>
+        /// Active status
+        /// </summary>
+        [JsonProperty("active", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Active { get; set; }
+
+        /// <summary>
+        /// Payment Status Id
+        /// </summary>
+        [JsonProperty("payment_status_id")]
+        public int? PaymentStatusId
+        {
+            get
+            {
+                return this.paymentStatusId;
+            }
+
+            set
+            {
+                this.shouldSerialize["payment_status_id"] = true;
+                this.paymentStatusId = value;
+            }
+        }
+
+        /// <summary>
+        /// Register is active
+        /// </summary>
+        [JsonProperty("is_active", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? IsActive { get; set; }
+
+        /// <summary>
+        /// Quick Invoice Setting Information on `expand`
+        /// </summary>
+        [JsonProperty("quick_invoice_setting", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.QuickInvoiceSetting QuickInvoiceSetting { get; set; }
+
+        /// <summary>
+        /// Quick Invoice View Information on `expand`
+        /// </summary>
+        [JsonProperty("quick_invoice_views", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.QuickInvoiceView> QuickInvoiceViews { get; set; }
+
+        /// <summary>
+        /// Location Information on `expand`
+        /// </summary>
+        [JsonProperty("location", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Location Location { get; set; }
+
+        /// <summary>
+        /// User Information on `expand`
+        /// </summary>
+        [JsonProperty("created_user", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.CreatedUser CreatedUser { get; set; }
+
+        /// <summary>
+        /// Modified User Information on `expand`
+        /// </summary>
+        [JsonProperty("modified_user", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.ModifiedUser ModifiedUser { get; set; }
+
+        /// <summary>
+        /// Changelog Information on `expand`
+        /// </summary>
+        [JsonProperty("changelogs", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.Changelog> Changelogs { get; set; }
+
+        /// <summary>
+        /// Contact Information on `expand`
+        /// </summary>
+        [JsonProperty("contact", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Contact1 Contact { get; set; }
+
+        /// <summary>
+        /// Log Email Information on `expand`
+        /// </summary>
+        [JsonProperty("log_emails", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.LogEmail> LogEmails { get; set; }
+
+        /// <summary>
+        /// Log Sms Information on `expand`
+        /// </summary>
+        [JsonProperty("log_sms", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.LogSms LogSms { get; set; }
+
+        /// <summary>
+        /// Transaction Information on `expand`
+        /// </summary>
+        [JsonProperty("transactions", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.Transaction> Transactions { get; set; }
+
+        /// <summary>
+        /// Cc Product Transaction Information on `expand`
+        /// </summary>
+        [JsonProperty("cc_product_transaction", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.CcProductTransaction CcProductTransaction { get; set; }
+
+        /// <summary>
+        /// Ach Product Transaction Information on `expand`
+        /// </summary>
+        [JsonProperty("ach_product_transaction", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.AchProductTransaction AchProductTransaction { get; set; }
+
+        /// <summary>
+        /// Email Blacklist Information on `expand`
+        /// </summary>
+        [JsonProperty("email_blacklist", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.EmailBlacklist EmailBlacklist { get; set; }
+
+        /// <summary>
+        /// Sms Blacklist Information on `expand`
+        /// </summary>
+        [JsonProperty("sms_blacklist", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.SmsBlacklist SmsBlacklist { get; set; }
+
+        /// <summary>
+        /// Payment Url Information on `expand`
+        /// </summary>
+        [JsonProperty("payment_url")]
+        public string PaymentUrl
+        {
+            get
+            {
+                return this.paymentUrl;
+            }
+
+            set
+            {
+                this.shouldSerialize["payment_url"] = true;
+                this.paymentUrl = value;
+            }
+        }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -807,341 +1075,477 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetDefaultProductTransactionId()
+        public void UnsetLocationId()
         {
-            this.shouldSerialize["default_product_transaction_id"] = false;
+            this.shouldSerialize["location_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTerminalCvmId()
+        public void UnsetCcProductTransactionId()
         {
-            this.shouldSerialize["terminal_cvm_id"] = false;
+            this.shouldSerialize["cc_product_transaction_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetMacAddress()
+        public void UnsetAchProductTransactionId()
         {
-            this.shouldSerialize["mac_address"] = false;
+            this.shouldSerialize["ach_product_transaction_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetLocationApiId()
+        public void UnsetBankFundedOnlyOverride()
         {
-            this.shouldSerialize["location_api_id"] = false;
+            this.shouldSerialize["bank_funded_only_override"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTerminalApiId()
+        public void UnsetEmail()
         {
-            this.shouldSerialize["terminal_api_id"] = false;
+            this.shouldSerialize["email"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetHeaderLine1()
+        public void UnsetContactId()
         {
-            this.shouldSerialize["header_line_1"] = false;
+            this.shouldSerialize["contact_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetHeaderLine2()
+        public void UnsetContactApiId()
         {
-            this.shouldSerialize["header_line_2"] = false;
+            this.shouldSerialize["contact_api_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetHeaderLine3()
+        public void UnsetQuickInvoiceApiId()
         {
-            this.shouldSerialize["header_line_3"] = false;
+            this.shouldSerialize["quick_invoice_api_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetHeaderLine4()
+        public void UnsetCustomerId()
         {
-            this.shouldSerialize["header_line_4"] = false;
+            this.shouldSerialize["customer_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetHeaderLine5()
+        public void UnsetExpireDate()
         {
-            this.shouldSerialize["header_line_5"] = false;
+            this.shouldSerialize["expire_date"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTrailerLine1()
+        public void UnsetInvoiceNumber()
         {
-            this.shouldSerialize["trailer_line_1"] = false;
+            this.shouldSerialize["invoice_number"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTrailerLine2()
+        public void UnsetItemHeader()
         {
-            this.shouldSerialize["trailer_line_2"] = false;
+            this.shouldSerialize["item_header"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTrailerLine3()
+        public void UnsetItemFooter()
         {
-            this.shouldSerialize["trailer_line_3"] = false;
+            this.shouldSerialize["item_footer"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTrailerLine4()
+        public void UnsetAmountDue()
         {
-            this.shouldSerialize["trailer_line_4"] = false;
+            this.shouldSerialize["amount_due"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTrailerLine5()
+        public void UnsetNotificationEmail()
         {
-            this.shouldSerialize["trailer_line_5"] = false;
+            this.shouldSerialize["notification_email"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetDefaultCheckin()
+        public void UnsetStatusId()
         {
-            this.shouldSerialize["default_checkin"] = false;
+            this.shouldSerialize["status_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetDefaultCheckout()
+        public void UnsetStatusCode()
         {
-            this.shouldSerialize["default_checkout"] = false;
+            this.shouldSerialize["status_code"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetDefaultRoomRate()
+        public void UnsetNote()
         {
-            this.shouldSerialize["default_room_rate"] = false;
+            this.shouldSerialize["note"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetDefaultRoomNumber()
+        public void UnsetNotificationDaysBeforeDueDate()
         {
-            this.shouldSerialize["default_room_number"] = false;
+            this.shouldSerialize["notification_days_before_due_date"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetCommunicationType()
+        public void UnsetNotificationDaysAfterDueDate()
         {
-            this.shouldSerialize["communication_type"] = false;
+            this.shouldSerialize["notification_days_after_due_date"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetRemainingBalance()
+        {
+            this.shouldSerialize["remaining_balance"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetSinglePaymentMinAmount()
+        {
+            this.shouldSerialize["single_payment_min_amount"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetSinglePaymentMaxAmount()
+        {
+            this.shouldSerialize["single_payment_max_amount"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetCellPhone()
+        {
+            this.shouldSerialize["cell_phone"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetCreatedUserId()
+        {
+            this.shouldSerialize["created_user_id"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetModifiedUserId()
+        {
+            this.shouldSerialize["modified_user_id"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetPaymentStatusId()
+        {
+            this.shouldSerialize["payment_status_id"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetPaymentUrl()
+        {
+            this.shouldSerialize["payment_url"] = false;
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeDefaultProductTransactionId()
+        public bool ShouldSerializeLocationId()
         {
-            return this.shouldSerialize["default_product_transaction_id"];
+            return this.shouldSerialize["location_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTerminalCvmId()
+        public bool ShouldSerializeCcProductTransactionId()
         {
-            return this.shouldSerialize["terminal_cvm_id"];
+            return this.shouldSerialize["cc_product_transaction_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeMacAddress()
+        public bool ShouldSerializeAchProductTransactionId()
         {
-            return this.shouldSerialize["mac_address"];
+            return this.shouldSerialize["ach_product_transaction_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeLocationApiId()
+        public bool ShouldSerializeBankFundedOnlyOverride()
         {
-            return this.shouldSerialize["location_api_id"];
+            return this.shouldSerialize["bank_funded_only_override"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTerminalApiId()
+        public bool ShouldSerializeEmail()
         {
-            return this.shouldSerialize["terminal_api_id"];
+            return this.shouldSerialize["email"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeHeaderLine1()
+        public bool ShouldSerializeContactId()
         {
-            return this.shouldSerialize["header_line_1"];
+            return this.shouldSerialize["contact_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeHeaderLine2()
+        public bool ShouldSerializeContactApiId()
         {
-            return this.shouldSerialize["header_line_2"];
+            return this.shouldSerialize["contact_api_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeHeaderLine3()
+        public bool ShouldSerializeQuickInvoiceApiId()
         {
-            return this.shouldSerialize["header_line_3"];
+            return this.shouldSerialize["quick_invoice_api_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeHeaderLine4()
+        public bool ShouldSerializeCustomerId()
         {
-            return this.shouldSerialize["header_line_4"];
+            return this.shouldSerialize["customer_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeHeaderLine5()
+        public bool ShouldSerializeExpireDate()
         {
-            return this.shouldSerialize["header_line_5"];
+            return this.shouldSerialize["expire_date"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTrailerLine1()
+        public bool ShouldSerializeInvoiceNumber()
         {
-            return this.shouldSerialize["trailer_line_1"];
+            return this.shouldSerialize["invoice_number"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTrailerLine2()
+        public bool ShouldSerializeItemHeader()
         {
-            return this.shouldSerialize["trailer_line_2"];
+            return this.shouldSerialize["item_header"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTrailerLine3()
+        public bool ShouldSerializeItemFooter()
         {
-            return this.shouldSerialize["trailer_line_3"];
+            return this.shouldSerialize["item_footer"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTrailerLine4()
+        public bool ShouldSerializeAmountDue()
         {
-            return this.shouldSerialize["trailer_line_4"];
+            return this.shouldSerialize["amount_due"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTrailerLine5()
+        public bool ShouldSerializeNotificationEmail()
         {
-            return this.shouldSerialize["trailer_line_5"];
+            return this.shouldSerialize["notification_email"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeDefaultCheckin()
+        public bool ShouldSerializeStatusId()
         {
-            return this.shouldSerialize["default_checkin"];
+            return this.shouldSerialize["status_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeDefaultCheckout()
+        public bool ShouldSerializeStatusCode()
         {
-            return this.shouldSerialize["default_checkout"];
+            return this.shouldSerialize["status_code"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeDefaultRoomRate()
+        public bool ShouldSerializeNote()
         {
-            return this.shouldSerialize["default_room_rate"];
+            return this.shouldSerialize["note"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeDefaultRoomNumber()
+        public bool ShouldSerializeNotificationDaysBeforeDueDate()
         {
-            return this.shouldSerialize["default_room_number"];
+            return this.shouldSerialize["notification_days_before_due_date"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeCommunicationType()
+        public bool ShouldSerializeNotificationDaysAfterDueDate()
         {
-            return this.shouldSerialize["communication_type"];
+            return this.shouldSerialize["notification_days_after_due_date"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeRemainingBalance()
+        {
+            return this.shouldSerialize["remaining_balance"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeSinglePaymentMinAmount()
+        {
+            return this.shouldSerialize["single_payment_min_amount"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeSinglePaymentMaxAmount()
+        {
+            return this.shouldSerialize["single_payment_max_amount"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeCellPhone()
+        {
+            return this.shouldSerialize["cell_phone"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeCreatedUserId()
+        {
+            return this.shouldSerialize["created_user_id"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeModifiedUserId()
+        {
+            return this.shouldSerialize["modified_user_id"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializePaymentStatusId()
+        {
+            return this.shouldSerialize["payment_status_id"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializePaymentUrl()
+        {
+            return this.shouldSerialize["payment_url"];
         }
 
         /// <inheritdoc/>
@@ -1156,105 +1560,132 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is List9 other &&
-                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
-                ((this.DefaultProductTransactionId == null && other.DefaultProductTransactionId == null) || (this.DefaultProductTransactionId?.Equals(other.DefaultProductTransactionId) == true)) &&
-                ((this.TerminalApplicationId == null && other.TerminalApplicationId == null) || (this.TerminalApplicationId?.Equals(other.TerminalApplicationId) == true)) &&
-                ((this.TerminalCvmId == null && other.TerminalCvmId == null) || (this.TerminalCvmId?.Equals(other.TerminalCvmId) == true)) &&
-                this.TerminalManufacturerCode.Equals(other.TerminalManufacturerCode) &&
+            return obj is List9 other &&                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
                 ((this.Title == null && other.Title == null) || (this.Title?.Equals(other.Title) == true)) &&
-                ((this.MacAddress == null && other.MacAddress == null) || (this.MacAddress?.Equals(other.MacAddress) == true)) &&
-                ((this.LocalIpAddress == null && other.LocalIpAddress == null) || (this.LocalIpAddress?.Equals(other.LocalIpAddress) == true)) &&
-                this.Port.Equals(other.Port) &&
-                ((this.SerialNumber == null && other.SerialNumber == null) || (this.SerialNumber?.Equals(other.SerialNumber) == true)) &&
-                ((this.TerminalNumber == null && other.TerminalNumber == null) || (this.TerminalNumber?.Equals(other.TerminalNumber) == true)) &&
-                ((this.TerminalTimeouts == null && other.TerminalTimeouts == null) || (this.TerminalTimeouts?.Equals(other.TerminalTimeouts) == true)) &&
-                ((this.TipPercents == null && other.TipPercents == null) || (this.TipPercents?.Equals(other.TipPercents) == true)) &&
-                ((this.LocationApiId == null && other.LocationApiId == null) || (this.LocationApiId?.Equals(other.LocationApiId) == true)) &&
-                ((this.TerminalApiId == null && other.TerminalApiId == null) || (this.TerminalApiId?.Equals(other.TerminalApiId) == true)) &&
-                ((this.HeaderLine1 == null && other.HeaderLine1 == null) || (this.HeaderLine1?.Equals(other.HeaderLine1) == true)) &&
-                ((this.HeaderLine2 == null && other.HeaderLine2 == null) || (this.HeaderLine2?.Equals(other.HeaderLine2) == true)) &&
-                ((this.HeaderLine3 == null && other.HeaderLine3 == null) || (this.HeaderLine3?.Equals(other.HeaderLine3) == true)) &&
-                ((this.HeaderLine4 == null && other.HeaderLine4 == null) || (this.HeaderLine4?.Equals(other.HeaderLine4) == true)) &&
-                ((this.HeaderLine5 == null && other.HeaderLine5 == null) || (this.HeaderLine5?.Equals(other.HeaderLine5) == true)) &&
-                ((this.TrailerLine1 == null && other.TrailerLine1 == null) || (this.TrailerLine1?.Equals(other.TrailerLine1) == true)) &&
-                ((this.TrailerLine2 == null && other.TrailerLine2 == null) || (this.TrailerLine2?.Equals(other.TrailerLine2) == true)) &&
-                ((this.TrailerLine3 == null && other.TrailerLine3 == null) || (this.TrailerLine3?.Equals(other.TrailerLine3) == true)) &&
-                ((this.TrailerLine4 == null && other.TrailerLine4 == null) || (this.TrailerLine4?.Equals(other.TrailerLine4) == true)) &&
-                ((this.TrailerLine5 == null && other.TrailerLine5 == null) || (this.TrailerLine5?.Equals(other.TrailerLine5) == true)) &&
-                ((this.DefaultCheckin == null && other.DefaultCheckin == null) || (this.DefaultCheckin?.Equals(other.DefaultCheckin) == true)) &&
-                ((this.DefaultCheckout == null && other.DefaultCheckout == null) || (this.DefaultCheckout?.Equals(other.DefaultCheckout) == true)) &&
-                ((this.DefaultRoomRate == null && other.DefaultRoomRate == null) || (this.DefaultRoomRate?.Equals(other.DefaultRoomRate) == true)) &&
-                ((this.DefaultRoomNumber == null && other.DefaultRoomNumber == null) || (this.DefaultRoomNumber?.Equals(other.DefaultRoomNumber) == true)) &&
-                this.Debit.Equals(other.Debit) &&
-                this.Emv.Equals(other.Emv) &&
-                this.CashbackEnable.Equals(other.CashbackEnable) &&
-                this.PrintEnable.Equals(other.PrintEnable) &&
-                this.SigCaptureEnable.Equals(other.SigCaptureEnable) &&
-                ((this.IsProvisioned == null && other.IsProvisioned == null) || (this.IsProvisioned?.Equals(other.IsProvisioned) == true)) &&
-                ((this.TipEnable == null && other.TipEnable == null) || (this.TipEnable?.Equals(other.TipEnable) == true)) &&
-                ((this.ValidatedDecryption == null && other.ValidatedDecryption == null) || (this.ValidatedDecryption?.Equals(other.ValidatedDecryption) == true)) &&
-                ((this.CommunicationType == null && other.CommunicationType == null) || (this.CommunicationType?.Equals(other.CommunicationType) == true)) &&
+                ((this.CcProductTransactionId == null && other.CcProductTransactionId == null) || (this.CcProductTransactionId?.Equals(other.CcProductTransactionId) == true)) &&
+                ((this.AchProductTransactionId == null && other.AchProductTransactionId == null) || (this.AchProductTransactionId?.Equals(other.AchProductTransactionId) == true)) &&
+                ((this.DueDate == null && other.DueDate == null) || (this.DueDate?.Equals(other.DueDate) == true)) &&
+                ((this.ItemList == null && other.ItemList == null) || (this.ItemList?.Equals(other.ItemList) == true)) &&
+                ((this.AllowOverpayment == null && other.AllowOverpayment == null) || (this.AllowOverpayment?.Equals(other.AllowOverpayment) == true)) &&
+                ((this.BankFundedOnlyOverride == null && other.BankFundedOnlyOverride == null) || (this.BankFundedOnlyOverride?.Equals(other.BankFundedOnlyOverride) == true)) &&
+                ((this.Email == null && other.Email == null) || (this.Email?.Equals(other.Email) == true)) &&
+                ((this.ContactId == null && other.ContactId == null) || (this.ContactId?.Equals(other.ContactId) == true)) &&
+                ((this.ContactApiId == null && other.ContactApiId == null) || (this.ContactApiId?.Equals(other.ContactApiId) == true)) &&
+                ((this.QuickInvoiceApiId == null && other.QuickInvoiceApiId == null) || (this.QuickInvoiceApiId?.Equals(other.QuickInvoiceApiId) == true)) &&
+                ((this.CustomerId == null && other.CustomerId == null) || (this.CustomerId?.Equals(other.CustomerId) == true)) &&
+                ((this.ExpireDate == null && other.ExpireDate == null) || (this.ExpireDate?.Equals(other.ExpireDate) == true)) &&
+                ((this.AllowPartialPay == null && other.AllowPartialPay == null) || (this.AllowPartialPay?.Equals(other.AllowPartialPay) == true)) &&
+                ((this.AttachFilesToEmail == null && other.AttachFilesToEmail == null) || (this.AttachFilesToEmail?.Equals(other.AttachFilesToEmail) == true)) &&
+                ((this.SendEmail == null && other.SendEmail == null) || (this.SendEmail?.Equals(other.SendEmail) == true)) &&
+                ((this.InvoiceNumber == null && other.InvoiceNumber == null) || (this.InvoiceNumber?.Equals(other.InvoiceNumber) == true)) &&
+                ((this.ItemHeader == null && other.ItemHeader == null) || (this.ItemHeader?.Equals(other.ItemHeader) == true)) &&
+                ((this.ItemFooter == null && other.ItemFooter == null) || (this.ItemFooter?.Equals(other.ItemFooter) == true)) &&
+                ((this.AmountDue == null && other.AmountDue == null) || (this.AmountDue?.Equals(other.AmountDue) == true)) &&
+                ((this.NotificationEmail == null && other.NotificationEmail == null) || (this.NotificationEmail?.Equals(other.NotificationEmail) == true)) &&
+                ((this.StatusId == null && other.StatusId == null) || (this.StatusId?.Equals(other.StatusId) == true)) &&
+                ((this.StatusCode == null && other.StatusCode == null) || (this.StatusCode?.Equals(other.StatusCode) == true)) &&
+                ((this.Note == null && other.Note == null) || (this.Note?.Equals(other.Note) == true)) &&
+                ((this.NotificationDaysBeforeDueDate == null && other.NotificationDaysBeforeDueDate == null) || (this.NotificationDaysBeforeDueDate?.Equals(other.NotificationDaysBeforeDueDate) == true)) &&
+                ((this.NotificationDaysAfterDueDate == null && other.NotificationDaysAfterDueDate == null) || (this.NotificationDaysAfterDueDate?.Equals(other.NotificationDaysAfterDueDate) == true)) &&
+                ((this.NotificationOnDueDate == null && other.NotificationOnDueDate == null) || (this.NotificationOnDueDate?.Equals(other.NotificationOnDueDate) == true)) &&
+                ((this.SendTextToPay == null && other.SendTextToPay == null) || (this.SendTextToPay?.Equals(other.SendTextToPay) == true)) &&
+                ((this.Files == null && other.Files == null) || (this.Files?.Equals(other.Files) == true)) &&
+                ((this.RemainingBalance == null && other.RemainingBalance == null) || (this.RemainingBalance?.Equals(other.RemainingBalance) == true)) &&
+                ((this.SinglePaymentMinAmount == null && other.SinglePaymentMinAmount == null) || (this.SinglePaymentMinAmount?.Equals(other.SinglePaymentMinAmount) == true)) &&
+                ((this.SinglePaymentMaxAmount == null && other.SinglePaymentMaxAmount == null) || (this.SinglePaymentMaxAmount?.Equals(other.SinglePaymentMaxAmount) == true)) &&
+                ((this.CellPhone == null && other.CellPhone == null) || (this.CellPhone?.Equals(other.CellPhone) == true)) &&
+                ((this.Tags == null && other.Tags == null) || (this.Tags?.Equals(other.Tags) == true)) &&
                 ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
                 this.CreatedTs.Equals(other.CreatedTs) &&
                 this.ModifiedTs.Equals(other.ModifiedTs) &&
-                this.LastRegistrationTs.Equals(other.LastRegistrationTs) &&
                 ((this.CreatedUserId == null && other.CreatedUserId == null) || (this.CreatedUserId?.Equals(other.CreatedUserId) == true)) &&
-                ((this.ModifiedUserId == null && other.ModifiedUserId == null) || (this.ModifiedUserId?.Equals(other.ModifiedUserId) == true));
+                ((this.ModifiedUserId == null && other.ModifiedUserId == null) || (this.ModifiedUserId?.Equals(other.ModifiedUserId) == true)) &&
+                ((this.Active == null && other.Active == null) || (this.Active?.Equals(other.Active) == true)) &&
+                ((this.PaymentStatusId == null && other.PaymentStatusId == null) || (this.PaymentStatusId?.Equals(other.PaymentStatusId) == true)) &&
+                ((this.IsActive == null && other.IsActive == null) || (this.IsActive?.Equals(other.IsActive) == true)) &&
+                ((this.QuickInvoiceSetting == null && other.QuickInvoiceSetting == null) || (this.QuickInvoiceSetting?.Equals(other.QuickInvoiceSetting) == true)) &&
+                ((this.QuickInvoiceViews == null && other.QuickInvoiceViews == null) || (this.QuickInvoiceViews?.Equals(other.QuickInvoiceViews) == true)) &&
+                ((this.Location == null && other.Location == null) || (this.Location?.Equals(other.Location) == true)) &&
+                ((this.CreatedUser == null && other.CreatedUser == null) || (this.CreatedUser?.Equals(other.CreatedUser) == true)) &&
+                ((this.ModifiedUser == null && other.ModifiedUser == null) || (this.ModifiedUser?.Equals(other.ModifiedUser) == true)) &&
+                ((this.Changelogs == null && other.Changelogs == null) || (this.Changelogs?.Equals(other.Changelogs) == true)) &&
+                ((this.Contact == null && other.Contact == null) || (this.Contact?.Equals(other.Contact) == true)) &&
+                ((this.LogEmails == null && other.LogEmails == null) || (this.LogEmails?.Equals(other.LogEmails) == true)) &&
+                ((this.LogSms == null && other.LogSms == null) || (this.LogSms?.Equals(other.LogSms) == true)) &&
+                ((this.Transactions == null && other.Transactions == null) || (this.Transactions?.Equals(other.Transactions) == true)) &&
+                ((this.CcProductTransaction == null && other.CcProductTransaction == null) || (this.CcProductTransaction?.Equals(other.CcProductTransaction) == true)) &&
+                ((this.AchProductTransaction == null && other.AchProductTransaction == null) || (this.AchProductTransaction?.Equals(other.AchProductTransaction) == true)) &&
+                ((this.EmailBlacklist == null && other.EmailBlacklist == null) || (this.EmailBlacklist?.Equals(other.EmailBlacklist) == true)) &&
+                ((this.SmsBlacklist == null && other.SmsBlacklist == null) || (this.SmsBlacklist?.Equals(other.SmsBlacklist) == true)) &&
+                ((this.PaymentUrl == null && other.PaymentUrl == null) || (this.PaymentUrl?.Equals(other.PaymentUrl) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.DefaultProductTransactionId = {(this.DefaultProductTransactionId == null ? "null" : this.DefaultProductTransactionId == string.Empty ? "" : this.DefaultProductTransactionId)}");
-            toStringOutput.Add($"this.TerminalApplicationId = {(this.TerminalApplicationId == null ? "null" : this.TerminalApplicationId == string.Empty ? "" : this.TerminalApplicationId)}");
-            toStringOutput.Add($"this.TerminalCvmId = {(this.TerminalCvmId == null ? "null" : this.TerminalCvmId == string.Empty ? "" : this.TerminalCvmId)}");
-            toStringOutput.Add($"this.TerminalManufacturerCode = {this.TerminalManufacturerCode}");
-            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title == string.Empty ? "" : this.Title)}");
-            toStringOutput.Add($"this.MacAddress = {(this.MacAddress == null ? "null" : this.MacAddress == string.Empty ? "" : this.MacAddress)}");
-            toStringOutput.Add($"this.LocalIpAddress = {(this.LocalIpAddress == null ? "null" : this.LocalIpAddress == string.Empty ? "" : this.LocalIpAddress)}");
-            toStringOutput.Add($"this.Port = {this.Port}");
-            toStringOutput.Add($"this.SerialNumber = {(this.SerialNumber == null ? "null" : this.SerialNumber == string.Empty ? "" : this.SerialNumber)}");
-            toStringOutput.Add($"this.TerminalNumber = {(this.TerminalNumber == null ? "null" : this.TerminalNumber == string.Empty ? "" : this.TerminalNumber)}");
-            toStringOutput.Add($"this.TerminalTimeouts = {(this.TerminalTimeouts == null ? "null" : this.TerminalTimeouts.ToString())}");
-            toStringOutput.Add($"this.TipPercents = {(this.TipPercents == null ? "null" : this.TipPercents.ToString())}");
-            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId == string.Empty ? "" : this.LocationApiId)}");
-            toStringOutput.Add($"this.TerminalApiId = {(this.TerminalApiId == null ? "null" : this.TerminalApiId == string.Empty ? "" : this.TerminalApiId)}");
-            toStringOutput.Add($"this.HeaderLine1 = {(this.HeaderLine1 == null ? "null" : this.HeaderLine1 == string.Empty ? "" : this.HeaderLine1)}");
-            toStringOutput.Add($"this.HeaderLine2 = {(this.HeaderLine2 == null ? "null" : this.HeaderLine2 == string.Empty ? "" : this.HeaderLine2)}");
-            toStringOutput.Add($"this.HeaderLine3 = {(this.HeaderLine3 == null ? "null" : this.HeaderLine3 == string.Empty ? "" : this.HeaderLine3)}");
-            toStringOutput.Add($"this.HeaderLine4 = {(this.HeaderLine4 == null ? "null" : this.HeaderLine4 == string.Empty ? "" : this.HeaderLine4)}");
-            toStringOutput.Add($"this.HeaderLine5 = {(this.HeaderLine5 == null ? "null" : this.HeaderLine5 == string.Empty ? "" : this.HeaderLine5)}");
-            toStringOutput.Add($"this.TrailerLine1 = {(this.TrailerLine1 == null ? "null" : this.TrailerLine1 == string.Empty ? "" : this.TrailerLine1)}");
-            toStringOutput.Add($"this.TrailerLine2 = {(this.TrailerLine2 == null ? "null" : this.TrailerLine2 == string.Empty ? "" : this.TrailerLine2)}");
-            toStringOutput.Add($"this.TrailerLine3 = {(this.TrailerLine3 == null ? "null" : this.TrailerLine3 == string.Empty ? "" : this.TrailerLine3)}");
-            toStringOutput.Add($"this.TrailerLine4 = {(this.TrailerLine4 == null ? "null" : this.TrailerLine4 == string.Empty ? "" : this.TrailerLine4)}");
-            toStringOutput.Add($"this.TrailerLine5 = {(this.TrailerLine5 == null ? "null" : this.TrailerLine5 == string.Empty ? "" : this.TrailerLine5)}");
-            toStringOutput.Add($"this.DefaultCheckin = {(this.DefaultCheckin == null ? "null" : this.DefaultCheckin == string.Empty ? "" : this.DefaultCheckin)}");
-            toStringOutput.Add($"this.DefaultCheckout = {(this.DefaultCheckout == null ? "null" : this.DefaultCheckout == string.Empty ? "" : this.DefaultCheckout)}");
-            toStringOutput.Add($"this.DefaultRoomRate = {(this.DefaultRoomRate == null ? "null" : this.DefaultRoomRate.ToString())}");
-            toStringOutput.Add($"this.DefaultRoomNumber = {(this.DefaultRoomNumber == null ? "null" : this.DefaultRoomNumber == string.Empty ? "" : this.DefaultRoomNumber)}");
-            toStringOutput.Add($"this.Debit = {this.Debit}");
-            toStringOutput.Add($"this.Emv = {this.Emv}");
-            toStringOutput.Add($"this.CashbackEnable = {this.CashbackEnable}");
-            toStringOutput.Add($"this.PrintEnable = {this.PrintEnable}");
-            toStringOutput.Add($"this.SigCaptureEnable = {this.SigCaptureEnable}");
-            toStringOutput.Add($"this.IsProvisioned = {(this.IsProvisioned == null ? "null" : this.IsProvisioned.ToString())}");
-            toStringOutput.Add($"this.TipEnable = {(this.TipEnable == null ? "null" : this.TipEnable.ToString())}");
-            toStringOutput.Add($"this.ValidatedDecryption = {(this.ValidatedDecryption == null ? "null" : this.ValidatedDecryption.ToString())}");
-            toStringOutput.Add($"this.CommunicationType = {(this.CommunicationType == null ? "null" : this.CommunicationType.ToString())}");
-            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id == string.Empty ? "" : this.Id)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title)}");
+            toStringOutput.Add($"this.CcProductTransactionId = {(this.CcProductTransactionId == null ? "null" : this.CcProductTransactionId)}");
+            toStringOutput.Add($"this.AchProductTransactionId = {(this.AchProductTransactionId == null ? "null" : this.AchProductTransactionId)}");
+            toStringOutput.Add($"this.DueDate = {(this.DueDate == null ? "null" : this.DueDate)}");
+            toStringOutput.Add($"this.ItemList = {(this.ItemList == null ? "null" : $"[{string.Join(", ", this.ItemList)} ]")}");
+            toStringOutput.Add($"this.AllowOverpayment = {(this.AllowOverpayment == null ? "null" : this.AllowOverpayment.ToString())}");
+            toStringOutput.Add($"this.BankFundedOnlyOverride = {(this.BankFundedOnlyOverride == null ? "null" : this.BankFundedOnlyOverride.ToString())}");
+            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email)}");
+            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId)}");
+            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId)}");
+            toStringOutput.Add($"this.QuickInvoiceApiId = {(this.QuickInvoiceApiId == null ? "null" : this.QuickInvoiceApiId)}");
+            toStringOutput.Add($"this.CustomerId = {(this.CustomerId == null ? "null" : this.CustomerId)}");
+            toStringOutput.Add($"this.ExpireDate = {(this.ExpireDate == null ? "null" : this.ExpireDate)}");
+            toStringOutput.Add($"this.AllowPartialPay = {(this.AllowPartialPay == null ? "null" : this.AllowPartialPay.ToString())}");
+            toStringOutput.Add($"this.AttachFilesToEmail = {(this.AttachFilesToEmail == null ? "null" : this.AttachFilesToEmail.ToString())}");
+            toStringOutput.Add($"this.SendEmail = {(this.SendEmail == null ? "null" : this.SendEmail.ToString())}");
+            toStringOutput.Add($"this.InvoiceNumber = {(this.InvoiceNumber == null ? "null" : this.InvoiceNumber)}");
+            toStringOutput.Add($"this.ItemHeader = {(this.ItemHeader == null ? "null" : this.ItemHeader)}");
+            toStringOutput.Add($"this.ItemFooter = {(this.ItemFooter == null ? "null" : this.ItemFooter)}");
+            toStringOutput.Add($"this.AmountDue = {(this.AmountDue == null ? "null" : this.AmountDue.ToString())}");
+            toStringOutput.Add($"this.NotificationEmail = {(this.NotificationEmail == null ? "null" : this.NotificationEmail)}");
+            toStringOutput.Add($"this.StatusId = {(this.StatusId == null ? "null" : this.StatusId.ToString())}");
+            toStringOutput.Add($"this.StatusCode = {(this.StatusCode == null ? "null" : this.StatusCode.ToString())}");
+            toStringOutput.Add($"this.Note = {(this.Note == null ? "null" : this.Note)}");
+            toStringOutput.Add($"this.NotificationDaysBeforeDueDate = {(this.NotificationDaysBeforeDueDate == null ? "null" : this.NotificationDaysBeforeDueDate.ToString())}");
+            toStringOutput.Add($"this.NotificationDaysAfterDueDate = {(this.NotificationDaysAfterDueDate == null ? "null" : this.NotificationDaysAfterDueDate.ToString())}");
+            toStringOutput.Add($"this.NotificationOnDueDate = {(this.NotificationOnDueDate == null ? "null" : this.NotificationOnDueDate.ToString())}");
+            toStringOutput.Add($"this.SendTextToPay = {(this.SendTextToPay == null ? "null" : this.SendTextToPay.ToString())}");
+            toStringOutput.Add($"this.Files = {(this.Files == null ? "null" : $"[{string.Join(", ", this.Files)} ]")}");
+            toStringOutput.Add($"this.RemainingBalance = {(this.RemainingBalance == null ? "null" : this.RemainingBalance.ToString())}");
+            toStringOutput.Add($"this.SinglePaymentMinAmount = {(this.SinglePaymentMinAmount == null ? "null" : this.SinglePaymentMinAmount.ToString())}");
+            toStringOutput.Add($"this.SinglePaymentMaxAmount = {(this.SinglePaymentMaxAmount == null ? "null" : this.SinglePaymentMaxAmount.ToString())}");
+            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone)}");
+            toStringOutput.Add($"this.Tags = {(this.Tags == null ? "null" : $"[{string.Join(", ", this.Tags)} ]")}");
+            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id)}");
             toStringOutput.Add($"this.CreatedTs = {this.CreatedTs}");
             toStringOutput.Add($"this.ModifiedTs = {this.ModifiedTs}");
-            toStringOutput.Add($"this.LastRegistrationTs = {this.LastRegistrationTs}");
-            toStringOutput.Add($"this.CreatedUserId = {(this.CreatedUserId == null ? "null" : this.CreatedUserId == string.Empty ? "" : this.CreatedUserId)}");
-            toStringOutput.Add($"this.ModifiedUserId = {(this.ModifiedUserId == null ? "null" : this.ModifiedUserId == string.Empty ? "" : this.ModifiedUserId)}");
+            toStringOutput.Add($"this.CreatedUserId = {(this.CreatedUserId == null ? "null" : this.CreatedUserId)}");
+            toStringOutput.Add($"this.ModifiedUserId = {(this.ModifiedUserId == null ? "null" : this.ModifiedUserId)}");
+            toStringOutput.Add($"this.Active = {(this.Active == null ? "null" : this.Active.ToString())}");
+            toStringOutput.Add($"this.PaymentStatusId = {(this.PaymentStatusId == null ? "null" : this.PaymentStatusId.ToString())}");
+            toStringOutput.Add($"this.IsActive = {(this.IsActive == null ? "null" : this.IsActive.ToString())}");
+            toStringOutput.Add($"this.QuickInvoiceSetting = {(this.QuickInvoiceSetting == null ? "null" : this.QuickInvoiceSetting.ToString())}");
+            toStringOutput.Add($"this.QuickInvoiceViews = {(this.QuickInvoiceViews == null ? "null" : $"[{string.Join(", ", this.QuickInvoiceViews)} ]")}");
+            toStringOutput.Add($"this.Location = {(this.Location == null ? "null" : this.Location.ToString())}");
+            toStringOutput.Add($"this.CreatedUser = {(this.CreatedUser == null ? "null" : this.CreatedUser.ToString())}");
+            toStringOutput.Add($"this.ModifiedUser = {(this.ModifiedUser == null ? "null" : this.ModifiedUser.ToString())}");
+            toStringOutput.Add($"this.Changelogs = {(this.Changelogs == null ? "null" : $"[{string.Join(", ", this.Changelogs)} ]")}");
+            toStringOutput.Add($"this.Contact = {(this.Contact == null ? "null" : this.Contact.ToString())}");
+            toStringOutput.Add($"this.LogEmails = {(this.LogEmails == null ? "null" : $"[{string.Join(", ", this.LogEmails)} ]")}");
+            toStringOutput.Add($"this.LogSms = {(this.LogSms == null ? "null" : this.LogSms.ToString())}");
+            toStringOutput.Add($"this.Transactions = {(this.Transactions == null ? "null" : $"[{string.Join(", ", this.Transactions)} ]")}");
+            toStringOutput.Add($"this.CcProductTransaction = {(this.CcProductTransaction == null ? "null" : this.CcProductTransaction.ToString())}");
+            toStringOutput.Add($"this.AchProductTransaction = {(this.AchProductTransaction == null ? "null" : this.AchProductTransaction.ToString())}");
+            toStringOutput.Add($"this.EmailBlacklist = {(this.EmailBlacklist == null ? "null" : this.EmailBlacklist.ToString())}");
+            toStringOutput.Add($"this.SmsBlacklist = {(this.SmsBlacklist == null ? "null" : this.SmsBlacklist.ToString())}");
+            toStringOutput.Add($"this.PaymentUrl = {(this.PaymentUrl == null ? "null" : this.PaymentUrl)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

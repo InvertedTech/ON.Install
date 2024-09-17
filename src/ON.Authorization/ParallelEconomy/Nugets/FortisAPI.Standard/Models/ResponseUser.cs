@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// ResponseUser.
     /// </summary>
-    public class ResponseUser
+    public class ResponseUser : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ResponseUser"/> class.
@@ -34,7 +35,7 @@ namespace FortisAPI.Standard.Models
         /// <param name="data">data.</param>
         public ResponseUser(
             string type,
-            Models.Data19 data = null)
+            Models.Data29 data = null)
         {
             this.Type = type;
             this.Data = data;
@@ -50,7 +51,7 @@ namespace FortisAPI.Standard.Models
         /// Gets or sets Data.
         /// </summary>
         [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
-        public Models.Data19 Data { get; set; }
+        public Models.Data29 Data { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -74,21 +75,20 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is ResponseUser other &&
-                ((this.Type == null && other.Type == null) || (this.Type?.Equals(other.Type) == true)) &&
+            return obj is ResponseUser other &&                ((this.Type == null && other.Type == null) || (this.Type?.Equals(other.Type) == true)) &&
                 ((this.Data == null && other.Data == null) || (this.Data?.Equals(other.Data) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.Type = {(this.Type == null ? "null" : this.Type == string.Empty ? "" : this.Type)}");
+            toStringOutput.Add($"this.Type = {(this.Type == null ? "null" : this.Type)}");
             toStringOutput.Add($"this.Data = {(this.Data == null ? "null" : this.Data.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

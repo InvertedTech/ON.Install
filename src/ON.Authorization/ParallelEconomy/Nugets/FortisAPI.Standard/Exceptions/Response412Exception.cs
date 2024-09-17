@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Exceptions
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Http.Client;
     using FortisAPI.Standard.Models;
@@ -33,6 +34,18 @@ namespace FortisAPI.Standard.Exceptions
         }
 
         /// <summary>
+        /// Gets or sets Type.
+        /// </summary>
+        [JsonProperty("type", NullValueHandling = NullValueHandling.Ignore)]
+        public string Type { get; set; }
+
+        /// <summary>
+        /// Gets or sets Id.
+        /// </summary>
+        [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
+        public string Id { get; set; }
+
+        /// <summary>
         /// Response code
         /// </summary>
         [JsonProperty("statusCode", NullValueHandling = NullValueHandling.Ignore)]
@@ -41,19 +54,19 @@ namespace FortisAPI.Standard.Exceptions
         /// <summary>
         /// Error description
         /// </summary>
-        [JsonProperty("error", NullValueHandling = NullValueHandling.Ignore)]
-        public string Error { get; set; }
+        [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
+        public string Title { get; set; }
 
         /// <summary>
-        /// Error message
+        /// Error details
         /// </summary>
-        [JsonProperty("message", NullValueHandling = NullValueHandling.Ignore)]
-        public new string Message { get; set; }
+        [JsonProperty("detail", NullValueHandling = NullValueHandling.Ignore)]
+        public string Detail { get; set; }
 
         /// <summary>
-        /// Error detail
+        /// Gets or sets Meta.
         /// </summary>
-        [JsonProperty("details", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Models.Detail> Details { get; set; }
+        [JsonProperty("meta", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Meta Meta { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1WebhooksTransactionRequest1.
     /// </summary>
-    public class V1WebhooksTransactionRequest1
+    public class V1WebhooksTransactionRequest1 : BaseModel
     {
         private int? attemptInterval;
         private string basicAuthUsername;
@@ -27,12 +28,9 @@ namespace FortisAPI.Standard.Models
         private Models.FormatEnum? format;
         private string locationId;
         private string locationApiId;
-        private Models.OnCreateEnum? onCreate;
-        private Models.OnUpdateEnum? onUpdate;
-        private Models.OnDeleteEnum? onDelete;
         private string postbackConfigId;
         private string productTransactionId;
-        private Models.Resource4Enum? resource;
+        private Models.Resource12Enum? resource;
         private int? numberOfAttempts;
         private string url;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
@@ -44,9 +42,6 @@ namespace FortisAPI.Standard.Models
             { "format", false },
             { "location_id", false },
             { "location_api_id", false },
-            { "on_create", false },
-            { "on_update", false },
-            { "on_delete", false },
             { "postback_config_id", false },
             { "product_transaction_id", false },
             { "resource", false },
@@ -89,12 +84,12 @@ namespace FortisAPI.Standard.Models
             bool? isActive = null,
             string locationId = null,
             string locationApiId = null,
-            Models.OnCreateEnum? onCreate = null,
-            Models.OnUpdateEnum? onUpdate = null,
-            Models.OnDeleteEnum? onDelete = null,
+            bool? onCreate = null,
+            bool? onUpdate = null,
+            bool? onDelete = null,
             string postbackConfigId = null,
             string productTransactionId = null,
-            Models.Resource4Enum? resource = null,
+            Models.Resource12Enum? resource = null,
             int? numberOfAttempts = null,
             string url = null)
         {
@@ -130,21 +125,9 @@ namespace FortisAPI.Standard.Models
                 this.LocationApiId = locationApiId;
             }
 
-            if (onCreate != null)
-            {
-                this.OnCreate = onCreate;
-            }
-
-            if (onUpdate != null)
-            {
-                this.OnUpdate = onUpdate;
-            }
-
-            if (onDelete != null)
-            {
-                this.OnDelete = onDelete;
-            }
-
+            this.OnCreate = onCreate;
+            this.OnUpdate = onUpdate;
+            this.OnDelete = onDelete;
             if (postbackConfigId != null)
             {
                 this.PostbackConfigId = postbackConfigId;
@@ -247,7 +230,7 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Options include: api-default
         /// </summary>
-        [JsonProperty("format", ItemConverterType = typeof(StringEnumConverter))]
+        [JsonProperty("format")]
         public Models.FormatEnum? Format
         {
             get
@@ -307,56 +290,20 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// To receive postbacks on the creation of a resource
         /// </summary>
-        [JsonProperty("on_create")]
-        public Models.OnCreateEnum? OnCreate
-        {
-            get
-            {
-                return this.onCreate;
-            }
-
-            set
-            {
-                this.shouldSerialize["on_create"] = true;
-                this.onCreate = value;
-            }
-        }
+        [JsonProperty("on_create", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? OnCreate { get; set; }
 
         /// <summary>
         /// To receive postbacks on the updating of a resource
         /// </summary>
-        [JsonProperty("on_update")]
-        public Models.OnUpdateEnum? OnUpdate
-        {
-            get
-            {
-                return this.onUpdate;
-            }
-
-            set
-            {
-                this.shouldSerialize["on_update"] = true;
-                this.onUpdate = value;
-            }
-        }
+        [JsonProperty("on_update", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? OnUpdate { get; set; }
 
         /// <summary>
         /// To receive postbacks when the record is deleted
         /// </summary>
-        [JsonProperty("on_delete")]
-        public Models.OnDeleteEnum? OnDelete
-        {
-            get
-            {
-                return this.onDelete;
-            }
-
-            set
-            {
-                this.shouldSerialize["on_delete"] = true;
-                this.onDelete = value;
-            }
-        }
+        [JsonProperty("on_delete", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? OnDelete { get; set; }
 
         /// <summary>
         /// Postback Config ID
@@ -397,8 +344,8 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// The resource you want to subscribe the postbacks to.
         /// </summary>
-        [JsonProperty("resource", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.Resource4Enum? Resource
+        [JsonProperty("resource")]
+        public Models.Resource12Enum? Resource
         {
             get
             {
@@ -517,30 +464,6 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetOnCreate()
-        {
-            this.shouldSerialize["on_create"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetOnUpdate()
-        {
-            this.shouldSerialize["on_update"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetOnDelete()
-        {
-            this.shouldSerialize["on_delete"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
         public void UnsetPostbackConfigId()
         {
             this.shouldSerialize["postback_config_id"] = false;
@@ -645,33 +568,6 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeOnCreate()
-        {
-            return this.shouldSerialize["on_create"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeOnUpdate()
-        {
-            return this.shouldSerialize["on_update"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeOnDelete()
-        {
-            return this.shouldSerialize["on_delete"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
         public bool ShouldSerializePostbackConfigId()
         {
             return this.shouldSerialize["postback_config_id"];
@@ -725,9 +621,7 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1WebhooksTransactionRequest1 other &&
-                ((this.AttemptInterval == null && other.AttemptInterval == null) || (this.AttemptInterval?.Equals(other.AttemptInterval) == true)) &&
+            return obj is V1WebhooksTransactionRequest1 other &&                ((this.AttemptInterval == null && other.AttemptInterval == null) || (this.AttemptInterval?.Equals(other.AttemptInterval) == true)) &&
                 ((this.BasicAuthUsername == null && other.BasicAuthUsername == null) || (this.BasicAuthUsername?.Equals(other.BasicAuthUsername) == true)) &&
                 ((this.BasicAuthPassword == null && other.BasicAuthPassword == null) || (this.BasicAuthPassword?.Equals(other.BasicAuthPassword) == true)) &&
                 ((this.Expands == null && other.Expands == null) || (this.Expands?.Equals(other.Expands) == true)) &&
@@ -745,29 +639,30 @@ namespace FortisAPI.Standard.Models
                 ((this.Url == null && other.Url == null) || (this.Url?.Equals(other.Url) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.AttemptInterval = {(this.AttemptInterval == null ? "null" : this.AttemptInterval.ToString())}");
-            toStringOutput.Add($"this.BasicAuthUsername = {(this.BasicAuthUsername == null ? "null" : this.BasicAuthUsername == string.Empty ? "" : this.BasicAuthUsername)}");
-            toStringOutput.Add($"this.BasicAuthPassword = {(this.BasicAuthPassword == null ? "null" : this.BasicAuthPassword == string.Empty ? "" : this.BasicAuthPassword)}");
-            toStringOutput.Add($"this.Expands = {(this.Expands == null ? "null" : this.Expands == string.Empty ? "" : this.Expands)}");
+            toStringOutput.Add($"this.BasicAuthUsername = {(this.BasicAuthUsername == null ? "null" : this.BasicAuthUsername)}");
+            toStringOutput.Add($"this.BasicAuthPassword = {(this.BasicAuthPassword == null ? "null" : this.BasicAuthPassword)}");
+            toStringOutput.Add($"this.Expands = {(this.Expands == null ? "null" : this.Expands)}");
             toStringOutput.Add($"this.Format = {(this.Format == null ? "null" : this.Format.ToString())}");
             toStringOutput.Add($"this.IsActive = {(this.IsActive == null ? "null" : this.IsActive.ToString())}");
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId == string.Empty ? "" : this.LocationApiId)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId)}");
             toStringOutput.Add($"this.OnCreate = {(this.OnCreate == null ? "null" : this.OnCreate.ToString())}");
             toStringOutput.Add($"this.OnUpdate = {(this.OnUpdate == null ? "null" : this.OnUpdate.ToString())}");
             toStringOutput.Add($"this.OnDelete = {(this.OnDelete == null ? "null" : this.OnDelete.ToString())}");
-            toStringOutput.Add($"this.PostbackConfigId = {(this.PostbackConfigId == null ? "null" : this.PostbackConfigId == string.Empty ? "" : this.PostbackConfigId)}");
-            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId == string.Empty ? "" : this.ProductTransactionId)}");
+            toStringOutput.Add($"this.PostbackConfigId = {(this.PostbackConfigId == null ? "null" : this.PostbackConfigId)}");
+            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId)}");
             toStringOutput.Add($"this.Resource = {(this.Resource == null ? "null" : this.Resource.ToString())}");
             toStringOutput.Add($"this.NumberOfAttempts = {(this.NumberOfAttempts == null ? "null" : this.NumberOfAttempts.ToString())}");
-            toStringOutput.Add($"this.Url = {(this.Url == null ? "null" : this.Url == string.Empty ? "" : this.Url)}");
+            toStringOutput.Add($"this.Url = {(this.Url == null ? "null" : this.Url)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

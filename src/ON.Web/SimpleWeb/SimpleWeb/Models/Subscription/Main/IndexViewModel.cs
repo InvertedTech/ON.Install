@@ -23,7 +23,10 @@ namespace ON.SimpleWeb.Models.Subscription.Main
                 Records = res,
             };
 
+            if (res.Fake != null)
+                vm.Subscriptions.Add(new SubscriptionViewModel(res.Fake));
             vm.Subscriptions.AddRange(res.Paypal.Select(r => new SubscriptionViewModel(r)));
+            vm.Subscriptions.AddRange(res.Stripe.Select(r => new SubscriptionViewModel(r)));
 
 
             vm.Subscriptions = vm.Subscriptions.OrderByDescending(s => s.Status == SubscriptionStatus.SubscriptionActive ? 1 : 0).OrderByDescending(s => s.StartedOnUTC).ToList();

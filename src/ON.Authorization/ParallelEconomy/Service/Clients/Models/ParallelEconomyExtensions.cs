@@ -8,7 +8,7 @@ namespace ON.Authorization.ParallelEconomy.Service.Clients.Models
         {
             return new ResponseContact()
             {
-                Data = new Data3()
+                Data = new()
                 {
                     AccountNumber = item.AccountNumber,
                     Active = item.Active,

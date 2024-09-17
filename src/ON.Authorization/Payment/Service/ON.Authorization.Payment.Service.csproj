@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\..\ON.Settings\Shared\ON.Settings.Shared.csproj" />
     <ProjectReference Include="..\Fake\ON.Authorization.Payment.Fake\ON.Authorization.Payment.Fake.csproj" />
     <ProjectReference Include="..\Paypal\ON.Authorization.Payment.Paypal\ON.Authorization.Payment.Paypal.csproj" />
+    <ProjectReference Include="..\Stripe\ON.Authorization.Payment.Stripe\ON.Authorization.Payment.Stripe.csproj" />
   </ItemGroup>
 
 </Project>

@@ -19,9 +19,44 @@ namespace FortisAPI.Standard
         Environment Environment { get; }
 
         /// <summary>
-        /// Gets the credentials to use with CustomHeaderAuthentication.
+        /// Gets the credentials to use with UserId.
         /// </summary>
-        ICustomHeaderAuthenticationCredentials CustomHeaderAuthenticationCredentials { get; }
+        IUserIdCredentials UserIdCredentials { get; }
+
+        /// <summary>
+        /// Gets the credentials model to use with UserId.
+        /// </summary>
+        UserIdModel UserIdModel { get; }
+
+        /// <summary>
+        /// Gets the credentials to use with UserApiKey.
+        /// </summary>
+        IUserApiKeyCredentials UserApiKeyCredentials { get; }
+
+        /// <summary>
+        /// Gets the credentials model to use with UserApiKey.
+        /// </summary>
+        UserApiKeyModel UserApiKeyModel { get; }
+
+        /// <summary>
+        /// Gets the credentials to use with DeveloperId.
+        /// </summary>
+        IDeveloperIdCredentials DeveloperIdCredentials { get; }
+
+        /// <summary>
+        /// Gets the credentials model to use with DeveloperId.
+        /// </summary>
+        DeveloperIdModel DeveloperIdModel { get; }
+
+        /// <summary>
+        /// Gets the credentials to use with AccessToken.
+        /// </summary>
+        IAccessTokenCredentials AccessTokenCredentials { get; }
+
+        /// <summary>
+        /// Gets the credentials model to use with AccessToken.
+        /// </summary>
+        AccessTokenModel AccessTokenModel { get; }
 
         /// <summary>
         /// Gets the URL for a particular alias in the current environment and appends it with template parameters.

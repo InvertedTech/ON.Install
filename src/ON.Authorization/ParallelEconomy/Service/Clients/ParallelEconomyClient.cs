@@ -1,6 +1,8 @@
-﻿using FortisAPI.Standard.Controllers;
+﻿using FortisAPI.Standard.Authentication;
+using FortisAPI.Standard.Controllers;
 using FortisAPI.Standard.Exceptions;
 using FortisAPI.Standard.Models;
+using FortisAPI.Standard.Models.Containers;
 using Microsoft.Extensions.Options;
 using ON.Authentication;
 using ON.Authorization.ParallelEconomy.Service.Clients.Models;
@@ -86,22 +88,25 @@ namespace ON.Authorization.ParallelEconomy.Service.Clients
             return null;
         }
 
-        internal async Task<ResponseRecurring> CreateSubscription(string tokenId, int amountCents, DateTime startDate)
+        internal async Task<ResponseRecurring> CreateSubscription(string tokenId, int? amountCents, DateTime startDate)
         {
+            if (!amountCents.HasValue)
+                return null;
+
             try
             {
                 return await client.RecurringController.CreateANewRecurringRecordAsync(new V1RecurringsRequest()
                 {
-                    Active = ActiveEnum.Enum1,
+                    Active = true,
                     AccountVaultId = tokenId,
                     Interval = 1,
                     IntervalType = IntervalTypeEnum.M,
                     LocationId = settings.ParallelEconomyLocationId,
                     StartDate = startDate.ToString("yyyy-MM-dd"),
-                    TransactionAmount = amountCents / 100.0,
-                    PaymentMethod = PaymentMethodEnum.Cc,
-                    
-                    
+                    TransactionAmount = amountCents.Value,
+                    PaymentMethod = PaymentMethod1Enum.Cc,
+
+
                 });
             }
             catch { }
@@ -167,10 +172,21 @@ namespace ON.Authorization.ParallelEconomy.Service.Clients
         {
             try
             {
-                var list = await client.ContactsController.ListAllContactsAsync(new Page() { Number = 1, Size = 1 }, null, new Filter1()
+                var filters = new List<FilterBy>();
+                filters.Add(new FilterBy
                 {
-                    AccountNumber = user.Id.ToString()
+                    Key = "account_number",
+                    MOperator = FilterByOperator.FromOperator1(Operator1Enum.Enum0),
+                    MValue = FilterByValue.FromFilterByValueCase1(FilterByValueCase1.FromString(user.Id.ToString())),
                 });
+                filters.Add(new FilterBy
+                {
+                    Key = "account_number",
+                    MOperator = FilterByOperator.FromOperator1(Operator1Enum.Enum1),
+                    MValue = FilterByValue.FromFilterByValueCase1(FilterByValueCase1.FromString(user.Id.ToString())),
+                });
+
+                var list = await client.ContactsController.ListAllContactsAsync(new Page() { Number = 1, Size = 1 }, null, filters);
 
                 var item = list?.List?.FirstOrDefault();
                 if (item != null)
@@ -192,17 +208,17 @@ namespace ON.Authorization.ParallelEconomy.Service.Clients
             return null;
         }
 
-        internal async Task<string> GetNewPaymentIntent(uint amount)
+        internal async Task<string> GetNewPaymentIntent(uint amountCents)
         {
             ElementsController elementsController = client.ElementsController;
             var body = new V1ElementsTransactionIntentionRequest()
             {
                 Action = ActionEnum.Sale,
-                Amount = (int)amount * 100,
-                Methods = new List<Method>(),
+                Amount = FortisAPI.Standard.Models.Containers.V1ElementsTransactionIntentionRequestAmount.FromNumber((int)amountCents),
+                Methods = new(),
                 LocationId = settings.ParallelEconomyLocationId
             };
-            body.Methods.Add(new Method(TypeEnum.Cc, settings.ParallelEconomyProductId));
+            body.Methods.Add(new(TypeEnum.Cc, settings.ParallelEconomyProductId));
 
             try
             {
@@ -260,7 +276,10 @@ namespace ON.Authorization.ParallelEconomy.Service.Clients
         private Task<FortisAPI.Standard.FortisAPIClient> GetClient()
         {
             FortisAPI.Standard.FortisAPIClient client = new FortisAPI.Standard.FortisAPIClient.Builder()
-                .CustomHeaderAuthenticationCredentials(settings.ParallelEconomyUserId, settings.ParallelEconomyUserApiKey, settings.ParallelEconomyDeveloperId)
+                .UserIdCredentials(new UserIdModel.Builder(settings.ParallelEconomyUserId).Build())
+                .UserApiKeyCredentials(new UserApiKeyModel.Builder(settings.ParallelEconomyUserApiKey).Build())
+                .DeveloperIdCredentials(new DeveloperIdModel.Builder(settings.ParallelEconomyDeveloperId).Build())
+                //.AccessTokenCredentials(new AccessTokenModel.Builder("access-token").Build())
                 .Environment(settings.ParallelEconomyIsTest ? FortisAPI.Standard.Environment.Sandbox : FortisAPI.Standard.Environment.Production)
                 .HttpClientConfig(config => config.NumberOfRetries(0))
                 .Build();

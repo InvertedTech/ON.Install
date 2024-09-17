@@ -16,8 +16,8 @@
 
 ```json
 {
-  "key": null,
-  "label": null
+  "key": "fieldName",
+  "label": "fieldName"
 }
 ```
 

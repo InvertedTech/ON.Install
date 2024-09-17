@@ -25,7 +25,7 @@ namespace ON.Authorization.Stripe.Service
             if (request.UserID == null)
                 return new GetClaimsResponse();
 
-            var rec = await paymentProvider.GetById(new Guid(request.UserID.Span));
+            var rec = await paymentProvider.GetById(new Guid(request.UserID));
 
             if (rec == null || rec.Level < 1)
                 return new GetClaimsResponse();

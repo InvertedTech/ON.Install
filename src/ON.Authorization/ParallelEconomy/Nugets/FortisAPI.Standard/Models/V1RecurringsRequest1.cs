@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,11 +19,11 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1RecurringsRequest1.
     /// </summary>
-    public class V1RecurringsRequest1
+    public class V1RecurringsRequest1 : BaseModel
     {
         private string nextRunDate;
         private string accountVaultId;
-        private Models.ActiveEnum? active;
+        private string tokenId;
         private string description;
         private string endDate;
         private int? installmentTotalCount;
@@ -30,22 +31,25 @@ namespace FortisAPI.Standard.Models
         private Models.IntervalTypeEnum? intervalType;
         private string locationId;
         private int? notificationDays;
-        private Models.PaymentMethodEnum? paymentMethod;
+        private Models.PaymentMethod1Enum? paymentMethod;
         private string productTransactionId;
         private string recurringId;
         private string recurringApiId;
         private string startDate;
         private Models.StatusEnum? status;
-        private double? transactionAmount;
+        private int? transactionAmount;
         private string termsAgreeIp;
         private string recurringC1;
         private string recurringC2;
         private string recurringC3;
+        private List<string> tags;
+        private int? secondaryAmount;
+        private string contactId;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
             { "next_run_date", false },
             { "account_vault_id", false },
-            { "active", false },
+            { "token_id", false },
             { "description", false },
             { "end_date", false },
             { "installment_total_count", false },
@@ -64,6 +68,9 @@ namespace FortisAPI.Standard.Models
             { "recurring_c1", false },
             { "recurring_c2", false },
             { "recurring_c3", false },
+            { "tags", false },
+            { "secondary_amount", false },
+            { "contact_id", false },
         };
 
         /// <summary>
@@ -78,6 +85,7 @@ namespace FortisAPI.Standard.Models
         /// </summary>
         /// <param name="nextRunDate">next_run_date.</param>
         /// <param name="accountVaultId">account_vault_id.</param>
+        /// <param name="tokenId">token_id.</param>
         /// <param name="active">active.</param>
         /// <param name="description">description.</param>
         /// <param name="endDate">end_date.</param>
@@ -99,10 +107,14 @@ namespace FortisAPI.Standard.Models
         /// <param name="recurringC2">recurring_c2.</param>
         /// <param name="recurringC3">recurring_c3.</param>
         /// <param name="sendToProcAsRecur">send_to_proc_as_recur.</param>
+        /// <param name="tags">tags.</param>
+        /// <param name="secondaryAmount">secondary_amount.</param>
+        /// <param name="contactId">contact_id.</param>
         public V1RecurringsRequest1(
             string nextRunDate = null,
             string accountVaultId = null,
-            Models.ActiveEnum? active = null,
+            string tokenId = null,
+            bool? active = null,
             string description = null,
             string endDate = null,
             int? installmentTotalCount = null,
@@ -110,19 +122,22 @@ namespace FortisAPI.Standard.Models
             Models.IntervalTypeEnum? intervalType = null,
             string locationId = null,
             int? notificationDays = null,
-            Models.PaymentMethodEnum? paymentMethod = null,
+            Models.PaymentMethod1Enum? paymentMethod = null,
             string productTransactionId = null,
             string recurringId = null,
             string recurringApiId = null,
             string startDate = null,
             Models.StatusEnum? status = null,
-            double? transactionAmount = null,
+            int? transactionAmount = null,
             bool? termsAgree = null,
             string termsAgreeIp = null,
             string recurringC1 = null,
             string recurringC2 = null,
             string recurringC3 = null,
-            bool? sendToProcAsRecur = null)
+            bool? sendToProcAsRecur = null,
+            List<string> tags = null,
+            int? secondaryAmount = null,
+            string contactId = null)
         {
             if (nextRunDate != null)
             {
@@ -134,11 +149,12 @@ namespace FortisAPI.Standard.Models
                 this.AccountVaultId = accountVaultId;
             }
 
-            if (active != null)
+            if (tokenId != null)
             {
-                this.Active = active;
+                this.TokenId = tokenId;
             }
 
+            this.Active = active;
             if (description != null)
             {
                 this.Description = description;
@@ -231,6 +247,21 @@ namespace FortisAPI.Standard.Models
             }
 
             this.SendToProcAsRecur = sendToProcAsRecur;
+            if (tags != null)
+            {
+                this.Tags = tags;
+            }
+
+            if (secondaryAmount != null)
+            {
+                this.SecondaryAmount = secondaryAmount;
+            }
+
+            if (contactId != null)
+            {
+                this.ContactId = contactId;
+            }
+
         }
 
         /// <summary>
@@ -270,22 +301,28 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Active
+        /// Token ID
         /// </summary>
-        [JsonProperty("active")]
-        public Models.ActiveEnum? Active
+        [JsonProperty("token_id")]
+        public string TokenId
         {
             get
             {
-                return this.active;
+                return this.tokenId;
             }
 
             set
             {
-                this.shouldSerialize["active"] = true;
-                this.active = value;
+                this.shouldSerialize["token_id"] = true;
+                this.tokenId = value;
             }
         }
+
+        /// <summary>
+        /// Active
+        /// </summary>
+        [JsonProperty("active", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Active { get; set; }
 
         /// <summary>
         /// Description
@@ -362,7 +399,7 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Interval Type
         /// </summary>
-        [JsonProperty("interval_type", ItemConverterType = typeof(StringEnumConverter))]
+        [JsonProperty("interval_type")]
         public Models.IntervalTypeEnum? IntervalType
         {
             get
@@ -416,8 +453,8 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Payment Method
         /// </summary>
-        [JsonProperty("payment_method", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.PaymentMethodEnum? PaymentMethod
+        [JsonProperty("payment_method")]
+        public Models.PaymentMethod1Enum? PaymentMethod
         {
             get
             {
@@ -506,7 +543,7 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Status
         /// </summary>
-        [JsonProperty("status", ItemConverterType = typeof(StringEnumConverter))]
+        [JsonProperty("status")]
         public Models.StatusEnum? Status
         {
             get
@@ -525,7 +562,7 @@ namespace FortisAPI.Standard.Models
         /// Transaction amount
         /// </summary>
         [JsonProperty("transaction_amount")]
-        public double? TransactionAmount
+        public int? TransactionAmount
         {
             get
             {
@@ -623,6 +660,60 @@ namespace FortisAPI.Standard.Models
         [JsonProperty("send_to_proc_as_recur", NullValueHandling = NullValueHandling.Ignore)]
         public bool? SendToProcAsRecur { get; set; }
 
+        /// <summary>
+        /// Tags
+        /// </summary>
+        [JsonProperty("tags")]
+        public List<string> Tags
+        {
+            get
+            {
+                return this.tags;
+            }
+
+            set
+            {
+                this.shouldSerialize["tags"] = true;
+                this.tags = value;
+            }
+        }
+
+        /// <summary>
+        /// Retained Amount
+        /// </summary>
+        [JsonProperty("secondary_amount")]
+        public int? SecondaryAmount
+        {
+            get
+            {
+                return this.secondaryAmount;
+            }
+
+            set
+            {
+                this.shouldSerialize["secondary_amount"] = true;
+                this.secondaryAmount = value;
+            }
+        }
+
+        /// <summary>
+        /// Contact ID
+        /// </summary>
+        [JsonProperty("contact_id")]
+        public string ContactId
+        {
+            get
+            {
+                return this.contactId;
+            }
+
+            set
+            {
+                this.shouldSerialize["contact_id"] = true;
+                this.contactId = value;
+            }
+        }
+
         /// <inheritdoc/>
         public override string ToString()
         {
@@ -652,9 +743,9 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetActive()
+        public void UnsetTokenId()
         {
-            this.shouldSerialize["active"] = false;
+            this.shouldSerialize["token_id"] = false;
         }
 
         /// <summary>
@@ -802,6 +893,30 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTags()
+        {
+            this.shouldSerialize["tags"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetSecondaryAmount()
+        {
+            this.shouldSerialize["secondary_amount"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetContactId()
+        {
+            this.shouldSerialize["contact_id"] = false;
+        }
+
+        /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
@@ -823,9 +938,9 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeActive()
+        public bool ShouldSerializeTokenId()
         {
-            return this.shouldSerialize["active"];
+            return this.shouldSerialize["token_id"];
         }
 
         /// <summary>
@@ -990,6 +1105,33 @@ namespace FortisAPI.Standard.Models
             return this.shouldSerialize["recurring_c3"];
         }
 
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTags()
+        {
+            return this.shouldSerialize["tags"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeSecondaryAmount()
+        {
+            return this.shouldSerialize["secondary_amount"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeContactId()
+        {
+            return this.shouldSerialize["contact_id"];
+        }
+
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
@@ -1002,10 +1144,9 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1RecurringsRequest1 other &&
-                ((this.NextRunDate == null && other.NextRunDate == null) || (this.NextRunDate?.Equals(other.NextRunDate) == true)) &&
+            return obj is V1RecurringsRequest1 other &&                ((this.NextRunDate == null && other.NextRunDate == null) || (this.NextRunDate?.Equals(other.NextRunDate) == true)) &&
                 ((this.AccountVaultId == null && other.AccountVaultId == null) || (this.AccountVaultId?.Equals(other.AccountVaultId) == true)) &&
+                ((this.TokenId == null && other.TokenId == null) || (this.TokenId?.Equals(other.TokenId) == true)) &&
                 ((this.Active == null && other.Active == null) || (this.Active?.Equals(other.Active) == true)) &&
                 ((this.Description == null && other.Description == null) || (this.Description?.Equals(other.Description) == true)) &&
                 ((this.EndDate == null && other.EndDate == null) || (this.EndDate?.Equals(other.EndDate) == true)) &&
@@ -1026,39 +1167,47 @@ namespace FortisAPI.Standard.Models
                 ((this.RecurringC1 == null && other.RecurringC1 == null) || (this.RecurringC1?.Equals(other.RecurringC1) == true)) &&
                 ((this.RecurringC2 == null && other.RecurringC2 == null) || (this.RecurringC2?.Equals(other.RecurringC2) == true)) &&
                 ((this.RecurringC3 == null && other.RecurringC3 == null) || (this.RecurringC3?.Equals(other.RecurringC3) == true)) &&
-                ((this.SendToProcAsRecur == null && other.SendToProcAsRecur == null) || (this.SendToProcAsRecur?.Equals(other.SendToProcAsRecur) == true));
+                ((this.SendToProcAsRecur == null && other.SendToProcAsRecur == null) || (this.SendToProcAsRecur?.Equals(other.SendToProcAsRecur) == true)) &&
+                ((this.Tags == null && other.Tags == null) || (this.Tags?.Equals(other.Tags) == true)) &&
+                ((this.SecondaryAmount == null && other.SecondaryAmount == null) || (this.SecondaryAmount?.Equals(other.SecondaryAmount) == true)) &&
+                ((this.ContactId == null && other.ContactId == null) || (this.ContactId?.Equals(other.ContactId) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.NextRunDate = {(this.NextRunDate == null ? "null" : this.NextRunDate == string.Empty ? "" : this.NextRunDate)}");
-            toStringOutput.Add($"this.AccountVaultId = {(this.AccountVaultId == null ? "null" : this.AccountVaultId == string.Empty ? "" : this.AccountVaultId)}");
+            toStringOutput.Add($"this.NextRunDate = {(this.NextRunDate == null ? "null" : this.NextRunDate)}");
+            toStringOutput.Add($"this.AccountVaultId = {(this.AccountVaultId == null ? "null" : this.AccountVaultId)}");
+            toStringOutput.Add($"this.TokenId = {(this.TokenId == null ? "null" : this.TokenId)}");
             toStringOutput.Add($"this.Active = {(this.Active == null ? "null" : this.Active.ToString())}");
-            toStringOutput.Add($"this.Description = {(this.Description == null ? "null" : this.Description == string.Empty ? "" : this.Description)}");
-            toStringOutput.Add($"this.EndDate = {(this.EndDate == null ? "null" : this.EndDate == string.Empty ? "" : this.EndDate)}");
+            toStringOutput.Add($"this.Description = {(this.Description == null ? "null" : this.Description)}");
+            toStringOutput.Add($"this.EndDate = {(this.EndDate == null ? "null" : this.EndDate)}");
             toStringOutput.Add($"this.InstallmentTotalCount = {(this.InstallmentTotalCount == null ? "null" : this.InstallmentTotalCount.ToString())}");
             toStringOutput.Add($"this.Interval = {(this.Interval == null ? "null" : this.Interval.ToString())}");
             toStringOutput.Add($"this.IntervalType = {(this.IntervalType == null ? "null" : this.IntervalType.ToString())}");
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
             toStringOutput.Add($"this.NotificationDays = {(this.NotificationDays == null ? "null" : this.NotificationDays.ToString())}");
             toStringOutput.Add($"this.PaymentMethod = {(this.PaymentMethod == null ? "null" : this.PaymentMethod.ToString())}");
-            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId == string.Empty ? "" : this.ProductTransactionId)}");
-            toStringOutput.Add($"this.RecurringId = {(this.RecurringId == null ? "null" : this.RecurringId == string.Empty ? "" : this.RecurringId)}");
-            toStringOutput.Add($"this.RecurringApiId = {(this.RecurringApiId == null ? "null" : this.RecurringApiId == string.Empty ? "" : this.RecurringApiId)}");
-            toStringOutput.Add($"this.StartDate = {(this.StartDate == null ? "null" : this.StartDate == string.Empty ? "" : this.StartDate)}");
+            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId)}");
+            toStringOutput.Add($"this.RecurringId = {(this.RecurringId == null ? "null" : this.RecurringId)}");
+            toStringOutput.Add($"this.RecurringApiId = {(this.RecurringApiId == null ? "null" : this.RecurringApiId)}");
+            toStringOutput.Add($"this.StartDate = {(this.StartDate == null ? "null" : this.StartDate)}");
             toStringOutput.Add($"this.Status = {(this.Status == null ? "null" : this.Status.ToString())}");
             toStringOutput.Add($"this.TransactionAmount = {(this.TransactionAmount == null ? "null" : this.TransactionAmount.ToString())}");
             toStringOutput.Add($"this.TermsAgree = {(this.TermsAgree == null ? "null" : this.TermsAgree.ToString())}");
-            toStringOutput.Add($"this.TermsAgreeIp = {(this.TermsAgreeIp == null ? "null" : this.TermsAgreeIp == string.Empty ? "" : this.TermsAgreeIp)}");
-            toStringOutput.Add($"this.RecurringC1 = {(this.RecurringC1 == null ? "null" : this.RecurringC1 == string.Empty ? "" : this.RecurringC1)}");
-            toStringOutput.Add($"this.RecurringC2 = {(this.RecurringC2 == null ? "null" : this.RecurringC2 == string.Empty ? "" : this.RecurringC2)}");
-            toStringOutput.Add($"this.RecurringC3 = {(this.RecurringC3 == null ? "null" : this.RecurringC3 == string.Empty ? "" : this.RecurringC3)}");
+            toStringOutput.Add($"this.TermsAgreeIp = {(this.TermsAgreeIp == null ? "null" : this.TermsAgreeIp)}");
+            toStringOutput.Add($"this.RecurringC1 = {(this.RecurringC1 == null ? "null" : this.RecurringC1)}");
+            toStringOutput.Add($"this.RecurringC2 = {(this.RecurringC2 == null ? "null" : this.RecurringC2)}");
+            toStringOutput.Add($"this.RecurringC3 = {(this.RecurringC3 == null ? "null" : this.RecurringC3)}");
             toStringOutput.Add($"this.SendToProcAsRecur = {(this.SendToProcAsRecur == null ? "null" : this.SendToProcAsRecur.ToString())}");
+            toStringOutput.Add($"this.Tags = {(this.Tags == null ? "null" : $"[{string.Join(", ", this.Tags)} ]")}");
+            toStringOutput.Add($"this.SecondaryAmount = {(this.SecondaryAmount == null ? "null" : this.SecondaryAmount.ToString())}");
+            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

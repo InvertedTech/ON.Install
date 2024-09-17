@@ -3,76 +3,22 @@
 // </copyright>
 namespace FortisAPI.Standard.Exceptions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Text;
+    using APIMatic.Core.Types.Sdk;
     using FortisAPI.Standard.Http.Client;
-    using FortisAPI.Standard.Utilities;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
+    using FortisAPI.Standard.Http.Request;
+    using FortisAPI.Standard.Http.Response;
 
     /// <summary>
     /// This is the base class for all exceptions that represent an error response
     /// from the server.
     /// </summary>
-    [JsonObject]
-    public class ApiException : Exception
+    public class ApiException : CoreApiException<HttpRequest, HttpResponse, HttpContext>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ApiException"/> class.
         /// </summary>
         /// <param name="reason"> The reason for throwing exception.</param>
         /// <param name="context"> The HTTP context that encapsulates request and response objects.</param>
-        public ApiException(string reason, HttpContext context)
-            : base(reason)
-        {
-            this.HttpContext = context;
-
-            // If a derived exception class is used, then perform deserialization of response body.
-            if ((context == null) || (context.Response == null)
-                || (context.Response.RawBody == null)
-                || (!context.Response.RawBody.CanRead))
-                {
-                    return;
-                }
-
-            using (var reader = new StreamReader(context.Response.RawBody))
-            {
-                string responseBody = reader.ReadToEnd();
-                if (!string.IsNullOrWhiteSpace(responseBody))
-                {
-                    try
-                    {
-                        JObject body = JObject.Parse(responseBody);
-
-                        if (!this.GetType().Name.Equals("ApiException", StringComparison.OrdinalIgnoreCase))
-                        {
-                            JsonConvert.PopulateObject(responseBody, this);
-                        }
-                    }
-                    catch (JsonReaderException)
-                    {
-                        // Ignore deserialization and IO issues to prevent exception being thrown when this exception
-                        // instance is being constructed.
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the HTTP response code from the API request.
-        /// </summary>
-        [JsonIgnore]
-        public int ResponseCode
-        {
-            get { return this.HttpContext != null ? this.HttpContext.Response.StatusCode : -1; }
-        }
-
-        /// <summary>
-        /// Gets or sets the HttpContext for the request and response.
-        /// </summary>
-        [JsonIgnore]
-        public HttpContext HttpContext { get; internal set; }
+        public ApiException(string reason, HttpContext context = null) : base(reason, context) { }
     }
 }

@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,8 +19,42 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Level3Data.
     /// </summary>
-    public class Level3Data
+    public class Level3Data : BaseModel
     {
+        private string destinationCountryCode;
+        private int? dutyAmount;
+        private int? freightAmount;
+        private int? nationalTax;
+        private int? salesTax;
+        private string shipfromZipCode;
+        private string shiptoZipCode;
+        private int? taxAmount;
+        private Models.TaxExemptEnum? taxExempt;
+        private string customerVatRegistration;
+        private string merchantVatRegistration;
+        private string orderDate;
+        private string summaryCommodityCode;
+        private int? taxRate;
+        private string uniqueVatRefNumber;
+        private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
+        {
+            { "destination_country_code", false },
+            { "duty_amount", false },
+            { "freight_amount", false },
+            { "national_tax", false },
+            { "sales_tax", false },
+            { "shipfrom_zip_code", false },
+            { "shipto_zip_code", false },
+            { "tax_amount", false },
+            { "tax_exempt", false },
+            { "customer_vat_registration", false },
+            { "merchant_vat_registration", false },
+            { "order_date", false },
+            { "summary_commodity_code", false },
+            { "tax_rate", false },
+            { "unique_vat_ref_number", false },
+        };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Level3Data"/> class.
         /// </summary>
@@ -49,128 +84,368 @@ namespace FortisAPI.Standard.Models
         public Level3Data(
             List<Models.LineItem> lineItems,
             string destinationCountryCode = null,
-            double? dutyAmount = null,
-            double? freightAmount = null,
-            double? nationalTax = null,
-            double? salesTax = null,
+            int? dutyAmount = null,
+            int? freightAmount = null,
+            int? nationalTax = null,
+            int? salesTax = null,
             string shipfromZipCode = null,
             string shiptoZipCode = null,
-            double? taxAmount = null,
+            int? taxAmount = null,
             Models.TaxExemptEnum? taxExempt = null,
             string customerVatRegistration = null,
             string merchantVatRegistration = null,
             string orderDate = null,
             string summaryCommodityCode = null,
-            double? taxRate = null,
+            int? taxRate = null,
             string uniqueVatRefNumber = null)
         {
-            this.DestinationCountryCode = destinationCountryCode;
-            this.DutyAmount = dutyAmount;
-            this.FreightAmount = freightAmount;
-            this.NationalTax = nationalTax;
-            this.SalesTax = salesTax;
-            this.ShipfromZipCode = shipfromZipCode;
-            this.ShiptoZipCode = shiptoZipCode;
-            this.TaxAmount = taxAmount;
-            this.TaxExempt = taxExempt;
-            this.CustomerVatRegistration = customerVatRegistration;
-            this.MerchantVatRegistration = merchantVatRegistration;
-            this.OrderDate = orderDate;
-            this.SummaryCommodityCode = summaryCommodityCode;
-            this.TaxRate = taxRate;
-            this.UniqueVatRefNumber = uniqueVatRefNumber;
+            if (destinationCountryCode != null)
+            {
+                this.DestinationCountryCode = destinationCountryCode;
+            }
+
+            if (dutyAmount != null)
+            {
+                this.DutyAmount = dutyAmount;
+            }
+
+            if (freightAmount != null)
+            {
+                this.FreightAmount = freightAmount;
+            }
+
+            if (nationalTax != null)
+            {
+                this.NationalTax = nationalTax;
+            }
+
+            if (salesTax != null)
+            {
+                this.SalesTax = salesTax;
+            }
+
+            if (shipfromZipCode != null)
+            {
+                this.ShipfromZipCode = shipfromZipCode;
+            }
+
+            if (shiptoZipCode != null)
+            {
+                this.ShiptoZipCode = shiptoZipCode;
+            }
+
+            if (taxAmount != null)
+            {
+                this.TaxAmount = taxAmount;
+            }
+
+            if (taxExempt != null)
+            {
+                this.TaxExempt = taxExempt;
+            }
+
+            if (customerVatRegistration != null)
+            {
+                this.CustomerVatRegistration = customerVatRegistration;
+            }
+
+            if (merchantVatRegistration != null)
+            {
+                this.MerchantVatRegistration = merchantVatRegistration;
+            }
+
+            if (orderDate != null)
+            {
+                this.OrderDate = orderDate;
+            }
+
+            if (summaryCommodityCode != null)
+            {
+                this.SummaryCommodityCode = summaryCommodityCode;
+            }
+
+            if (taxRate != null)
+            {
+                this.TaxRate = taxRate;
+            }
+
+            if (uniqueVatRefNumber != null)
+            {
+                this.UniqueVatRefNumber = uniqueVatRefNumber;
+            }
+
             this.LineItems = lineItems;
         }
 
         /// <summary>
         /// Code of the country where the goods are being shipped.
         /// </summary>
-        [JsonProperty("destination_country_code", NullValueHandling = NullValueHandling.Ignore)]
-        public string DestinationCountryCode { get; set; }
+        [JsonProperty("destination_country_code")]
+        public string DestinationCountryCode
+        {
+            get
+            {
+                return this.destinationCountryCode;
+            }
+
+            set
+            {
+                this.shouldSerialize["destination_country_code"] = true;
+                this.destinationCountryCode = value;
+            }
+        }
 
         /// <summary>
         /// Fee amount associated with the import of the purchased goods ,Can accept Two (2) decimal places
         /// </summary>
-        [JsonProperty("duty_amount", NullValueHandling = NullValueHandling.Ignore)]
-        public double? DutyAmount { get; set; }
+        [JsonProperty("duty_amount")]
+        public int? DutyAmount
+        {
+            get
+            {
+                return this.dutyAmount;
+            }
+
+            set
+            {
+                this.shouldSerialize["duty_amount"] = true;
+                this.dutyAmount = value;
+            }
+        }
 
         /// <summary>
         /// Freight or shipping portion of the total transaction amount ,Can accept Two (2) decimal places.
         /// </summary>
-        [JsonProperty("freight_amount", NullValueHandling = NullValueHandling.Ignore)]
-        public double? FreightAmount { get; set; }
+        [JsonProperty("freight_amount")]
+        public int? FreightAmount
+        {
+            get
+            {
+                return this.freightAmount;
+            }
+
+            set
+            {
+                this.shouldSerialize["freight_amount"] = true;
+                this.freightAmount = value;
+            }
+        }
 
         /// <summary>
         /// National tax for the transaction ,Can accept Two (2) decimal places.
         /// </summary>
-        [JsonProperty("national_tax", NullValueHandling = NullValueHandling.Ignore)]
-        public double? NationalTax { get; set; }
+        [JsonProperty("national_tax")]
+        public int? NationalTax
+        {
+            get
+            {
+                return this.nationalTax;
+            }
+
+            set
+            {
+                this.shouldSerialize["national_tax"] = true;
+                this.nationalTax = value;
+            }
+        }
 
         /// <summary>
         /// Sales tax for the transaction ,Can accept Two (2) decimal places.
         /// </summary>
-        [JsonProperty("sales_tax", NullValueHandling = NullValueHandling.Ignore)]
-        public double? SalesTax { get; set; }
+        [JsonProperty("sales_tax")]
+        public int? SalesTax
+        {
+            get
+            {
+                return this.salesTax;
+            }
+
+            set
+            {
+                this.shouldSerialize["sales_tax"] = true;
+                this.salesTax = value;
+            }
+        }
 
         /// <summary>
         /// Postal/ZIP code of the address from where the purchased goods are being shipped.
         /// </summary>
-        [JsonProperty("shipfrom_zip_code", NullValueHandling = NullValueHandling.Ignore)]
-        public string ShipfromZipCode { get; set; }
+        [JsonProperty("shipfrom_zip_code")]
+        public string ShipfromZipCode
+        {
+            get
+            {
+                return this.shipfromZipCode;
+            }
+
+            set
+            {
+                this.shouldSerialize["shipfrom_zip_code"] = true;
+                this.shipfromZipCode = value;
+            }
+        }
 
         /// <summary>
         /// Postal/ZIP code of the address where purchased goods will be delivered.
         /// </summary>
-        [JsonProperty("shipto_zip_code", NullValueHandling = NullValueHandling.Ignore)]
-        public string ShiptoZipCode { get; set; }
+        [JsonProperty("shipto_zip_code")]
+        public string ShiptoZipCode
+        {
+            get
+            {
+                return this.shiptoZipCode;
+            }
+
+            set
+            {
+                this.shouldSerialize["shipto_zip_code"] = true;
+                this.shiptoZipCode = value;
+            }
+        }
 
         /// <summary>
         /// Amount of any value added taxes ,Can accept Two (2) decimal places.
         /// </summary>
-        [JsonProperty("tax_amount", NullValueHandling = NullValueHandling.Ignore)]
-        public double? TaxAmount { get; set; }
+        [JsonProperty("tax_amount")]
+        public int? TaxAmount
+        {
+            get
+            {
+                return this.taxAmount;
+            }
+
+            set
+            {
+                this.shouldSerialize["tax_amount"] = true;
+                this.taxAmount = value;
+            }
+        }
 
         /// <summary>
         /// Sales Tax Exempt. Allowed values: “1”, “0”.
         /// </summary>
-        [JsonProperty("tax_exempt", NullValueHandling = NullValueHandling.Ignore)]
-        public Models.TaxExemptEnum? TaxExempt { get; set; }
+        [JsonProperty("tax_exempt")]
+        public Models.TaxExemptEnum? TaxExempt
+        {
+            get
+            {
+                return this.taxExempt;
+            }
+
+            set
+            {
+                this.shouldSerialize["tax_exempt"] = true;
+                this.taxExempt = value;
+            }
+        }
 
         /// <summary>
         /// Customer VAT Registration
         /// </summary>
-        [JsonProperty("customer_vat_registration", NullValueHandling = NullValueHandling.Ignore)]
-        public string CustomerVatRegistration { get; set; }
+        [JsonProperty("customer_vat_registration")]
+        public string CustomerVatRegistration
+        {
+            get
+            {
+                return this.customerVatRegistration;
+            }
+
+            set
+            {
+                this.shouldSerialize["customer_vat_registration"] = true;
+                this.customerVatRegistration = value;
+            }
+        }
 
         /// <summary>
         /// Merchant VAT Registration
         /// </summary>
-        [JsonProperty("merchant_vat_registration", NullValueHandling = NullValueHandling.Ignore)]
-        public string MerchantVatRegistration { get; set; }
+        [JsonProperty("merchant_vat_registration")]
+        public string MerchantVatRegistration
+        {
+            get
+            {
+                return this.merchantVatRegistration;
+            }
+
+            set
+            {
+                this.shouldSerialize["merchant_vat_registration"] = true;
+                this.merchantVatRegistration = value;
+            }
+        }
 
         /// <summary>
         /// Order Date
         /// </summary>
-        [JsonProperty("order_date", NullValueHandling = NullValueHandling.Ignore)]
-        public string OrderDate { get; set; }
+        [JsonProperty("order_date")]
+        public string OrderDate
+        {
+            get
+            {
+                return this.orderDate;
+            }
+
+            set
+            {
+                this.shouldSerialize["order_date"] = true;
+                this.orderDate = value;
+            }
+        }
 
         /// <summary>
         /// Summary Commodity Code
         /// </summary>
-        [JsonProperty("summary_commodity_code", NullValueHandling = NullValueHandling.Ignore)]
-        public string SummaryCommodityCode { get; set; }
+        [JsonProperty("summary_commodity_code")]
+        public string SummaryCommodityCode
+        {
+            get
+            {
+                return this.summaryCommodityCode;
+            }
+
+            set
+            {
+                this.shouldSerialize["summary_commodity_code"] = true;
+                this.summaryCommodityCode = value;
+            }
+        }
 
         /// <summary>
         /// Tax rate used to calculate the sales tax amount, can accept 2 decimal places.
         /// </summary>
-        [JsonProperty("tax_rate", NullValueHandling = NullValueHandling.Ignore)]
-        public double? TaxRate { get; set; }
+        [JsonProperty("tax_rate")]
+        public int? TaxRate
+        {
+            get
+            {
+                return this.taxRate;
+            }
+
+            set
+            {
+                this.shouldSerialize["tax_rate"] = true;
+                this.taxRate = value;
+            }
+        }
 
         /// <summary>
         /// Unique VAT Reference Number
         /// </summary>
-        [JsonProperty("unique_vat_ref_number", NullValueHandling = NullValueHandling.Ignore)]
-        public string UniqueVatRefNumber { get; set; }
+        [JsonProperty("unique_vat_ref_number")]
+        public string UniqueVatRefNumber
+        {
+            get
+            {
+                return this.uniqueVatRefNumber;
+            }
+
+            set
+            {
+                this.shouldSerialize["unique_vat_ref_number"] = true;
+                this.uniqueVatRefNumber = value;
+            }
+        }
 
         /// <summary>
         /// Array of line items in transaction
@@ -188,6 +463,261 @@ namespace FortisAPI.Standard.Models
             return $"Level3Data : ({string.Join(", ", toStringOutput)})";
         }
 
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetDestinationCountryCode()
+        {
+            this.shouldSerialize["destination_country_code"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetDutyAmount()
+        {
+            this.shouldSerialize["duty_amount"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetFreightAmount()
+        {
+            this.shouldSerialize["freight_amount"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetNationalTax()
+        {
+            this.shouldSerialize["national_tax"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetSalesTax()
+        {
+            this.shouldSerialize["sales_tax"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetShipfromZipCode()
+        {
+            this.shouldSerialize["shipfrom_zip_code"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetShiptoZipCode()
+        {
+            this.shouldSerialize["shipto_zip_code"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTaxAmount()
+        {
+            this.shouldSerialize["tax_amount"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTaxExempt()
+        {
+            this.shouldSerialize["tax_exempt"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetCustomerVatRegistration()
+        {
+            this.shouldSerialize["customer_vat_registration"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetMerchantVatRegistration()
+        {
+            this.shouldSerialize["merchant_vat_registration"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetOrderDate()
+        {
+            this.shouldSerialize["order_date"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetSummaryCommodityCode()
+        {
+            this.shouldSerialize["summary_commodity_code"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTaxRate()
+        {
+            this.shouldSerialize["tax_rate"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetUniqueVatRefNumber()
+        {
+            this.shouldSerialize["unique_vat_ref_number"] = false;
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeDestinationCountryCode()
+        {
+            return this.shouldSerialize["destination_country_code"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeDutyAmount()
+        {
+            return this.shouldSerialize["duty_amount"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeFreightAmount()
+        {
+            return this.shouldSerialize["freight_amount"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeNationalTax()
+        {
+            return this.shouldSerialize["national_tax"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeSalesTax()
+        {
+            return this.shouldSerialize["sales_tax"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeShipfromZipCode()
+        {
+            return this.shouldSerialize["shipfrom_zip_code"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeShiptoZipCode()
+        {
+            return this.shouldSerialize["shipto_zip_code"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTaxAmount()
+        {
+            return this.shouldSerialize["tax_amount"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTaxExempt()
+        {
+            return this.shouldSerialize["tax_exempt"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeCustomerVatRegistration()
+        {
+            return this.shouldSerialize["customer_vat_registration"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeMerchantVatRegistration()
+        {
+            return this.shouldSerialize["merchant_vat_registration"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeOrderDate()
+        {
+            return this.shouldSerialize["order_date"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeSummaryCommodityCode()
+        {
+            return this.shouldSerialize["summary_commodity_code"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTaxRate()
+        {
+            return this.shouldSerialize["tax_rate"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeUniqueVatRefNumber()
+        {
+            return this.shouldSerialize["unique_vat_ref_number"];
+        }
+
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
@@ -200,9 +730,7 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Level3Data other &&
-                ((this.DestinationCountryCode == null && other.DestinationCountryCode == null) || (this.DestinationCountryCode?.Equals(other.DestinationCountryCode) == true)) &&
+            return obj is Level3Data other &&                ((this.DestinationCountryCode == null && other.DestinationCountryCode == null) || (this.DestinationCountryCode?.Equals(other.DestinationCountryCode) == true)) &&
                 ((this.DutyAmount == null && other.DutyAmount == null) || (this.DutyAmount?.Equals(other.DutyAmount) == true)) &&
                 ((this.FreightAmount == null && other.FreightAmount == null) || (this.FreightAmount?.Equals(other.FreightAmount) == true)) &&
                 ((this.NationalTax == null && other.NationalTax == null) || (this.NationalTax?.Equals(other.NationalTax) == true)) &&
@@ -220,29 +748,30 @@ namespace FortisAPI.Standard.Models
                 ((this.LineItems == null && other.LineItems == null) || (this.LineItems?.Equals(other.LineItems) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.DestinationCountryCode = {(this.DestinationCountryCode == null ? "null" : this.DestinationCountryCode == string.Empty ? "" : this.DestinationCountryCode)}");
+            toStringOutput.Add($"this.DestinationCountryCode = {(this.DestinationCountryCode == null ? "null" : this.DestinationCountryCode)}");
             toStringOutput.Add($"this.DutyAmount = {(this.DutyAmount == null ? "null" : this.DutyAmount.ToString())}");
             toStringOutput.Add($"this.FreightAmount = {(this.FreightAmount == null ? "null" : this.FreightAmount.ToString())}");
             toStringOutput.Add($"this.NationalTax = {(this.NationalTax == null ? "null" : this.NationalTax.ToString())}");
             toStringOutput.Add($"this.SalesTax = {(this.SalesTax == null ? "null" : this.SalesTax.ToString())}");
-            toStringOutput.Add($"this.ShipfromZipCode = {(this.ShipfromZipCode == null ? "null" : this.ShipfromZipCode == string.Empty ? "" : this.ShipfromZipCode)}");
-            toStringOutput.Add($"this.ShiptoZipCode = {(this.ShiptoZipCode == null ? "null" : this.ShiptoZipCode == string.Empty ? "" : this.ShiptoZipCode)}");
+            toStringOutput.Add($"this.ShipfromZipCode = {(this.ShipfromZipCode == null ? "null" : this.ShipfromZipCode)}");
+            toStringOutput.Add($"this.ShiptoZipCode = {(this.ShiptoZipCode == null ? "null" : this.ShiptoZipCode)}");
             toStringOutput.Add($"this.TaxAmount = {(this.TaxAmount == null ? "null" : this.TaxAmount.ToString())}");
             toStringOutput.Add($"this.TaxExempt = {(this.TaxExempt == null ? "null" : this.TaxExempt.ToString())}");
-            toStringOutput.Add($"this.CustomerVatRegistration = {(this.CustomerVatRegistration == null ? "null" : this.CustomerVatRegistration == string.Empty ? "" : this.CustomerVatRegistration)}");
-            toStringOutput.Add($"this.MerchantVatRegistration = {(this.MerchantVatRegistration == null ? "null" : this.MerchantVatRegistration == string.Empty ? "" : this.MerchantVatRegistration)}");
-            toStringOutput.Add($"this.OrderDate = {(this.OrderDate == null ? "null" : this.OrderDate == string.Empty ? "" : this.OrderDate)}");
-            toStringOutput.Add($"this.SummaryCommodityCode = {(this.SummaryCommodityCode == null ? "null" : this.SummaryCommodityCode == string.Empty ? "" : this.SummaryCommodityCode)}");
+            toStringOutput.Add($"this.CustomerVatRegistration = {(this.CustomerVatRegistration == null ? "null" : this.CustomerVatRegistration)}");
+            toStringOutput.Add($"this.MerchantVatRegistration = {(this.MerchantVatRegistration == null ? "null" : this.MerchantVatRegistration)}");
+            toStringOutput.Add($"this.OrderDate = {(this.OrderDate == null ? "null" : this.OrderDate)}");
+            toStringOutput.Add($"this.SummaryCommodityCode = {(this.SummaryCommodityCode == null ? "null" : this.SummaryCommodityCode)}");
             toStringOutput.Add($"this.TaxRate = {(this.TaxRate == null ? "null" : this.TaxRate.ToString())}");
-            toStringOutput.Add($"this.UniqueVatRefNumber = {(this.UniqueVatRefNumber == null ? "null" : this.UniqueVatRefNumber == string.Empty ? "" : this.UniqueVatRefNumber)}");
+            toStringOutput.Add($"this.UniqueVatRefNumber = {(this.UniqueVatRefNumber == null ? "null" : this.UniqueVatRefNumber)}");
             toStringOutput.Add($"this.LineItems = {(this.LineItems == null ? "null" : $"[{string.Join(", ", this.LineItems)} ]")}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

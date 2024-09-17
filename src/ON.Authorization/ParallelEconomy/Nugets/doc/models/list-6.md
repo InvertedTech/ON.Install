@@ -9,52 +9,90 @@
 
 | Name | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `AccountVaultId` | `string` | Required | Token ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `Active` | [`Models.ActiveEnum`](../../doc/models/active-enum.md) | Required | Active |
-| `Description` | `string` | Optional | Description<br>**Constraints**: *Maximum Length*: `36` |
-| `EndDate` | `string` | Optional | End date<br>**Constraints**: *Maximum Length*: `10`, *Pattern*: `^[\d]{4}-[\d]{2}-[\d]{2}$` |
-| `InstallmentTotalCount` | `int?` | Optional | Installment Total Count<br>**Constraints**: `>= 1`, `<= 999` |
-| `Interval` | `int` | Required | Interval<br>**Constraints**: `>= 0`, `<= 365` |
-| `IntervalType` | [`Models.IntervalTypeEnum`](../../doc/models/interval-type-enum.md) | Required | Interval Type |
-| `LocationId` | `string` | Required | Location ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `NotificationDays` | `int?` | Optional | Notification Days<br>**Constraints**: `>= 0`, `<= 365` |
-| `PaymentMethod` | [`Models.PaymentMethodEnum`](../../doc/models/payment-method-enum.md) | Required | Payment Method |
-| `ProductTransactionId` | `string` | Optional | Product Transaction ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `RecurringId` | `string` | Optional | Recurring ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `RecurringApiId` | `string` | Optional | Recurring Api ID<br>**Constraints**: *Maximum Length*: `64` |
-| `StartDate` | `string` | Required | Start date<br>**Constraints**: *Maximum Length*: `10`, *Pattern*: `^[\d]{4}-[\d]{2}-[\d]{2}$` |
-| `Status` | [`Models.StatusEnum`](../../doc/models/status-enum.md) | Required | Status |
-| `TransactionAmount` | `double` | Required | Transaction amount |
-| `TermsAgree` | `bool?` | Optional | Terms Agree |
-| `TermsAgreeIp` | `string` | Optional | Terms Agree Ip |
-| `RecurringC1` | `string` | Optional | Custom field used for integrations<br>**Constraints**: *Maximum Length*: `128` |
-| `RecurringC2` | `string` | Optional | Custom field used for integrations<br>**Constraints**: *Maximum Length*: `128` |
-| `RecurringC3` | `string` | Optional | Custom field used for integrations<br>**Constraints**: *Maximum Length*: `128` |
-| `SendToProcAsRecur` | `bool?` | Optional | Send To Proc As Recur |
-| `Id` | `string` | Required | Recurring ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `NextRunDate` | `string` | Required | Next Run Date<br>**Constraints**: *Maximum Length*: `10`, *Pattern*: `^[\d]{4}-[\d]{2}-[\d]{2}$` |
+| `Id` | `string` | Required | Location ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
 | `CreatedTs` | `int` | Required | Created Time Stamp |
 | `ModifiedTs` | `int` | Required | Modified Time Stamp |
-| `RecurringTypeId` | [`Models.RecurringTypeIdEnum`](../../doc/models/recurring-type-id-enum.md) | Required | Recurring Type |
+| `AccountNumber` | `string` | Optional | Account number<br>**Constraints**: *Maximum Length*: `32`, *Pattern*: `^[a-zA-Z0-9\-_]+$` |
+| `Address` | [`Address1`](../../doc/models/address-1.md) | Optional | Address |
+| `BrandingDomainId` | `string` | Optional | GUID for Branding Domain<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `ContactEmailTrxReceiptDefault` | `bool?` | Optional | If true, will email contact receipt for any transaction |
+| `DefaultAch` | `string` | Optional | GUID for Location's default ACH Product Transaction<br>**Constraints**: *Minimum Length*: `24`, *Maximum Length*: `36` |
+| `DefaultCc` | `string` | Optional | GUID for Location's default CC Product Transaction<br>**Constraints**: *Minimum Length*: `24`, *Maximum Length*: `36` |
+| `EmailReplyTo` | `string` | Optional | Used as from email address when sending various notifications<br>**Constraints**: *Maximum Length*: `64` |
+| `Fax` | `string` | Optional | Fax number<br>**Constraints**: *Minimum Length*: `10`, *Maximum Length*: `10`, *Pattern*: `^\d{10}$` |
+| `LocationApiId` | `string` | Optional | Location api ID<br>**Constraints**: *Maximum Length*: `36` |
+| `LocationApiKey` | `string` | Optional | Location api key<br>**Constraints**: *Maximum Length*: `36` |
+| `LocationC1` | `string` | Optional | Can be used to store custom information for location.<br>**Constraints**: *Maximum Length*: `128` |
+| `LocationC2` | `string` | Optional | Can be used to store custom information for location.<br>**Constraints**: *Maximum Length*: `128` |
+| `LocationC3` | `string` | Optional | Can be used to store custom information for location.<br>**Constraints**: *Maximum Length*: `128` |
+| `Name` | `string` | Required | Name of the company<br>**Constraints**: *Minimum Length*: `1`, *Maximum Length*: `64` |
+| `OfficePhone` | `string` | Optional | Office phone number<br>**Constraints**: *Minimum Length*: `10`, *Maximum Length*: `10` |
+| `OfficeExtPhone` | `string` | Optional | Office phone extension number<br>**Constraints**: *Maximum Length*: `10` |
+| `Tz` | `string` | Optional | Time zone<br>**Constraints**: *Maximum Length*: `30` |
+| `ParentId` | `string` | Required | Location GUID of the parent location<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `ShowContactNotes` | `bool?` | Optional | If set to true will show 'Notes' tab on Contact |
+| `ShowContactFiles` | `bool?` | Optional | If set to true will show 'Files' tab on Contact |
+| `CreatedUserId` | `string` | Optional | User ID Created the register<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `LocationType` | [`LocationTypeEnum?`](../../doc/models/location-type-enum.md) | Optional | Location Type |
+| `TicketHashKey` | `string` | Optional | Ticket Hash Key<br>**Constraints**: *Maximum Length*: `36` |
+| `Parent` | [`Parent3`](../../doc/models/parent-3.md) | Optional | Parent Information on `expand` |
+| `Users` | [`List<User9>`](../../doc/models/user-9.md) | Optional | User Information on `expand` |
+| `IsDeletable` | `bool?` | Optional | Is Deletable Information on `expand` |
+| `Terminals` | [`List<Terminal2>`](../../doc/models/terminal-2.md) | Optional | Terminal Information on `expand` |
+| `BrandingDomain` | [`BrandingDomain`](../../doc/models/branding-domain.md) | Optional | Branding Domain Information on `expand` |
+| `ProductInvoice` | [`ProductInvoice`](../../doc/models/product-invoice.md) | Optional | Product Invoice Information on `expand` |
+| `ProductFiles` | [`List<ProductFile>`](../../doc/models/product-file.md) | Optional | Product File Information on `expand` |
+| `CreatedUser` | [`CreatedUser`](../../doc/models/created-user.md) | Optional | User Information on `expand` |
+| `Changelogs` | [`List<Changelog>`](../../doc/models/changelog.md) | Optional | Changelog Information on `expand` |
+| `ProductTransactions` | [`List<ProductTransaction1>`](../../doc/models/product-transaction-1.md) | Optional | Product Transaction Information on `expand` |
+| `TerminalRouters` | [`List<TerminalRouter>`](../../doc/models/terminal-router.md) | Optional | Terminal Router Information on `expand` |
+| `DeveloperCompany` | [`DeveloperCompany`](../../doc/models/developer-company.md) | Optional | Developer Company Information on `expand` |
+| `DeveloperCompanyId` | `string` | Optional | Developer Company Id Information on `expand` |
+| `Helppages` | [`List<Helppage>`](../../doc/models/helppage.md) | Optional | Helppage Information on `expand` |
+| `QuickInvoiceSetting` | [`QuickInvoiceSetting`](../../doc/models/quick-invoice-setting.md) | Optional | Quick Invoice Setting Information on `expand` |
+| `LocationBillingAccounts` | [`List<LocationBillingAccount>`](../../doc/models/location-billing-account.md) | Optional | Location Billing Account Information on `expand` |
+| `Marketplaces` | [`List<Marketplace>`](../../doc/models/marketplace.md) | Optional | Marketplace Information on `expand` |
+| `Locationmarketplaces` | [`List<Locationmarketplace>`](../../doc/models/locationmarketplace.md) | Optional | Locationmarketplaces Information on `expand` |
+| `Addons` | [`List<Addon>`](../../doc/models/addon.md) | Optional | Addons Information on `expand` |
 
 ## Example (as JSON)
 
 ```json
 {
-  "account_vault_id": "11e95f8ec39de8fbdb0a4f1a",
-  "active": 1,
-  "interval": 1,
-  "interval_type": "d",
-  "location_id": "11e95f8ec39de8fbdb0a4f1a",
-  "payment_method": "cc",
-  "start_date": "2021-12-01",
-  "status": "active",
-  "transaction_amount": 3,
   "id": "11e95f8ec39de8fbdb0a4f1a",
-  "next_run_date": "2021-12-01",
   "created_ts": 1422040992,
   "modified_ts": 1422040992,
-  "recurring_type_id": "i"
+  "account_number": "5454545454545454",
+  "branding_domain_id": "11e95f8ec39de8fbdb0a4f1a",
+  "contact_email_trx_receipt_default": true,
+  "default_ach": "11e608a7d515f1e093242bb2",
+  "default_cc": "11e608a442a5f1e092242dda",
+  "email_reply_to": "email@domain.com",
+  "fax": "3339998822",
+  "location_api_id": "location-111111",
+  "location_api_key": "AE34BBCAADF4AE34BBCAADF4",
+  "location_c1": "custom 1",
+  "location_c2": "custom 2",
+  "location_c3": "custom data 3",
+  "name": "Sample Company Headquarters",
+  "office_phone": "2481234567",
+  "office_ext_phone": "1021021209",
+  "tz": "America/New_York",
+  "parent_id": "11e95f8ec39de8fbdb0a4f1a",
+  "show_contact_notes": true,
+  "show_contact_files": true,
+  "created_user_id": "11e95f8ec39de8fbdb0a4f1a",
+  "location_type": "merchant",
+  "ticket_hash_key": "A5F443CADF4AE34BBCAADF4",
+  "is_deletable": true,
+  "developer_company_id": "sample developer company id",
+  "address": {
+    "city": "city6",
+    "state": "state2",
+    "postal_code": "postal_code8",
+    "country": "US",
+    "street": "street6"
+  }
 }
 ```
 

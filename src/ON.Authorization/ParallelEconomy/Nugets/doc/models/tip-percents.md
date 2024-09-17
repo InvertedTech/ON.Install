@@ -19,9 +19,9 @@ A JSON of tip percents the JSON MUST contain only these three fields: percent_1,
 
 ```json
 {
-  "percent_1": null,
-  "percent_2": null,
-  "percent_3": null
+  "percent_1": 0,
+  "percent_2": 2,
+  "percent_3": 99
 }
 ```
 

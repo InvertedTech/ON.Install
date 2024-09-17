@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// ItemList.
     /// </summary>
-    public class ItemList
+    public class ItemList : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemList"/> class.
@@ -34,7 +35,7 @@ namespace FortisAPI.Standard.Models
         /// <param name="amount">amount.</param>
         public ItemList(
             string name,
-            double amount)
+            int amount)
         {
             this.Name = name;
             this.Amount = amount;
@@ -50,7 +51,7 @@ namespace FortisAPI.Standard.Models
         /// Item's Amount
         /// </summary>
         [JsonProperty("amount")]
-        public double Amount { get; set; }
+        public int Amount { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -74,21 +75,20 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is ItemList other &&
-                ((this.Name == null && other.Name == null) || (this.Name?.Equals(other.Name) == true)) &&
+            return obj is ItemList other &&                ((this.Name == null && other.Name == null) || (this.Name?.Equals(other.Name) == true)) &&
                 this.Amount.Equals(other.Amount);
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.Name = {(this.Name == null ? "null" : this.Name == string.Empty ? "" : this.Name)}");
+            toStringOutput.Add($"this.Name = {(this.Name == null ? "null" : this.Name)}");
             toStringOutput.Add($"this.Amount = {this.Amount}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

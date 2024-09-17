@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1RecurringsDeferPaymentRequest.
     /// </summary>
-    public class V1RecurringsDeferPaymentRequest
+    public class V1RecurringsDeferPaymentRequest : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="V1RecurringsDeferPaymentRequest"/> class.
@@ -65,19 +66,18 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1RecurringsDeferPaymentRequest other &&
-                this.DeferCount.Equals(other.DeferCount);
+            return obj is V1RecurringsDeferPaymentRequest other &&                this.DeferCount.Equals(other.DeferCount);
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.DeferCount = {this.DeferCount}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

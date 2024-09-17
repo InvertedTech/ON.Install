@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1QuickInvoicesTransactionRequest.
     /// </summary>
-    public class V1QuickInvoicesTransactionRequest
+    public class V1QuickInvoicesTransactionRequest : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="V1QuickInvoicesTransactionRequest"/> class.
@@ -65,19 +66,18 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1QuickInvoicesTransactionRequest other &&
-                ((this.TransactionId == null && other.TransactionId == null) || (this.TransactionId?.Equals(other.TransactionId) == true));
+            return obj is V1QuickInvoicesTransactionRequest other &&                ((this.TransactionId == null && other.TransactionId == null) || (this.TransactionId?.Equals(other.TransactionId) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.TransactionId = {(this.TransactionId == null ? "null" : this.TransactionId == string.Empty ? "" : this.TransactionId)}");
+            toStringOutput.Add($"this.TransactionId = {(this.TransactionId == null ? "null" : this.TransactionId)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

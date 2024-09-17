@@ -12,15 +12,16 @@ namespace FortisAPI.Standard.Controllers
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using APIMatic.Core;
+    using APIMatic.Core.Types;
+    using APIMatic.Core.Utilities;
+    using APIMatic.Core.Utilities.Date.Xml;
     using FortisAPI.Standard;
-    using FortisAPI.Standard.Authentication;
     using FortisAPI.Standard.Exceptions;
     using FortisAPI.Standard.Http.Client;
-    using FortisAPI.Standard.Http.Request;
-    using FortisAPI.Standard.Http.Request.Configuration;
-    using FortisAPI.Standard.Http.Response;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json.Converters;
+    using System.Net.Http;
 
     /// <summary>
     /// AsyncProcessingController.
@@ -30,14 +31,7 @@ namespace FortisAPI.Standard.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="AsyncProcessingController"/> class.
         /// </summary>
-        /// <param name="config"> config instance. </param>
-        /// <param name="httpClient"> httpClient. </param>
-        /// <param name="authManagers"> authManager. </param>
-        /// <param name="httpCallBack"> httpCallBack. </param>
-        internal AsyncProcessingController(IConfiguration config, IHttpClient httpClient, IDictionary<string, IAuthManager> authManagers, HttpCallBack httpCallBack = null)
-            : base(config, httpClient, authManagers, httpCallBack)
-        {
-        }
+        internal AsyncProcessingController(GlobalConfiguration globalConfiguration) : base(globalConfiguration) { }
 
         /// <summary>
         /// Retrieve the current status for a particular code.
@@ -46,11 +40,7 @@ namespace FortisAPI.Standard.Controllers
         /// <returns>Returns the Models.ResponseAsyncStatus response from the API call.</returns>
         public Models.ResponseAsyncStatus StatusCheck(
                 Guid statusCode)
-        {
-            Task<Models.ResponseAsyncStatus> t = this.StatusCheckAsync(statusCode);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+            => CoreHelper.RunTask(StatusCheckAsync(statusCode));
 
         /// <summary>
         /// Retrieve the current status for a particular code.
@@ -61,54 +51,18 @@ namespace FortisAPI.Standard.Controllers
         public async Task<Models.ResponseAsyncStatus> StatusCheckAsync(
                 Guid statusCode,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
-
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/async/status/{status_code}");
-
-            // process optional template parameters.
-            ApiHelper.AppendUrlWithTemplateParameters(queryBuilder, new Dictionary<string, object>()
-            {
-                { "status_code", statusCode },
-            });
-
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-            };
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().Get(queryBuilder.ToString(), headers);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseAsyncStatus>(response.Body);
-        }
+            => await CreateApiCall<Models.ResponseAsyncStatus>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Get, "/v1/async/status/{status_code}")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Template(_template => _template.Setup("status_code", statusCode))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
     }
 }

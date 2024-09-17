@@ -19,18 +19,18 @@ TagsController tagsController = client.TagsController;
 
 # Create a New Tag
 
-Create a new tag
-
 ```csharp
 CreateANewTagAsync(
-    Models.V1TagsRequest body)
+    Models.V1TagsRequest body,
+    List<Models.Expand34Enum> expand = null)
 ```
 
 ## Parameters
 
 | Parameter | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `body` | [`Models.V1TagsRequest`](../../doc/models/v1-tags-request.md) | Body, Required | - |
+| `body` | [`V1TagsRequest`](../../doc/models/v1-tags-request.md) | Body, Required | - |
+| `expand` | [`List<Expand34Enum>`](../../doc/models/expand-34-enum.md) | Query, Optional | Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request. |
 
 ## Response Type
 
@@ -39,15 +39,21 @@ CreateANewTagAsync(
 ## Example Usage
 
 ```csharp
-var body = new V1TagsRequest();
-body.LocationId = "11e95f8ec39de8fbdb0a4f1a";
-body.Title = "My terminal";
+V1TagsRequest body = new V1TagsRequest
+{
+    LocationId = "11e95f8ec39de8fbdb0a4f1a",
+    Title = "My terminal",
+};
 
 try
 {
     ResponseTag result = await tagsController.CreateANewTagAsync(body);
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*
@@ -60,7 +66,40 @@ catch (ApiException e){};
     "title": "My terminal",
     "id": "11e95f8ec39de8fbdb0a4f1a",
     "created_ts": 1422040992,
-    "modified_ts": 1422040992
+    "modified_ts": 1422040992,
+    "location": {
+      "id": "11e95f8ec39de8fbdb0a4f1a",
+      "created_ts": 1422040992,
+      "modified_ts": 1422040992,
+      "account_number": "5454545454545454",
+      "address": {
+        "city": "Novi",
+        "state": "MI",
+        "postal_code": "48375",
+        "country": "US"
+      },
+      "branding_domain_id": "11e95f8ec39de8fbdb0a4f1a",
+      "contact_email_trx_receipt_default": true,
+      "default_ach": "11e608a7d515f1e093242bb2",
+      "default_cc": "11e608a442a5f1e092242dda",
+      "email_reply_to": "email@domain.com",
+      "fax": "3339998822",
+      "location_api_id": "location-111111",
+      "location_api_key": "AE34BBCAADF4AE34BBCAADF4",
+      "location_c1": "custom 1",
+      "location_c2": "custom 2",
+      "location_c3": "custom data 3",
+      "name": "Sample Company Headquarters",
+      "office_phone": "2481234567",
+      "office_ext_phone": "1021021209",
+      "tz": "America/New_York",
+      "parent_id": "11e95f8ec39de8fbdb0a4f1a",
+      "show_contact_notes": true,
+      "show_contact_files": true,
+      "created_user_id": "11e95f8ec39de8fbdb0a4f1a",
+      "location_type": "merchant",
+      "ticket_hash_key": "A5F443CADF4AE34BBCAADF4"
+    }
   }
 }
 ```
@@ -75,24 +114,28 @@ catch (ApiException e){};
 
 # List All Tags Related
 
-List all tags related
-
 ```csharp
 ListAllTagsRelatedAsync(
     Models.Page page = null,
-    Models.Sort8 sort = null,
-    Models.Filter8 filter = null,
-    List<string> expand = null)
+    List<Models.Order19> order = null,
+    List<Models.FilterBy> filterBy = null,
+    List<Models.Expand34Enum> expand = null,
+    Models.Format1Enum? format = null,
+    string typeahead = null,
+    List<Models.Field43Enum> fields = null)
 ```
 
 ## Parameters
 
 | Parameter | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `page` | [`Models.Page`](../../doc/models/page.md) | Query, Optional | Use this field to specify paginate your results, by using page size and number. You can use one of the following methods:<br><br>> /endpoint?page={ "number": 1, "size": 50 }<br>> <br>> /endpoint?page[number]=1&page[size]=50 |
-| `sort` | [`Models.Sort8`](../../doc/models/sort-8.md) | Query, Optional | You can use any `field_name` from this endpoint results, and you can combine more than one field for more complex sorting. You can use one of the following methods:<br><br>> /endpoint?sort={ "field_name": "asc", "field_name2": "desc" }<br>> <br>> /endpoint?sort[field_name]=asc&sort[field_name2]=desc |
-| `filter` | [`Models.Filter8`](../../doc/models/filter-8.md) | Query, Optional | You can use any `field_name` from this endpoint results as a filter, and you can also use more than one field to create AND conditions. You can use one of the following methods:<br><br>> /endpoint?filter={ "field_name": "Value" }<br>> <br>> /endpoint?filter[field_name]=Value |
-| `expand` | `List<string>` | Query, Optional | Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the account vault belongs to, this data can be returned in the accountvaults endpoint request.<br>**Constraints**: *Unique Items Required*, *Pattern*: `^[\w]+$` |
+| `page` | [`Page`](../../doc/models/page.md) | Query, Optional | Use this field to specify paginate your results, by using page size and number. You can use one of the following methods:<br><br>> /endpoint?page={ "number": 1, "size": 50 }<br>> <br>> /endpoint?page[number]=1&page[size]=50 |
+| `order` | [`List<Order19>`](../../doc/models/order-19.md) | Query, Optional | Criteria used in query string parameters to order results.  Most fields from the endpoint results can be used as a `key`.  Unsupported fields or operators will return a `412`.  Array objects must be valid json.<br><br>> /endpoint?order=[{ "key": "created_ts", "operator": "asc"}]<br>> <br>> /endpoint?order=[{ "key": "balance", "operator": "desc"},{ "key": "created_ts", "operator": "asc"}] |
+| `filterBy` | [`List<FilterBy>`](../../doc/models/filter-by.md) | Query, Optional | Filter criteria that can be used in query string parameters.  Most fields from the endpoint results can be used as a `key`.  Unsupported fields or operators will return a `412`.<br><br>> /endpoint?filter_by=[{ "key": "first_name", "operator": "=", "value": "Fred" }]<br>> <br>> /endpoint?filter_by=[{ "key": "account_type", "operator": "=", "value": "VISA" }]<br>> <br>> /endpoint?filter_by=[{ "key": "created_ts", "operator": ">=", "value": "946702799" }, { "key": "created_ts", "operator": "<=", value: "1695061891" }]<br>> <br>> /endpoint?filter_by=[{ "key": "last_name", "operator": "IN", "value": "Williams,Brown,Allman" }] |
+| `expand` | [`List<Expand34Enum>`](../../doc/models/expand-34-enum.md) | Query, Optional | Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request. |
+| `format` | [`Format1Enum?`](../../doc/models/format-1-enum.md) | Query, Optional | Reporting format, valid values: csv, tsv |
+| `typeahead` | `string` | Query, Optional | You can use any `field_name` from this endpoint results to order the list using the value provided as filter for the same `field_name`. It will be ordered using the following rules: 1) Exact match, 2) Starts with, 3) Contains. |
+| `fields` | [`List<Field43Enum>`](../../doc/models/field-43-enum.md) | Query, Optional | You can use any `field_name` from this endpoint results to filter the list of fields returned on the response. |
 
 ## Response Type
 
@@ -101,11 +144,46 @@ ListAllTagsRelatedAsync(
 ## Example Usage
 
 ```csharp
+Page page = new Page
+{
+    Number = 1,
+    Size = 50,
+};
+
+List<Models.Order19> order = new List<Models.Order19>
+{
+    new Order19
+    {
+        Key = "first_name",
+        MOperator = OperatorEnum.Asc,
+    },
+};
+
+List<Models.FilterBy> filterBy = new List<Models.FilterBy>
+{
+    new FilterBy
+    {
+        Key = "first_name",
+        MOperator = FilterByOperator.FromOperator1(Operator1Enum.Enum1),
+        MValue = FilterByValue.FromFilterByValueCase1(
+            FilterByValueCase1.FromString("Fred")
+        ),
+    },
+};
+
 try
 {
-    ResponseTagsCollection result = await tagsController.ListAllTagsRelatedAsync(null, null, null, null);
+    ResponseTagsCollection result = await tagsController.ListAllTagsRelatedAsync(
+        page,
+        order,
+        filterBy
+    );
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*
@@ -119,9 +197,64 @@ catch (ApiException e){};
       "title": "My terminal",
       "id": "11e95f8ec39de8fbdb0a4f1a",
       "created_ts": 1422040992,
-      "modified_ts": 1422040992
+      "modified_ts": 1422040992,
+      "location": {
+        "id": "11e95f8ec39de8fbdb0a4f1a",
+        "created_ts": 1422040992,
+        "modified_ts": 1422040992,
+        "account_number": "5454545454545454",
+        "address": {
+          "city": "Novi",
+          "state": "MI",
+          "postal_code": "48375",
+          "country": "US"
+        },
+        "branding_domain_id": "11e95f8ec39de8fbdb0a4f1a",
+        "contact_email_trx_receipt_default": true,
+        "default_ach": "11e608a7d515f1e093242bb2",
+        "default_cc": "11e608a442a5f1e092242dda",
+        "email_reply_to": "email@domain.com",
+        "fax": "3339998822",
+        "location_api_id": "location-111111",
+        "location_api_key": "AE34BBCAADF4AE34BBCAADF4",
+        "location_c1": "custom 1",
+        "location_c2": "custom 2",
+        "location_c3": "custom data 3",
+        "name": "Sample Company Headquarters",
+        "office_phone": "2481234567",
+        "office_ext_phone": "1021021209",
+        "tz": "America/New_York",
+        "parent_id": "11e95f8ec39de8fbdb0a4f1a",
+        "show_contact_notes": true,
+        "show_contact_files": true,
+        "created_user_id": "11e95f8ec39de8fbdb0a4f1a",
+        "location_type": "merchant",
+        "ticket_hash_key": "A5F443CADF4AE34BBCAADF4"
+      }
     }
-  ]
+  ],
+  "links": {
+    "type": "Links",
+    "first": "/v1/endpoint?page[size]=10&page[number]=1",
+    "previous": "/v1/endpoint?page[size]=10&page[number]=5",
+    "last": "/v1/endpoint?page[size]=10&page[number]=42"
+  },
+  "pagination": {
+    "type": "Pagination",
+    "total_count": 423,
+    "page_count": 42,
+    "page_number": 6,
+    "page_size": 10
+  },
+  "sort": {
+    "type": "Sorting",
+    "fields": [
+      {
+        "field": "last_name",
+        "order": "asc"
+      }
+    ]
+  }
 }
 ```
 
@@ -134,8 +267,6 @@ catch (ApiException e){};
 
 # Delete Tag Record
 
-Delete tag record
-
 ```csharp
 DeleteTagRecordAsync(
     string tagId)
@@ -145,7 +276,7 @@ DeleteTagRecordAsync(
 
 | Parameter | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `tagId` | `string` | Template, Required | Tag ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `tagId` | `string` | Template, Required | Tag ID |
 
 ## Response Type
 
@@ -155,12 +286,15 @@ DeleteTagRecordAsync(
 
 ```csharp
 string tagId = "11e95f8ec39de8fbdb0a4f1a";
-
 try
 {
     ResponseTag result = await tagsController.DeleteTagRecordAsync(tagId);
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*
@@ -173,7 +307,40 @@ catch (ApiException e){};
     "title": "My terminal",
     "id": "11e95f8ec39de8fbdb0a4f1a",
     "created_ts": 1422040992,
-    "modified_ts": 1422040992
+    "modified_ts": 1422040992,
+    "location": {
+      "id": "11e95f8ec39de8fbdb0a4f1a",
+      "created_ts": 1422040992,
+      "modified_ts": 1422040992,
+      "account_number": "5454545454545454",
+      "address": {
+        "city": "Novi",
+        "state": "MI",
+        "postal_code": "48375",
+        "country": "US"
+      },
+      "branding_domain_id": "11e95f8ec39de8fbdb0a4f1a",
+      "contact_email_trx_receipt_default": true,
+      "default_ach": "11e608a7d515f1e093242bb2",
+      "default_cc": "11e608a442a5f1e092242dda",
+      "email_reply_to": "email@domain.com",
+      "fax": "3339998822",
+      "location_api_id": "location-111111",
+      "location_api_key": "AE34BBCAADF4AE34BBCAADF4",
+      "location_c1": "custom 1",
+      "location_c2": "custom 2",
+      "location_c3": "custom data 3",
+      "name": "Sample Company Headquarters",
+      "office_phone": "2481234567",
+      "office_ext_phone": "1021021209",
+      "tz": "America/New_York",
+      "parent_id": "11e95f8ec39de8fbdb0a4f1a",
+      "show_contact_notes": true,
+      "show_contact_files": true,
+      "created_user_id": "11e95f8ec39de8fbdb0a4f1a",
+      "location_type": "merchant",
+      "ticket_hash_key": "A5F443CADF4AE34BBCAADF4"
+    }
   }
 }
 ```
@@ -187,18 +354,20 @@ catch (ApiException e){};
 
 # View Single Tags Record
 
-View single tags record
-
 ```csharp
 ViewSingleTagsRecordAsync(
-    string tagId)
+    string tagId,
+    List<Models.Expand34Enum> expand = null,
+    List<Models.Field43Enum> fields = null)
 ```
 
 ## Parameters
 
 | Parameter | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `tagId` | `string` | Template, Required | Tag ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `tagId` | `string` | Template, Required | Tag ID |
+| `expand` | [`List<Expand34Enum>`](../../doc/models/expand-34-enum.md) | Query, Optional | Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request. |
+| `fields` | [`List<Field43Enum>`](../../doc/models/field-43-enum.md) | Query, Optional | You can use any `field_name` from this endpoint results to filter the list of fields returned on the response. |
 
 ## Response Type
 
@@ -208,12 +377,15 @@ ViewSingleTagsRecordAsync(
 
 ```csharp
 string tagId = "11e95f8ec39de8fbdb0a4f1a";
-
 try
 {
     ResponseTag result = await tagsController.ViewSingleTagsRecordAsync(tagId);
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*
@@ -226,7 +398,40 @@ catch (ApiException e){};
     "title": "My terminal",
     "id": "11e95f8ec39de8fbdb0a4f1a",
     "created_ts": 1422040992,
-    "modified_ts": 1422040992
+    "modified_ts": 1422040992,
+    "location": {
+      "id": "11e95f8ec39de8fbdb0a4f1a",
+      "created_ts": 1422040992,
+      "modified_ts": 1422040992,
+      "account_number": "5454545454545454",
+      "address": {
+        "city": "Novi",
+        "state": "MI",
+        "postal_code": "48375",
+        "country": "US"
+      },
+      "branding_domain_id": "11e95f8ec39de8fbdb0a4f1a",
+      "contact_email_trx_receipt_default": true,
+      "default_ach": "11e608a7d515f1e093242bb2",
+      "default_cc": "11e608a442a5f1e092242dda",
+      "email_reply_to": "email@domain.com",
+      "fax": "3339998822",
+      "location_api_id": "location-111111",
+      "location_api_key": "AE34BBCAADF4AE34BBCAADF4",
+      "location_c1": "custom 1",
+      "location_c2": "custom 2",
+      "location_c3": "custom data 3",
+      "name": "Sample Company Headquarters",
+      "office_phone": "2481234567",
+      "office_ext_phone": "1021021209",
+      "tz": "America/New_York",
+      "parent_id": "11e95f8ec39de8fbdb0a4f1a",
+      "show_contact_notes": true,
+      "show_contact_files": true,
+      "created_user_id": "11e95f8ec39de8fbdb0a4f1a",
+      "location_type": "merchant",
+      "ticket_hash_key": "A5F443CADF4AE34BBCAADF4"
+    }
   }
 }
 ```
@@ -240,8 +445,6 @@ catch (ApiException e){};
 
 # Update Tag Record
 
-Update tag record
-
 ```csharp
 UpdateTagRecordAsync(
     string tagId,
@@ -252,8 +455,8 @@ UpdateTagRecordAsync(
 
 | Parameter | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `tagId` | `string` | Template, Required | Tag ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `body` | [`Models.V1TagsRequest1`](../../doc/models/v1-tags-request-1.md) | Body, Required | - |
+| `tagId` | `string` | Template, Required | Tag ID |
+| `body` | [`V1TagsRequest1`](../../doc/models/v1-tags-request-1.md) | Body, Required | - |
 
 ## Response Type
 
@@ -263,13 +466,24 @@ UpdateTagRecordAsync(
 
 ```csharp
 string tagId = "11e95f8ec39de8fbdb0a4f1a";
-var body = new V1TagsRequest1();
+V1TagsRequest1 body = new V1TagsRequest1
+{
+    LocationId = "11e95f8ec39de8fbdb0a4f1a",
+    Title = "My terminal",
+};
 
 try
 {
-    ResponseTag result = await tagsController.UpdateTagRecordAsync(tagId, body);
+    ResponseTag result = await tagsController.UpdateTagRecordAsync(
+        tagId,
+        body
+    );
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*
@@ -282,7 +496,40 @@ catch (ApiException e){};
     "title": "My terminal",
     "id": "11e95f8ec39de8fbdb0a4f1a",
     "created_ts": 1422040992,
-    "modified_ts": 1422040992
+    "modified_ts": 1422040992,
+    "location": {
+      "id": "11e95f8ec39de8fbdb0a4f1a",
+      "created_ts": 1422040992,
+      "modified_ts": 1422040992,
+      "account_number": "5454545454545454",
+      "address": {
+        "city": "Novi",
+        "state": "MI",
+        "postal_code": "48375",
+        "country": "US"
+      },
+      "branding_domain_id": "11e95f8ec39de8fbdb0a4f1a",
+      "contact_email_trx_receipt_default": true,
+      "default_ach": "11e608a7d515f1e093242bb2",
+      "default_cc": "11e608a442a5f1e092242dda",
+      "email_reply_to": "email@domain.com",
+      "fax": "3339998822",
+      "location_api_id": "location-111111",
+      "location_api_key": "AE34BBCAADF4AE34BBCAADF4",
+      "location_c1": "custom 1",
+      "location_c2": "custom 2",
+      "location_c3": "custom data 3",
+      "name": "Sample Company Headquarters",
+      "office_phone": "2481234567",
+      "office_ext_phone": "1021021209",
+      "tz": "America/New_York",
+      "parent_id": "11e95f8ec39de8fbdb0a4f1a",
+      "show_contact_notes": true,
+      "show_contact_files": true,
+      "created_user_id": "11e95f8ec39de8fbdb0a4f1a",
+      "location_type": "merchant",
+      "ticket_hash_key": "A5F443CADF4AE34BBCAADF4"
+    }
   }
 }
 ```

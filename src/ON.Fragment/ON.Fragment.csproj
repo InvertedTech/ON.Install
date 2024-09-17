@@ -22,7 +22,10 @@
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Paypal\PaypalSettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Paypal\PaypalSubscriptionRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\SharedTypes.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeInterface.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeRecords.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSettings.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSubscriptionRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Comment\CommentInterface.proto" />
     <None Remove="Protos\ON\Fragments\Comment\CommentRecord.proto" />
@@ -32,6 +35,8 @@
     <None Remove="Protos\ON\Fragments\Content\AssetRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\AudioAssetRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\ImageAssetRecord.proto" />
+    <None Remove="Protos\ON\Fragments\Content\Music\MusicInterface.proto" />
+    <None Remove="Protos\ON\Fragments\Content\Music\MusicRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\Page.proto" />
     <None Remove="Protos\ON\Fragments\Content\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Content\StatsInterface.proto" />
@@ -60,9 +65,7 @@
     <None Remove="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\Backup.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\PlanRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\Backup.proto" />
-    <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\Payments.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\ProductRecord.proto" />
-    <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\SubscriptionRecord.proto" />
     <None Remove="Protos\ON\Fragments\Content\Backup.proto" />
     <None Remove="Protos\ON\Fragments\Content\Content.proto" />
     <None Remove="Protos\ON\Fragments\Content\ContentRecord.proto" />
@@ -88,6 +91,7 @@
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\SharedTypes.proto">
       <GrpcServices>None</GrpcServices>
     </Protobuf>
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeRecords.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSettings.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Comment\CommentInterface.proto" />
@@ -95,6 +99,8 @@
     <Protobuf Include="Protos\ON\Fragments\Comment\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Content\AssetBackup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\AssetRecord.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Content\Music\MusicInterface.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Content\Music\MusicRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Page\PageRecord.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Page\PageInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Content\Stats\StatsSaveInterface.proto" />
@@ -127,9 +133,9 @@
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\PlanRecord.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\ParallelEconomy\ParallelEconomySubscriptionRecord.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\Backup.proto" />
-    <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\Payments.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\ProductRecord.proto" />
-    <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\SubscriptionRecord.proto" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSubscriptionRecord.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Paypal\Backup.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Claims.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Paypal\PaypalSubscriptionRecord.proto" GrpcServices="None" />

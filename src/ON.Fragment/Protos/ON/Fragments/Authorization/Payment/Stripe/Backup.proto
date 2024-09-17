@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ON.Fragments.Authorization.Payment.Stripe;
 
-import "Protos/ON/Fragments/Authorization/Payment/Stripe/SubscriptionRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeSubscriptionRecord.proto";
 
 // Service for Stripe backup fragment interface
 service BackupInterface {
@@ -51,5 +51,5 @@ message RestoreAllDataResponse {
 
 message UserBackupDataRecord {
   bytes ExtraData = 1;   // Generic byte structure to save all application specific data for user
-  SubscriptionRecord SubscriptionRecord = 2; // SubscriptionRecord
+  StripeSubscriptionFullRecord SubscriptionFullRecord = 2; // SubscriptionRecord
 }

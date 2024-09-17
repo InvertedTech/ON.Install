@@ -30,6 +30,23 @@ namespace ON.SimpleWeb.Models.Subscription.Main
             PaidThruUTC = record.PaidThruUTC.ToDateTime();
         }
 
+        public PaymentViewModel(ON.Fragments.Authorization.Payment.Stripe.StripePaymentRecord record)
+        {
+            if (Guid.TryParse(record.UserID, out var id))
+                UserId = id;
+            if (Guid.TryParse(record.SubscriptionID, out var id2))
+                SubscriptionId = id2;
+            if (Guid.TryParse(record.PaymentID, out var id3))
+                PaymentId = id3;
+
+            OtherPaymentId = record.StripePaymentID;
+            Status = record.Status;
+            AmountCents = record.AmountCents;
+
+            PaidOnUTC = record.PaidOnUTC.ToDateTime();
+            PaidThruUTC = record.PaidThruUTC.ToDateTime();
+        }
+
         public string StatusPretty
         {
             get

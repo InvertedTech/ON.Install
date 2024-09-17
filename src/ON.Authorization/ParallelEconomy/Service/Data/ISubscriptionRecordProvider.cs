@@ -9,7 +9,7 @@ namespace ON.Authorization.ParallelEconomy.Service.Data
 {
     public interface ISubscriptionRecordProvider
     {
-        Task<SubscriptionRecord> GetById(Guid userId);
-        Task Save(SubscriptionRecord record);
+        Task<ParallelEconomySubscriptionRecord> GetById(Guid userId);
+        Task Save(ParallelEconomySubscriptionRecord record);
     }
 }

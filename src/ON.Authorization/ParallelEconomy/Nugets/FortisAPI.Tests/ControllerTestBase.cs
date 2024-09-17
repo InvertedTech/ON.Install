@@ -8,10 +8,12 @@ namespace FortisAPI.Tests
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Types;
     using FortisAPI.Standard;
+    using FortisAPI.Standard.Authentication;
     using FortisAPI.Standard.Http.Client;
     using FortisAPI.Standard.Models;
-    using FortisAPI.Tests.Helpers;
+    using FortisAPI.Standard.Models.Containers;
     using NUnit.Framework;
 
     /// <summary>
@@ -28,7 +30,7 @@ namespace FortisAPI.Tests
         /// <summary>
         /// Gets HttpCallBackHandler.
         /// </summary>
-        internal HttpCallBack HttpCallBackHandler { get; private set; }
+        internal HttpCallBack HttpCallBack { get; private set; } = new HttpCallBack();
 
         /// <summary>
         /// Gets FortisAPIClient Client.
@@ -41,9 +43,9 @@ namespace FortisAPI.Tests
         [OneTimeSetUp]
         public void SetUp()
         {
-            this.HttpCallBackHandler = new HttpCallBack();
-            this.Client = FortisAPIClient.CreateFromEnvironment().ToBuilder()
-                .HttpCallBack(this.HttpCallBackHandler)
+            FortisAPIClient config = FortisAPIClient.CreateFromEnvironment();
+            this.Client = config.ToBuilder()
+                .HttpCallBack(HttpCallBack)
                 .Build();
         }
     }

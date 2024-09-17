@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,54 +19,46 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// List5.
     /// </summary>
-    public class List5
+    public class List5 : BaseModel
     {
-        private string achProductTransactionId;
-        private string email;
-        private string contactId;
-        private string contactApiId;
-        private string customerId;
-        private string expireDate;
-        private string invoiceNumber;
-        private string itemHeader;
-        private string itemFooter;
-        private double? amountDue;
-        private string notificationEmail;
-        private double? paymentStatusId;
-        private Models.StatusIdEnum? statusId;
-        private string note;
-        private int? notificationDaysBeforeDueDate;
-        private int? notificationDaysAfterDueDate;
-        private double? remainingBalance;
-        private double? singlePaymentMinAmount;
-        private double? singlePaymentMaxAmount;
-        private string cellPhone;
+        private string accountNumber;
+        private string brandingDomainId;
+        private string defaultAch;
+        private string defaultCc;
+        private string emailReplyTo;
+        private string fax;
+        private string locationApiId;
+        private string locationApiKey;
+        private string locationC1;
+        private string locationC2;
+        private string locationC3;
+        private string officePhone;
+        private string officeExtPhone;
+        private string tz;
+        private string parentId;
         private string createdUserId;
-        private string modifiedUserId;
+        private Models.LocationTypeEnum? locationType;
+        private string brandingDomainUrl;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
-            { "ach_product_transaction_id", false },
-            { "email", false },
-            { "contact_id", false },
-            { "contact_api_id", false },
-            { "customer_id", false },
-            { "expire_date", false },
-            { "invoice_number", false },
-            { "item_header", false },
-            { "item_footer", false },
-            { "amount_due", false },
-            { "notification_email", false },
-            { "payment_status_id", false },
-            { "status_id", false },
-            { "note", false },
-            { "notification_days_before_due_date", false },
-            { "notification_days_after_due_date", false },
-            { "remaining_balance", false },
-            { "single_payment_min_amount", false },
-            { "single_payment_max_amount", true },
-            { "cell_phone", false },
+            { "account_number", false },
+            { "branding_domain_id", false },
+            { "default_ach", false },
+            { "default_cc", false },
+            { "email_reply_to", false },
+            { "fax", false },
+            { "location_api_id", false },
+            { "location_api_key", false },
+            { "location_c1", false },
+            { "location_c2", false },
+            { "location_c3", false },
+            { "office_phone", false },
+            { "office_ext_phone", false },
+            { "tz", false },
+            { "parent_id", false },
             { "created_user_id", false },
-            { "modified_user_id", false },
+            { "location_type", false },
+            { "branding_domain_url", false },
         };
 
         /// <summary>
@@ -78,645 +71,183 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="List5"/> class.
         /// </summary>
-        /// <param name="locationId">location_id.</param>
-        /// <param name="title">title.</param>
-        /// <param name="ccProductTransactionId">cc_product_transaction_id.</param>
-        /// <param name="dueDate">due_date.</param>
-        /// <param name="itemList">item_list.</param>
         /// <param name="id">id.</param>
         /// <param name="createdTs">created_ts.</param>
         /// <param name="modifiedTs">modified_ts.</param>
-        /// <param name="achProductTransactionId">ach_product_transaction_id.</param>
-        /// <param name="allowOverpayment">allow_overpayment.</param>
-        /// <param name="email">email.</param>
-        /// <param name="contactId">contact_id.</param>
-        /// <param name="contactApiId">contact_api_id.</param>
-        /// <param name="customerId">customer_id.</param>
-        /// <param name="expireDate">expire_date.</param>
-        /// <param name="allowPartialPay">allow_partial_pay.</param>
-        /// <param name="attachFilesToEmail">attach_files_to_email.</param>
-        /// <param name="sendEmail">send_email.</param>
-        /// <param name="invoiceNumber">invoice_number.</param>
-        /// <param name="itemHeader">item_header.</param>
-        /// <param name="itemFooter">item_footer.</param>
-        /// <param name="amountDue">amount_due.</param>
-        /// <param name="notificationEmail">notification_email.</param>
-        /// <param name="paymentStatusId">payment_status_id.</param>
-        /// <param name="statusId">status_id.</param>
-        /// <param name="note">note.</param>
-        /// <param name="notificationDaysBeforeDueDate">notification_days_before_due_date.</param>
-        /// <param name="notificationDaysAfterDueDate">notification_days_after_due_date.</param>
-        /// <param name="notificationOnDueDate">notification_on_due_date.</param>
-        /// <param name="sendTextToPay">send_text_to_pay.</param>
-        /// <param name="files">files.</param>
-        /// <param name="remainingBalance">remaining_balance.</param>
-        /// <param name="singlePaymentMinAmount">single_payment_min_amount.</param>
-        /// <param name="singlePaymentMaxAmount">single_payment_max_amount.</param>
-        /// <param name="cellPhone">cell_phone.</param>
+        /// <param name="name">name.</param>
+        /// <param name="brandingDomain">branding_domain.</param>
+        /// <param name="productTransactions">product_transactions.</param>
+        /// <param name="productFile">product_file.</param>
+        /// <param name="productAccountvault">product_accountvault.</param>
+        /// <param name="productRecurring">product_recurring.</param>
+        /// <param name="tags">tags.</param>
+        /// <param name="terminals">terminals.</param>
+        /// <param name="accountNumber">account_number.</param>
+        /// <param name="address">address.</param>
+        /// <param name="brandingDomainId">branding_domain_id.</param>
+        /// <param name="contactEmailTrxReceiptDefault">contact_email_trx_receipt_default.</param>
+        /// <param name="defaultAch">default_ach.</param>
+        /// <param name="defaultCc">default_cc.</param>
+        /// <param name="emailReplyTo">email_reply_to.</param>
+        /// <param name="fax">fax.</param>
+        /// <param name="locationApiId">location_api_id.</param>
+        /// <param name="locationApiKey">location_api_key.</param>
+        /// <param name="locationC1">location_c1.</param>
+        /// <param name="locationC2">location_c2.</param>
+        /// <param name="locationC3">location_c3.</param>
+        /// <param name="officePhone">office_phone.</param>
+        /// <param name="officeExtPhone">office_ext_phone.</param>
+        /// <param name="tz">tz.</param>
+        /// <param name="parentId">parent_id.</param>
+        /// <param name="showContactNotes">show_contact_notes.</param>
+        /// <param name="showContactFiles">show_contact_files.</param>
         /// <param name="createdUserId">created_user_id.</param>
-        /// <param name="modifiedUserId">modified_user_id.</param>
-        /// <param name="active">active.</param>
-        /// <param name="isActive">is_active.</param>
+        /// <param name="locationType">location_type.</param>
+        /// <param name="brandingDomainUrl">branding_domain_url.</param>
         public List5(
-            string locationId,
-            string title,
-            string ccProductTransactionId,
-            string dueDate,
-            List<Models.ItemList> itemList,
             string id,
             int createdTs,
             int modifiedTs,
-            string achProductTransactionId = null,
-            bool? allowOverpayment = null,
-            string email = null,
-            string contactId = null,
-            string contactApiId = null,
-            string customerId = null,
-            string expireDate = null,
-            bool? allowPartialPay = null,
-            bool? attachFilesToEmail = null,
-            bool? sendEmail = null,
-            string invoiceNumber = null,
-            string itemHeader = null,
-            string itemFooter = null,
-            double? amountDue = null,
-            string notificationEmail = null,
-            double? paymentStatusId = null,
-            Models.StatusIdEnum? statusId = null,
-            string note = null,
-            int? notificationDaysBeforeDueDate = null,
-            int? notificationDaysAfterDueDate = null,
-            bool? notificationOnDueDate = null,
-            bool? sendTextToPay = null,
-            object files = null,
-            double? remainingBalance = null,
-            double? singlePaymentMinAmount = null,
-            double? singlePaymentMaxAmount = 9999999.99,
-            string cellPhone = null,
+            string name,
+            object brandingDomain,
+            object productTransactions,
+            object productFile,
+            object productAccountvault,
+            object productRecurring,
+            object tags,
+            object terminals,
+            string accountNumber = null,
+            Models.Address1 address = null,
+            string brandingDomainId = null,
+            bool? contactEmailTrxReceiptDefault = null,
+            string defaultAch = null,
+            string defaultCc = null,
+            string emailReplyTo = null,
+            string fax = null,
+            string locationApiId = null,
+            string locationApiKey = null,
+            string locationC1 = null,
+            string locationC2 = null,
+            string locationC3 = null,
+            string officePhone = null,
+            string officeExtPhone = null,
+            string tz = null,
+            string parentId = null,
+            bool? showContactNotes = null,
+            bool? showContactFiles = null,
             string createdUserId = null,
-            string modifiedUserId = null,
-            bool? active = null,
-            bool? isActive = null)
+            Models.LocationTypeEnum? locationType = null,
+            string brandingDomainUrl = null)
         {
-            this.LocationId = locationId;
-            this.Title = title;
-            this.CcProductTransactionId = ccProductTransactionId;
-            if (achProductTransactionId != null)
-            {
-                this.AchProductTransactionId = achProductTransactionId;
-            }
-
-            this.DueDate = dueDate;
-            this.ItemList = itemList;
-            this.AllowOverpayment = allowOverpayment;
-            if (email != null)
-            {
-                this.Email = email;
-            }
-
-            if (contactId != null)
-            {
-                this.ContactId = contactId;
-            }
-
-            if (contactApiId != null)
-            {
-                this.ContactApiId = contactApiId;
-            }
-
-            if (customerId != null)
-            {
-                this.CustomerId = customerId;
-            }
-
-            if (expireDate != null)
-            {
-                this.ExpireDate = expireDate;
-            }
-
-            this.AllowPartialPay = allowPartialPay;
-            this.AttachFilesToEmail = attachFilesToEmail;
-            this.SendEmail = sendEmail;
-            if (invoiceNumber != null)
-            {
-                this.InvoiceNumber = invoiceNumber;
-            }
-
-            if (itemHeader != null)
-            {
-                this.ItemHeader = itemHeader;
-            }
-
-            if (itemFooter != null)
-            {
-                this.ItemFooter = itemFooter;
-            }
-
-            if (amountDue != null)
-            {
-                this.AmountDue = amountDue;
-            }
-
-            if (notificationEmail != null)
-            {
-                this.NotificationEmail = notificationEmail;
-            }
-
-            if (paymentStatusId != null)
-            {
-                this.PaymentStatusId = paymentStatusId;
-            }
-
-            if (statusId != null)
-            {
-                this.StatusId = statusId;
-            }
-
-            if (note != null)
-            {
-                this.Note = note;
-            }
-
-            if (notificationDaysBeforeDueDate != null)
-            {
-                this.NotificationDaysBeforeDueDate = notificationDaysBeforeDueDate;
-            }
-
-            if (notificationDaysAfterDueDate != null)
-            {
-                this.NotificationDaysAfterDueDate = notificationDaysAfterDueDate;
-            }
-
-            this.NotificationOnDueDate = notificationOnDueDate;
-            this.SendTextToPay = sendTextToPay;
-            this.Files = files;
-            if (remainingBalance != null)
-            {
-                this.RemainingBalance = remainingBalance;
-            }
-
-            if (singlePaymentMinAmount != null)
-            {
-                this.SinglePaymentMinAmount = singlePaymentMinAmount;
-            }
-
-            this.SinglePaymentMaxAmount = singlePaymentMaxAmount;
-            if (cellPhone != null)
-            {
-                this.CellPhone = cellPhone;
-            }
-
             this.Id = id;
             this.CreatedTs = createdTs;
             this.ModifiedTs = modifiedTs;
+            if (accountNumber != null)
+            {
+                this.AccountNumber = accountNumber;
+            }
+
+            this.Address = address;
+            if (brandingDomainId != null)
+            {
+                this.BrandingDomainId = brandingDomainId;
+            }
+
+            this.ContactEmailTrxReceiptDefault = contactEmailTrxReceiptDefault;
+            if (defaultAch != null)
+            {
+                this.DefaultAch = defaultAch;
+            }
+
+            if (defaultCc != null)
+            {
+                this.DefaultCc = defaultCc;
+            }
+
+            if (emailReplyTo != null)
+            {
+                this.EmailReplyTo = emailReplyTo;
+            }
+
+            if (fax != null)
+            {
+                this.Fax = fax;
+            }
+
+            if (locationApiId != null)
+            {
+                this.LocationApiId = locationApiId;
+            }
+
+            if (locationApiKey != null)
+            {
+                this.LocationApiKey = locationApiKey;
+            }
+
+            if (locationC1 != null)
+            {
+                this.LocationC1 = locationC1;
+            }
+
+            if (locationC2 != null)
+            {
+                this.LocationC2 = locationC2;
+            }
+
+            if (locationC3 != null)
+            {
+                this.LocationC3 = locationC3;
+            }
+
+            this.Name = name;
+            if (officePhone != null)
+            {
+                this.OfficePhone = officePhone;
+            }
+
+            if (officeExtPhone != null)
+            {
+                this.OfficeExtPhone = officeExtPhone;
+            }
+
+            if (tz != null)
+            {
+                this.Tz = tz;
+            }
+
+            if (parentId != null)
+            {
+                this.ParentId = parentId;
+            }
+
+            this.ShowContactNotes = showContactNotes;
+            this.ShowContactFiles = showContactFiles;
             if (createdUserId != null)
             {
                 this.CreatedUserId = createdUserId;
             }
 
-            if (modifiedUserId != null)
+            if (locationType != null)
             {
-                this.ModifiedUserId = modifiedUserId;
+                this.LocationType = locationType;
             }
 
-            this.Active = active;
-            this.IsActive = isActive;
+            if (brandingDomainUrl != null)
+            {
+                this.BrandingDomainUrl = brandingDomainUrl;
+            }
+
+            this.BrandingDomain = brandingDomain;
+            this.ProductTransactions = productTransactions;
+            this.ProductFile = productFile;
+            this.ProductAccountvault = productAccountvault;
+            this.ProductRecurring = productRecurring;
+            this.Tags = tags;
+            this.Terminals = terminals;
         }
 
         /// <summary>
         /// Location ID
-        /// </summary>
-        [JsonProperty("location_id")]
-        public string LocationId { get; set; }
-
-        /// <summary>
-        /// Title
-        /// </summary>
-        [JsonProperty("title")]
-        public string Title { get; set; }
-
-        /// <summary>
-        /// Transaction ID
-        /// </summary>
-        [JsonProperty("cc_product_transaction_id")]
-        public string CcProductTransactionId { get; set; }
-
-        /// <summary>
-        /// ACH Product Transaction Id
-        /// </summary>
-        [JsonProperty("ach_product_transaction_id")]
-        public string AchProductTransactionId
-        {
-            get
-            {
-                return this.achProductTransactionId;
-            }
-
-            set
-            {
-                this.shouldSerialize["ach_product_transaction_id"] = true;
-                this.achProductTransactionId = value;
-            }
-        }
-
-        /// <summary>
-        /// Due Date, Format: Y-m-d
-        /// </summary>
-        [JsonProperty("due_date")]
-        public string DueDate { get; set; }
-
-        /// <summary>
-        /// Item List
-        /// </summary>
-        [JsonProperty("item_list")]
-        public List<Models.ItemList> ItemList { get; set; }
-
-        /// <summary>
-        /// Allow Overpayment.
-        /// </summary>
-        [JsonProperty("allow_overpayment", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? AllowOverpayment { get; set; }
-
-        /// <summary>
-        /// Email
-        /// </summary>
-        [JsonProperty("email")]
-        public string Email
-        {
-            get
-            {
-                return this.email;
-            }
-
-            set
-            {
-                this.shouldSerialize["email"] = true;
-                this.email = value;
-            }
-        }
-
-        /// <summary>
-        /// Contact ID
-        /// </summary>
-        [JsonProperty("contact_id")]
-        public string ContactId
-        {
-            get
-            {
-                return this.contactId;
-            }
-
-            set
-            {
-                this.shouldSerialize["contact_id"] = true;
-                this.contactId = value;
-            }
-        }
-
-        /// <summary>
-        /// Contact API Id
-        /// </summary>
-        [JsonProperty("contact_api_id")]
-        public string ContactApiId
-        {
-            get
-            {
-                return this.contactApiId;
-            }
-
-            set
-            {
-                this.shouldSerialize["contact_api_id"] = true;
-                this.contactApiId = value;
-            }
-        }
-
-        /// <summary>
-        /// Customer Id
-        /// </summary>
-        [JsonProperty("customer_id")]
-        public string CustomerId
-        {
-            get
-            {
-                return this.customerId;
-            }
-
-            set
-            {
-                this.shouldSerialize["customer_id"] = true;
-                this.customerId = value;
-            }
-        }
-
-        /// <summary>
-        /// Expire Date.
-        /// </summary>
-        [JsonProperty("expire_date")]
-        public string ExpireDate
-        {
-            get
-            {
-                return this.expireDate;
-            }
-
-            set
-            {
-                this.shouldSerialize["expire_date"] = true;
-                this.expireDate = value;
-            }
-        }
-
-        /// <summary>
-        /// Allow partial pay
-        /// </summary>
-        [JsonProperty("allow_partial_pay", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? AllowPartialPay { get; set; }
-
-        /// <summary>
-        /// Attach Files to Email
-        /// </summary>
-        [JsonProperty("attach_files_to_email", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? AttachFilesToEmail { get; set; }
-
-        /// <summary>
-        /// Send Email
-        /// </summary>
-        [JsonProperty("send_email", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? SendEmail { get; set; }
-
-        /// <summary>
-        /// Invoice number
-        /// </summary>
-        [JsonProperty("invoice_number")]
-        public string InvoiceNumber
-        {
-            get
-            {
-                return this.invoiceNumber;
-            }
-
-            set
-            {
-                this.shouldSerialize["invoice_number"] = true;
-                this.invoiceNumber = value;
-            }
-        }
-
-        /// <summary>
-        /// Item Header
-        /// </summary>
-        [JsonProperty("item_header")]
-        public string ItemHeader
-        {
-            get
-            {
-                return this.itemHeader;
-            }
-
-            set
-            {
-                this.shouldSerialize["item_header"] = true;
-                this.itemHeader = value;
-            }
-        }
-
-        /// <summary>
-        /// Item footer
-        /// </summary>
-        [JsonProperty("item_footer")]
-        public string ItemFooter
-        {
-            get
-            {
-                return this.itemFooter;
-            }
-
-            set
-            {
-                this.shouldSerialize["item_footer"] = true;
-                this.itemFooter = value;
-            }
-        }
-
-        /// <summary>
-        /// Amount Due
-        /// </summary>
-        [JsonProperty("amount_due")]
-        public double? AmountDue
-        {
-            get
-            {
-                return this.amountDue;
-            }
-
-            set
-            {
-                this.shouldSerialize["amount_due"] = true;
-                this.amountDue = value;
-            }
-        }
-
-        /// <summary>
-        /// Notification email
-        /// </summary>
-        [JsonProperty("notification_email")]
-        public string NotificationEmail
-        {
-            get
-            {
-                return this.notificationEmail;
-            }
-
-            set
-            {
-                this.shouldSerialize["notification_email"] = true;
-                this.notificationEmail = value;
-            }
-        }
-
-        /// <summary>
-        /// Payment Status Id
-        /// </summary>
-        [JsonProperty("payment_status_id")]
-        public double? PaymentStatusId
-        {
-            get
-            {
-                return this.paymentStatusId;
-            }
-
-            set
-            {
-                this.shouldSerialize["payment_status_id"] = true;
-                this.paymentStatusId = value;
-            }
-        }
-
-        /// <summary>
-        /// Status Id
-        /// </summary>
-        [JsonProperty("status_id")]
-        public Models.StatusIdEnum? StatusId
-        {
-            get
-            {
-                return this.statusId;
-            }
-
-            set
-            {
-                this.shouldSerialize["status_id"] = true;
-                this.statusId = value;
-            }
-        }
-
-        /// <summary>
-        /// Note
-        /// </summary>
-        [JsonProperty("note")]
-        public string Note
-        {
-            get
-            {
-                return this.note;
-            }
-
-            set
-            {
-                this.shouldSerialize["note"] = true;
-                this.note = value;
-            }
-        }
-
-        /// <summary>
-        /// Notification days before due date
-        /// </summary>
-        [JsonProperty("notification_days_before_due_date")]
-        public int? NotificationDaysBeforeDueDate
-        {
-            get
-            {
-                return this.notificationDaysBeforeDueDate;
-            }
-
-            set
-            {
-                this.shouldSerialize["notification_days_before_due_date"] = true;
-                this.notificationDaysBeforeDueDate = value;
-            }
-        }
-
-        /// <summary>
-        /// Notification days after due date
-        /// </summary>
-        [JsonProperty("notification_days_after_due_date")]
-        public int? NotificationDaysAfterDueDate
-        {
-            get
-            {
-                return this.notificationDaysAfterDueDate;
-            }
-
-            set
-            {
-                this.shouldSerialize["notification_days_after_due_date"] = true;
-                this.notificationDaysAfterDueDate = value;
-            }
-        }
-
-        /// <summary>
-        /// Notification on due date
-        /// </summary>
-        [JsonProperty("notification_on_due_date", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? NotificationOnDueDate { get; set; }
-
-        /// <summary>
-        /// Send Text To Pay
-        /// </summary>
-        [JsonProperty("send_text_to_pay", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? SendTextToPay { get; set; }
-
-        /// <summary>
-        /// Files
-        /// </summary>
-        [JsonProperty("files", NullValueHandling = NullValueHandling.Ignore)]
-        public object Files { get; set; }
-
-        /// <summary>
-        /// Remaining Balance
-        /// </summary>
-        [JsonProperty("remaining_balance")]
-        public double? RemainingBalance
-        {
-            get
-            {
-                return this.remainingBalance;
-            }
-
-            set
-            {
-                this.shouldSerialize["remaining_balance"] = true;
-                this.remainingBalance = value;
-            }
-        }
-
-        /// <summary>
-        /// Single Payment Min Amount
-        /// </summary>
-        [JsonProperty("single_payment_min_amount")]
-        public double? SinglePaymentMinAmount
-        {
-            get
-            {
-                return this.singlePaymentMinAmount;
-            }
-
-            set
-            {
-                this.shouldSerialize["single_payment_min_amount"] = true;
-                this.singlePaymentMinAmount = value;
-            }
-        }
-
-        /// <summary>
-        /// Single Payment Max Amount
-        /// </summary>
-        [JsonProperty("single_payment_max_amount")]
-        public double? SinglePaymentMaxAmount
-        {
-            get
-            {
-                return this.singlePaymentMaxAmount;
-            }
-
-            set
-            {
-                this.shouldSerialize["single_payment_max_amount"] = true;
-                this.singlePaymentMaxAmount = value;
-            }
-        }
-
-        /// <summary>
-        /// Cell Phone
-        /// </summary>
-        [JsonProperty("cell_phone")]
-        public string CellPhone
-        {
-            get
-            {
-                return this.cellPhone;
-            }
-
-            set
-            {
-                this.shouldSerialize["cell_phone"] = true;
-                this.cellPhone = value;
-            }
-        }
-
-        /// <summary>
-        /// Quick Invoice ID
         /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -734,7 +265,307 @@ namespace FortisAPI.Standard.Models
         public int ModifiedTs { get; set; }
 
         /// <summary>
-        /// Created User Id
+        /// Account number
+        /// </summary>
+        [JsonProperty("account_number")]
+        public string AccountNumber
+        {
+            get
+            {
+                return this.accountNumber;
+            }
+
+            set
+            {
+                this.shouldSerialize["account_number"] = true;
+                this.accountNumber = value;
+            }
+        }
+
+        /// <summary>
+        /// Address
+        /// </summary>
+        [JsonProperty("address", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Address1 Address { get; set; }
+
+        /// <summary>
+        /// GUID for Branding Domain
+        /// </summary>
+        [JsonProperty("branding_domain_id")]
+        public string BrandingDomainId
+        {
+            get
+            {
+                return this.brandingDomainId;
+            }
+
+            set
+            {
+                this.shouldSerialize["branding_domain_id"] = true;
+                this.brandingDomainId = value;
+            }
+        }
+
+        /// <summary>
+        /// If true, will email contact receipt for any transaction
+        /// </summary>
+        [JsonProperty("contact_email_trx_receipt_default", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? ContactEmailTrxReceiptDefault { get; set; }
+
+        /// <summary>
+        /// GUID for Location's default ACH Product Transaction
+        /// </summary>
+        [JsonProperty("default_ach")]
+        public string DefaultAch
+        {
+            get
+            {
+                return this.defaultAch;
+            }
+
+            set
+            {
+                this.shouldSerialize["default_ach"] = true;
+                this.defaultAch = value;
+            }
+        }
+
+        /// <summary>
+        /// GUID for Location's default CC Product Transaction
+        /// </summary>
+        [JsonProperty("default_cc")]
+        public string DefaultCc
+        {
+            get
+            {
+                return this.defaultCc;
+            }
+
+            set
+            {
+                this.shouldSerialize["default_cc"] = true;
+                this.defaultCc = value;
+            }
+        }
+
+        /// <summary>
+        /// Used as from email address when sending various notifications
+        /// </summary>
+        [JsonProperty("email_reply_to")]
+        public string EmailReplyTo
+        {
+            get
+            {
+                return this.emailReplyTo;
+            }
+
+            set
+            {
+                this.shouldSerialize["email_reply_to"] = true;
+                this.emailReplyTo = value;
+            }
+        }
+
+        /// <summary>
+        /// Fax number
+        /// </summary>
+        [JsonProperty("fax")]
+        public string Fax
+        {
+            get
+            {
+                return this.fax;
+            }
+
+            set
+            {
+                this.shouldSerialize["fax"] = true;
+                this.fax = value;
+            }
+        }
+
+        /// <summary>
+        /// Location api ID
+        /// </summary>
+        [JsonProperty("location_api_id")]
+        public string LocationApiId
+        {
+            get
+            {
+                return this.locationApiId;
+            }
+
+            set
+            {
+                this.shouldSerialize["location_api_id"] = true;
+                this.locationApiId = value;
+            }
+        }
+
+        /// <summary>
+        /// Location api key
+        /// </summary>
+        [JsonProperty("location_api_key")]
+        public string LocationApiKey
+        {
+            get
+            {
+                return this.locationApiKey;
+            }
+
+            set
+            {
+                this.shouldSerialize["location_api_key"] = true;
+                this.locationApiKey = value;
+            }
+        }
+
+        /// <summary>
+        /// Can be used to store custom information for location.
+        /// </summary>
+        [JsonProperty("location_c1")]
+        public string LocationC1
+        {
+            get
+            {
+                return this.locationC1;
+            }
+
+            set
+            {
+                this.shouldSerialize["location_c1"] = true;
+                this.locationC1 = value;
+            }
+        }
+
+        /// <summary>
+        /// Can be used to store custom information for location.
+        /// </summary>
+        [JsonProperty("location_c2")]
+        public string LocationC2
+        {
+            get
+            {
+                return this.locationC2;
+            }
+
+            set
+            {
+                this.shouldSerialize["location_c2"] = true;
+                this.locationC2 = value;
+            }
+        }
+
+        /// <summary>
+        /// Can be used to store custom information for location.
+        /// </summary>
+        [JsonProperty("location_c3")]
+        public string LocationC3
+        {
+            get
+            {
+                return this.locationC3;
+            }
+
+            set
+            {
+                this.shouldSerialize["location_c3"] = true;
+                this.locationC3 = value;
+            }
+        }
+
+        /// <summary>
+        /// Name of the company
+        /// </summary>
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Office phone number
+        /// </summary>
+        [JsonProperty("office_phone")]
+        public string OfficePhone
+        {
+            get
+            {
+                return this.officePhone;
+            }
+
+            set
+            {
+                this.shouldSerialize["office_phone"] = true;
+                this.officePhone = value;
+            }
+        }
+
+        /// <summary>
+        /// Office phone extension number
+        /// </summary>
+        [JsonProperty("office_ext_phone")]
+        public string OfficeExtPhone
+        {
+            get
+            {
+                return this.officeExtPhone;
+            }
+
+            set
+            {
+                this.shouldSerialize["office_ext_phone"] = true;
+                this.officeExtPhone = value;
+            }
+        }
+
+        /// <summary>
+        /// Time zone
+        /// </summary>
+        [JsonProperty("tz")]
+        public string Tz
+        {
+            get
+            {
+                return this.tz;
+            }
+
+            set
+            {
+                this.shouldSerialize["tz"] = true;
+                this.tz = value;
+            }
+        }
+
+        /// <summary>
+        /// Location GUID of the parent location
+        /// </summary>
+        [JsonProperty("parent_id")]
+        public string ParentId
+        {
+            get
+            {
+                return this.parentId;
+            }
+
+            set
+            {
+                this.shouldSerialize["parent_id"] = true;
+                this.parentId = value;
+            }
+        }
+
+        /// <summary>
+        /// If set to true will show 'Notes' tab on Contact
+        /// </summary>
+        [JsonProperty("show_contact_notes", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? ShowContactNotes { get; set; }
+
+        /// <summary>
+        /// If set to true will show 'Files' tab on Contact
+        /// </summary>
+        [JsonProperty("show_contact_files", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? ShowContactFiles { get; set; }
+
+        /// <summary>
+        /// User ID Created the register
         /// </summary>
         [JsonProperty("created_user_id")]
         public string CreatedUserId
@@ -752,34 +583,82 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Modified User Id
+        /// Location Type
         /// </summary>
-        [JsonProperty("modified_user_id")]
-        public string ModifiedUserId
+        [JsonProperty("location_type")]
+        public Models.LocationTypeEnum? LocationType
         {
             get
             {
-                return this.modifiedUserId;
+                return this.locationType;
             }
 
             set
             {
-                this.shouldSerialize["modified_user_id"] = true;
-                this.modifiedUserId = value;
+                this.shouldSerialize["location_type"] = true;
+                this.locationType = value;
             }
         }
 
         /// <summary>
-        /// Active status
+        /// Branding domain URL
         /// </summary>
-        [JsonProperty("active", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? Active { get; set; }
+        [JsonProperty("branding_domain_url")]
+        public string BrandingDomainUrl
+        {
+            get
+            {
+                return this.brandingDomainUrl;
+            }
+
+            set
+            {
+                this.shouldSerialize["branding_domain_url"] = true;
+                this.brandingDomainUrl = value;
+            }
+        }
 
         /// <summary>
-        /// Register is active
+        /// Branding domain array
         /// </summary>
-        [JsonProperty("is_active", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? IsActive { get; set; }
+        [JsonProperty("branding_domain")]
+        public object BrandingDomain { get; set; }
+
+        /// <summary>
+        /// Product Transactions array
+        /// </summary>
+        [JsonProperty("product_transactions")]
+        public object ProductTransactions { get; set; }
+
+        /// <summary>
+        /// Product file array
+        /// </summary>
+        [JsonProperty("product_file")]
+        public object ProductFile { get; set; }
+
+        /// <summary>
+        /// Product Token array
+        /// </summary>
+        [JsonProperty("product_accountvault")]
+        public object ProductAccountvault { get; set; }
+
+        /// <summary>
+        /// Product recurring array
+        /// </summary>
+        [JsonProperty("product_recurring")]
+        public object ProductRecurring { get; set; }
+
+        /// <summary>
+        /// Tags array
+        /// </summary>
+        [JsonProperty("tags")]
+        public object Tags { get; set; }
+
+        /// <summary>
+        /// Terminals array
+        /// </summary>
+        [JsonProperty("terminals")]
+        public object Terminals { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -794,161 +673,121 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAchProductTransactionId()
+        public void UnsetAccountNumber()
         {
-            this.shouldSerialize["ach_product_transaction_id"] = false;
+            this.shouldSerialize["account_number"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetEmail()
+        public void UnsetBrandingDomainId()
         {
-            this.shouldSerialize["email"] = false;
+            this.shouldSerialize["branding_domain_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetContactId()
+        public void UnsetDefaultAch()
         {
-            this.shouldSerialize["contact_id"] = false;
+            this.shouldSerialize["default_ach"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetContactApiId()
+        public void UnsetDefaultCc()
         {
-            this.shouldSerialize["contact_api_id"] = false;
+            this.shouldSerialize["default_cc"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetCustomerId()
+        public void UnsetEmailReplyTo()
         {
-            this.shouldSerialize["customer_id"] = false;
+            this.shouldSerialize["email_reply_to"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetExpireDate()
+        public void UnsetFax()
         {
-            this.shouldSerialize["expire_date"] = false;
+            this.shouldSerialize["fax"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetInvoiceNumber()
+        public void UnsetLocationApiId()
         {
-            this.shouldSerialize["invoice_number"] = false;
+            this.shouldSerialize["location_api_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetItemHeader()
+        public void UnsetLocationApiKey()
         {
-            this.shouldSerialize["item_header"] = false;
+            this.shouldSerialize["location_api_key"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetItemFooter()
+        public void UnsetLocationC1()
         {
-            this.shouldSerialize["item_footer"] = false;
+            this.shouldSerialize["location_c1"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAmountDue()
+        public void UnsetLocationC2()
         {
-            this.shouldSerialize["amount_due"] = false;
+            this.shouldSerialize["location_c2"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetNotificationEmail()
+        public void UnsetLocationC3()
         {
-            this.shouldSerialize["notification_email"] = false;
+            this.shouldSerialize["location_c3"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetPaymentStatusId()
+        public void UnsetOfficePhone()
         {
-            this.shouldSerialize["payment_status_id"] = false;
+            this.shouldSerialize["office_phone"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetStatusId()
+        public void UnsetOfficeExtPhone()
         {
-            this.shouldSerialize["status_id"] = false;
+            this.shouldSerialize["office_ext_phone"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetNote()
+        public void UnsetTz()
         {
-            this.shouldSerialize["note"] = false;
+            this.shouldSerialize["tz"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetNotificationDaysBeforeDueDate()
+        public void UnsetParentId()
         {
-            this.shouldSerialize["notification_days_before_due_date"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetNotificationDaysAfterDueDate()
-        {
-            this.shouldSerialize["notification_days_after_due_date"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetRemainingBalance()
-        {
-            this.shouldSerialize["remaining_balance"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetSinglePaymentMinAmount()
-        {
-            this.shouldSerialize["single_payment_min_amount"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetSinglePaymentMaxAmount()
-        {
-            this.shouldSerialize["single_payment_max_amount"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetCellPhone()
-        {
-            this.shouldSerialize["cell_phone"] = false;
+            this.shouldSerialize["parent_id"] = false;
         }
 
         /// <summary>
@@ -962,189 +801,152 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetModifiedUserId()
+        public void UnsetLocationType()
         {
-            this.shouldSerialize["modified_user_id"] = false;
+            this.shouldSerialize["location_type"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetBrandingDomainUrl()
+        {
+            this.shouldSerialize["branding_domain_url"] = false;
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAchProductTransactionId()
+        public bool ShouldSerializeAccountNumber()
         {
-            return this.shouldSerialize["ach_product_transaction_id"];
+            return this.shouldSerialize["account_number"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeEmail()
+        public bool ShouldSerializeBrandingDomainId()
         {
-            return this.shouldSerialize["email"];
+            return this.shouldSerialize["branding_domain_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeContactId()
+        public bool ShouldSerializeDefaultAch()
         {
-            return this.shouldSerialize["contact_id"];
+            return this.shouldSerialize["default_ach"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeContactApiId()
+        public bool ShouldSerializeDefaultCc()
         {
-            return this.shouldSerialize["contact_api_id"];
+            return this.shouldSerialize["default_cc"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeCustomerId()
+        public bool ShouldSerializeEmailReplyTo()
         {
-            return this.shouldSerialize["customer_id"];
+            return this.shouldSerialize["email_reply_to"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeExpireDate()
+        public bool ShouldSerializeFax()
         {
-            return this.shouldSerialize["expire_date"];
+            return this.shouldSerialize["fax"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeInvoiceNumber()
+        public bool ShouldSerializeLocationApiId()
         {
-            return this.shouldSerialize["invoice_number"];
+            return this.shouldSerialize["location_api_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeItemHeader()
+        public bool ShouldSerializeLocationApiKey()
         {
-            return this.shouldSerialize["item_header"];
+            return this.shouldSerialize["location_api_key"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeItemFooter()
+        public bool ShouldSerializeLocationC1()
         {
-            return this.shouldSerialize["item_footer"];
+            return this.shouldSerialize["location_c1"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAmountDue()
+        public bool ShouldSerializeLocationC2()
         {
-            return this.shouldSerialize["amount_due"];
+            return this.shouldSerialize["location_c2"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeNotificationEmail()
+        public bool ShouldSerializeLocationC3()
         {
-            return this.shouldSerialize["notification_email"];
+            return this.shouldSerialize["location_c3"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializePaymentStatusId()
+        public bool ShouldSerializeOfficePhone()
         {
-            return this.shouldSerialize["payment_status_id"];
+            return this.shouldSerialize["office_phone"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeStatusId()
+        public bool ShouldSerializeOfficeExtPhone()
         {
-            return this.shouldSerialize["status_id"];
+            return this.shouldSerialize["office_ext_phone"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeNote()
+        public bool ShouldSerializeTz()
         {
-            return this.shouldSerialize["note"];
+            return this.shouldSerialize["tz"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeNotificationDaysBeforeDueDate()
+        public bool ShouldSerializeParentId()
         {
-            return this.shouldSerialize["notification_days_before_due_date"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeNotificationDaysAfterDueDate()
-        {
-            return this.shouldSerialize["notification_days_after_due_date"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeRemainingBalance()
-        {
-            return this.shouldSerialize["remaining_balance"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeSinglePaymentMinAmount()
-        {
-            return this.shouldSerialize["single_payment_min_amount"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeSinglePaymentMaxAmount()
-        {
-            return this.shouldSerialize["single_payment_max_amount"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeCellPhone()
-        {
-            return this.shouldSerialize["cell_phone"];
+            return this.shouldSerialize["parent_id"];
         }
 
         /// <summary>
@@ -1160,9 +962,18 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeModifiedUserId()
+        public bool ShouldSerializeLocationType()
         {
-            return this.shouldSerialize["modified_user_id"];
+            return this.shouldSerialize["location_type"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeBrandingDomainUrl()
+        {
+            return this.shouldSerialize["branding_domain_url"];
         }
 
         /// <inheritdoc/>
@@ -1177,95 +988,82 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is List5 other &&
-                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
-                ((this.Title == null && other.Title == null) || (this.Title?.Equals(other.Title) == true)) &&
-                ((this.CcProductTransactionId == null && other.CcProductTransactionId == null) || (this.CcProductTransactionId?.Equals(other.CcProductTransactionId) == true)) &&
-                ((this.AchProductTransactionId == null && other.AchProductTransactionId == null) || (this.AchProductTransactionId?.Equals(other.AchProductTransactionId) == true)) &&
-                ((this.DueDate == null && other.DueDate == null) || (this.DueDate?.Equals(other.DueDate) == true)) &&
-                ((this.ItemList == null && other.ItemList == null) || (this.ItemList?.Equals(other.ItemList) == true)) &&
-                ((this.AllowOverpayment == null && other.AllowOverpayment == null) || (this.AllowOverpayment?.Equals(other.AllowOverpayment) == true)) &&
-                ((this.Email == null && other.Email == null) || (this.Email?.Equals(other.Email) == true)) &&
-                ((this.ContactId == null && other.ContactId == null) || (this.ContactId?.Equals(other.ContactId) == true)) &&
-                ((this.ContactApiId == null && other.ContactApiId == null) || (this.ContactApiId?.Equals(other.ContactApiId) == true)) &&
-                ((this.CustomerId == null && other.CustomerId == null) || (this.CustomerId?.Equals(other.CustomerId) == true)) &&
-                ((this.ExpireDate == null && other.ExpireDate == null) || (this.ExpireDate?.Equals(other.ExpireDate) == true)) &&
-                ((this.AllowPartialPay == null && other.AllowPartialPay == null) || (this.AllowPartialPay?.Equals(other.AllowPartialPay) == true)) &&
-                ((this.AttachFilesToEmail == null && other.AttachFilesToEmail == null) || (this.AttachFilesToEmail?.Equals(other.AttachFilesToEmail) == true)) &&
-                ((this.SendEmail == null && other.SendEmail == null) || (this.SendEmail?.Equals(other.SendEmail) == true)) &&
-                ((this.InvoiceNumber == null && other.InvoiceNumber == null) || (this.InvoiceNumber?.Equals(other.InvoiceNumber) == true)) &&
-                ((this.ItemHeader == null && other.ItemHeader == null) || (this.ItemHeader?.Equals(other.ItemHeader) == true)) &&
-                ((this.ItemFooter == null && other.ItemFooter == null) || (this.ItemFooter?.Equals(other.ItemFooter) == true)) &&
-                ((this.AmountDue == null && other.AmountDue == null) || (this.AmountDue?.Equals(other.AmountDue) == true)) &&
-                ((this.NotificationEmail == null && other.NotificationEmail == null) || (this.NotificationEmail?.Equals(other.NotificationEmail) == true)) &&
-                ((this.PaymentStatusId == null && other.PaymentStatusId == null) || (this.PaymentStatusId?.Equals(other.PaymentStatusId) == true)) &&
-                ((this.StatusId == null && other.StatusId == null) || (this.StatusId?.Equals(other.StatusId) == true)) &&
-                ((this.Note == null && other.Note == null) || (this.Note?.Equals(other.Note) == true)) &&
-                ((this.NotificationDaysBeforeDueDate == null && other.NotificationDaysBeforeDueDate == null) || (this.NotificationDaysBeforeDueDate?.Equals(other.NotificationDaysBeforeDueDate) == true)) &&
-                ((this.NotificationDaysAfterDueDate == null && other.NotificationDaysAfterDueDate == null) || (this.NotificationDaysAfterDueDate?.Equals(other.NotificationDaysAfterDueDate) == true)) &&
-                ((this.NotificationOnDueDate == null && other.NotificationOnDueDate == null) || (this.NotificationOnDueDate?.Equals(other.NotificationOnDueDate) == true)) &&
-                ((this.SendTextToPay == null && other.SendTextToPay == null) || (this.SendTextToPay?.Equals(other.SendTextToPay) == true)) &&
-                ((this.Files == null && other.Files == null) || (this.Files?.Equals(other.Files) == true)) &&
-                ((this.RemainingBalance == null && other.RemainingBalance == null) || (this.RemainingBalance?.Equals(other.RemainingBalance) == true)) &&
-                ((this.SinglePaymentMinAmount == null && other.SinglePaymentMinAmount == null) || (this.SinglePaymentMinAmount?.Equals(other.SinglePaymentMinAmount) == true)) &&
-                ((this.SinglePaymentMaxAmount == null && other.SinglePaymentMaxAmount == null) || (this.SinglePaymentMaxAmount?.Equals(other.SinglePaymentMaxAmount) == true)) &&
-                ((this.CellPhone == null && other.CellPhone == null) || (this.CellPhone?.Equals(other.CellPhone) == true)) &&
-                ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
+            return obj is List5 other &&                ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
                 this.CreatedTs.Equals(other.CreatedTs) &&
                 this.ModifiedTs.Equals(other.ModifiedTs) &&
+                ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
+                ((this.Address == null && other.Address == null) || (this.Address?.Equals(other.Address) == true)) &&
+                ((this.BrandingDomainId == null && other.BrandingDomainId == null) || (this.BrandingDomainId?.Equals(other.BrandingDomainId) == true)) &&
+                ((this.ContactEmailTrxReceiptDefault == null && other.ContactEmailTrxReceiptDefault == null) || (this.ContactEmailTrxReceiptDefault?.Equals(other.ContactEmailTrxReceiptDefault) == true)) &&
+                ((this.DefaultAch == null && other.DefaultAch == null) || (this.DefaultAch?.Equals(other.DefaultAch) == true)) &&
+                ((this.DefaultCc == null && other.DefaultCc == null) || (this.DefaultCc?.Equals(other.DefaultCc) == true)) &&
+                ((this.EmailReplyTo == null && other.EmailReplyTo == null) || (this.EmailReplyTo?.Equals(other.EmailReplyTo) == true)) &&
+                ((this.Fax == null && other.Fax == null) || (this.Fax?.Equals(other.Fax) == true)) &&
+                ((this.LocationApiId == null && other.LocationApiId == null) || (this.LocationApiId?.Equals(other.LocationApiId) == true)) &&
+                ((this.LocationApiKey == null && other.LocationApiKey == null) || (this.LocationApiKey?.Equals(other.LocationApiKey) == true)) &&
+                ((this.LocationC1 == null && other.LocationC1 == null) || (this.LocationC1?.Equals(other.LocationC1) == true)) &&
+                ((this.LocationC2 == null && other.LocationC2 == null) || (this.LocationC2?.Equals(other.LocationC2) == true)) &&
+                ((this.LocationC3 == null && other.LocationC3 == null) || (this.LocationC3?.Equals(other.LocationC3) == true)) &&
+                ((this.Name == null && other.Name == null) || (this.Name?.Equals(other.Name) == true)) &&
+                ((this.OfficePhone == null && other.OfficePhone == null) || (this.OfficePhone?.Equals(other.OfficePhone) == true)) &&
+                ((this.OfficeExtPhone == null && other.OfficeExtPhone == null) || (this.OfficeExtPhone?.Equals(other.OfficeExtPhone) == true)) &&
+                ((this.Tz == null && other.Tz == null) || (this.Tz?.Equals(other.Tz) == true)) &&
+                ((this.ParentId == null && other.ParentId == null) || (this.ParentId?.Equals(other.ParentId) == true)) &&
+                ((this.ShowContactNotes == null && other.ShowContactNotes == null) || (this.ShowContactNotes?.Equals(other.ShowContactNotes) == true)) &&
+                ((this.ShowContactFiles == null && other.ShowContactFiles == null) || (this.ShowContactFiles?.Equals(other.ShowContactFiles) == true)) &&
                 ((this.CreatedUserId == null && other.CreatedUserId == null) || (this.CreatedUserId?.Equals(other.CreatedUserId) == true)) &&
-                ((this.ModifiedUserId == null && other.ModifiedUserId == null) || (this.ModifiedUserId?.Equals(other.ModifiedUserId) == true)) &&
-                ((this.Active == null && other.Active == null) || (this.Active?.Equals(other.Active) == true)) &&
-                ((this.IsActive == null && other.IsActive == null) || (this.IsActive?.Equals(other.IsActive) == true));
+                ((this.LocationType == null && other.LocationType == null) || (this.LocationType?.Equals(other.LocationType) == true)) &&
+                ((this.BrandingDomainUrl == null && other.BrandingDomainUrl == null) || (this.BrandingDomainUrl?.Equals(other.BrandingDomainUrl) == true)) &&
+                ((this.BrandingDomain == null && other.BrandingDomain == null) || (this.BrandingDomain?.Equals(other.BrandingDomain) == true)) &&
+                ((this.ProductTransactions == null && other.ProductTransactions == null) || (this.ProductTransactions?.Equals(other.ProductTransactions) == true)) &&
+                ((this.ProductFile == null && other.ProductFile == null) || (this.ProductFile?.Equals(other.ProductFile) == true)) &&
+                ((this.ProductAccountvault == null && other.ProductAccountvault == null) || (this.ProductAccountvault?.Equals(other.ProductAccountvault) == true)) &&
+                ((this.ProductRecurring == null && other.ProductRecurring == null) || (this.ProductRecurring?.Equals(other.ProductRecurring) == true)) &&
+                ((this.Tags == null && other.Tags == null) || (this.Tags?.Equals(other.Tags) == true)) &&
+                ((this.Terminals == null && other.Terminals == null) || (this.Terminals?.Equals(other.Terminals) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title == string.Empty ? "" : this.Title)}");
-            toStringOutput.Add($"this.CcProductTransactionId = {(this.CcProductTransactionId == null ? "null" : this.CcProductTransactionId == string.Empty ? "" : this.CcProductTransactionId)}");
-            toStringOutput.Add($"this.AchProductTransactionId = {(this.AchProductTransactionId == null ? "null" : this.AchProductTransactionId == string.Empty ? "" : this.AchProductTransactionId)}");
-            toStringOutput.Add($"this.DueDate = {(this.DueDate == null ? "null" : this.DueDate == string.Empty ? "" : this.DueDate)}");
-            toStringOutput.Add($"this.ItemList = {(this.ItemList == null ? "null" : $"[{string.Join(", ", this.ItemList)} ]")}");
-            toStringOutput.Add($"this.AllowOverpayment = {(this.AllowOverpayment == null ? "null" : this.AllowOverpayment.ToString())}");
-            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email == string.Empty ? "" : this.Email)}");
-            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId == string.Empty ? "" : this.ContactId)}");
-            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId == string.Empty ? "" : this.ContactApiId)}");
-            toStringOutput.Add($"this.CustomerId = {(this.CustomerId == null ? "null" : this.CustomerId == string.Empty ? "" : this.CustomerId)}");
-            toStringOutput.Add($"this.ExpireDate = {(this.ExpireDate == null ? "null" : this.ExpireDate == string.Empty ? "" : this.ExpireDate)}");
-            toStringOutput.Add($"this.AllowPartialPay = {(this.AllowPartialPay == null ? "null" : this.AllowPartialPay.ToString())}");
-            toStringOutput.Add($"this.AttachFilesToEmail = {(this.AttachFilesToEmail == null ? "null" : this.AttachFilesToEmail.ToString())}");
-            toStringOutput.Add($"this.SendEmail = {(this.SendEmail == null ? "null" : this.SendEmail.ToString())}");
-            toStringOutput.Add($"this.InvoiceNumber = {(this.InvoiceNumber == null ? "null" : this.InvoiceNumber == string.Empty ? "" : this.InvoiceNumber)}");
-            toStringOutput.Add($"this.ItemHeader = {(this.ItemHeader == null ? "null" : this.ItemHeader == string.Empty ? "" : this.ItemHeader)}");
-            toStringOutput.Add($"this.ItemFooter = {(this.ItemFooter == null ? "null" : this.ItemFooter == string.Empty ? "" : this.ItemFooter)}");
-            toStringOutput.Add($"this.AmountDue = {(this.AmountDue == null ? "null" : this.AmountDue.ToString())}");
-            toStringOutput.Add($"this.NotificationEmail = {(this.NotificationEmail == null ? "null" : this.NotificationEmail == string.Empty ? "" : this.NotificationEmail)}");
-            toStringOutput.Add($"this.PaymentStatusId = {(this.PaymentStatusId == null ? "null" : this.PaymentStatusId.ToString())}");
-            toStringOutput.Add($"this.StatusId = {(this.StatusId == null ? "null" : this.StatusId.ToString())}");
-            toStringOutput.Add($"this.Note = {(this.Note == null ? "null" : this.Note == string.Empty ? "" : this.Note)}");
-            toStringOutput.Add($"this.NotificationDaysBeforeDueDate = {(this.NotificationDaysBeforeDueDate == null ? "null" : this.NotificationDaysBeforeDueDate.ToString())}");
-            toStringOutput.Add($"this.NotificationDaysAfterDueDate = {(this.NotificationDaysAfterDueDate == null ? "null" : this.NotificationDaysAfterDueDate.ToString())}");
-            toStringOutput.Add($"this.NotificationOnDueDate = {(this.NotificationOnDueDate == null ? "null" : this.NotificationOnDueDate.ToString())}");
-            toStringOutput.Add($"this.SendTextToPay = {(this.SendTextToPay == null ? "null" : this.SendTextToPay.ToString())}");
-            toStringOutput.Add($"Files = {(this.Files == null ? "null" : this.Files.ToString())}");
-            toStringOutput.Add($"this.RemainingBalance = {(this.RemainingBalance == null ? "null" : this.RemainingBalance.ToString())}");
-            toStringOutput.Add($"this.SinglePaymentMinAmount = {(this.SinglePaymentMinAmount == null ? "null" : this.SinglePaymentMinAmount.ToString())}");
-            toStringOutput.Add($"this.SinglePaymentMaxAmount = {(this.SinglePaymentMaxAmount == null ? "null" : this.SinglePaymentMaxAmount.ToString())}");
-            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone == string.Empty ? "" : this.CellPhone)}");
-            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id == string.Empty ? "" : this.Id)}");
+            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id)}");
             toStringOutput.Add($"this.CreatedTs = {this.CreatedTs}");
             toStringOutput.Add($"this.ModifiedTs = {this.ModifiedTs}");
-            toStringOutput.Add($"this.CreatedUserId = {(this.CreatedUserId == null ? "null" : this.CreatedUserId == string.Empty ? "" : this.CreatedUserId)}");
-            toStringOutput.Add($"this.ModifiedUserId = {(this.ModifiedUserId == null ? "null" : this.ModifiedUserId == string.Empty ? "" : this.ModifiedUserId)}");
-            toStringOutput.Add($"this.Active = {(this.Active == null ? "null" : this.Active.ToString())}");
-            toStringOutput.Add($"this.IsActive = {(this.IsActive == null ? "null" : this.IsActive.ToString())}");
+            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber)}");
+            toStringOutput.Add($"this.Address = {(this.Address == null ? "null" : this.Address.ToString())}");
+            toStringOutput.Add($"this.BrandingDomainId = {(this.BrandingDomainId == null ? "null" : this.BrandingDomainId)}");
+            toStringOutput.Add($"this.ContactEmailTrxReceiptDefault = {(this.ContactEmailTrxReceiptDefault == null ? "null" : this.ContactEmailTrxReceiptDefault.ToString())}");
+            toStringOutput.Add($"this.DefaultAch = {(this.DefaultAch == null ? "null" : this.DefaultAch)}");
+            toStringOutput.Add($"this.DefaultCc = {(this.DefaultCc == null ? "null" : this.DefaultCc)}");
+            toStringOutput.Add($"this.EmailReplyTo = {(this.EmailReplyTo == null ? "null" : this.EmailReplyTo)}");
+            toStringOutput.Add($"this.Fax = {(this.Fax == null ? "null" : this.Fax)}");
+            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId)}");
+            toStringOutput.Add($"this.LocationApiKey = {(this.LocationApiKey == null ? "null" : this.LocationApiKey)}");
+            toStringOutput.Add($"this.LocationC1 = {(this.LocationC1 == null ? "null" : this.LocationC1)}");
+            toStringOutput.Add($"this.LocationC2 = {(this.LocationC2 == null ? "null" : this.LocationC2)}");
+            toStringOutput.Add($"this.LocationC3 = {(this.LocationC3 == null ? "null" : this.LocationC3)}");
+            toStringOutput.Add($"this.Name = {(this.Name == null ? "null" : this.Name)}");
+            toStringOutput.Add($"this.OfficePhone = {(this.OfficePhone == null ? "null" : this.OfficePhone)}");
+            toStringOutput.Add($"this.OfficeExtPhone = {(this.OfficeExtPhone == null ? "null" : this.OfficeExtPhone)}");
+            toStringOutput.Add($"this.Tz = {(this.Tz == null ? "null" : this.Tz)}");
+            toStringOutput.Add($"this.ParentId = {(this.ParentId == null ? "null" : this.ParentId)}");
+            toStringOutput.Add($"this.ShowContactNotes = {(this.ShowContactNotes == null ? "null" : this.ShowContactNotes.ToString())}");
+            toStringOutput.Add($"this.ShowContactFiles = {(this.ShowContactFiles == null ? "null" : this.ShowContactFiles.ToString())}");
+            toStringOutput.Add($"this.CreatedUserId = {(this.CreatedUserId == null ? "null" : this.CreatedUserId)}");
+            toStringOutput.Add($"this.LocationType = {(this.LocationType == null ? "null" : this.LocationType.ToString())}");
+            toStringOutput.Add($"this.BrandingDomainUrl = {(this.BrandingDomainUrl == null ? "null" : this.BrandingDomainUrl)}");
+            toStringOutput.Add($"BrandingDomain = {(this.BrandingDomain == null ? "null" : this.BrandingDomain.ToString())}");
+            toStringOutput.Add($"ProductTransactions = {(this.ProductTransactions == null ? "null" : this.ProductTransactions.ToString())}");
+            toStringOutput.Add($"ProductFile = {(this.ProductFile == null ? "null" : this.ProductFile.ToString())}");
+            toStringOutput.Add($"ProductAccountvault = {(this.ProductAccountvault == null ? "null" : this.ProductAccountvault.ToString())}");
+            toStringOutput.Add($"ProductRecurring = {(this.ProductRecurring == null ? "null" : this.ProductRecurring.ToString())}");
+            toStringOutput.Add($"Tags = {(this.Tags == null ? "null" : this.Tags.ToString())}");
+            toStringOutput.Add($"Terminals = {(this.Terminals == null ? "null" : this.Terminals.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

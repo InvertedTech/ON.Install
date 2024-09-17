@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,8 +19,20 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// AltBankAccount.
     /// </summary>
-    public class AltBankAccount
+    public class AltBankAccount : BaseModel
     {
+        private string routingNumber;
+        private string accountNumber;
+        private string accountHolderName;
+        private string depositType;
+        private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
+        {
+            { "routing_number", false },
+            { "account_number", false },
+            { "account_holder_name", false },
+            { "deposit_type", false },
+        };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AltBankAccount"/> class.
         /// </summary>
@@ -40,35 +53,99 @@ namespace FortisAPI.Standard.Models
             string accountHolderName = null,
             string depositType = null)
         {
-            this.RoutingNumber = routingNumber;
-            this.AccountNumber = accountNumber;
-            this.AccountHolderName = accountHolderName;
-            this.DepositType = depositType;
+            if (routingNumber != null)
+            {
+                this.RoutingNumber = routingNumber;
+            }
+
+            if (accountNumber != null)
+            {
+                this.AccountNumber = accountNumber;
+            }
+
+            if (accountHolderName != null)
+            {
+                this.AccountHolderName = accountHolderName;
+            }
+
+            if (depositType != null)
+            {
+                this.DepositType = depositType;
+            }
+
         }
 
         /// <summary>
         /// Nine-digit Bank routing number.
         /// </summary>
-        [JsonProperty("routing_number", NullValueHandling = NullValueHandling.Ignore)]
-        public string RoutingNumber { get; set; }
+        [JsonProperty("routing_number")]
+        public string RoutingNumber
+        {
+            get
+            {
+                return this.routingNumber;
+            }
+
+            set
+            {
+                this.shouldSerialize["routing_number"] = true;
+                this.routingNumber = value;
+            }
+        }
 
         /// <summary>
         /// Bank account number.
         /// </summary>
-        [JsonProperty("account_number", NullValueHandling = NullValueHandling.Ignore)]
-        public string AccountNumber { get; set; }
+        [JsonProperty("account_number")]
+        public string AccountNumber
+        {
+            get
+            {
+                return this.accountNumber;
+            }
+
+            set
+            {
+                this.shouldSerialize["account_number"] = true;
+                this.accountNumber = value;
+            }
+        }
 
         /// <summary>
         /// Name on bank account.
         /// </summary>
-        [JsonProperty("account_holder_name", NullValueHandling = NullValueHandling.Ignore)]
-        public string AccountHolderName { get; set; }
+        [JsonProperty("account_holder_name")]
+        public string AccountHolderName
+        {
+            get
+            {
+                return this.accountHolderName;
+            }
+
+            set
+            {
+                this.shouldSerialize["account_holder_name"] = true;
+                this.accountHolderName = value;
+            }
+        }
 
         /// <summary>
         /// Deposit type.
         /// </summary>
-        [JsonProperty("deposit_type", NullValueHandling = NullValueHandling.Ignore)]
-        public string DepositType { get; set; }
+        [JsonProperty("deposit_type")]
+        public string DepositType
+        {
+            get
+            {
+                return this.depositType;
+            }
+
+            set
+            {
+                this.shouldSerialize["deposit_type"] = true;
+                this.depositType = value;
+            }
+        }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -78,6 +155,74 @@ namespace FortisAPI.Standard.Models
             this.ToString(toStringOutput);
 
             return $"AltBankAccount : ({string.Join(", ", toStringOutput)})";
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetRoutingNumber()
+        {
+            this.shouldSerialize["routing_number"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetAccountNumber()
+        {
+            this.shouldSerialize["account_number"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetAccountHolderName()
+        {
+            this.shouldSerialize["account_holder_name"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetDepositType()
+        {
+            this.shouldSerialize["deposit_type"] = false;
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeRoutingNumber()
+        {
+            return this.shouldSerialize["routing_number"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeAccountNumber()
+        {
+            return this.shouldSerialize["account_number"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeAccountHolderName()
+        {
+            return this.shouldSerialize["account_holder_name"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeDepositType()
+        {
+            return this.shouldSerialize["deposit_type"];
         }
 
         /// <inheritdoc/>
@@ -92,25 +237,24 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is AltBankAccount other &&
-                ((this.RoutingNumber == null && other.RoutingNumber == null) || (this.RoutingNumber?.Equals(other.RoutingNumber) == true)) &&
+            return obj is AltBankAccount other &&                ((this.RoutingNumber == null && other.RoutingNumber == null) || (this.RoutingNumber?.Equals(other.RoutingNumber) == true)) &&
                 ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
                 ((this.AccountHolderName == null && other.AccountHolderName == null) || (this.AccountHolderName?.Equals(other.AccountHolderName) == true)) &&
                 ((this.DepositType == null && other.DepositType == null) || (this.DepositType?.Equals(other.DepositType) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.RoutingNumber = {(this.RoutingNumber == null ? "null" : this.RoutingNumber == string.Empty ? "" : this.RoutingNumber)}");
-            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber == string.Empty ? "" : this.AccountNumber)}");
-            toStringOutput.Add($"this.AccountHolderName = {(this.AccountHolderName == null ? "null" : this.AccountHolderName == string.Empty ? "" : this.AccountHolderName)}");
-            toStringOutput.Add($"this.DepositType = {(this.DepositType == null ? "null" : this.DepositType == string.Empty ? "" : this.DepositType)}");
+            toStringOutput.Add($"this.RoutingNumber = {(this.RoutingNumber == null ? "null" : this.RoutingNumber)}");
+            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber)}");
+            toStringOutput.Add($"this.AccountHolderName = {(this.AccountHolderName == null ? "null" : this.AccountHolderName)}");
+            toStringOutput.Add($"this.DepositType = {(this.DepositType == null ? "null" : this.DepositType)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

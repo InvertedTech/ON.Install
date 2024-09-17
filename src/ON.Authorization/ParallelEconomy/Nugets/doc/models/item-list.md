@@ -10,14 +10,14 @@
 | Name | Type | Tags | Description |
 |  --- | --- | --- | --- |
 | `Name` | `string` | Required | Item's Name, must be unique on the list<br>**Constraints**: *Maximum Length*: `100` |
-| `Amount` | `double` | Required | Item's Amount<br>**Constraints**: `>= 0`, `<= 9999999.99` |
+| `Amount` | `int` | Required | Item's Amount<br>**Constraints**: `>= -999999999`, `<= 999999999` |
 
 ## Example (as JSON)
 
 ```json
 {
   "name": "Bread",
-  "amount": 20.15
+  "amount": 2015
 }
 ```
 

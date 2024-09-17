@@ -9,16 +9,7 @@
 
 | Name |
 |  --- |
-| `ReceivedEmails` |
-| `IsDeletable` |
-| `Location` |
-| `User` |
-| `Recurrings` |
-| `EmailBlacklist` |
-| `SmsBlacklist` |
 | `Changelogs` |
 | `PostbackLogs` |
-| `CreatedUser` |
-| `Parent` |
-| `Children` |
+| `ProductTransaction` |
 

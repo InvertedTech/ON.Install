@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,32 +19,35 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1QuickInvoicesRequest1.
     /// </summary>
-    public class V1QuickInvoicesRequest1
+    public class V1QuickInvoicesRequest1 : BaseModel
     {
         private string locationId;
         private string title;
         private string ccProductTransactionId;
         private string achProductTransactionId;
         private string dueDate;
+        private bool? bankFundedOnlyOverride;
         private string email;
         private string contactId;
         private string contactApiId;
+        private string quickInvoiceApiId;
         private string customerId;
         private string expireDate;
         private string invoiceNumber;
         private string itemHeader;
         private string itemFooter;
-        private double? amountDue;
+        private int? amountDue;
         private string notificationEmail;
-        private double? paymentStatusId;
-        private double? statusId;
+        private int? statusId;
+        private int? statusCode;
         private string note;
         private int? notificationDaysBeforeDueDate;
         private int? notificationDaysAfterDueDate;
-        private double? remainingBalance;
-        private double? singlePaymentMinAmount;
-        private double? singlePaymentMaxAmount;
+        private int? remainingBalance;
+        private int? singlePaymentMinAmount;
+        private int? singlePaymentMaxAmount;
         private string cellPhone;
+        private List<string> tags;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
             { "location_id", false },
@@ -51,9 +55,11 @@ namespace FortisAPI.Standard.Models
             { "cc_product_transaction_id", false },
             { "ach_product_transaction_id", false },
             { "due_date", false },
+            { "bank_funded_only_override", false },
             { "email", false },
             { "contact_id", false },
             { "contact_api_id", false },
+            { "quick_invoice_api_id", false },
             { "customer_id", false },
             { "expire_date", false },
             { "invoice_number", false },
@@ -61,8 +67,8 @@ namespace FortisAPI.Standard.Models
             { "item_footer", false },
             { "amount_due", false },
             { "notification_email", false },
-            { "payment_status_id", false },
             { "status_id", false },
+            { "status_code", false },
             { "note", false },
             { "notification_days_before_due_date", false },
             { "notification_days_after_due_date", false },
@@ -70,6 +76,7 @@ namespace FortisAPI.Standard.Models
             { "single_payment_min_amount", false },
             { "single_payment_max_amount", true },
             { "cell_phone", false },
+            { "tags", false },
         };
 
         /// <summary>
@@ -89,9 +96,11 @@ namespace FortisAPI.Standard.Models
         /// <param name="dueDate">due_date.</param>
         /// <param name="itemList">item_list.</param>
         /// <param name="allowOverpayment">allow_overpayment.</param>
+        /// <param name="bankFundedOnlyOverride">bank_funded_only_override.</param>
         /// <param name="email">email.</param>
         /// <param name="contactId">contact_id.</param>
         /// <param name="contactApiId">contact_api_id.</param>
+        /// <param name="quickInvoiceApiId">quick_invoice_api_id.</param>
         /// <param name="customerId">customer_id.</param>
         /// <param name="expireDate">expire_date.</param>
         /// <param name="allowPartialPay">allow_partial_pay.</param>
@@ -102,8 +111,8 @@ namespace FortisAPI.Standard.Models
         /// <param name="itemFooter">item_footer.</param>
         /// <param name="amountDue">amount_due.</param>
         /// <param name="notificationEmail">notification_email.</param>
-        /// <param name="paymentStatusId">payment_status_id.</param>
         /// <param name="statusId">status_id.</param>
+        /// <param name="statusCode">status_code.</param>
         /// <param name="note">note.</param>
         /// <param name="notificationDaysBeforeDueDate">notification_days_before_due_date.</param>
         /// <param name="notificationDaysAfterDueDate">notification_days_after_due_date.</param>
@@ -114,17 +123,20 @@ namespace FortisAPI.Standard.Models
         /// <param name="singlePaymentMinAmount">single_payment_min_amount.</param>
         /// <param name="singlePaymentMaxAmount">single_payment_max_amount.</param>
         /// <param name="cellPhone">cell_phone.</param>
+        /// <param name="tags">tags.</param>
         public V1QuickInvoicesRequest1(
             string locationId = null,
             string title = null,
             string ccProductTransactionId = null,
             string achProductTransactionId = null,
             string dueDate = null,
-            List<Models.ItemList> itemList = null,
+            List<Models.ItemList5> itemList = null,
             bool? allowOverpayment = null,
+            bool? bankFundedOnlyOverride = null,
             string email = null,
             string contactId = null,
             string contactApiId = null,
+            string quickInvoiceApiId = null,
             string customerId = null,
             string expireDate = null,
             bool? allowPartialPay = null,
@@ -133,20 +145,21 @@ namespace FortisAPI.Standard.Models
             string invoiceNumber = null,
             string itemHeader = null,
             string itemFooter = null,
-            double? amountDue = null,
+            int? amountDue = null,
             string notificationEmail = null,
-            double? paymentStatusId = null,
-            double? statusId = null,
+            int? statusId = null,
+            int? statusCode = null,
             string note = null,
             int? notificationDaysBeforeDueDate = null,
             int? notificationDaysAfterDueDate = null,
             bool? notificationOnDueDate = null,
             bool? sendTextToPay = null,
             object files = null,
-            double? remainingBalance = null,
-            double? singlePaymentMinAmount = null,
-            double? singlePaymentMaxAmount = 9999999.99,
-            string cellPhone = null)
+            int? remainingBalance = null,
+            int? singlePaymentMinAmount = null,
+            int? singlePaymentMaxAmount = 999999999,
+            string cellPhone = null,
+            List<string> tags = null)
         {
             if (locationId != null)
             {
@@ -175,6 +188,11 @@ namespace FortisAPI.Standard.Models
 
             this.ItemList = itemList;
             this.AllowOverpayment = allowOverpayment;
+            if (bankFundedOnlyOverride != null)
+            {
+                this.BankFundedOnlyOverride = bankFundedOnlyOverride;
+            }
+
             if (email != null)
             {
                 this.Email = email;
@@ -188,6 +206,11 @@ namespace FortisAPI.Standard.Models
             if (contactApiId != null)
             {
                 this.ContactApiId = contactApiId;
+            }
+
+            if (quickInvoiceApiId != null)
+            {
+                this.QuickInvoiceApiId = quickInvoiceApiId;
             }
 
             if (customerId != null)
@@ -228,14 +251,14 @@ namespace FortisAPI.Standard.Models
                 this.NotificationEmail = notificationEmail;
             }
 
-            if (paymentStatusId != null)
-            {
-                this.PaymentStatusId = paymentStatusId;
-            }
-
             if (statusId != null)
             {
                 this.StatusId = statusId;
+            }
+
+            if (statusCode != null)
+            {
+                this.StatusCode = statusCode;
             }
 
             if (note != null)
@@ -270,6 +293,11 @@ namespace FortisAPI.Standard.Models
             if (cellPhone != null)
             {
                 this.CellPhone = cellPhone;
+            }
+
+            if (tags != null)
+            {
+                this.Tags = tags;
             }
 
         }
@@ -368,13 +396,31 @@ namespace FortisAPI.Standard.Models
         /// Item List
         /// </summary>
         [JsonProperty("item_list", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Models.ItemList> ItemList { get; set; }
+        public List<Models.ItemList5> ItemList { get; set; }
 
         /// <summary>
         /// Allow Overpayment.
         /// </summary>
         [JsonProperty("allow_overpayment", NullValueHandling = NullValueHandling.Ignore)]
         public bool? AllowOverpayment { get; set; }
+
+        /// <summary>
+        /// Bank Funded Only override
+        /// </summary>
+        [JsonProperty("bank_funded_only_override")]
+        public bool? BankFundedOnlyOverride
+        {
+            get
+            {
+                return this.bankFundedOnlyOverride;
+            }
+
+            set
+            {
+                this.shouldSerialize["bank_funded_only_override"] = true;
+                this.bankFundedOnlyOverride = value;
+            }
+        }
 
         /// <summary>
         /// Email
@@ -427,6 +473,24 @@ namespace FortisAPI.Standard.Models
             {
                 this.shouldSerialize["contact_api_id"] = true;
                 this.contactApiId = value;
+            }
+        }
+
+        /// <summary>
+        /// Quick Invoice API Id
+        /// </summary>
+        [JsonProperty("quick_invoice_api_id")]
+        public string QuickInvoiceApiId
+        {
+            get
+            {
+                return this.quickInvoiceApiId;
+            }
+
+            set
+            {
+                this.shouldSerialize["quick_invoice_api_id"] = true;
+                this.quickInvoiceApiId = value;
             }
         }
 
@@ -542,7 +606,7 @@ namespace FortisAPI.Standard.Models
         /// Amount Due
         /// </summary>
         [JsonProperty("amount_due")]
-        public double? AmountDue
+        public int? AmountDue
         {
             get
             {
@@ -575,28 +639,10 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Payment Status Id
-        /// </summary>
-        [JsonProperty("payment_status_id")]
-        public double? PaymentStatusId
-        {
-            get
-            {
-                return this.paymentStatusId;
-            }
-
-            set
-            {
-                this.shouldSerialize["payment_status_id"] = true;
-                this.paymentStatusId = value;
-            }
-        }
-
-        /// <summary>
-        /// Status Id
+        /// (DEPRECATED) Status Id
         /// </summary>
         [JsonProperty("status_id")]
-        public double? StatusId
+        public int? StatusId
         {
             get
             {
@@ -607,6 +653,24 @@ namespace FortisAPI.Standard.Models
             {
                 this.shouldSerialize["status_id"] = true;
                 this.statusId = value;
+            }
+        }
+
+        /// <summary>
+        /// Status Code
+        /// </summary>
+        [JsonProperty("status_code")]
+        public int? StatusCode
+        {
+            get
+            {
+                return this.statusCode;
+            }
+
+            set
+            {
+                this.shouldSerialize["status_code"] = true;
+                this.statusCode = value;
             }
         }
 
@@ -686,7 +750,7 @@ namespace FortisAPI.Standard.Models
         /// Remaining Balance
         /// </summary>
         [JsonProperty("remaining_balance")]
-        public double? RemainingBalance
+        public int? RemainingBalance
         {
             get
             {
@@ -704,7 +768,7 @@ namespace FortisAPI.Standard.Models
         /// Single Payment Min Amount
         /// </summary>
         [JsonProperty("single_payment_min_amount")]
-        public double? SinglePaymentMinAmount
+        public int? SinglePaymentMinAmount
         {
             get
             {
@@ -722,7 +786,7 @@ namespace FortisAPI.Standard.Models
         /// Single Payment Max Amount
         /// </summary>
         [JsonProperty("single_payment_max_amount")]
-        public double? SinglePaymentMaxAmount
+        public int? SinglePaymentMaxAmount
         {
             get
             {
@@ -751,6 +815,24 @@ namespace FortisAPI.Standard.Models
             {
                 this.shouldSerialize["cell_phone"] = true;
                 this.cellPhone = value;
+            }
+        }
+
+        /// <summary>
+        /// Tags
+        /// </summary>
+        [JsonProperty("tags")]
+        public List<string> Tags
+        {
+            get
+            {
+                return this.tags;
+            }
+
+            set
+            {
+                this.shouldSerialize["tags"] = true;
+                this.tags = value;
             }
         }
 
@@ -807,6 +889,14 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
+        public void UnsetBankFundedOnlyOverride()
+        {
+            this.shouldSerialize["bank_funded_only_override"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
         public void UnsetEmail()
         {
             this.shouldSerialize["email"] = false;
@@ -826,6 +916,14 @@ namespace FortisAPI.Standard.Models
         public void UnsetContactApiId()
         {
             this.shouldSerialize["contact_api_id"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetQuickInvoiceApiId()
+        {
+            this.shouldSerialize["quick_invoice_api_id"] = false;
         }
 
         /// <summary>
@@ -887,17 +985,17 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetPaymentStatusId()
+        public void UnsetStatusId()
         {
-            this.shouldSerialize["payment_status_id"] = false;
+            this.shouldSerialize["status_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetStatusId()
+        public void UnsetStatusCode()
         {
-            this.shouldSerialize["status_id"] = false;
+            this.shouldSerialize["status_code"] = false;
         }
 
         /// <summary>
@@ -957,6 +1055,14 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTags()
+        {
+            this.shouldSerialize["tags"] = false;
+        }
+
+        /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
@@ -1005,6 +1111,15 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeBankFundedOnlyOverride()
+        {
+            return this.shouldSerialize["bank_funded_only_override"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
         public bool ShouldSerializeEmail()
         {
             return this.shouldSerialize["email"];
@@ -1026,6 +1141,15 @@ namespace FortisAPI.Standard.Models
         public bool ShouldSerializeContactApiId()
         {
             return this.shouldSerialize["contact_api_id"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeQuickInvoiceApiId()
+        {
+            return this.shouldSerialize["quick_invoice_api_id"];
         }
 
         /// <summary>
@@ -1095,18 +1219,18 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializePaymentStatusId()
+        public bool ShouldSerializeStatusId()
         {
-            return this.shouldSerialize["payment_status_id"];
+            return this.shouldSerialize["status_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeStatusId()
+        public bool ShouldSerializeStatusCode()
         {
-            return this.shouldSerialize["status_id"];
+            return this.shouldSerialize["status_code"];
         }
 
         /// <summary>
@@ -1172,6 +1296,15 @@ namespace FortisAPI.Standard.Models
             return this.shouldSerialize["cell_phone"];
         }
 
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTags()
+        {
+            return this.shouldSerialize["tags"];
+        }
+
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
@@ -1184,18 +1317,18 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1QuickInvoicesRequest1 other &&
-                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
+            return obj is V1QuickInvoicesRequest1 other &&                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
                 ((this.Title == null && other.Title == null) || (this.Title?.Equals(other.Title) == true)) &&
                 ((this.CcProductTransactionId == null && other.CcProductTransactionId == null) || (this.CcProductTransactionId?.Equals(other.CcProductTransactionId) == true)) &&
                 ((this.AchProductTransactionId == null && other.AchProductTransactionId == null) || (this.AchProductTransactionId?.Equals(other.AchProductTransactionId) == true)) &&
                 ((this.DueDate == null && other.DueDate == null) || (this.DueDate?.Equals(other.DueDate) == true)) &&
                 ((this.ItemList == null && other.ItemList == null) || (this.ItemList?.Equals(other.ItemList) == true)) &&
                 ((this.AllowOverpayment == null && other.AllowOverpayment == null) || (this.AllowOverpayment?.Equals(other.AllowOverpayment) == true)) &&
+                ((this.BankFundedOnlyOverride == null && other.BankFundedOnlyOverride == null) || (this.BankFundedOnlyOverride?.Equals(other.BankFundedOnlyOverride) == true)) &&
                 ((this.Email == null && other.Email == null) || (this.Email?.Equals(other.Email) == true)) &&
                 ((this.ContactId == null && other.ContactId == null) || (this.ContactId?.Equals(other.ContactId) == true)) &&
                 ((this.ContactApiId == null && other.ContactApiId == null) || (this.ContactApiId?.Equals(other.ContactApiId) == true)) &&
+                ((this.QuickInvoiceApiId == null && other.QuickInvoiceApiId == null) || (this.QuickInvoiceApiId?.Equals(other.QuickInvoiceApiId) == true)) &&
                 ((this.CustomerId == null && other.CustomerId == null) || (this.CustomerId?.Equals(other.CustomerId) == true)) &&
                 ((this.ExpireDate == null && other.ExpireDate == null) || (this.ExpireDate?.Equals(other.ExpireDate) == true)) &&
                 ((this.AllowPartialPay == null && other.AllowPartialPay == null) || (this.AllowPartialPay?.Equals(other.AllowPartialPay) == true)) &&
@@ -1206,8 +1339,8 @@ namespace FortisAPI.Standard.Models
                 ((this.ItemFooter == null && other.ItemFooter == null) || (this.ItemFooter?.Equals(other.ItemFooter) == true)) &&
                 ((this.AmountDue == null && other.AmountDue == null) || (this.AmountDue?.Equals(other.AmountDue) == true)) &&
                 ((this.NotificationEmail == null && other.NotificationEmail == null) || (this.NotificationEmail?.Equals(other.NotificationEmail) == true)) &&
-                ((this.PaymentStatusId == null && other.PaymentStatusId == null) || (this.PaymentStatusId?.Equals(other.PaymentStatusId) == true)) &&
                 ((this.StatusId == null && other.StatusId == null) || (this.StatusId?.Equals(other.StatusId) == true)) &&
+                ((this.StatusCode == null && other.StatusCode == null) || (this.StatusCode?.Equals(other.StatusCode) == true)) &&
                 ((this.Note == null && other.Note == null) || (this.Note?.Equals(other.Note) == true)) &&
                 ((this.NotificationDaysBeforeDueDate == null && other.NotificationDaysBeforeDueDate == null) || (this.NotificationDaysBeforeDueDate?.Equals(other.NotificationDaysBeforeDueDate) == true)) &&
                 ((this.NotificationDaysAfterDueDate == null && other.NotificationDaysAfterDueDate == null) || (this.NotificationDaysAfterDueDate?.Equals(other.NotificationDaysAfterDueDate) == true)) &&
@@ -1217,39 +1350,41 @@ namespace FortisAPI.Standard.Models
                 ((this.RemainingBalance == null && other.RemainingBalance == null) || (this.RemainingBalance?.Equals(other.RemainingBalance) == true)) &&
                 ((this.SinglePaymentMinAmount == null && other.SinglePaymentMinAmount == null) || (this.SinglePaymentMinAmount?.Equals(other.SinglePaymentMinAmount) == true)) &&
                 ((this.SinglePaymentMaxAmount == null && other.SinglePaymentMaxAmount == null) || (this.SinglePaymentMaxAmount?.Equals(other.SinglePaymentMaxAmount) == true)) &&
-                ((this.CellPhone == null && other.CellPhone == null) || (this.CellPhone?.Equals(other.CellPhone) == true));
+                ((this.CellPhone == null && other.CellPhone == null) || (this.CellPhone?.Equals(other.CellPhone) == true)) &&
+                ((this.Tags == null && other.Tags == null) || (this.Tags?.Equals(other.Tags) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title == string.Empty ? "" : this.Title)}");
-            toStringOutput.Add($"this.CcProductTransactionId = {(this.CcProductTransactionId == null ? "null" : this.CcProductTransactionId == string.Empty ? "" : this.CcProductTransactionId)}");
-            toStringOutput.Add($"this.AchProductTransactionId = {(this.AchProductTransactionId == null ? "null" : this.AchProductTransactionId == string.Empty ? "" : this.AchProductTransactionId)}");
-            toStringOutput.Add($"this.DueDate = {(this.DueDate == null ? "null" : this.DueDate == string.Empty ? "" : this.DueDate)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title)}");
+            toStringOutput.Add($"this.CcProductTransactionId = {(this.CcProductTransactionId == null ? "null" : this.CcProductTransactionId)}");
+            toStringOutput.Add($"this.AchProductTransactionId = {(this.AchProductTransactionId == null ? "null" : this.AchProductTransactionId)}");
+            toStringOutput.Add($"this.DueDate = {(this.DueDate == null ? "null" : this.DueDate)}");
             toStringOutput.Add($"this.ItemList = {(this.ItemList == null ? "null" : $"[{string.Join(", ", this.ItemList)} ]")}");
             toStringOutput.Add($"this.AllowOverpayment = {(this.AllowOverpayment == null ? "null" : this.AllowOverpayment.ToString())}");
-            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email == string.Empty ? "" : this.Email)}");
-            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId == string.Empty ? "" : this.ContactId)}");
-            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId == string.Empty ? "" : this.ContactApiId)}");
-            toStringOutput.Add($"this.CustomerId = {(this.CustomerId == null ? "null" : this.CustomerId == string.Empty ? "" : this.CustomerId)}");
-            toStringOutput.Add($"this.ExpireDate = {(this.ExpireDate == null ? "null" : this.ExpireDate == string.Empty ? "" : this.ExpireDate)}");
+            toStringOutput.Add($"this.BankFundedOnlyOverride = {(this.BankFundedOnlyOverride == null ? "null" : this.BankFundedOnlyOverride.ToString())}");
+            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email)}");
+            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId)}");
+            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId)}");
+            toStringOutput.Add($"this.QuickInvoiceApiId = {(this.QuickInvoiceApiId == null ? "null" : this.QuickInvoiceApiId)}");
+            toStringOutput.Add($"this.CustomerId = {(this.CustomerId == null ? "null" : this.CustomerId)}");
+            toStringOutput.Add($"this.ExpireDate = {(this.ExpireDate == null ? "null" : this.ExpireDate)}");
             toStringOutput.Add($"this.AllowPartialPay = {(this.AllowPartialPay == null ? "null" : this.AllowPartialPay.ToString())}");
             toStringOutput.Add($"this.AttachFilesToEmail = {(this.AttachFilesToEmail == null ? "null" : this.AttachFilesToEmail.ToString())}");
             toStringOutput.Add($"this.SendEmail = {(this.SendEmail == null ? "null" : this.SendEmail.ToString())}");
-            toStringOutput.Add($"this.InvoiceNumber = {(this.InvoiceNumber == null ? "null" : this.InvoiceNumber == string.Empty ? "" : this.InvoiceNumber)}");
-            toStringOutput.Add($"this.ItemHeader = {(this.ItemHeader == null ? "null" : this.ItemHeader == string.Empty ? "" : this.ItemHeader)}");
-            toStringOutput.Add($"this.ItemFooter = {(this.ItemFooter == null ? "null" : this.ItemFooter == string.Empty ? "" : this.ItemFooter)}");
+            toStringOutput.Add($"this.InvoiceNumber = {(this.InvoiceNumber == null ? "null" : this.InvoiceNumber)}");
+            toStringOutput.Add($"this.ItemHeader = {(this.ItemHeader == null ? "null" : this.ItemHeader)}");
+            toStringOutput.Add($"this.ItemFooter = {(this.ItemFooter == null ? "null" : this.ItemFooter)}");
             toStringOutput.Add($"this.AmountDue = {(this.AmountDue == null ? "null" : this.AmountDue.ToString())}");
-            toStringOutput.Add($"this.NotificationEmail = {(this.NotificationEmail == null ? "null" : this.NotificationEmail == string.Empty ? "" : this.NotificationEmail)}");
-            toStringOutput.Add($"this.PaymentStatusId = {(this.PaymentStatusId == null ? "null" : this.PaymentStatusId.ToString())}");
+            toStringOutput.Add($"this.NotificationEmail = {(this.NotificationEmail == null ? "null" : this.NotificationEmail)}");
             toStringOutput.Add($"this.StatusId = {(this.StatusId == null ? "null" : this.StatusId.ToString())}");
-            toStringOutput.Add($"this.Note = {(this.Note == null ? "null" : this.Note == string.Empty ? "" : this.Note)}");
+            toStringOutput.Add($"this.StatusCode = {(this.StatusCode == null ? "null" : this.StatusCode.ToString())}");
+            toStringOutput.Add($"this.Note = {(this.Note == null ? "null" : this.Note)}");
             toStringOutput.Add($"this.NotificationDaysBeforeDueDate = {(this.NotificationDaysBeforeDueDate == null ? "null" : this.NotificationDaysBeforeDueDate.ToString())}");
             toStringOutput.Add($"this.NotificationDaysAfterDueDate = {(this.NotificationDaysAfterDueDate == null ? "null" : this.NotificationDaysAfterDueDate.ToString())}");
             toStringOutput.Add($"this.NotificationOnDueDate = {(this.NotificationOnDueDate == null ? "null" : this.NotificationOnDueDate.ToString())}");
@@ -1258,7 +1393,10 @@ namespace FortisAPI.Standard.Models
             toStringOutput.Add($"this.RemainingBalance = {(this.RemainingBalance == null ? "null" : this.RemainingBalance.ToString())}");
             toStringOutput.Add($"this.SinglePaymentMinAmount = {(this.SinglePaymentMinAmount == null ? "null" : this.SinglePaymentMinAmount.ToString())}");
             toStringOutput.Add($"this.SinglePaymentMaxAmount = {(this.SinglePaymentMaxAmount == null ? "null" : this.SinglePaymentMaxAmount.ToString())}");
-            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone == string.Empty ? "" : this.CellPhone)}");
+            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone)}");
+            toStringOutput.Add($"this.Tags = {(this.Tags == null ? "null" : $"[{string.Join(", ", this.Tags)} ]")}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

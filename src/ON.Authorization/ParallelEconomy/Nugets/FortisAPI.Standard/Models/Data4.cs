@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,12 +19,18 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Data4.
     /// </summary>
-    public class Data4
+    public class Data4 : BaseModel
     {
-        private string deviceTermApiId;
+        private string accountHolderName;
+        private List<string> tags;
+        private string routing;
+        private Models.ReasonCodeIdEnum? reasonCodeId;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
-            { "device_term_api_id", false },
+            { "account_holder_name", false },
+            { "tags", false },
+            { "routing", false },
+            { "reason_code_id", false },
         };
 
         /// <summary>
@@ -36,123 +43,225 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Data4"/> class.
         /// </summary>
-        /// <param name="locationId">location_id.</param>
-        /// <param name="terminalId">terminal_id.</param>
-        /// <param name="requireSignature">require_signature.</param>
-        /// <param name="termsConditions">terms_conditions.</param>
+        /// <param name="declinedRecurringTransactionId">declined_recurring_transaction_id.</param>
+        /// <param name="accountNumber">account_number.</param>
+        /// <param name="expDate">exp_date.</param>
+        /// <param name="transactionAmount">transaction_amount.</param>
+        /// <param name="firstSix">first_six.</param>
+        /// <param name="lastFour">last_four.</param>
+        /// <param name="accountHolderName">account_holder_name.</param>
+        /// <param name="description">description.</param>
+        /// <param name="billingAddress">billing_address.</param>
+        /// <param name="tags">tags.</param>
         /// <param name="id">id.</param>
+        /// <param name="routing">routing.</param>
+        /// <param name="statusId">status_id.</param>
         /// <param name="reasonCodeId">reason_code_id.</param>
-        /// <param name="signature">signature.</param>
+        /// <param name="typeId">type_id.</param>
         /// <param name="createdTs">created_ts.</param>
-        /// <param name="modifiedTs">modified_ts.</param>
         /// <param name="createdUserId">created_user_id.</param>
-        /// <param name="deviceTermApiId">device_term_api_id.</param>
         public Data4(
-            string locationId,
-            string terminalId,
-            bool requireSignature,
-            string termsConditions,
-            string id,
-            int reasonCodeId,
-            Models.Signature signature,
-            int createdTs,
-            int modifiedTs,
-            string createdUserId,
-            string deviceTermApiId = null)
+            string declinedRecurringTransactionId,
+            string accountNumber,
+            string expDate,
+            int transactionAmount,
+            string firstSix,
+            string lastFour,
+            string accountHolderName = null,
+            string description = null,
+            Models.BillingAddress billingAddress = null,
+            List<string> tags = null,
+            string id = null,
+            string routing = null,
+            double? statusId = null,
+            Models.ReasonCodeIdEnum? reasonCodeId = null,
+            double? typeId = null,
+            int? createdTs = null,
+            string createdUserId = null)
         {
-            this.LocationId = locationId;
-            this.TerminalId = terminalId;
-            this.RequireSignature = requireSignature;
-            if (deviceTermApiId != null)
+            this.DeclinedRecurringTransactionId = declinedRecurringTransactionId;
+            this.AccountNumber = accountNumber;
+            if (accountHolderName != null)
             {
-                this.DeviceTermApiId = deviceTermApiId;
+                this.AccountHolderName = accountHolderName;
             }
 
-            this.TermsConditions = termsConditions;
+            this.ExpDate = expDate;
+            this.TransactionAmount = transactionAmount;
+            this.Description = description;
+            this.BillingAddress = billingAddress;
+            if (tags != null)
+            {
+                this.Tags = tags;
+            }
+
             this.Id = id;
-            this.ReasonCodeId = reasonCodeId;
-            this.Signature = signature;
+            this.FirstSix = firstSix;
+            this.LastFour = lastFour;
+            if (routing != null)
+            {
+                this.Routing = routing;
+            }
+
+            this.StatusId = statusId;
+            if (reasonCodeId != null)
+            {
+                this.ReasonCodeId = reasonCodeId;
+            }
+
+            this.TypeId = typeId;
             this.CreatedTs = createdTs;
-            this.ModifiedTs = modifiedTs;
             this.CreatedUserId = createdUserId;
         }
 
         /// <summary>
-        /// Location ID
+        /// Declined Recurring Transaction Id
         /// </summary>
-        [JsonProperty("location_id")]
-        public string LocationId { get; set; }
+        [JsonProperty("declined_recurring_transaction_id")]
+        public string DeclinedRecurringTransactionId { get; set; }
 
         /// <summary>
-        /// Terminal ID
+        /// Account Number
         /// </summary>
-        [JsonProperty("terminal_id")]
-        public string TerminalId { get; set; }
+        [JsonProperty("account_number")]
+        public string AccountNumber { get; set; }
 
         /// <summary>
-        /// Set to true or 1 to require a signature from the customer
+        /// Account Holder Name
         /// </summary>
-        [JsonProperty("require_signature")]
-        public bool RequireSignature { get; set; }
-
-        /// <summary>
-        /// Can be used for associating record to external systems. Must be unique per location.
-        /// </summary>
-        [JsonProperty("device_term_api_id")]
-        public string DeviceTermApiId
+        [JsonProperty("account_holder_name")]
+        public string AccountHolderName
         {
             get
             {
-                return this.deviceTermApiId;
+                return this.accountHolderName;
             }
 
             set
             {
-                this.shouldSerialize["device_term_api_id"] = true;
-                this.deviceTermApiId = value;
+                this.shouldSerialize["account_holder_name"] = true;
+                this.accountHolderName = value;
             }
         }
 
         /// <summary>
-        /// This is the message that is displayed on the screen when prompting for a signature.
+        /// Exp Date
         /// </summary>
-        [JsonProperty("terms_conditions")]
-        public string TermsConditions { get; set; }
+        [JsonProperty("exp_date")]
+        public string ExpDate { get; set; }
 
         /// <summary>
-        /// Device term ID
+        /// Transaction Amount
         /// </summary>
-        [JsonProperty("id")]
+        [JsonProperty("transaction_amount")]
+        public int TransactionAmount { get; set; }
+
+        /// <summary>
+        /// Description
+        /// </summary>
+        [JsonProperty("description", NullValueHandling = NullValueHandling.Ignore)]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Billing Address Object
+        /// </summary>
+        [JsonProperty("billing_address", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.BillingAddress BillingAddress { get; set; }
+
+        /// <summary>
+        /// Tags
+        /// </summary>
+        [JsonProperty("tags")]
+        public List<string> Tags
+        {
+            get
+            {
+                return this.tags;
+            }
+
+            set
+            {
+                this.shouldSerialize["tags"] = true;
+                this.tags = value;
+            }
+        }
+
+        /// <summary>
+        /// Id
+        /// </summary>
+        [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
         public string Id { get; set; }
 
         /// <summary>
-        /// Reason code ID
+        /// First Six
         /// </summary>
-        [JsonProperty("reason_code_id")]
-        public int ReasonCodeId { get; set; }
+        [JsonProperty("first_six")]
+        public string FirstSix { get; set; }
 
         /// <summary>
-        /// A JSON object containing all the info about and including the signature blob (base64).
+        /// Last Four
         /// </summary>
-        [JsonProperty("signature")]
-        public Models.Signature Signature { get; set; }
+        [JsonProperty("last_four")]
+        public string LastFour { get; set; }
+
+        /// <summary>
+        /// Routing
+        /// </summary>
+        [JsonProperty("routing")]
+        public string Routing
+        {
+            get
+            {
+                return this.routing;
+            }
+
+            set
+            {
+                this.shouldSerialize["routing"] = true;
+                this.routing = value;
+            }
+        }
+
+        /// <summary>
+        /// Status Id
+        /// </summary>
+        [JsonProperty("status_id", NullValueHandling = NullValueHandling.Ignore)]
+        public double? StatusId { get; set; }
+
+        /// <summary>
+        /// Reason Code Id
+        /// </summary>
+        [JsonProperty("reason_code_id")]
+        public Models.ReasonCodeIdEnum? ReasonCodeId
+        {
+            get
+            {
+                return this.reasonCodeId;
+            }
+
+            set
+            {
+                this.shouldSerialize["reason_code_id"] = true;
+                this.reasonCodeId = value;
+            }
+        }
+
+        /// <summary>
+        /// Type Id
+        /// </summary>
+        [JsonProperty("type_id", NullValueHandling = NullValueHandling.Ignore)]
+        public double? TypeId { get; set; }
 
         /// <summary>
         /// Created Time Stamp
         /// </summary>
-        [JsonProperty("created_ts")]
-        public int CreatedTs { get; set; }
+        [JsonProperty("created_ts", NullValueHandling = NullValueHandling.Ignore)]
+        public int? CreatedTs { get; set; }
 
         /// <summary>
-        /// Modified Time Stamp
+        /// User ID Created the register
         /// </summary>
-        [JsonProperty("modified_ts")]
-        public int ModifiedTs { get; set; }
-
-        /// <summary>
-        /// System generated id for user who created record
-        /// </summary>
-        [JsonProperty("created_user_id")]
+        [JsonProperty("created_user_id", NullValueHandling = NullValueHandling.Ignore)]
         public string CreatedUserId { get; set; }
 
         /// <inheritdoc/>
@@ -168,18 +277,69 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetDeviceTermApiId()
+        public void UnsetAccountHolderName()
         {
-            this.shouldSerialize["device_term_api_id"] = false;
+            this.shouldSerialize["account_holder_name"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTags()
+        {
+            this.shouldSerialize["tags"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetRouting()
+        {
+            this.shouldSerialize["routing"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetReasonCodeId()
+        {
+            this.shouldSerialize["reason_code_id"] = false;
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeDeviceTermApiId()
+        public bool ShouldSerializeAccountHolderName()
         {
-            return this.shouldSerialize["device_term_api_id"];
+            return this.shouldSerialize["account_holder_name"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTags()
+        {
+            return this.shouldSerialize["tags"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeRouting()
+        {
+            return this.shouldSerialize["routing"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeReasonCodeId()
+        {
+            return this.shouldSerialize["reason_code_id"];
         }
 
         /// <inheritdoc/>
@@ -194,39 +354,50 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Data4 other &&
-                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
-                ((this.TerminalId == null && other.TerminalId == null) || (this.TerminalId?.Equals(other.TerminalId) == true)) &&
-                this.RequireSignature.Equals(other.RequireSignature) &&
-                ((this.DeviceTermApiId == null && other.DeviceTermApiId == null) || (this.DeviceTermApiId?.Equals(other.DeviceTermApiId) == true)) &&
-                ((this.TermsConditions == null && other.TermsConditions == null) || (this.TermsConditions?.Equals(other.TermsConditions) == true)) &&
+            return obj is Data4 other &&                ((this.DeclinedRecurringTransactionId == null && other.DeclinedRecurringTransactionId == null) || (this.DeclinedRecurringTransactionId?.Equals(other.DeclinedRecurringTransactionId) == true)) &&
+                ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
+                ((this.AccountHolderName == null && other.AccountHolderName == null) || (this.AccountHolderName?.Equals(other.AccountHolderName) == true)) &&
+                ((this.ExpDate == null && other.ExpDate == null) || (this.ExpDate?.Equals(other.ExpDate) == true)) &&
+                this.TransactionAmount.Equals(other.TransactionAmount) &&
+                ((this.Description == null && other.Description == null) || (this.Description?.Equals(other.Description) == true)) &&
+                ((this.BillingAddress == null && other.BillingAddress == null) || (this.BillingAddress?.Equals(other.BillingAddress) == true)) &&
+                ((this.Tags == null && other.Tags == null) || (this.Tags?.Equals(other.Tags) == true)) &&
                 ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
-                this.ReasonCodeId.Equals(other.ReasonCodeId) &&
-                ((this.Signature == null && other.Signature == null) || (this.Signature?.Equals(other.Signature) == true)) &&
-                this.CreatedTs.Equals(other.CreatedTs) &&
-                this.ModifiedTs.Equals(other.ModifiedTs) &&
+                ((this.FirstSix == null && other.FirstSix == null) || (this.FirstSix?.Equals(other.FirstSix) == true)) &&
+                ((this.LastFour == null && other.LastFour == null) || (this.LastFour?.Equals(other.LastFour) == true)) &&
+                ((this.Routing == null && other.Routing == null) || (this.Routing?.Equals(other.Routing) == true)) &&
+                ((this.StatusId == null && other.StatusId == null) || (this.StatusId?.Equals(other.StatusId) == true)) &&
+                ((this.ReasonCodeId == null && other.ReasonCodeId == null) || (this.ReasonCodeId?.Equals(other.ReasonCodeId) == true)) &&
+                ((this.TypeId == null && other.TypeId == null) || (this.TypeId?.Equals(other.TypeId) == true)) &&
+                ((this.CreatedTs == null && other.CreatedTs == null) || (this.CreatedTs?.Equals(other.CreatedTs) == true)) &&
                 ((this.CreatedUserId == null && other.CreatedUserId == null) || (this.CreatedUserId?.Equals(other.CreatedUserId) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.TerminalId = {(this.TerminalId == null ? "null" : this.TerminalId == string.Empty ? "" : this.TerminalId)}");
-            toStringOutput.Add($"this.RequireSignature = {this.RequireSignature}");
-            toStringOutput.Add($"this.DeviceTermApiId = {(this.DeviceTermApiId == null ? "null" : this.DeviceTermApiId == string.Empty ? "" : this.DeviceTermApiId)}");
-            toStringOutput.Add($"this.TermsConditions = {(this.TermsConditions == null ? "null" : this.TermsConditions == string.Empty ? "" : this.TermsConditions)}");
-            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id == string.Empty ? "" : this.Id)}");
-            toStringOutput.Add($"this.ReasonCodeId = {this.ReasonCodeId}");
-            toStringOutput.Add($"this.Signature = {(this.Signature == null ? "null" : this.Signature.ToString())}");
-            toStringOutput.Add($"this.CreatedTs = {this.CreatedTs}");
-            toStringOutput.Add($"this.ModifiedTs = {this.ModifiedTs}");
-            toStringOutput.Add($"this.CreatedUserId = {(this.CreatedUserId == null ? "null" : this.CreatedUserId == string.Empty ? "" : this.CreatedUserId)}");
+            toStringOutput.Add($"this.DeclinedRecurringTransactionId = {(this.DeclinedRecurringTransactionId == null ? "null" : this.DeclinedRecurringTransactionId)}");
+            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber)}");
+            toStringOutput.Add($"this.AccountHolderName = {(this.AccountHolderName == null ? "null" : this.AccountHolderName)}");
+            toStringOutput.Add($"this.ExpDate = {(this.ExpDate == null ? "null" : this.ExpDate)}");
+            toStringOutput.Add($"this.TransactionAmount = {this.TransactionAmount}");
+            toStringOutput.Add($"this.Description = {(this.Description == null ? "null" : this.Description)}");
+            toStringOutput.Add($"this.BillingAddress = {(this.BillingAddress == null ? "null" : this.BillingAddress.ToString())}");
+            toStringOutput.Add($"this.Tags = {(this.Tags == null ? "null" : $"[{string.Join(", ", this.Tags)} ]")}");
+            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id)}");
+            toStringOutput.Add($"this.FirstSix = {(this.FirstSix == null ? "null" : this.FirstSix)}");
+            toStringOutput.Add($"this.LastFour = {(this.LastFour == null ? "null" : this.LastFour)}");
+            toStringOutput.Add($"this.Routing = {(this.Routing == null ? "null" : this.Routing)}");
+            toStringOutput.Add($"this.StatusId = {(this.StatusId == null ? "null" : this.StatusId.ToString())}");
+            toStringOutput.Add($"this.ReasonCodeId = {(this.ReasonCodeId == null ? "null" : this.ReasonCodeId.ToString())}");
+            toStringOutput.Add($"this.TypeId = {(this.TypeId == null ? "null" : this.TypeId.ToString())}");
+            toStringOutput.Add($"this.CreatedTs = {(this.CreatedTs == null ? "null" : this.CreatedTs.ToString())}");
+            toStringOutput.Add($"this.CreatedUserId = {(this.CreatedUserId == null ? "null" : this.CreatedUserId)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

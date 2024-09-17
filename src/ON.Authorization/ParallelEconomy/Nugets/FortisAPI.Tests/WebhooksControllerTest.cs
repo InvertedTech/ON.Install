@@ -8,13 +8,14 @@ namespace FortisAPI.Tests
     using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Controllers;
     using FortisAPI.Standard.Exceptions;
     using FortisAPI.Standard.Http.Client;
     using FortisAPI.Standard.Http.Response;
+    using FortisAPI.Standard.Models.Containers;
     using FortisAPI.Standard.Utilities;
-    using FortisAPI.Tests.Helpers;
     using Newtonsoft.Json.Converters;
     using NUnit.Framework;
 
@@ -59,7 +60,7 @@ namespace FortisAPI.Tests
             }
 
             // Test response code
-            Assert.AreEqual(204, this.HttpCallBackHandler.Response.StatusCode, "Status should be 204");
+            Assert.AreEqual(204, HttpCallBack.Response.StatusCode, "Status should be 204");
 
             // Test headers
             Dictionary<string, string> headers = new Dictionary<string, string>();
@@ -68,15 +69,15 @@ namespace FortisAPI.Tests
             Assert.IsTrue(
                     TestHelper.AreHeadersProperSubsetOf (
                     headers,
-                    this.HttpCallBackHandler.Response.Headers),
+                    HttpCallBack.Response.Headers),
                     "Headers should match");
 
             // Test whether the captured response is as we expected
             Assert.IsNotNull(result, "Result should exist");
             Assert.IsTrue(
-                    TestHelper.IsJsonObjectProperSubsetOf(
-                    "{\"type\":\"Webhook\",\"data\":{\"attempt_interval\":300,\"basic_auth_username\":\"tester\",\"basic_auth_password\":\"Test@522\",\"expands\":\"changelogs,tags\",\"format\":\"api-default\",\"is_active\":true,\"location_id\":\"11e95f8ec39de8fbdb0a4f1a\",\"on_create\":1,\"on_update\":1,\"on_delete\":1,\"postback_config_id\":\"11e95f8ec39de8fbdb0a4f1a\",\"product_transaction_id\":\"11e95f8ec39de8fbdb0a4f1a\",\"resource\":\"contact\",\"number_of_attempts\":1,\"url\":\"https://127.0.0.1/receiver\",\"id\":\"11e95f8ec39de8fbdb0a4f1a\"}}",
-                    TestHelper.ConvertStreamToString(this.HttpCallBackHandler.Response.RawBody),
+                    TestHelper.IsProperSubsetOf(
+                    "{\"type\":\"Webhook\",\"data\":{\"attempt_interval\":300,\"basic_auth_username\":\"username\",\"basic_auth_password\":\"password\",\"expands\":\"changelogs,tags\",\"format\":\"api-default\",\"is_active\":true,\"location_id\":\"11e95f8ec39de8fbdb0a4f1a\",\"on_create\":true,\"on_update\":true,\"on_delete\":true,\"postback_config_id\":\"11e95f8ec39de8fbdb0a4f1a\",\"product_transaction_id\":\"11e95f8ec39de8fbdb0a4f1a\",\"resource\":\"contact\",\"number_of_attempts\":1,\"url\":\"https://127.0.0.1/receiver\",\"id\":\"11e95f8ec39de8fbdb0a4f1a\",\"postback_logs\":[{\"id\":\"11e95f8ec39de8fbdb0a4f1a\",\"postback_config_id\":\"11e95f8ec39de8fbdb0a4f1a\",\"changelog_id\":\"11e95f8ec39de8fbdb0a4f1a\",\"next_run_ts\":1422040992,\"created_ts\":1422040992,\"model_id\":\"11e95f8ec39de8fbdb0a4f1a\"}]}}",
+                    TestHelper.ConvertStreamToString(HttpCallBack.Response.RawBody),
                     false,
                     true,
                     false),

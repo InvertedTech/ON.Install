@@ -7,6 +7,8 @@ import "Protos/ON/Fragments/Authorization/Payment/Crypto/CryptoRecords.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Fake/FakeSubscriptionRecord.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Paypal/PaypalRecords.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Paypal/PaypalSubscriptionRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeRecords.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeSubscriptionRecord.proto";
 
 service PaymentInterface {
   rpc GetNewDetails (GetNewDetailsRequest) returns (GetNewDetailsResponse)
@@ -31,6 +33,7 @@ message GetNewDetailsRequest {
 message GetNewDetailsResponse {
   Crypto.CryptoNewDetails Crypto = 1;
   Paypal.PaypalNewDetails Paypal = 5;
+  Stripe.StripeNewDetails Stripe = 6;
 }
 
 
@@ -40,4 +43,5 @@ message GetOwnSubscriptionRecordsRequest {
 message GetOwnSubscriptionRecordsResponse {
     Fake.FakeSubscriptionRecord Fake = 2;
     repeated Paypal.PaypalSubscriptionFullRecord Paypal = 5;
+    repeated Stripe.StripeSubscriptionFullRecord Stripe = 6;
 }

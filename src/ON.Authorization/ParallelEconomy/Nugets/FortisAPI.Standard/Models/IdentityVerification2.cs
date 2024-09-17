@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,8 +19,20 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// IdentityVerification2.
     /// </summary>
-    public class IdentityVerification2
+    public class IdentityVerification2 : BaseModel
     {
+        private string dlState;
+        private string dlNumber;
+        private string ssn4;
+        private string dobYear;
+        private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
+        {
+            { "dl_state", false },
+            { "dl_number", false },
+            { "ssn4", false },
+            { "dob_year", false },
+        };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="IdentityVerification2"/> class.
         /// </summary>
@@ -32,34 +45,107 @@ namespace FortisAPI.Standard.Models
         /// </summary>
         /// <param name="dlState">dl_state.</param>
         /// <param name="dlNumber">dl_number.</param>
+        /// <param name="ssn4">ssn4.</param>
         /// <param name="dobYear">dob_year.</param>
         public IdentityVerification2(
             string dlState = null,
             string dlNumber = null,
+            string ssn4 = null,
             string dobYear = null)
         {
-            this.DlState = dlState;
-            this.DlNumber = dlNumber;
-            this.DobYear = dobYear;
+            if (dlState != null)
+            {
+                this.DlState = dlState;
+            }
+
+            if (dlNumber != null)
+            {
+                this.DlNumber = dlNumber;
+            }
+
+            if (ssn4 != null)
+            {
+                this.Ssn4 = ssn4;
+            }
+
+            if (dobYear != null)
+            {
+                this.DobYear = dobYear;
+            }
+
         }
 
         /// <summary>
-        /// Required for ACH transactions when Driver's License Verification is enabled on the terminal.  Either dl_number + dl_state OR customer_id will need to be passed in this scenario.
+        /// Used for certain ACH transactions where Driver's License is required by the terminal being used.
         /// </summary>
-        [JsonProperty("dl_state", NullValueHandling = NullValueHandling.Ignore)]
-        public string DlState { get; set; }
+        [JsonProperty("dl_state")]
+        public string DlState
+        {
+            get
+            {
+                return this.dlState;
+            }
+
+            set
+            {
+                this.shouldSerialize["dl_state"] = true;
+                this.dlState = value;
+            }
+        }
 
         /// <summary>
-        /// Required for ACH transactions when Driver's License Verification is enabled on the terminal.  Either dl_number + dl_state OR customer_id will need to be passed in this scenario.
+        /// Used for certain ACH transactions where Driver's License is required by the terminal being used.
         /// </summary>
-        [JsonProperty("dl_number", NullValueHandling = NullValueHandling.Ignore)]
-        public string DlNumber { get; set; }
+        [JsonProperty("dl_number")]
+        public string DlNumber
+        {
+            get
+            {
+                return this.dlNumber;
+            }
+
+            set
+            {
+                this.shouldSerialize["dl_number"] = true;
+                this.dlNumber = value;
+            }
+        }
 
         /// <summary>
-        /// Required for certain ACH transactions where Identity Verification has been enabled for the terminal.  Either ssn4 or dob_year will need to be passed in this scenario but NOT BOTH.
+        /// The last four of the account_holder social security number.
         /// </summary>
-        [JsonProperty("dob_year", NullValueHandling = NullValueHandling.Ignore)]
-        public string DobYear { get; set; }
+        [JsonProperty("ssn4")]
+        public string Ssn4
+        {
+            get
+            {
+                return this.ssn4;
+            }
+
+            set
+            {
+                this.shouldSerialize["ssn4"] = true;
+                this.ssn4 = value;
+            }
+        }
+
+        /// <summary>
+        /// Used for certain ACH transactions where Identity Verification is enabled on the terminal being used.
+        /// </summary>
+        [JsonProperty("dob_year")]
+        public string DobYear
+        {
+            get
+            {
+                return this.dobYear;
+            }
+
+            set
+            {
+                this.shouldSerialize["dob_year"] = true;
+                this.dobYear = value;
+            }
+        }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -69,6 +155,74 @@ namespace FortisAPI.Standard.Models
             this.ToString(toStringOutput);
 
             return $"IdentityVerification2 : ({string.Join(", ", toStringOutput)})";
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetDlState()
+        {
+            this.shouldSerialize["dl_state"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetDlNumber()
+        {
+            this.shouldSerialize["dl_number"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetSsn4()
+        {
+            this.shouldSerialize["ssn4"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetDobYear()
+        {
+            this.shouldSerialize["dob_year"] = false;
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeDlState()
+        {
+            return this.shouldSerialize["dl_state"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeDlNumber()
+        {
+            return this.shouldSerialize["dl_number"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeSsn4()
+        {
+            return this.shouldSerialize["ssn4"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeDobYear()
+        {
+            return this.shouldSerialize["dob_year"];
         }
 
         /// <inheritdoc/>
@@ -83,23 +237,24 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is IdentityVerification2 other &&
-                ((this.DlState == null && other.DlState == null) || (this.DlState?.Equals(other.DlState) == true)) &&
+            return obj is IdentityVerification2 other &&                ((this.DlState == null && other.DlState == null) || (this.DlState?.Equals(other.DlState) == true)) &&
                 ((this.DlNumber == null && other.DlNumber == null) || (this.DlNumber?.Equals(other.DlNumber) == true)) &&
+                ((this.Ssn4 == null && other.Ssn4 == null) || (this.Ssn4?.Equals(other.Ssn4) == true)) &&
                 ((this.DobYear == null && other.DobYear == null) || (this.DobYear?.Equals(other.DobYear) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.DlState = {(this.DlState == null ? "null" : this.DlState == string.Empty ? "" : this.DlState)}");
-            toStringOutput.Add($"this.DlNumber = {(this.DlNumber == null ? "null" : this.DlNumber == string.Empty ? "" : this.DlNumber)}");
-            toStringOutput.Add($"this.DobYear = {(this.DobYear == null ? "null" : this.DobYear == string.Empty ? "" : this.DobYear)}");
+            toStringOutput.Add($"this.DlState = {(this.DlState == null ? "null" : this.DlState)}");
+            toStringOutput.Add($"this.DlNumber = {(this.DlNumber == null ? "null" : this.DlNumber)}");
+            toStringOutput.Add($"this.Ssn4 = {(this.Ssn4 == null ? "null" : this.Ssn4)}");
+            toStringOutput.Add($"this.DobYear = {(this.DobYear == null ? "null" : this.DobYear)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

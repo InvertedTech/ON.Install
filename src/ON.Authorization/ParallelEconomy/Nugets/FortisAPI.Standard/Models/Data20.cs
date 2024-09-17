@@ -10,7 +10,9 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
+    using FortisAPI.Standard.Models.Containers;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
@@ -18,26 +20,22 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Data20.
     /// </summary>
-    public class Data20
+    public class Data20 : BaseModel
     {
-        private int? attemptInterval;
-        private string basicAuthUsername;
-        private string basicAuthPassword;
-        private string expands;
-        private Models.FormatEnum? format;
+        private string accountHolderName;
+        private string cvv;
+        private string contactId;
+        private string contactApiId;
         private string locationApiId;
-        private string postbackConfigId;
-        private string productTransactionId;
+        private string createdUserId;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
-            { "attempt_interval", true },
-            { "basic_auth_username", false },
-            { "basic_auth_password", false },
-            { "expands", false },
-            { "format", false },
+            { "account_holder_name", false },
+            { "cvv", false },
+            { "contact_id", false },
+            { "contact_api_id", false },
             { "location_api_id", false },
-            { "postback_config_id", false },
-            { "product_transaction_id", false },
+            { "created_user_id", false },
         };
 
         /// <summary>
@@ -50,193 +48,168 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Data20"/> class.
         /// </summary>
-        /// <param name="isActive">is_active.</param>
-        /// <param name="locationId">location_id.</param>
-        /// <param name="onCreate">on_create.</param>
-        /// <param name="onUpdate">on_update.</param>
-        /// <param name="onDelete">on_delete.</param>
-        /// <param name="resource">resource.</param>
-        /// <param name="numberOfAttempts">number_of_attempts.</param>
-        /// <param name="url">url.</param>
+        /// <param name="expDate">exp_date.</param>
+        /// <param name="accountNumber">account_number.</param>
         /// <param name="id">id.</param>
-        /// <param name="attemptInterval">attempt_interval.</param>
-        /// <param name="basicAuthUsername">basic_auth_username.</param>
-        /// <param name="basicAuthPassword">basic_auth_password.</param>
-        /// <param name="expands">expands.</param>
-        /// <param name="format">format.</param>
+        /// <param name="createdTs">created_ts.</param>
+        /// <param name="accountHolderName">account_holder_name.</param>
+        /// <param name="cvv">cvv.</param>
+        /// <param name="billingAddress">billing_address.</param>
+        /// <param name="contactId">contact_id.</param>
+        /// <param name="contactApiId">contact_api_id.</param>
+        /// <param name="locationId">location_id.</param>
         /// <param name="locationApiId">location_api_id.</param>
-        /// <param name="postbackConfigId">postback_config_id.</param>
-        /// <param name="productTransactionId">product_transaction_id.</param>
+        /// <param name="createdUserId">created_user_id.</param>
         public Data20(
-            bool isActive,
-            string locationId,
-            Models.OnCreateEnum onCreate,
-            Models.OnUpdateEnum onUpdate,
-            Models.OnDeleteEnum onDelete,
-            Models.Resource4Enum resource,
-            int numberOfAttempts,
-            string url,
+            string expDate,
+            string accountNumber,
             string id,
-            int? attemptInterval = 300,
-            string basicAuthUsername = null,
-            string basicAuthPassword = null,
-            string expands = null,
-            Models.FormatEnum? format = null,
+            int createdTs,
+            string accountHolderName = null,
+            string cvv = null,
+            Models.BillingAddress5 billingAddress = null,
+            string contactId = null,
+            string contactApiId = null,
+            Data20LocationId locationId = null,
             string locationApiId = null,
-            string postbackConfigId = null,
-            string productTransactionId = null)
+            string createdUserId = null)
         {
-            this.AttemptInterval = attemptInterval;
-            if (basicAuthUsername != null)
+            if (accountHolderName != null)
             {
-                this.BasicAuthUsername = basicAuthUsername;
+                this.AccountHolderName = accountHolderName;
             }
 
-            if (basicAuthPassword != null)
+            this.ExpDate = expDate;
+            if (cvv != null)
             {
-                this.BasicAuthPassword = basicAuthPassword;
+                this.Cvv = cvv;
             }
 
-            if (expands != null)
+            this.AccountNumber = accountNumber;
+            this.BillingAddress = billingAddress;
+            if (contactId != null)
             {
-                this.Expands = expands;
+                this.ContactId = contactId;
             }
 
-            if (format != null)
+            if (contactApiId != null)
             {
-                this.Format = format;
+                this.ContactApiId = contactApiId;
             }
 
-            this.IsActive = isActive;
             this.LocationId = locationId;
             if (locationApiId != null)
             {
                 this.LocationApiId = locationApiId;
             }
 
-            this.OnCreate = onCreate;
-            this.OnUpdate = onUpdate;
-            this.OnDelete = onDelete;
-            if (postbackConfigId != null)
-            {
-                this.PostbackConfigId = postbackConfigId;
-            }
-
-            if (productTransactionId != null)
-            {
-                this.ProductTransactionId = productTransactionId;
-            }
-
-            this.Resource = resource;
-            this.NumberOfAttempts = numberOfAttempts;
-            this.Url = url;
             this.Id = id;
+            this.CreatedTs = createdTs;
+            if (createdUserId != null)
+            {
+                this.CreatedUserId = createdUserId;
+            }
+
         }
 
         /// <summary>
-        /// Number of seconds before another retry is submitted
+        /// Account holder name
         /// </summary>
-        [JsonProperty("attempt_interval")]
-        public int? AttemptInterval
+        [JsonProperty("account_holder_name")]
+        public string AccountHolderName
         {
             get
             {
-                return this.attemptInterval;
+                return this.accountHolderName;
             }
 
             set
             {
-                this.shouldSerialize["attempt_interval"] = true;
-                this.attemptInterval = value;
+                this.shouldSerialize["account_holder_name"] = true;
+                this.accountHolderName = value;
             }
         }
 
         /// <summary>
-        /// The Basic authorization username for the URL, if not supplied, the postback will be submitted without Basic authorization headers
+        /// The Expiration Date for the credit card.
         /// </summary>
-        [JsonProperty("basic_auth_username")]
-        public string BasicAuthUsername
+        [JsonProperty("exp_date")]
+        public string ExpDate { get; set; }
+
+        /// <summary>
+        /// CVV
+        /// </summary>
+        [JsonProperty("cvv")]
+        public string Cvv
         {
             get
             {
-                return this.basicAuthUsername;
+                return this.cvv;
             }
 
             set
             {
-                this.shouldSerialize["basic_auth_username"] = true;
-                this.basicAuthUsername = value;
+                this.shouldSerialize["cvv"] = true;
+                this.cvv = value;
             }
         }
 
         /// <summary>
-        /// The basic authorization password
+        /// Account number
         /// </summary>
-        [JsonProperty("basic_auth_password")]
-        public string BasicAuthPassword
+        [JsonProperty("account_number")]
+        public string AccountNumber { get; set; }
+
+        /// <summary>
+        /// Billing Address Object
+        /// </summary>
+        [JsonProperty("billing_address", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.BillingAddress5 BillingAddress { get; set; }
+
+        /// <summary>
+        /// Used to associate the Ticket with a Contact.
+        /// </summary>
+        [JsonProperty("contact_id")]
+        public string ContactId
         {
             get
             {
-                return this.basicAuthPassword;
+                return this.contactId;
             }
 
             set
             {
-                this.shouldSerialize["basic_auth_password"] = true;
-                this.basicAuthPassword = value;
+                this.shouldSerialize["contact_id"] = true;
+                this.contactId = value;
             }
         }
 
         /// <summary>
-        /// An option list of expanded data to send with base data. (i.e. set this field to “contact,account_vault” to get the contact an accountvault used to run a transaction.)
+        /// Used to associate the Ticket with a Contact.
         /// </summary>
-        [JsonProperty("expands")]
-        public string Expands
+        [JsonProperty("contact_api_id")]
+        public string ContactApiId
         {
             get
             {
-                return this.expands;
+                return this.contactApiId;
             }
 
             set
             {
-                this.shouldSerialize["expands"] = true;
-                this.expands = value;
+                this.shouldSerialize["contact_api_id"] = true;
+                this.contactApiId = value;
             }
         }
 
         /// <summary>
-        /// Options include: api-default
+        /// A valid Location Id associated with the Contact for this Ticket
         /// </summary>
-        [JsonProperty("format", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.FormatEnum? Format
-        {
-            get
-            {
-                return this.format;
-            }
-
-            set
-            {
-                this.shouldSerialize["format"] = true;
-                this.format = value;
-            }
-        }
+        [JsonProperty("location_id", NullValueHandling = NullValueHandling.Ignore)]
+        public Data20LocationId LocationId { get; set; }
 
         /// <summary>
-        /// Flag to indicate whether configuration is active (in effect).
-        /// </summary>
-        [JsonProperty("is_active")]
-        public bool IsActive { get; set; }
-
-        /// <summary>
-        /// The location identifier of the resource you want to recieve postbacks from.
-        /// </summary>
-        [JsonProperty("location_id")]
-        public string LocationId { get; set; }
-
-        /// <summary>
-        /// Location Api ID
+        /// Location Api Id
         /// </summary>
         [JsonProperty("location_api_id")]
         public string LocationApiId
@@ -254,82 +227,34 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// To receive postbacks on the creation of a resource
-        /// </summary>
-        [JsonProperty("on_create")]
-        public Models.OnCreateEnum OnCreate { get; set; }
-
-        /// <summary>
-        /// To receive postbacks on the updating of a resource
-        /// </summary>
-        [JsonProperty("on_update")]
-        public Models.OnUpdateEnum OnUpdate { get; set; }
-
-        /// <summary>
-        /// To receive postbacks when the record is deleted
-        /// </summary>
-        [JsonProperty("on_delete")]
-        public Models.OnDeleteEnum OnDelete { get; set; }
-
-        /// <summary>
-        /// Postback Config ID
-        /// </summary>
-        [JsonProperty("postback_config_id")]
-        public string PostbackConfigId
-        {
-            get
-            {
-                return this.postbackConfigId;
-            }
-
-            set
-            {
-                this.shouldSerialize["postback_config_id"] = true;
-                this.postbackConfigId = value;
-            }
-        }
-
-        /// <summary>
-        /// Required when using 'transaction' or 'transactionbatch' resource
-        /// </summary>
-        [JsonProperty("product_transaction_id")]
-        public string ProductTransactionId
-        {
-            get
-            {
-                return this.productTransactionId;
-            }
-
-            set
-            {
-                this.shouldSerialize["product_transaction_id"] = true;
-                this.productTransactionId = value;
-            }
-        }
-
-        /// <summary>
-        /// The resource you want to subscribe the postbacks to.
-        /// </summary>
-        [JsonProperty("resource", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.Resource4Enum Resource { get; set; }
-
-        /// <summary>
-        /// Maximum number of attempts on failure
-        /// </summary>
-        [JsonProperty("number_of_attempts")]
-        public int NumberOfAttempts { get; set; }
-
-        /// <summary>
-        /// The URL where the postback will be submitted
-        /// </summary>
-        [JsonProperty("url")]
-        public string Url { get; set; }
-
-        /// <summary>
-        /// Postback Config ID
+        /// A unique, system-generated identifier for the Ticket.
         /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
+
+        /// <summary>
+        /// Created Time Stamp
+        /// </summary>
+        [JsonProperty("created_ts")]
+        public int CreatedTs { get; set; }
+
+        /// <summary>
+        /// User ID Created the register
+        /// </summary>
+        [JsonProperty("created_user_id")]
+        public string CreatedUserId
+        {
+            get
+            {
+                return this.createdUserId;
+            }
+
+            set
+            {
+                this.shouldSerialize["created_user_id"] = true;
+                this.createdUserId = value;
+            }
+        }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -344,41 +269,33 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAttemptInterval()
+        public void UnsetAccountHolderName()
         {
-            this.shouldSerialize["attempt_interval"] = false;
+            this.shouldSerialize["account_holder_name"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetBasicAuthUsername()
+        public void UnsetCvv()
         {
-            this.shouldSerialize["basic_auth_username"] = false;
+            this.shouldSerialize["cvv"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetBasicAuthPassword()
+        public void UnsetContactId()
         {
-            this.shouldSerialize["basic_auth_password"] = false;
+            this.shouldSerialize["contact_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetExpands()
+        public void UnsetContactApiId()
         {
-            this.shouldSerialize["expands"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetFormat()
-        {
-            this.shouldSerialize["format"] = false;
+            this.shouldSerialize["contact_api_id"] = false;
         }
 
         /// <summary>
@@ -392,62 +309,45 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetPostbackConfigId()
+        public void UnsetCreatedUserId()
         {
-            this.shouldSerialize["postback_config_id"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetProductTransactionId()
-        {
-            this.shouldSerialize["product_transaction_id"] = false;
+            this.shouldSerialize["created_user_id"] = false;
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAttemptInterval()
+        public bool ShouldSerializeAccountHolderName()
         {
-            return this.shouldSerialize["attempt_interval"];
+            return this.shouldSerialize["account_holder_name"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeBasicAuthUsername()
+        public bool ShouldSerializeCvv()
         {
-            return this.shouldSerialize["basic_auth_username"];
+            return this.shouldSerialize["cvv"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeBasicAuthPassword()
+        public bool ShouldSerializeContactId()
         {
-            return this.shouldSerialize["basic_auth_password"];
+            return this.shouldSerialize["contact_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeExpands()
+        public bool ShouldSerializeContactApiId()
         {
-            return this.shouldSerialize["expands"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeFormat()
-        {
-            return this.shouldSerialize["format"];
+            return this.shouldSerialize["contact_api_id"];
         }
 
         /// <summary>
@@ -463,18 +363,9 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializePostbackConfigId()
+        public bool ShouldSerializeCreatedUserId()
         {
-            return this.shouldSerialize["postback_config_id"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeProductTransactionId()
-        {
-            return this.shouldSerialize["product_transaction_id"];
+            return this.shouldSerialize["created_user_id"];
         }
 
         /// <inheritdoc/>
@@ -489,51 +380,40 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Data20 other &&
-                ((this.AttemptInterval == null && other.AttemptInterval == null) || (this.AttemptInterval?.Equals(other.AttemptInterval) == true)) &&
-                ((this.BasicAuthUsername == null && other.BasicAuthUsername == null) || (this.BasicAuthUsername?.Equals(other.BasicAuthUsername) == true)) &&
-                ((this.BasicAuthPassword == null && other.BasicAuthPassword == null) || (this.BasicAuthPassword?.Equals(other.BasicAuthPassword) == true)) &&
-                ((this.Expands == null && other.Expands == null) || (this.Expands?.Equals(other.Expands) == true)) &&
-                ((this.Format == null && other.Format == null) || (this.Format?.Equals(other.Format) == true)) &&
-                this.IsActive.Equals(other.IsActive) &&
+            return obj is Data20 other &&                ((this.AccountHolderName == null && other.AccountHolderName == null) || (this.AccountHolderName?.Equals(other.AccountHolderName) == true)) &&
+                ((this.ExpDate == null && other.ExpDate == null) || (this.ExpDate?.Equals(other.ExpDate) == true)) &&
+                ((this.Cvv == null && other.Cvv == null) || (this.Cvv?.Equals(other.Cvv) == true)) &&
+                ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
+                ((this.BillingAddress == null && other.BillingAddress == null) || (this.BillingAddress?.Equals(other.BillingAddress) == true)) &&
+                ((this.ContactId == null && other.ContactId == null) || (this.ContactId?.Equals(other.ContactId) == true)) &&
+                ((this.ContactApiId == null && other.ContactApiId == null) || (this.ContactApiId?.Equals(other.ContactApiId) == true)) &&
                 ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
                 ((this.LocationApiId == null && other.LocationApiId == null) || (this.LocationApiId?.Equals(other.LocationApiId) == true)) &&
-                this.OnCreate.Equals(other.OnCreate) &&
-                this.OnUpdate.Equals(other.OnUpdate) &&
-                this.OnDelete.Equals(other.OnDelete) &&
-                ((this.PostbackConfigId == null && other.PostbackConfigId == null) || (this.PostbackConfigId?.Equals(other.PostbackConfigId) == true)) &&
-                ((this.ProductTransactionId == null && other.ProductTransactionId == null) || (this.ProductTransactionId?.Equals(other.ProductTransactionId) == true)) &&
-                this.Resource.Equals(other.Resource) &&
-                this.NumberOfAttempts.Equals(other.NumberOfAttempts) &&
-                ((this.Url == null && other.Url == null) || (this.Url?.Equals(other.Url) == true)) &&
-                ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true));
+                ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
+                this.CreatedTs.Equals(other.CreatedTs) &&
+                ((this.CreatedUserId == null && other.CreatedUserId == null) || (this.CreatedUserId?.Equals(other.CreatedUserId) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.AttemptInterval = {(this.AttemptInterval == null ? "null" : this.AttemptInterval.ToString())}");
-            toStringOutput.Add($"this.BasicAuthUsername = {(this.BasicAuthUsername == null ? "null" : this.BasicAuthUsername == string.Empty ? "" : this.BasicAuthUsername)}");
-            toStringOutput.Add($"this.BasicAuthPassword = {(this.BasicAuthPassword == null ? "null" : this.BasicAuthPassword == string.Empty ? "" : this.BasicAuthPassword)}");
-            toStringOutput.Add($"this.Expands = {(this.Expands == null ? "null" : this.Expands == string.Empty ? "" : this.Expands)}");
-            toStringOutput.Add($"this.Format = {(this.Format == null ? "null" : this.Format.ToString())}");
-            toStringOutput.Add($"this.IsActive = {this.IsActive}");
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId == string.Empty ? "" : this.LocationApiId)}");
-            toStringOutput.Add($"this.OnCreate = {this.OnCreate}");
-            toStringOutput.Add($"this.OnUpdate = {this.OnUpdate}");
-            toStringOutput.Add($"this.OnDelete = {this.OnDelete}");
-            toStringOutput.Add($"this.PostbackConfigId = {(this.PostbackConfigId == null ? "null" : this.PostbackConfigId == string.Empty ? "" : this.PostbackConfigId)}");
-            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId == string.Empty ? "" : this.ProductTransactionId)}");
-            toStringOutput.Add($"this.Resource = {this.Resource}");
-            toStringOutput.Add($"this.NumberOfAttempts = {this.NumberOfAttempts}");
-            toStringOutput.Add($"this.Url = {(this.Url == null ? "null" : this.Url == string.Empty ? "" : this.Url)}");
-            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id == string.Empty ? "" : this.Id)}");
+            toStringOutput.Add($"this.AccountHolderName = {(this.AccountHolderName == null ? "null" : this.AccountHolderName)}");
+            toStringOutput.Add($"this.ExpDate = {(this.ExpDate == null ? "null" : this.ExpDate)}");
+            toStringOutput.Add($"this.Cvv = {(this.Cvv == null ? "null" : this.Cvv)}");
+            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber)}");
+            toStringOutput.Add($"this.BillingAddress = {(this.BillingAddress == null ? "null" : this.BillingAddress.ToString())}");
+            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId)}");
+            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId)}");
+            toStringOutput.Add($"LocationId = {(this.LocationId == null ? "null" : this.LocationId.ToString())}");
+            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId)}");
+            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id)}");
+            toStringOutput.Add($"this.CreatedTs = {this.CreatedTs}");
+            toStringOutput.Add($"this.CreatedUserId = {(this.CreatedUserId == null ? "null" : this.CreatedUserId)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

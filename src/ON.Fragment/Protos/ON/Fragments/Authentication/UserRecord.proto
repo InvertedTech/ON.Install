@@ -44,6 +44,12 @@ message UserPrivateRecord {
 
 message UserPrivateData {
   repeated string Emails = 1; // Private email(s) used for password resets
+  string MailingAddressLine1 = 11;
+  string MailingAddressLine2 = 12;
+  string MailingAddressCity = 13;
+  string MailingAddressState = 14;
+  string MailingAddressPostalCode = 15;
+  string MailingAddressCountryCode = 16;
   string OldUserID = 51;
 }
 

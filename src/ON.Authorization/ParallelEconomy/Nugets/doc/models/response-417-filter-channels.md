@@ -17,9 +17,9 @@
 
 ```json
 {
-  "statusCode": null,
-  "error": null,
-  "message": null
+  "statusCode": 417,
+  "error": "Expectation Failed",
+  "message": "Channel filters are not set for this project"
 }
 ```
 

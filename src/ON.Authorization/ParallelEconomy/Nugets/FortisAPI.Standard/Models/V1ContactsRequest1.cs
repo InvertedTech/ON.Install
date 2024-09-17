@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1ContactsRequest1.
     /// </summary>
-    public class V1ContactsRequest1
+    public class V1ContactsRequest1 : BaseModel
     {
         private string locationId;
         private string accountNumber;
@@ -958,9 +959,7 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1ContactsRequest1 other &&
-                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
+            return obj is V1ContactsRequest1 other &&                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
                 ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
                 ((this.ContactApiId == null && other.ContactApiId == null) || (this.ContactApiId?.Equals(other.ContactApiId) == true)) &&
                 ((this.FirstName == null && other.FirstName == null) || (this.FirstName?.Equals(other.FirstName) == true)) &&
@@ -984,35 +983,36 @@ namespace FortisAPI.Standard.Models
                 ((this.Email == null && other.Email == null) || (this.Email?.Equals(other.Email) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber == string.Empty ? "" : this.AccountNumber)}");
-            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId == string.Empty ? "" : this.ContactApiId)}");
-            toStringOutput.Add($"this.FirstName = {(this.FirstName == null ? "null" : this.FirstName == string.Empty ? "" : this.FirstName)}");
-            toStringOutput.Add($"this.LastName = {(this.LastName == null ? "null" : this.LastName == string.Empty ? "" : this.LastName)}");
-            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone == string.Empty ? "" : this.CellPhone)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber)}");
+            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId)}");
+            toStringOutput.Add($"this.FirstName = {(this.FirstName == null ? "null" : this.FirstName)}");
+            toStringOutput.Add($"this.LastName = {(this.LastName == null ? "null" : this.LastName)}");
+            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone)}");
             toStringOutput.Add($"this.Balance = {(this.Balance == null ? "null" : this.Balance.ToString())}");
             toStringOutput.Add($"this.Address = {(this.Address == null ? "null" : this.Address.ToString())}");
-            toStringOutput.Add($"this.CompanyName = {(this.CompanyName == null ? "null" : this.CompanyName == string.Empty ? "" : this.CompanyName)}");
-            toStringOutput.Add($"this.HeaderMessage = {(this.HeaderMessage == null ? "null" : this.HeaderMessage == string.Empty ? "" : this.HeaderMessage)}");
-            toStringOutput.Add($"this.DateOfBirth = {(this.DateOfBirth == null ? "null" : this.DateOfBirth == string.Empty ? "" : this.DateOfBirth)}");
+            toStringOutput.Add($"this.CompanyName = {(this.CompanyName == null ? "null" : this.CompanyName)}");
+            toStringOutput.Add($"this.HeaderMessage = {(this.HeaderMessage == null ? "null" : this.HeaderMessage)}");
+            toStringOutput.Add($"this.DateOfBirth = {(this.DateOfBirth == null ? "null" : this.DateOfBirth)}");
             toStringOutput.Add($"this.EmailTrxReceipt = {(this.EmailTrxReceipt == null ? "null" : this.EmailTrxReceipt.ToString())}");
-            toStringOutput.Add($"this.HomePhone = {(this.HomePhone == null ? "null" : this.HomePhone == string.Empty ? "" : this.HomePhone)}");
-            toStringOutput.Add($"this.OfficePhone = {(this.OfficePhone == null ? "null" : this.OfficePhone == string.Empty ? "" : this.OfficePhone)}");
-            toStringOutput.Add($"this.OfficePhoneExt = {(this.OfficePhoneExt == null ? "null" : this.OfficePhoneExt == string.Empty ? "" : this.OfficePhoneExt)}");
+            toStringOutput.Add($"this.HomePhone = {(this.HomePhone == null ? "null" : this.HomePhone)}");
+            toStringOutput.Add($"this.OfficePhone = {(this.OfficePhone == null ? "null" : this.OfficePhone)}");
+            toStringOutput.Add($"this.OfficePhoneExt = {(this.OfficePhoneExt == null ? "null" : this.OfficePhoneExt)}");
             toStringOutput.Add($"this.HeaderMessageType = {(this.HeaderMessageType == null ? "null" : this.HeaderMessageType.ToString())}");
             toStringOutput.Add($"this.UpdateIfExists = {(this.UpdateIfExists == null ? "null" : this.UpdateIfExists.ToString())}");
-            toStringOutput.Add($"this.ContactC1 = {(this.ContactC1 == null ? "null" : this.ContactC1 == string.Empty ? "" : this.ContactC1)}");
-            toStringOutput.Add($"this.ContactC2 = {(this.ContactC2 == null ? "null" : this.ContactC2 == string.Empty ? "" : this.ContactC2)}");
-            toStringOutput.Add($"this.ContactC3 = {(this.ContactC3 == null ? "null" : this.ContactC3 == string.Empty ? "" : this.ContactC3)}");
-            toStringOutput.Add($"this.ParentId = {(this.ParentId == null ? "null" : this.ParentId == string.Empty ? "" : this.ParentId)}");
-            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email == string.Empty ? "" : this.Email)}");
+            toStringOutput.Add($"this.ContactC1 = {(this.ContactC1 == null ? "null" : this.ContactC1)}");
+            toStringOutput.Add($"this.ContactC2 = {(this.ContactC2 == null ? "null" : this.ContactC2)}");
+            toStringOutput.Add($"this.ContactC3 = {(this.ContactC3 == null ? "null" : this.ContactC3)}");
+            toStringOutput.Add($"this.ParentId = {(this.ParentId == null ? "null" : this.ParentId)}");
+            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

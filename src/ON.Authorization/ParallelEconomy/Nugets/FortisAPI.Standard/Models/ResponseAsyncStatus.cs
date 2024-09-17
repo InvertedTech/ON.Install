@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// ResponseAsyncStatus.
     /// </summary>
-    public class ResponseAsyncStatus
+    public class ResponseAsyncStatus : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ResponseAsyncStatus"/> class.
@@ -74,21 +75,20 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is ResponseAsyncStatus other &&
-                ((this.Type == null && other.Type == null) || (this.Type?.Equals(other.Type) == true)) &&
+            return obj is ResponseAsyncStatus other &&                ((this.Type == null && other.Type == null) || (this.Type?.Equals(other.Type) == true)) &&
                 ((this.Data == null && other.Data == null) || (this.Data?.Equals(other.Data) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.Type = {(this.Type == null ? "null" : this.Type == string.Empty ? "" : this.Type)}");
+            toStringOutput.Add($"this.Type = {(this.Type == null ? "null" : this.Type)}");
             toStringOutput.Add($"this.Data = {(this.Data == null ? "null" : this.Data.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

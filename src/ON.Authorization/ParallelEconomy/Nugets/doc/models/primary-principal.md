@@ -30,7 +30,17 @@ The Primary Principal.
 ```json
 {
   "first_name": "Bob",
-  "last_name": "Fairview"
+  "last_name": "Fairview",
+  "middle_name": "Nathaniel",
+  "title": "Dr",
+  "date_of_birth": "2021-12-01",
+  "address_line_1": "1354 Oak St.",
+  "address_line_2": "Unit 203",
+  "city": "Dover",
+  "state_province": "DE",
+  "postal_code": "55022",
+  "ownership_percent": 100,
+  "phone_number": "555-555-1234"
 }
 ```
 

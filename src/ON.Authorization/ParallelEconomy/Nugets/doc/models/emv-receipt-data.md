@@ -22,12 +22,12 @@ This field is a read only field. This field will only be populated for EMV trans
 
 ```json
 {
-  "AID": null,
-  "APPLAB": null,
-  "APPN": null,
-  "CVM": null,
-  "TSI": null,
-  "TVR": null
+  "AID": "a0000000042203",
+  "APPLAB": "US Maestro",
+  "APPN": "US Maestro",
+  "CVM": "Pin Verified",
+  "TSI": "e800",
+  "TVR": "0800008000"
 }
 ```
 

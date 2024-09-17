@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1SignaturesRequest.
     /// </summary>
-    public class V1SignaturesRequest
+    public class V1SignaturesRequest : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="V1SignaturesRequest"/> class.
@@ -52,7 +53,7 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Resource
         /// </summary>
-        [JsonProperty("resource", ItemConverterType = typeof(StringEnumConverter))]
+        [JsonProperty("resource")]
         public Models.ResourceEnum Resource { get; set; }
 
         /// <summary>
@@ -83,23 +84,22 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1SignaturesRequest other &&
-                ((this.Signature == null && other.Signature == null) || (this.Signature?.Equals(other.Signature) == true)) &&
+            return obj is V1SignaturesRequest other &&                ((this.Signature == null && other.Signature == null) || (this.Signature?.Equals(other.Signature) == true)) &&
                 this.Resource.Equals(other.Resource) &&
                 ((this.ResourceId == null && other.ResourceId == null) || (this.ResourceId?.Equals(other.ResourceId) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.Signature = {(this.Signature == null ? "null" : this.Signature == string.Empty ? "" : this.Signature)}");
+            toStringOutput.Add($"this.Signature = {(this.Signature == null ? "null" : this.Signature)}");
             toStringOutput.Add($"this.Resource = {this.Resource}");
-            toStringOutput.Add($"this.ResourceId = {(this.ResourceId == null ? "null" : this.ResourceId == string.Empty ? "" : this.ResourceId)}");
+            toStringOutput.Add($"this.ResourceId = {(this.ResourceId == null ? "null" : this.ResourceId)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

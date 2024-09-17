@@ -7,59 +7,18 @@ namespace FortisAPI.Standard.Models
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
 
     /// <summary>
     /// ExpandEnum.
     /// </summary>
+
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ExpandEnum
     {
-        /// <summary>
-        /// ReceivedEmails.
-        /// </summary>
-        [EnumMember(Value = "received_emails")]
-        ReceivedEmails,
-
-        /// <summary>
-        /// IsDeletable.
-        /// </summary>
-        [EnumMember(Value = "is_deletable")]
-        IsDeletable,
-
-        /// <summary>
-        /// Location.
-        /// </summary>
-        [EnumMember(Value = "location")]
-        Location,
-
-        /// <summary>
-        /// User.
-        /// </summary>
-        [EnumMember(Value = "user")]
-        User,
-
-        /// <summary>
-        /// Recurrings.
-        /// </summary>
-        [EnumMember(Value = "recurrings")]
-        Recurrings,
-
-        /// <summary>
-        /// EmailBlacklist.
-        /// </summary>
-        [EnumMember(Value = "email_blacklist")]
-        EmailBlacklist,
-
-        /// <summary>
-        /// SmsBlacklist.
-        /// </summary>
-        [EnumMember(Value = "sms_blacklist")]
-        SmsBlacklist,
-
         /// <summary>
         /// Changelogs.
         /// </summary>
@@ -73,21 +32,9 @@ namespace FortisAPI.Standard.Models
         PostbackLogs,
 
         /// <summary>
-        /// CreatedUser.
+        /// ProductTransaction.
         /// </summary>
-        [EnumMember(Value = "created_user")]
-        CreatedUser,
-
-        /// <summary>
-        /// Parent.
-        /// </summary>
-        [EnumMember(Value = "parent")]
-        Parent,
-
-        /// <summary>
-        /// Children.
-        /// </summary>
-        [EnumMember(Value = "children")]
-        Children
+        [EnumMember(Value = "product_transaction")]
+        ProductTransaction
     }
 }

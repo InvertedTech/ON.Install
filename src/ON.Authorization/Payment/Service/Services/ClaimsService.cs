@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using FakeD = ON.Authorization.Payment.Fake.Data;
 using PaypalD = ON.Authorization.Payment.Paypal.Data;
+using StripeD = ON.Authorization.Payment.Stripe.Data;
 using ON.Fragments.Authorization;
 using ON.Fragments.Generic;
 using System;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 using static Google.Rpc.Context.AttributeContext.Types;
 using System.Linq;
 using ON.Fragments.Authorization.Payment.Paypal;
+using ON.Fragments.Authorization.Payment.Stripe;
 
 namespace ON.Authorization.Payment.Service
 {
@@ -19,12 +21,14 @@ namespace ON.Authorization.Payment.Service
         private readonly ILogger<ClaimsService> logger;
         private readonly FakeD.ISubscriptionRecordProvider fakeProvider;
         private readonly PaypalD.ISubscriptionRecordProvider paypalProvider;
+        private readonly StripeD.ISubscriptionRecordProvider stripeProvider;
 
-        public ClaimsService(ILogger<ClaimsService> logger, FakeD.ISubscriptionRecordProvider fakeProvider, PaypalD.ISubscriptionRecordProvider paypalProvider)
+        public ClaimsService(ILogger<ClaimsService> logger, FakeD.ISubscriptionRecordProvider fakeProvider, PaypalD.ISubscriptionRecordProvider paypalProvider, StripeD.ISubscriptionRecordProvider stripeProvider)
         {
             this.logger = logger;
             this.fakeProvider = fakeProvider;
             this.paypalProvider = paypalProvider;
+            this.stripeProvider = stripeProvider;
         }
 
         public override async Task<GetClaimsResponse> GetClaims(GetClaimsRequest request, ServerCallContext context)
@@ -41,7 +45,7 @@ namespace ON.Authorization.Payment.Service
             var tasks = new[]
             {
                 GetFakeClaims(userId),
-                GetPaypalClaims(userId),
+                GetPaidClaims(userId),
             };
 
             await Task.WhenAll(tasks);
@@ -76,14 +80,14 @@ namespace ON.Authorization.Payment.Service
 
             return claims.ToArray();
         }
-        private async Task<ClaimRecord[]> GetPaypalClaims(Guid userId)
+        private async Task<ClaimRecord[]> GetPaidClaims(Guid userId)
         {
-            var rec = await GetBestSubscription(userId);
+            var paypalRecs = await GetBestSubscription(userId);
 
-            if (rec == null || rec.AmountCents < 1)
+            if (paypalRecs == null || paypalRecs.AmountCents < 1)
                 return Array.Empty<ClaimRecord>();
 
-            if (rec.PaidThruUTC.ToDateTime() < DateTime.UtcNow)
+            if (paypalRecs.PaidThruUTC.ToDateTime() < DateTime.UtcNow)
                 return Array.Empty<ClaimRecord>();
 
             var claims = new List<ClaimRecord>();
@@ -91,23 +95,47 @@ namespace ON.Authorization.Payment.Service
             claims.Add(new ClaimRecord()
             {
                 Name = ONUser.SubscriptionLevelType,
-                Value = rec.AmountCents.ToString(),
-                ExpiresOnUTC = rec.PaidThruUTC
+                Value = paypalRecs.AmountCents.ToString(),
+                ExpiresOnUTC = paypalRecs.PaidThruUTC
             });
             claims.Add(new ClaimRecord()
             {
                 Name = ONUser.SubscriptionProviderType,
                 Value = "paypal",
-                ExpiresOnUTC = rec.PaidThruUTC
+                ExpiresOnUTC = paypalRecs.PaidThruUTC
             });
 
             return claims.ToArray();
         }
 
-        private async Task<PaypalSubscriptionRecord> GetBestSubscription(Guid userId)
+        private async Task<UnifiedSubscriptionRecord> GetBestSubscription(Guid userId)
         {
-            var recs = await paypalProvider.GetAllByUserId(userId);
+            var paypalRecs = await paypalProvider.GetAllByUserId(userId);
+            var stripeRecs = await stripeProvider.GetAllByUserId(userId);
+
+            var recs = new List<UnifiedSubscriptionRecord>();
+            recs.AddRange(paypalRecs.Select(r => new UnifiedSubscriptionRecord(r)));
+            recs.AddRange(stripeRecs.Select(r => new UnifiedSubscriptionRecord(r)));
+
             return recs.Where(r => r.PaidThruUTC.ToDateTime() > DateTime.UtcNow).OrderByDescending(r => r.PaidThruUTC).OrderByDescending(r => r.AmountCents).FirstOrDefault();
+        }
+
+        public class UnifiedSubscriptionRecord
+        {
+            public UnifiedSubscriptionRecord(PaypalSubscriptionRecord r)
+            {
+                PaidThruUTC = r.PaidThruUTC;
+                AmountCents = r.AmountCents;
+            }
+
+            public UnifiedSubscriptionRecord(StripeSubscriptionRecord r)
+            {
+                PaidThruUTC = r.PaidThruUTC;
+                AmountCents = r.AmountCents;
+            }
+
+            public Google.Protobuf.WellKnownTypes.Timestamp PaidThruUTC { get; set; }
+            public uint AmountCents { get; set; }
         }
     }
 }

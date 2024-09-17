@@ -7,14 +7,15 @@ namespace FortisAPI.Standard.Models
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
 
     /// <summary>
     /// AchSecCodeEnum.
     /// </summary>
+
     [JsonConverter(typeof(StringEnumConverter))]
     public enum AchSecCodeEnum
     {
@@ -35,18 +36,6 @@ namespace FortisAPI.Standard.Models
         /// </summary>
         [EnumMember(Value = "PPD")]
         PPD,
-
-        /// <summary>
-        /// C21.
-        /// </summary>
-        [EnumMember(Value = "C21")]
-        C21,
-
-        /// <summary>
-        /// POP.
-        /// </summary>
-        [EnumMember(Value = "POP")]
-        POP,
 
         /// <summary>
         /// TEL.

@@ -17,9 +17,9 @@
 
 ```json
 {
-  "statusCode": null,
-  "error": null,
-  "message": null
+  "statusCode": 416,
+  "error": "Requested Range Not Satisfiable",
+  "message": "The \"startDate\" should be less or equal \"2019-08-20T03:00:00.000Z\"."
 }
 ```
 

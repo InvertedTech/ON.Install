@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Detail.
     /// </summary>
-    public class Detail
+    public class Detail : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Detail"/> class.
@@ -92,25 +93,24 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Detail other &&
-                ((this.Message == null && other.Message == null) || (this.Message?.Equals(other.Message) == true)) &&
+            return obj is Detail other &&                ((this.Message == null && other.Message == null) || (this.Message?.Equals(other.Message) == true)) &&
                 ((this.Path == null && other.Path == null) || (this.Path?.Equals(other.Path) == true)) &&
                 ((this.Type == null && other.Type == null) || (this.Type?.Equals(other.Type) == true)) &&
                 ((this.Context == null && other.Context == null) || (this.Context?.Equals(other.Context) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.Message = {(this.Message == null ? "null" : this.Message == string.Empty ? "" : this.Message)}");
+            toStringOutput.Add($"this.Message = {(this.Message == null ? "null" : this.Message)}");
             toStringOutput.Add($"this.Path = {(this.Path == null ? "null" : $"[{string.Join(", ", this.Path)} ]")}");
-            toStringOutput.Add($"this.Type = {(this.Type == null ? "null" : this.Type == string.Empty ? "" : this.Type)}");
+            toStringOutput.Add($"this.Type = {(this.Type == null ? "null" : this.Type)}");
             toStringOutput.Add($"this.Context = {(this.Context == null ? "null" : this.Context.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

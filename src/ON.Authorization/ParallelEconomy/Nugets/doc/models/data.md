@@ -24,7 +24,8 @@
   "type": "Transaction",
   "id": "11e95f8ec39de8fbdb0a4f1a",
   "progress": 100,
-  "ttl": 7956886942
+  "ttl": 7956886942,
+  "error": "error8"
 }
 ```
 

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using ON.Authorization.Stripe.Service.Clients.Models;
 using ON.Authorization.Stripe.Service.Data;
 using ON.Authorization.Stripe.Service.Models;
-using ON.Fragments.Authorization.Payments.Stripe;
+using ON.Fragments.Authorization.Payment.Stripe;
 using Stripe;
 using System;
 using System.Collections.Generic;

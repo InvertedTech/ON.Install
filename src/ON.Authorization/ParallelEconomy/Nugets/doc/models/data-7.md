@@ -9,55 +9,23 @@
 
 | Name | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `ParentId` | `string` | Optional | Location ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `PrimaryPrincipal` | [`Models.PrimaryPrincipal`](../../doc/models/primary-principal.md) | Required | The Primary Principal. |
-| `TemplateCode` | `string` | Required | The ID of the template to be used - this value will be provided by Fortis.<br>**Constraints**: *Maximum Length*: `20`, *Pattern*: `^[a-zA-Z0-9]*$` |
-| `Email` | `string` | Required | Merchant email address.<br>**Constraints**: *Maximum Length*: `100` |
-| `DbaName` | `string` | Required | Merchant 'Doing Business As' name.<br>**Constraints**: *Maximum Length*: `100` |
-| `Location` | [`Models.Location`](../../doc/models/location.md) | Required | The Location. |
-| `AppDelivery` | `string` | Required | The delivery method of the app to the merchant.<br>**Constraints**: *Maximum Length*: `20` |
-| `BusinessCategory` | [`Models.BusinessCategoryEnum?`](../../doc/models/business-category-enum.md) | Optional | The Category of the merchant's business |
-| `BusinessType` | [`Models.BusinessTypeEnum?`](../../doc/models/business-type-enum.md) | Optional | The Type of a merchant's business. |
-| `BusinessDescription` | `string` | Optional | Description of Goods or Services.<br>**Constraints**: *Maximum Length*: `200` |
-| `SwipedPercent` | `int?` | Optional | Card present/swiped percentage<br>**Constraints**: `>= 0`, `<= 100` |
-| `KeyedPercent` | `int?` | Optional | Card not present/keyed percentage<br>**Constraints**: `>= 0`, `<= 100` |
-| `EcommercePercent` | `int?` | Optional | eCommerce percentage.<br>**Constraints**: `>= 0`, `<= 100` |
-| `OwnershipType` | [`Models.OwnershipTypeEnum?`](../../doc/models/ownership-type-enum.md) | Optional | The Ownership Type of the merchant's business.<br>**Constraints**: *Maximum Length*: `10` |
-| `FedTaxId` | `string` | Optional | Federal Tax ID (EIN).<br>**Constraints**: *Maximum Length*: `10` |
-| `CcAverageTicketRange` | `int?` | Optional | Average Transaction Amount Range<br>**Constraints**: `>= 1`, `<= 7` |
-| `CcMonthlyVolumeRange` | `int?` | Optional | Monthly Processing Volume Range<br>**Constraints**: `>= 1`, `<= 7` |
-| `CcHighTicket` | `int?` | Optional | Highest transaction amount rounded to the next dollar<br>**Constraints**: `>= 0`, `<= 30000` |
-| `EcAverageTicketRange` | `int?` | Optional | Average Transaction Amount Range<br>**Constraints**: `>= 1`, `<= 7` |
-| `EcMonthlyVolumeRange` | `int?` | Optional | Monthly Processing Volume Range<br>**Constraints**: `>= 1`, `<= 7` |
-| `EcHighTicket` | `int?` | Optional | Highest transaction amount rounded to the next dollar<br>**Constraints**: `>= 0`, `<= 30000` |
-| `Website` | `string` | Optional | Merchant's business website.<br>**Constraints**: *Maximum Length*: `100` |
-| `BankAccount` | [`Models.BankAccount`](../../doc/models/bank-account.md) | Required | The Bank Account. |
-| `AltBankAccount` | [`Models.AltBankAccount`](../../doc/models/alt-bank-account.md) | Required | The Alternative Bank Account. |
-| `LegalName` | `string` | Optional | Merchant legal name.<br>**Constraints**: *Maximum Length*: `100` |
-| `Contact` | [`Models.Contact`](../../doc/models/contact.md) | Required | The Contact. |
-| `ClientAppId` | `string` | Required | Client-Issued ID to uniquely identify the merchant (Returned unmodified).<br>**Constraints**: *Maximum Length*: `20` |
+| `ContactId` | `string` | Optional | Used to associate the Ticket with a Contact.<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `ContactApiId` | `string` | Optional | Used to associate the Ticket with a Contact. |
+| `LocationId` | `string` | Required | A valid Location Id associated with the Contact for this Ticket<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `ProductTransactionId` | `string` | Optional | Include a product_transaction_id to respect it's cvv and address field settings when creating a ticket.  These settings are enforced at the ticket creation level only.<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `Message` | `string` | Optional | A custom text message that displays after the ticket is created.<br>**Constraints**: *Maximum Length*: `120` |
+| `ClientToken` | `string` | Required | A JWT to be used to create the elements.<br><br>> This is a one-time only use token.<br>> Do not store for long term use, it expires after 48 hours. |
 
 ## Example (as JSON)
 
 ```json
 {
-  "primary_principal": {
-    "first_name": "Bob",
-    "last_name": "Fairview"
-  },
-  "template_code": "1234YourTemplateCode",
-  "email": "jtodd@example.com",
-  "dba_name": "Discount Home Goods",
-  "location": {
-    "phone_number": "555-555-1212"
-  },
-  "app_delivery": "link_full_page",
-  "bank_account": null,
-  "alt_bank_account": null,
-  "contact": {
-    "phone_number": "555-555-3456"
-  },
-  "client_app_id": "ABC123"
+  "contact_id": "11e95f8ec39de8fbdb0a4f1a",
+  "location_id": "11e95f8ec39de8fbdb0a4f1a",
+  "product_transaction_id": "11e95f8ec39de8fbdb0a4f1a",
+  "client_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "contact_api_id": "contact_api_id0",
+  "message": "message4"
 }
 ```
 

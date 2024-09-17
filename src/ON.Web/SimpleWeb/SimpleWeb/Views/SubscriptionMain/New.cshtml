@@ -24,6 +24,10 @@
 {
     <div id="paypal-button-@Model.Methods.Paypal.PlanId" style="width: 200px;"></div>
 }
+@if (Model.ShowStripe)
+{
+    <a href="@Model.Methods.Stripe.PaymentLink">Pay with Credit/Debit</a>
+}
 
 @section scripts
     {

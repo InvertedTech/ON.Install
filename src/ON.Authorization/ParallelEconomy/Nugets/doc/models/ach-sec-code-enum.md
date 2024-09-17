@@ -1,7 +1,7 @@
 
 # Ach Sec Code Enum
 
-SEC code for the account
+SEC code for the transaction if it's an ACH transaction
 
 ## Enumeration
 
@@ -14,8 +14,6 @@ SEC code for the account
 | `WEB` |
 | `CCD` |
 | `PPD` |
-| `C21` |
-| `POP` |
 | `TEL` |
 
 ## Example

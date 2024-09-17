@@ -7,14 +7,15 @@ namespace FortisAPI.Standard.Models
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
 
     /// <summary>
     /// ReportExportTypeEnum.
     /// </summary>
+
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ReportExportTypeEnum
     {

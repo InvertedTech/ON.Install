@@ -10,7 +10,9 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
+    using FortisAPI.Standard.Models.Containers;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
@@ -18,36 +20,48 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1TokensTicketRequest.
     /// </summary>
-    public class V1TokensTicketRequest
+    public class V1TokensTicketRequest : BaseModel
     {
         private string accountHolderName;
-        private string accountNumber;
         private string accountVaultApiId;
+        private string tokenApiId;
         private string accountvaultC1;
         private string accountvaultC2;
         private string accountvaultC3;
-        private Models.AchSecCodeEnum? achSecCode;
+        private string tokenC1;
+        private string tokenC2;
+        private string tokenC3;
+        private Models.AchSecCode3Enum? achSecCode;
         private string contactId;
         private string customerId;
         private string previousAccountVaultApiId;
+        private string previousTokenApiId;
         private string previousAccountVaultId;
+        private string previousTokenId;
         private string previousTransactionId;
+        private V1TokensTicketRequestAccountNumber accountNumber;
         private string termsAgreeIp;
         private string title;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
             { "account_holder_name", false },
-            { "account_number", false },
             { "account_vault_api_id", false },
+            { "token_api_id", false },
             { "accountvault_c1", false },
             { "accountvault_c2", false },
             { "accountvault_c3", false },
+            { "token_c1", false },
+            { "token_c2", false },
+            { "token_c3", false },
             { "ach_sec_code", false },
             { "contact_id", false },
             { "customer_id", false },
             { "previous_account_vault_api_id", false },
+            { "previous_token_api_id", false },
             { "previous_account_vault_id", false },
+            { "previous_token_id", false },
             { "previous_transaction_id", false },
+            { "account_number", false },
             { "terms_agree_ip", false },
             { "title", false },
         };
@@ -65,56 +79,70 @@ namespace FortisAPI.Standard.Models
         /// <param name="locationId">location_id.</param>
         /// <param name="ticket">ticket.</param>
         /// <param name="accountHolderName">account_holder_name.</param>
-        /// <param name="accountNumber">account_number.</param>
         /// <param name="accountVaultApiId">account_vault_api_id.</param>
+        /// <param name="tokenApiId">token_api_id.</param>
         /// <param name="accountvaultC1">accountvault_c1.</param>
         /// <param name="accountvaultC2">accountvault_c2.</param>
         /// <param name="accountvaultC3">accountvault_c3.</param>
+        /// <param name="tokenC1">token_c1.</param>
+        /// <param name="tokenC2">token_c2.</param>
+        /// <param name="tokenC3">token_c3.</param>
         /// <param name="achSecCode">ach_sec_code.</param>
         /// <param name="billingAddress">billing_address.</param>
         /// <param name="contactId">contact_id.</param>
         /// <param name="customerId">customer_id.</param>
         /// <param name="identityVerification">identity_verification.</param>
         /// <param name="previousAccountVaultApiId">previous_account_vault_api_id.</param>
+        /// <param name="previousTokenApiId">previous_token_api_id.</param>
         /// <param name="previousAccountVaultId">previous_account_vault_id.</param>
+        /// <param name="previousTokenId">previous_token_id.</param>
         /// <param name="previousTransactionId">previous_transaction_id.</param>
+        /// <param name="accountNumber">account_number.</param>
         /// <param name="termsAgree">terms_agree.</param>
         /// <param name="termsAgreeIp">terms_agree_ip.</param>
         /// <param name="title">title.</param>
+        /// <param name="joi">_joi.</param>
         public V1TokensTicketRequest(
             string locationId,
             string ticket,
             string accountHolderName = null,
-            string accountNumber = null,
             string accountVaultApiId = null,
+            string tokenApiId = null,
             string accountvaultC1 = null,
             string accountvaultC2 = null,
             string accountvaultC3 = null,
-            Models.AchSecCodeEnum? achSecCode = null,
+            string tokenC1 = null,
+            string tokenC2 = null,
+            string tokenC3 = null,
+            Models.AchSecCode3Enum? achSecCode = null,
             Models.BillingAddress billingAddress = null,
             string contactId = null,
             string customerId = null,
-            Models.IdentityVerification identityVerification = null,
+            Models.IdentityVerification2 identityVerification = null,
             string previousAccountVaultApiId = null,
+            string previousTokenApiId = null,
             string previousAccountVaultId = null,
+            string previousTokenId = null,
             string previousTransactionId = null,
+            V1TokensTicketRequestAccountNumber accountNumber = null,
             bool? termsAgree = null,
             string termsAgreeIp = null,
-            string title = null)
+            string title = null,
+            Models.Joi4 joi = null)
         {
             if (accountHolderName != null)
             {
                 this.AccountHolderName = accountHolderName;
             }
 
-            if (accountNumber != null)
-            {
-                this.AccountNumber = accountNumber;
-            }
-
             if (accountVaultApiId != null)
             {
                 this.AccountVaultApiId = accountVaultApiId;
+            }
+
+            if (tokenApiId != null)
+            {
+                this.TokenApiId = tokenApiId;
             }
 
             if (accountvaultC1 != null)
@@ -130,6 +158,21 @@ namespace FortisAPI.Standard.Models
             if (accountvaultC3 != null)
             {
                 this.AccountvaultC3 = accountvaultC3;
+            }
+
+            if (tokenC1 != null)
+            {
+                this.TokenC1 = tokenC1;
+            }
+
+            if (tokenC2 != null)
+            {
+                this.TokenC2 = tokenC2;
+            }
+
+            if (tokenC3 != null)
+            {
+                this.TokenC3 = tokenC3;
             }
 
             if (achSecCode != null)
@@ -155,14 +198,29 @@ namespace FortisAPI.Standard.Models
                 this.PreviousAccountVaultApiId = previousAccountVaultApiId;
             }
 
+            if (previousTokenApiId != null)
+            {
+                this.PreviousTokenApiId = previousTokenApiId;
+            }
+
             if (previousAccountVaultId != null)
             {
                 this.PreviousAccountVaultId = previousAccountVaultId;
             }
 
+            if (previousTokenId != null)
+            {
+                this.PreviousTokenId = previousTokenId;
+            }
+
             if (previousTransactionId != null)
             {
                 this.PreviousTransactionId = previousTransactionId;
+            }
+
+            if (accountNumber != null)
+            {
+                this.AccountNumber = accountNumber;
             }
 
             this.TermsAgree = termsAgree;
@@ -176,6 +234,7 @@ namespace FortisAPI.Standard.Models
                 this.Title = title;
             }
 
+            this.Joi = joi;
             this.Ticket = ticket;
         }
 
@@ -198,25 +257,7 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Account number
-        /// </summary>
-        [JsonProperty("account_number")]
-        public string AccountNumber
-        {
-            get
-            {
-                return this.accountNumber;
-            }
-
-            set
-            {
-                this.shouldSerialize["account_number"] = true;
-                this.accountNumber = value;
-            }
-        }
-
-        /// <summary>
-        /// This field can be used to correlate Account Vaults in our system to data within an outside software integration
+        /// This field can be used to correlate Tokens in our system to data within an outside software integration
         /// </summary>
         [JsonProperty("account_vault_api_id")]
         public string AccountVaultApiId
@@ -234,7 +275,25 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Custom field 1 for API users to store custom data
+        /// This field can be used to correlate Tokens in our system to data within an outside software integration
+        /// </summary>
+        [JsonProperty("token_api_id")]
+        public string TokenApiId
+        {
+            get
+            {
+                return this.tokenApiId;
+            }
+
+            set
+            {
+                this.shouldSerialize["token_api_id"] = true;
+                this.tokenApiId = value;
+            }
+        }
+
+        /// <summary>
+        /// DEPRECATED (Use token_c1 instead)
         /// </summary>
         [JsonProperty("accountvault_c1")]
         public string AccountvaultC1
@@ -252,7 +311,7 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Custom field 2 for API users to store custom data
+        /// DEPRECATED (Use token_c2 instead)
         /// </summary>
         [JsonProperty("accountvault_c2")]
         public string AccountvaultC2
@@ -270,7 +329,7 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Custom field 3 for API users to store custom data
+        /// DEPRECATED (Use token_c3 instead)
         /// </summary>
         [JsonProperty("accountvault_c3")]
         public string AccountvaultC3
@@ -288,10 +347,64 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
+        /// Custom field 1 for API users to store custom data
+        /// </summary>
+        [JsonProperty("token_c1")]
+        public string TokenC1
+        {
+            get
+            {
+                return this.tokenC1;
+            }
+
+            set
+            {
+                this.shouldSerialize["token_c1"] = true;
+                this.tokenC1 = value;
+            }
+        }
+
+        /// <summary>
+        /// Custom field 2 for API users to store custom data
+        /// </summary>
+        [JsonProperty("token_c2")]
+        public string TokenC2
+        {
+            get
+            {
+                return this.tokenC2;
+            }
+
+            set
+            {
+                this.shouldSerialize["token_c2"] = true;
+                this.tokenC2 = value;
+            }
+        }
+
+        /// <summary>
+        /// Custom field 3 for API users to store custom data
+        /// </summary>
+        [JsonProperty("token_c3")]
+        public string TokenC3
+        {
+            get
+            {
+                return this.tokenC3;
+            }
+
+            set
+            {
+                this.shouldSerialize["token_c3"] = true;
+                this.tokenC3 = value;
+            }
+        }
+
+        /// <summary>
         /// SEC code for the account
         /// </summary>
-        [JsonProperty("ach_sec_code", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.AchSecCodeEnum? AchSecCode
+        [JsonProperty("ach_sec_code")]
+        public Models.AchSecCode3Enum? AchSecCode
         {
             get
             {
@@ -306,13 +419,13 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// The Street portion of the address associated with the Credit Card (CC) or Bank Account (ACH).
+        /// Billing Address Object
         /// </summary>
         [JsonProperty("billing_address", NullValueHandling = NullValueHandling.Ignore)]
         public Models.BillingAddress BillingAddress { get; set; }
 
         /// <summary>
-        /// Used to associate the Account Vault with a Contact.
+        /// Used to associate the Token with a Contact.
         /// </summary>
         [JsonProperty("contact_id")]
         public string ContactId
@@ -351,7 +464,7 @@ namespace FortisAPI.Standard.Models
         /// Identity verification
         /// </summary>
         [JsonProperty("identity_verification", NullValueHandling = NullValueHandling.Ignore)]
-        public Models.IdentityVerification IdentityVerification { get; set; }
+        public Models.IdentityVerification2 IdentityVerification { get; set; }
 
         /// <summary>
         /// A valid Location Id associated with the Contact for this Token
@@ -360,7 +473,7 @@ namespace FortisAPI.Standard.Models
         public string LocationId { get; set; }
 
         /// <summary>
-        /// Can be used to pull payment info from a previous account vault api id.
+        /// Can be used to pull payment info from a previous token api id.
         /// </summary>
         [JsonProperty("previous_account_vault_api_id")]
         public string PreviousAccountVaultApiId
@@ -378,7 +491,25 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Can be used to pull payment info from a previous account vault.
+        /// Can be used to pull payment info from a previous token api id.
+        /// </summary>
+        [JsonProperty("previous_token_api_id")]
+        public string PreviousTokenApiId
+        {
+            get
+            {
+                return this.previousTokenApiId;
+            }
+
+            set
+            {
+                this.shouldSerialize["previous_token_api_id"] = true;
+                this.previousTokenApiId = value;
+            }
+        }
+
+        /// <summary>
+        /// Can be used to pull payment info from a previous token.
         /// </summary>
         [JsonProperty("previous_account_vault_id")]
         public string PreviousAccountVaultId
@@ -392,6 +523,24 @@ namespace FortisAPI.Standard.Models
             {
                 this.shouldSerialize["previous_account_vault_id"] = true;
                 this.previousAccountVaultId = value;
+            }
+        }
+
+        /// <summary>
+        /// Can be used to pull payment info from a previous token.
+        /// </summary>
+        [JsonProperty("previous_token_id")]
+        public string PreviousTokenId
+        {
+            get
+            {
+                return this.previousTokenId;
+            }
+
+            set
+            {
+                this.shouldSerialize["previous_token_id"] = true;
+                this.previousTokenId = value;
             }
         }
 
@@ -410,6 +559,24 @@ namespace FortisAPI.Standard.Models
             {
                 this.shouldSerialize["previous_transaction_id"] = true;
                 this.previousTransactionId = value;
+            }
+        }
+
+        /// <summary>
+        /// Account number
+        /// </summary>
+        [JsonProperty("account_number")]
+        public V1TokensTicketRequestAccountNumber AccountNumber
+        {
+            get
+            {
+                return this.accountNumber;
+            }
+
+            set
+            {
+                this.shouldSerialize["account_number"] = true;
+                this.accountNumber = value;
             }
         }
 
@@ -456,6 +623,12 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
+        /// Gets or sets Joi.
+        /// </summary>
+        [JsonProperty("_joi", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Joi4 Joi { get; set; }
+
+        /// <summary>
         /// A valid ticket that was created to store the token.
         /// </summary>
         [JsonProperty("ticket")]
@@ -482,17 +655,17 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAccountNumber()
+        public void UnsetAccountVaultApiId()
         {
-            this.shouldSerialize["account_number"] = false;
+            this.shouldSerialize["account_vault_api_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAccountVaultApiId()
+        public void UnsetTokenApiId()
         {
-            this.shouldSerialize["account_vault_api_id"] = false;
+            this.shouldSerialize["token_api_id"] = false;
         }
 
         /// <summary>
@@ -517,6 +690,30 @@ namespace FortisAPI.Standard.Models
         public void UnsetAccountvaultC3()
         {
             this.shouldSerialize["accountvault_c3"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTokenC1()
+        {
+            this.shouldSerialize["token_c1"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTokenC2()
+        {
+            this.shouldSerialize["token_c2"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTokenC3()
+        {
+            this.shouldSerialize["token_c3"] = false;
         }
 
         /// <summary>
@@ -554,6 +751,14 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
+        public void UnsetPreviousTokenApiId()
+        {
+            this.shouldSerialize["previous_token_api_id"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
         public void UnsetPreviousAccountVaultId()
         {
             this.shouldSerialize["previous_account_vault_id"] = false;
@@ -562,9 +767,25 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
+        public void UnsetPreviousTokenId()
+        {
+            this.shouldSerialize["previous_token_id"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
         public void UnsetPreviousTransactionId()
         {
             this.shouldSerialize["previous_transaction_id"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetAccountNumber()
+        {
+            this.shouldSerialize["account_number"] = false;
         }
 
         /// <summary>
@@ -596,18 +817,18 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAccountNumber()
+        public bool ShouldSerializeAccountVaultApiId()
         {
-            return this.shouldSerialize["account_number"];
+            return this.shouldSerialize["account_vault_api_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAccountVaultApiId()
+        public bool ShouldSerializeTokenApiId()
         {
-            return this.shouldSerialize["account_vault_api_id"];
+            return this.shouldSerialize["token_api_id"];
         }
 
         /// <summary>
@@ -635,6 +856,33 @@ namespace FortisAPI.Standard.Models
         public bool ShouldSerializeAccountvaultC3()
         {
             return this.shouldSerialize["accountvault_c3"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTokenC1()
+        {
+            return this.shouldSerialize["token_c1"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTokenC2()
+        {
+            return this.shouldSerialize["token_c2"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTokenC3()
+        {
+            return this.shouldSerialize["token_c3"];
         }
 
         /// <summary>
@@ -677,6 +925,15 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializePreviousTokenApiId()
+        {
+            return this.shouldSerialize["previous_token_api_id"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
         public bool ShouldSerializePreviousAccountVaultId()
         {
             return this.shouldSerialize["previous_account_vault_id"];
@@ -686,9 +943,27 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializePreviousTokenId()
+        {
+            return this.shouldSerialize["previous_token_id"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
         public bool ShouldSerializePreviousTransactionId()
         {
             return this.shouldSerialize["previous_transaction_id"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeAccountNumber()
+        {
+            return this.shouldSerialize["account_number"];
         }
 
         /// <summary>
@@ -721,14 +996,15 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1TokensTicketRequest other &&
-                ((this.AccountHolderName == null && other.AccountHolderName == null) || (this.AccountHolderName?.Equals(other.AccountHolderName) == true)) &&
-                ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
+            return obj is V1TokensTicketRequest other &&                ((this.AccountHolderName == null && other.AccountHolderName == null) || (this.AccountHolderName?.Equals(other.AccountHolderName) == true)) &&
                 ((this.AccountVaultApiId == null && other.AccountVaultApiId == null) || (this.AccountVaultApiId?.Equals(other.AccountVaultApiId) == true)) &&
+                ((this.TokenApiId == null && other.TokenApiId == null) || (this.TokenApiId?.Equals(other.TokenApiId) == true)) &&
                 ((this.AccountvaultC1 == null && other.AccountvaultC1 == null) || (this.AccountvaultC1?.Equals(other.AccountvaultC1) == true)) &&
                 ((this.AccountvaultC2 == null && other.AccountvaultC2 == null) || (this.AccountvaultC2?.Equals(other.AccountvaultC2) == true)) &&
                 ((this.AccountvaultC3 == null && other.AccountvaultC3 == null) || (this.AccountvaultC3?.Equals(other.AccountvaultC3) == true)) &&
+                ((this.TokenC1 == null && other.TokenC1 == null) || (this.TokenC1?.Equals(other.TokenC1) == true)) &&
+                ((this.TokenC2 == null && other.TokenC2 == null) || (this.TokenC2?.Equals(other.TokenC2) == true)) &&
+                ((this.TokenC3 == null && other.TokenC3 == null) || (this.TokenC3?.Equals(other.TokenC3) == true)) &&
                 ((this.AchSecCode == null && other.AchSecCode == null) || (this.AchSecCode?.Equals(other.AchSecCode) == true)) &&
                 ((this.BillingAddress == null && other.BillingAddress == null) || (this.BillingAddress?.Equals(other.BillingAddress) == true)) &&
                 ((this.ContactId == null && other.ContactId == null) || (this.ContactId?.Equals(other.ContactId) == true)) &&
@@ -736,40 +1012,52 @@ namespace FortisAPI.Standard.Models
                 ((this.IdentityVerification == null && other.IdentityVerification == null) || (this.IdentityVerification?.Equals(other.IdentityVerification) == true)) &&
                 ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
                 ((this.PreviousAccountVaultApiId == null && other.PreviousAccountVaultApiId == null) || (this.PreviousAccountVaultApiId?.Equals(other.PreviousAccountVaultApiId) == true)) &&
+                ((this.PreviousTokenApiId == null && other.PreviousTokenApiId == null) || (this.PreviousTokenApiId?.Equals(other.PreviousTokenApiId) == true)) &&
                 ((this.PreviousAccountVaultId == null && other.PreviousAccountVaultId == null) || (this.PreviousAccountVaultId?.Equals(other.PreviousAccountVaultId) == true)) &&
+                ((this.PreviousTokenId == null && other.PreviousTokenId == null) || (this.PreviousTokenId?.Equals(other.PreviousTokenId) == true)) &&
                 ((this.PreviousTransactionId == null && other.PreviousTransactionId == null) || (this.PreviousTransactionId?.Equals(other.PreviousTransactionId) == true)) &&
+                ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
                 ((this.TermsAgree == null && other.TermsAgree == null) || (this.TermsAgree?.Equals(other.TermsAgree) == true)) &&
                 ((this.TermsAgreeIp == null && other.TermsAgreeIp == null) || (this.TermsAgreeIp?.Equals(other.TermsAgreeIp) == true)) &&
                 ((this.Title == null && other.Title == null) || (this.Title?.Equals(other.Title) == true)) &&
+                ((this.Joi == null && other.Joi == null) || (this.Joi?.Equals(other.Joi) == true)) &&
                 ((this.Ticket == null && other.Ticket == null) || (this.Ticket?.Equals(other.Ticket) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.AccountHolderName = {(this.AccountHolderName == null ? "null" : this.AccountHolderName == string.Empty ? "" : this.AccountHolderName)}");
-            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber == string.Empty ? "" : this.AccountNumber)}");
-            toStringOutput.Add($"this.AccountVaultApiId = {(this.AccountVaultApiId == null ? "null" : this.AccountVaultApiId == string.Empty ? "" : this.AccountVaultApiId)}");
-            toStringOutput.Add($"this.AccountvaultC1 = {(this.AccountvaultC1 == null ? "null" : this.AccountvaultC1 == string.Empty ? "" : this.AccountvaultC1)}");
-            toStringOutput.Add($"this.AccountvaultC2 = {(this.AccountvaultC2 == null ? "null" : this.AccountvaultC2 == string.Empty ? "" : this.AccountvaultC2)}");
-            toStringOutput.Add($"this.AccountvaultC3 = {(this.AccountvaultC3 == null ? "null" : this.AccountvaultC3 == string.Empty ? "" : this.AccountvaultC3)}");
+            toStringOutput.Add($"this.AccountHolderName = {(this.AccountHolderName == null ? "null" : this.AccountHolderName)}");
+            toStringOutput.Add($"this.AccountVaultApiId = {(this.AccountVaultApiId == null ? "null" : this.AccountVaultApiId)}");
+            toStringOutput.Add($"this.TokenApiId = {(this.TokenApiId == null ? "null" : this.TokenApiId)}");
+            toStringOutput.Add($"this.AccountvaultC1 = {(this.AccountvaultC1 == null ? "null" : this.AccountvaultC1)}");
+            toStringOutput.Add($"this.AccountvaultC2 = {(this.AccountvaultC2 == null ? "null" : this.AccountvaultC2)}");
+            toStringOutput.Add($"this.AccountvaultC3 = {(this.AccountvaultC3 == null ? "null" : this.AccountvaultC3)}");
+            toStringOutput.Add($"this.TokenC1 = {(this.TokenC1 == null ? "null" : this.TokenC1)}");
+            toStringOutput.Add($"this.TokenC2 = {(this.TokenC2 == null ? "null" : this.TokenC2)}");
+            toStringOutput.Add($"this.TokenC3 = {(this.TokenC3 == null ? "null" : this.TokenC3)}");
             toStringOutput.Add($"this.AchSecCode = {(this.AchSecCode == null ? "null" : this.AchSecCode.ToString())}");
             toStringOutput.Add($"this.BillingAddress = {(this.BillingAddress == null ? "null" : this.BillingAddress.ToString())}");
-            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId == string.Empty ? "" : this.ContactId)}");
-            toStringOutput.Add($"this.CustomerId = {(this.CustomerId == null ? "null" : this.CustomerId == string.Empty ? "" : this.CustomerId)}");
+            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId)}");
+            toStringOutput.Add($"this.CustomerId = {(this.CustomerId == null ? "null" : this.CustomerId)}");
             toStringOutput.Add($"this.IdentityVerification = {(this.IdentityVerification == null ? "null" : this.IdentityVerification.ToString())}");
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.PreviousAccountVaultApiId = {(this.PreviousAccountVaultApiId == null ? "null" : this.PreviousAccountVaultApiId == string.Empty ? "" : this.PreviousAccountVaultApiId)}");
-            toStringOutput.Add($"this.PreviousAccountVaultId = {(this.PreviousAccountVaultId == null ? "null" : this.PreviousAccountVaultId == string.Empty ? "" : this.PreviousAccountVaultId)}");
-            toStringOutput.Add($"this.PreviousTransactionId = {(this.PreviousTransactionId == null ? "null" : this.PreviousTransactionId == string.Empty ? "" : this.PreviousTransactionId)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.PreviousAccountVaultApiId = {(this.PreviousAccountVaultApiId == null ? "null" : this.PreviousAccountVaultApiId)}");
+            toStringOutput.Add($"this.PreviousTokenApiId = {(this.PreviousTokenApiId == null ? "null" : this.PreviousTokenApiId)}");
+            toStringOutput.Add($"this.PreviousAccountVaultId = {(this.PreviousAccountVaultId == null ? "null" : this.PreviousAccountVaultId)}");
+            toStringOutput.Add($"this.PreviousTokenId = {(this.PreviousTokenId == null ? "null" : this.PreviousTokenId)}");
+            toStringOutput.Add($"this.PreviousTransactionId = {(this.PreviousTransactionId == null ? "null" : this.PreviousTransactionId)}");
+            toStringOutput.Add($"AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber.ToString())}");
             toStringOutput.Add($"this.TermsAgree = {(this.TermsAgree == null ? "null" : this.TermsAgree.ToString())}");
-            toStringOutput.Add($"this.TermsAgreeIp = {(this.TermsAgreeIp == null ? "null" : this.TermsAgreeIp == string.Empty ? "" : this.TermsAgreeIp)}");
-            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title == string.Empty ? "" : this.Title)}");
-            toStringOutput.Add($"this.Ticket = {(this.Ticket == null ? "null" : this.Ticket == string.Empty ? "" : this.Ticket)}");
+            toStringOutput.Add($"this.TermsAgreeIp = {(this.TermsAgreeIp == null ? "null" : this.TermsAgreeIp)}");
+            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title)}");
+            toStringOutput.Add($"this.Joi = {(this.Joi == null ? "null" : this.Joi.ToString())}");
+            toStringOutput.Add($"this.Ticket = {(this.Ticket == null ? "null" : this.Ticket)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

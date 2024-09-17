@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,12 +19,20 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// UiPrefs.
     /// </summary>
-    public class UiPrefs
+    public class UiPrefs : BaseModel
     {
+        private string entryPage;
         private int? pageSize;
+        private Models.ReportExportTypeEnum? reportExportType;
+        private Models.ProcessMethodEnum? processMethod;
+        private string defaultTerminal;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
+            { "entry_page", false },
             { "page_size", false },
+            { "report_export_type", false },
+            { "process_method", false },
+            { "default_terminal", false },
         };
 
         /// <summary>
@@ -48,22 +57,50 @@ namespace FortisAPI.Standard.Models
             Models.ProcessMethodEnum? processMethod = null,
             string defaultTerminal = null)
         {
-            this.EntryPage = entryPage;
+            if (entryPage != null)
+            {
+                this.EntryPage = entryPage;
+            }
+
             if (pageSize != null)
             {
                 this.PageSize = pageSize;
             }
 
-            this.ReportExportType = reportExportType;
-            this.ProcessMethod = processMethod;
-            this.DefaultTerminal = defaultTerminal;
+            if (reportExportType != null)
+            {
+                this.ReportExportType = reportExportType;
+            }
+
+            if (processMethod != null)
+            {
+                this.ProcessMethod = processMethod;
+            }
+
+            if (defaultTerminal != null)
+            {
+                this.DefaultTerminal = defaultTerminal;
+            }
+
         }
 
         /// <summary>
         /// Ui Prefs Entry Page
         /// </summary>
-        [JsonProperty("entry_page", NullValueHandling = NullValueHandling.Ignore)]
-        public string EntryPage { get; set; }
+        [JsonProperty("entry_page")]
+        public string EntryPage
+        {
+            get
+            {
+                return this.entryPage;
+            }
+
+            set
+            {
+                this.shouldSerialize["entry_page"] = true;
+                this.entryPage = value;
+            }
+        }
 
         /// <summary>
         /// Ui Prefs Page Size
@@ -86,20 +123,56 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Ui Prefs Export Type
         /// </summary>
-        [JsonProperty("report_export_type", ItemConverterType = typeof(StringEnumConverter), NullValueHandling = NullValueHandling.Ignore)]
-        public Models.ReportExportTypeEnum? ReportExportType { get; set; }
+        [JsonProperty("report_export_type")]
+        public Models.ReportExportTypeEnum? ReportExportType
+        {
+            get
+            {
+                return this.reportExportType;
+            }
+
+            set
+            {
+                this.shouldSerialize["report_export_type"] = true;
+                this.reportExportType = value;
+            }
+        }
 
         /// <summary>
         /// Ui Prefs Process Method
         /// </summary>
-        [JsonProperty("process_method", ItemConverterType = typeof(StringEnumConverter), NullValueHandling = NullValueHandling.Ignore)]
-        public Models.ProcessMethodEnum? ProcessMethod { get; set; }
+        [JsonProperty("process_method")]
+        public Models.ProcessMethodEnum? ProcessMethod
+        {
+            get
+            {
+                return this.processMethod;
+            }
+
+            set
+            {
+                this.shouldSerialize["process_method"] = true;
+                this.processMethod = value;
+            }
+        }
 
         /// <summary>
         /// Ui Prefs Default Termianl
         /// </summary>
-        [JsonProperty("default_terminal", NullValueHandling = NullValueHandling.Ignore)]
-        public string DefaultTerminal { get; set; }
+        [JsonProperty("default_terminal")]
+        public string DefaultTerminal
+        {
+            get
+            {
+                return this.defaultTerminal;
+            }
+
+            set
+            {
+                this.shouldSerialize["default_terminal"] = true;
+                this.defaultTerminal = value;
+            }
+        }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -114,9 +187,50 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
+        public void UnsetEntryPage()
+        {
+            this.shouldSerialize["entry_page"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
         public void UnsetPageSize()
         {
             this.shouldSerialize["page_size"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetReportExportType()
+        {
+            this.shouldSerialize["report_export_type"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetProcessMethod()
+        {
+            this.shouldSerialize["process_method"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetDefaultTerminal()
+        {
+            this.shouldSerialize["default_terminal"] = false;
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeEntryPage()
+        {
+            return this.shouldSerialize["entry_page"];
         }
 
         /// <summary>
@@ -126,6 +240,33 @@ namespace FortisAPI.Standard.Models
         public bool ShouldSerializePageSize()
         {
             return this.shouldSerialize["page_size"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeReportExportType()
+        {
+            return this.shouldSerialize["report_export_type"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeProcessMethod()
+        {
+            return this.shouldSerialize["process_method"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeDefaultTerminal()
+        {
+            return this.shouldSerialize["default_terminal"];
         }
 
         /// <inheritdoc/>
@@ -140,27 +281,26 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is UiPrefs other &&
-                ((this.EntryPage == null && other.EntryPage == null) || (this.EntryPage?.Equals(other.EntryPage) == true)) &&
+            return obj is UiPrefs other &&                ((this.EntryPage == null && other.EntryPage == null) || (this.EntryPage?.Equals(other.EntryPage) == true)) &&
                 ((this.PageSize == null && other.PageSize == null) || (this.PageSize?.Equals(other.PageSize) == true)) &&
                 ((this.ReportExportType == null && other.ReportExportType == null) || (this.ReportExportType?.Equals(other.ReportExportType) == true)) &&
                 ((this.ProcessMethod == null && other.ProcessMethod == null) || (this.ProcessMethod?.Equals(other.ProcessMethod) == true)) &&
                 ((this.DefaultTerminal == null && other.DefaultTerminal == null) || (this.DefaultTerminal?.Equals(other.DefaultTerminal) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.EntryPage = {(this.EntryPage == null ? "null" : this.EntryPage == string.Empty ? "" : this.EntryPage)}");
+            toStringOutput.Add($"this.EntryPage = {(this.EntryPage == null ? "null" : this.EntryPage)}");
             toStringOutput.Add($"this.PageSize = {(this.PageSize == null ? "null" : this.PageSize.ToString())}");
             toStringOutput.Add($"this.ReportExportType = {(this.ReportExportType == null ? "null" : this.ReportExportType.ToString())}");
             toStringOutput.Add($"this.ProcessMethod = {(this.ProcessMethod == null ? "null" : this.ProcessMethod.ToString())}");
-            toStringOutput.Add($"this.DefaultTerminal = {(this.DefaultTerminal == null ? "null" : this.DefaultTerminal == string.Empty ? "" : this.DefaultTerminal)}");
+            toStringOutput.Add($"this.DefaultTerminal = {(this.DefaultTerminal == null ? "null" : this.DefaultTerminal)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }
