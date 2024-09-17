@@ -28,6 +28,7 @@ service PaymentInterface {
 
 message GetNewDetailsRequest {
   uint32 Level = 1;
+  string DomainName = 2;
 }
 
 message GetNewDetailsResponse {

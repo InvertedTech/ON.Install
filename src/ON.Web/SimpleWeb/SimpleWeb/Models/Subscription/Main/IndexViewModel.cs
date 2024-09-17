@@ -48,6 +48,9 @@ namespace ON.SimpleWeb.Models.Subscription.Main
                 if (Records.Paypal.Any(r => r.Subscription.Status == SubscriptionStatus.SubscriptionActive))
                     return true;
 
+                if (Records.Stripe.Any(r => r.Subscription.Status == SubscriptionStatus.SubscriptionActive))
+                    return true;
+
                 return false;
             }
         }

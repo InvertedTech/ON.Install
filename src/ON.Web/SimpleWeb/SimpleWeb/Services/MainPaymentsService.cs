@@ -25,7 +25,7 @@ namespace ON.SimpleWeb.Services
 
         public bool IsLoggedIn { get => User != null; }
 
-        public async Task<GetNewDetailsResponse> GetNewDetails(uint level)
+        public async Task<GetNewDetailsResponse> GetNewDetails(uint level, string domainName)
         {
             if (!IsLoggedIn)
                 return null;
@@ -37,7 +37,7 @@ namespace ON.SimpleWeb.Services
 
 
             var client = new PaymentInterface.PaymentInterfaceClient(nameHelper.PaymentServiceChannel);
-            var reply = await client.GetNewDetailsAsync(new GetNewDetailsRequest() { Level = level }, GetMetadata());
+            var reply = await client.GetNewDetailsAsync(new GetNewDetailsRequest() { Level = level, DomainName = domainName }, GetMetadata());
             return reply;
         }
 

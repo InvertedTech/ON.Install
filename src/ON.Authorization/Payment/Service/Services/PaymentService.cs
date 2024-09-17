@@ -46,7 +46,7 @@ namespace ON.Authorization.Payment.Service
             return new()
             {
                 //Paypal = await paypalClient.GetNewDetails(level),
-                Stripe = await stripeClient.GetNewDetails(level, userToken),
+                Stripe = await stripeClient.GetNewDetails(level, userToken, request.DomainName),
             };
         }
 

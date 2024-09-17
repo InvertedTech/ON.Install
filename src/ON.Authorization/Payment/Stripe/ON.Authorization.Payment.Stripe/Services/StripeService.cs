@@ -126,50 +126,50 @@ namespace ON.Authorization.Payment.Stripe.Services
             }
         }
 
-        //public override async Task<StripeCancelOwnSubscriptionResponse> StripeCancelOwnSubscription(StripeCancelOwnSubscriptionRequest request, ServerCallContext context)
-        //{
-        //    try
-        //    {
-        //        var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-        //        if (userToken == null)
-        //            return new () { Error = "No user token specified" };
+        public override async Task<StripeCancelOwnSubscriptionResponse> StripeCancelOwnSubscription(StripeCancelOwnSubscriptionRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "No user token specified" };
 
-        //        Guid subscriptionId;
-        //        if (!Guid.TryParse(request.SubscriptionId, out subscriptionId))
-        //            return new() { Error = "No SubscriptionID specified" };
+                Guid subscriptionId;
+                if (!Guid.TryParse(request.SubscriptionId, out subscriptionId))
+                    return new() { Error = "No SubscriptionID specified" };
 
-        //        var record = await subscriptionProvider.GetById(userToken.Id, subscriptionId);
-        //        if (record == null)
-        //            return new () { Error = "Record not found" };
+                var record = await subscriptionProvider.GetById(userToken.Id, subscriptionId);
+                if (record == null)
+                    return new() { Error = "Record not found" };
 
-        //        var sub = await client.GetSubscription(record.StripeSubscriptionID);
-        //        if (sub == null)
-        //            return new () { Error = "SubscriptionId not valid" };
+                var sub = await client.GetSubscription(record.StripeSubscriptionID);
+                if (sub == null)
+                    return new() { Error = "SubscriptionId not valid" };
 
-        //        if (sub.status == "ACTIVE")
-        //        {
-        //            var canceled = await client.CancelSubscription(record.StripeSubscriptionID, request.Reason ?? "None");
-        //            if (!canceled)
-        //                return new () { Error = "Unable to cancel subscription" };
-        //        }
+                if (sub.Status == "active")
+                {
+                    var canceled = await client.CancelSubscription(record.StripeSubscriptionID, request.Reason ?? "None");
+                    if (!canceled)
+                        return new() { Error = "Unable to cancel subscription" };
+                }
 
-        //        record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
-        //        record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
-        //        record.RenewsOnUTC = null;
-        //        record.Status = Fragments.Authorization.Payment.SubscriptionStatus.SubscriptionStopped;
+                record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.RenewsOnUTC = null;
+                record.Status = Fragments.Authorization.Payment.SubscriptionStatus.SubscriptionStopped;
 
-        //        await subscriptionProvider.Save(record);
+                await subscriptionProvider.Save(record);
 
-        //        return new ()
-        //        {
-        //            Record = record
-        //        };
-        //    }
-        //    catch
-        //    {
-        //        return new () { Error = "Unknown error" };
-        //    }
-        //}
+                return new()
+                {
+                    Record = record
+                };
+            }
+            catch
+            {
+                return new() { Error = "Unknown error" };
+            }
+        }
 
         //public override async Task<StripeGetOwnSubscriptionRecordsResponse> StripeGetOwnSubscriptionRecords(StripeGetOwnSubscriptionRecordsRequest request, ServerCallContext context)
         //{

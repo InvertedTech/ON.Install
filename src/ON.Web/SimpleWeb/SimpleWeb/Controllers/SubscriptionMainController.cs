@@ -42,7 +42,10 @@ namespace ON.SimpleWeb.Controllers
         {
             var v = NewViewModel.Create(amountCents, settingsClient);
 
-            v.Methods = await payService.GetNewDetails(amountCents);
+            var domainName = Request.Host.Host == "localhost" ? "http" : "https";
+            domainName += "://" + Request.Host.Host;
+
+            v.Methods = await payService.GetNewDetails(amountCents, domainName);
 
             return View(v);
         }

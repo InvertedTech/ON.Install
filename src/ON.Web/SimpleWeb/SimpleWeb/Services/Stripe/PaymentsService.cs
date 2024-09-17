@@ -34,6 +34,7 @@ namespace ON.SimpleWeb.Services.Stripe
 
             var req = new StripeCancelOwnSubscriptionRequest()
             {
+                SubscriptionId = id.ToString(),
                 Reason = reason
             };
 

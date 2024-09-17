@@ -51,12 +51,12 @@ namespace ON.Authorization.Payment.Stripe.Clients
             EnsureProducts();
         }
 
-        public async Task<StripeNewDetails?> GetNewDetails(uint level, ONUser userToken)
+        public async Task<StripeNewDetails?> GetNewDetails(uint level, ONUser userToken, string domainName)
         {
             var product = Products.Records.FirstOrDefault(r => r.Price == level);
             if (product == null) return null;
 
-            var url = await CreateCheckoutSession(product, userToken);
+            var url = await CreateCheckoutSession(product, userToken, domainName);
             if (url == null) return null;
 
             var details = new StripeNewDetails()
@@ -67,7 +67,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
             return details;
         }
 
-        public async Task<string?> CreateCheckoutSession(ProductRecord product, ONUser userToken)
+        public async Task<string?> CreateCheckoutSession(ProductRecord product, ONUser userToken, string domainName)
         {
             try
             {
@@ -78,8 +78,8 @@ namespace ON.Authorization.Payment.Stripe.Clients
                 var chekoutOpts = new global::Stripe.Checkout.SessionCreateOptions
                 {
                     ClientReferenceId = userToken.Id.ToString(),
-                    SuccessUrl = "http://localhost/subscription/stripe/check",
-                    CancelUrl = "http://localhost/subscription/",
+                    SuccessUrl = domainName + "/subscription/stripe/check",
+                    CancelUrl = domainName + "/subscription/",
                     Mode = "subscription",
                     LineItems = new()
                     {
@@ -286,6 +286,18 @@ namespace ON.Authorization.Payment.Stripe.Clients
             return newPrice;
         }
 
+        public async Task<Subscription> GetSubscription(string id)
+        {
+            try
+            {
+                var sub = await subService.GetAsync(id, new());
+                return sub;
+            }
+            catch { }
+
+            return new();
+        }
+
         public async Task<List<Subscription>> GetSubscriptionsByCustomerId(string id)
         {
             try
@@ -296,6 +308,18 @@ namespace ON.Authorization.Payment.Stripe.Clients
             catch { }
 
             return new();
+        }
+
+        internal async Task<bool> CancelSubscription(string id, string reason)
+        {
+            try
+            {
+                var sub = await subService.CancelAsync(id, new() { CancellationDetails = new() { Comment = reason } });
+                return true;
+            }
+            catch { }
+
+            return false;
         }
     }
 }
