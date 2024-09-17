@@ -18,6 +18,10 @@ service PaymentInterface {
     };
   }
 
+  rpc GetOtherSubscriptionRecords (GetOtherSubscriptionRecordsRequest) returns (GetOtherSubscriptionRecordsResponse)
+  {
+  }
+
   rpc GetOwnSubscriptionRecords (GetOwnSubscriptionRecordsRequest) returns (GetOwnSubscriptionRecordsResponse)
   {
     option (google.api.http) = {
@@ -35,6 +39,17 @@ message GetNewDetailsResponse {
   Crypto.CryptoNewDetails Crypto = 1;
   Paypal.PaypalNewDetails Paypal = 5;
   Stripe.StripeNewDetails Stripe = 6;
+}
+
+
+message GetOtherSubscriptionRecordsRequest {
+    string UserID = 1;
+}
+
+message GetOtherSubscriptionRecordsResponse {
+    Fake.FakeSubscriptionRecord Fake = 2;
+    repeated Paypal.PaypalSubscriptionFullRecord Paypal = 5;
+    repeated Stripe.StripeSubscriptionFullRecord Stripe = 6;
 }
 
 

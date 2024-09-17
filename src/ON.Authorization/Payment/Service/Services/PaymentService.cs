@@ -50,6 +50,34 @@ namespace ON.Authorization.Payment.Service
             };
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE_OR_BOT)]
+        public override async Task<GetOtherSubscriptionRecordsResponse> GetOtherSubscriptionRecords(GetOtherSubscriptionRecordsRequest request, ServerCallContext context)
+        {
+            var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+            if (userToken == null)
+                return new();
+
+            var fakeT = fakeProvider.GetById(request.UserID.ToGuid());
+            var paypalT = paypalProvider.GetAllByUserId(request.UserID.ToGuid());
+            var stripeT = stripeProvider.GetAllByUserId(request.UserID.ToGuid());
+
+            await Task.WhenAll(fakeT, paypalT, stripeT);
+
+            var res = new GetOtherSubscriptionRecordsResponse();
+
+            if (fakeT.Result != null)
+                if (fakeT.Result.AmountCents > 0)
+                    res.Fake = fakeT.Result;
+
+            if (paypalT.Result != null)
+                res.Paypal.AddRange(paypalT.Result);
+
+            if (stripeT.Result != null)
+                res.Stripe.AddRange(stripeT.Result);
+
+            return res;
+        }
+
         public override async Task<GetOwnSubscriptionRecordsResponse> GetOwnSubscriptionRecords(GetOwnSubscriptionRecordsRequest request, ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
