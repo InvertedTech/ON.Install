@@ -16,6 +16,7 @@ namespace TestHarness
             var derive = new TheGreatDerivator(TheGreatDerivator.GenerateNewMnemonic());
 
             var clientKey = derive.DeriveBackupKey();
+            string privKey = clientKey.ToPrivateEncodedJsonWebKey();
             string clientPubKey = clientKey.ToPublicEncodedJsonWebKey();
 
             var serverBytes = EcdhHelper.DeriveKeyServer(clientPubKey.DecodeJsonWebKey(), out string serverPubKey);

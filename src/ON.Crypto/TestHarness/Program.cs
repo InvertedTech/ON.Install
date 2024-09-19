@@ -6,10 +6,10 @@ namespace TestHarness
     {
         static void Main(string[] args)
         {
-            //EcdhTest.Test();
+            EcdhTest.Test();
             //BitcoinAddressTest.Test2();
             //TorHiddenServicesTest.Test();
-            FloCoin.Test();
+            //FloCoin.Test();
         }
     }
 }
