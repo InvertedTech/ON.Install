@@ -6,7 +6,9 @@ import "Protos/ON/Fragments/Authorization/Payment/Stripe/ProductRecord.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeSubscriptionRecord.proto";
 
 service StripeInterface {
+  rpc StripeCancelOtherSubscription (StripeCancelOtherSubscriptionRequest) returns (StripeCancelOtherSubscriptionResponse) {}
   rpc StripeCancelOwnSubscription (StripeCancelOwnSubscriptionRequest) returns (StripeCancelOwnSubscriptionResponse) {}
+  rpc StripeCheckOtherSubscription (StripeCheckOtherSubscriptionRequest) returns (StripeCheckOtherSubscriptionResponse) {}
   rpc StripeCheckOwnSubscription (StripeCheckOwnSubscriptionRequest) returns (StripeCheckOwnSubscriptionResponse) {}
   rpc StripeGetAccountDetails (StripeGetAccountDetailsRequest) returns (StripeGetAccountDetailsResponse) {}
   rpc StripeGetOwnSubscriptionRecords (StripeGetOwnSubscriptionRecordsRequest) returns (StripeGetOwnSubscriptionRecordsResponse) {}
@@ -15,6 +17,15 @@ service StripeInterface {
   rpc StripeCreateCheckoutSession(StripeCheckoutSessionRequest) returns (StripeCheckoutSessionResponse) {}
 }
 
+message StripeCheckOtherSubscriptionRequest {
+    string UserID = 1;
+}
+
+message StripeCheckOtherSubscriptionResponse {
+	repeated StripeSubscriptionFullRecord Records = 1;
+	string Error = 2;
+}
+ 
 message StripeCheckOwnSubscriptionRequest {
 }
 
@@ -39,6 +50,17 @@ message StripeCreateBillingPortalRequest {
 message StripeCreateBillingPortalResponse {
 	string Url = 1;
 	string Error = 2;
+}
+
+message StripeCancelOtherSubscriptionRequest {
+  string UserID = 1;
+  string SubscriptionId = 2;
+  string Reason = 3;
+}
+  
+message StripeCancelOtherSubscriptionResponse {
+  StripeSubscriptionRecord Record = 1;
+  string Error = 2;
 }
 
 message StripeCancelOwnSubscriptionRequest {

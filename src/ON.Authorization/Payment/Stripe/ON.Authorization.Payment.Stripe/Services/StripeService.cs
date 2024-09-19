@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Authorization.Payment.Stripe.Clients;
@@ -27,6 +28,76 @@ namespace ON.Authorization.Payment.Stripe.Services
             this.paymentProvider = paymentProvider;
             this.client = client;
             this.settingsClient = settingsClient;
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<StripeCheckOtherSubscriptionResponse> StripeCheckOtherSubscription(StripeCheckOtherSubscriptionRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "No user token specified" };
+
+                var userId = request.UserID.ToGuid();
+
+                var customer = await client.GetCustomerByUserId(userId);
+                if (customer == null)
+                    return new() { };
+
+                var stripeSubs = await client.GetSubscriptionsByCustomerId(customer.Id);
+
+                var dbSubs = await subscriptionProvider.GetAllByUserId(userId);
+
+                foreach (var stripeSub in stripeSubs)
+                {
+                    var dbSub = dbSubs.FirstOrDefault(s => s.StripeSubscriptionID == stripeSub.Id);
+                    if (dbSub == null)
+                    {
+                        dbSub = new()
+                        {
+                            UserID = userId.ToString(),
+                            SubscriptionID = Guid.NewGuid().ToString(),
+                            StripeSubscriptionID = stripeSub.Id.ToString(),
+                            CustomerId = customer.Id,
+                            CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.Created),
+                            ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                            LastPaidUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.CurrentPeriodStart),
+                            PaidThruUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.CurrentPeriodEnd.AddDays(5)),
+                            RenewsOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.CurrentPeriodEnd),
+                            Status = ConvertStatus(stripeSub.Status),
+                            AmountCents = (uint)(stripeSub.Items.FirstOrDefault()?.Plan?.Amount ?? 0),
+                        };
+
+                        await subscriptionProvider.Save(dbSub);
+
+                        var dbPayment = new StripePaymentRecord()
+                        {
+                            UserID = userId.ToString(),
+                            SubscriptionID = dbSub.SubscriptionID,
+                            PaymentID = Guid.NewGuid().ToString(),
+                            StripePaymentID = stripeSub.LatestInvoiceId,
+                            AmountCents = dbSub.AmountCents,
+                            Status = dbSub.Status == SubscriptionStatus.SubscriptionActive ? PaymentStatus.PaymentComplete : PaymentStatus.PaymentFailed,
+                            CreatedOnUTC = dbSub.CreatedOnUTC,
+                            ChangedOnUTC = dbSub.ChangedOnUTC,
+                            PaidOnUTC = dbSub.LastPaidUTC,
+                            PaidThruUTC = dbSub.PaidThruUTC,
+                        };
+
+                        await paymentProvider.Save(dbPayment);
+                    }
+                }
+
+                var ret = new StripeCheckOtherSubscriptionResponse();
+                ret.Records.AddRange(await dataMerger.GetAllByUserId(userId));
+
+                return ret;
+            }
+            catch
+            {
+                return new() { Error = "Unknown error" };
+            }
         }
 
         public override async Task<StripeCheckOwnSubscriptionResponse> StripeCheckOwnSubscription(StripeCheckOwnSubscriptionRequest request, ServerCallContext context)
@@ -123,6 +194,54 @@ namespace ON.Authorization.Payment.Stripe.Services
                 case "past_due":
                 default:
                     return SubscriptionStatus.SubscriptionPaused;
+            }
+        }
+
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<StripeCancelOtherSubscriptionResponse> StripeCancelOtherSubscription(StripeCancelOtherSubscriptionRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "No user token specified" };
+
+                var userId = request.UserID.ToGuid();
+
+                Guid subscriptionId;
+                if (!Guid.TryParse(request.SubscriptionId, out subscriptionId))
+                    return new() { Error = "No SubscriptionID specified" };
+
+                var record = await subscriptionProvider.GetById(userId, subscriptionId);
+                if (record == null)
+                    return new() { Error = "Record not found" };
+
+                var sub = await client.GetSubscription(record.StripeSubscriptionID);
+                if (sub == null)
+                    return new() { Error = "SubscriptionId not valid" };
+
+                if (sub.Status == "active")
+                {
+                    var canceled = await client.CancelSubscription(record.StripeSubscriptionID, request.Reason ?? "None");
+                    if (!canceled)
+                        return new() { Error = "Unable to cancel subscription" };
+                }
+
+                record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.RenewsOnUTC = null;
+                record.Status = Fragments.Authorization.Payment.SubscriptionStatus.SubscriptionStopped;
+
+                await subscriptionProvider.Save(record);
+
+                return new()
+                {
+                    Record = record
+                };
+            }
+            catch
+            {
+                return new() { Error = "Unknown error" };
             }
         }
 
