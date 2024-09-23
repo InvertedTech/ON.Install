@@ -35,12 +35,15 @@ namespace ON.Authentication.SimpleAuth.Service.Data
         private async Task LoadIndex()
         {
             await foreach (var r in GetAll())
-            {
-                loginIndex.TryAdd(r.Normal.Public.Data.UserName.ToLower(), r.UserIDGuid);
+                LoadIndex(r);
+        }
 
-                foreach (var e in r.Normal.Private.Data.Emails)
-                    emailIndex.TryAdd(e.ToLower(), r.UserIDGuid);
-            }
+        private void LoadIndex(UserRecord r)
+        {
+            loginIndex.TryAdd(r.Normal.Public.Data.UserName.ToLower(), r.UserIDGuid);
+
+            foreach (var e in r.Normal.Private.Data.Emails)
+                emailIndex.TryAdd(e.ToLower(), r.UserIDGuid);
         }
 
         public Task<bool> ChangeEmailIndex(string[] emails, Guid id)
@@ -86,6 +89,8 @@ namespace ON.Authentication.SimpleAuth.Service.Data
 
             if (!loginIndex.TryAdd(user.Normal.Public.Data.UserName.ToLower(), id))
                 return false;
+
+            LoadIndex(user);
 
             await File.WriteAllBytesAsync(fd.FullName, user.ToByteArray());
 

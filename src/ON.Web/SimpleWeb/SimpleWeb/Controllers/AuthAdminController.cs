@@ -74,6 +74,22 @@ namespace ON.SimpleWeb.Controllers
             return View(vm);
         }
 
+        [HttpGet("byemail/{email}")]
+        public async Task<IActionResult> EditUserByEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return RedirectToAction(nameof(ListUsers));
+
+            var r = await userService.GetOtherUserByEmail(email);
+
+            var vm = new EditUserViewModel(r);
+
+            var totps = await userService.GetOtherTotp(r.UserIDGuid);
+            vm.TotpDevices = totps?.Devices?.ToList() ?? new();
+
+            return View("EditUser", vm);
+        }
+
         [HttpPost("{id}")]
         public async Task<IActionResult> EditUserPost(string id, EditUserViewModel vm)
         {
