@@ -301,6 +301,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                         ModifiedBy = (userToken?.Id ?? newGuid).ToString(),
                         Data = new()
                         {
+                            FirstName = request.FirstName,
+                            LastName = request.LastName,
                             MailingAddressLine1 = request.MailingAddressLine1,
                             MailingAddressLine2 = request.MailingAddressLine2,
                             MailingAddressCity = request.MailingAddressCity,
@@ -852,6 +854,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 record.Normal.Public.Data.Bio = request.Bio;
 
                 record.Normal.Private.ModifiedBy = userToken.Id.ToString();
+                record.Normal.Private.Data.FirstName = request.FirstName;
+                record.Normal.Private.Data.LastName = request.LastName;
                 record.Normal.Private.Data.MailingAddressLine1 = request.MailingAddressLine1;
                 record.Normal.Private.Data.MailingAddressLine2 = request.MailingAddressLine2;
                 record.Normal.Private.Data.MailingAddressCity = request.MailingAddressCity;
@@ -928,6 +932,8 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.Normal.Private.ModifiedBy = userToken.Id.ToString();
+                record.Normal.Private.Data.FirstName = request.FirstName;
+                record.Normal.Private.Data.LastName = request.LastName;
                 record.Normal.Private.Data.MailingAddressLine1 = request.MailingAddressLine1;
                 record.Normal.Private.Data.MailingAddressLine2 = request.MailingAddressLine2;
                 record.Normal.Private.Data.MailingAddressCity = request.MailingAddressCity;

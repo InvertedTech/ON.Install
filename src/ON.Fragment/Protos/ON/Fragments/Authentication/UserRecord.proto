@@ -50,6 +50,8 @@ message UserPrivateData {
   string MailingAddressState = 14;
   string MailingAddressPostalCode = 15;
   string MailingAddressCountryCode = 16;
+  string FirstName = 21;
+  string LastName = 22;
   string OldUserID = 51;
 }
 

@@ -321,6 +321,9 @@ message CreateUserRequest {
   string Bio = 4;                     // Biographical info of the user
   repeated string Emails = 5;         // Private email(s) used for password resets
 
+  string FirstName = 21;
+  string LastName = 22;
+
   string MailingAddressLine1 = 51;
   string MailingAddressLine2 = 52;
   string MailingAddressCity = 53;
@@ -490,6 +493,9 @@ message ModifyOtherUserRequest {
   string Bio = 4;             // Biographical info of the user
   repeated string Emails = 5; // Private email(s) used for password resets
 
+  string FirstName = 21;
+  string LastName = 22;
+
   string MailingAddressLine1 = 51;
   string MailingAddressLine2 = 52;
   string MailingAddressCity = 53;
@@ -516,6 +522,9 @@ message ModifyOwnUserRequest {
   string DisplayName = 2;     // Public display name of the user
   string Bio = 3;             // Biographical info of the user
   repeated string Emails = 4; // Private email(s) used for password resets
+
+  string FirstName = 21;
+  string LastName = 22;
 
   string MailingAddressLine1 = 51;
   string MailingAddressLine2 = 52;
