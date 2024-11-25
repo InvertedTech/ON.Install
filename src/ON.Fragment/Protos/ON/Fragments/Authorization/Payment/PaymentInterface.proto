@@ -9,12 +9,20 @@ import "Protos/ON/Fragments/Authorization/Payment/Paypal/PaypalRecords.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Paypal/PaypalSubscriptionRecord.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeRecords.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeSubscriptionRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeOneTimeRecord.proto";
 
 service PaymentInterface {
   rpc GetNewDetails (GetNewDetailsRequest) returns (GetNewDetailsResponse)
   {
     option (google.api.http) = {
       get: "/api/payment/new/{Level}"
+    };
+  }
+
+  rpc GetNewOneTimeDetails (GetNewOneTimeDetailsRequest) returns (GetNewOneTimeDetailsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/payment/single/new"
     };
   }
 
@@ -28,6 +36,13 @@ service PaymentInterface {
       get: "/api/payment/subscription"
     };
   }
+
+  rpc GetOwnOneTimeRecords (GetOwnOneTimeRecordsRequest) returns (GetOwnOneTimeRecordsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/payment/single"
+    };
+  }
 }
 
 message GetNewDetailsRequest {
@@ -39,6 +54,18 @@ message GetNewDetailsResponse {
   Crypto.CryptoNewDetails Crypto = 1;
   Paypal.PaypalNewDetails Paypal = 5;
   Stripe.StripeNewDetails Stripe = 6;
+}
+
+
+message GetNewOneTimeDetailsRequest {
+  string InternalId = 1;
+  string DomainName = 2;
+}
+
+message GetNewOneTimeDetailsResponse {
+  //Crypto.CryptoNewOneTimeDetails Crypto = 1;
+  //Paypal.PaypalNewOneTimeDetails Paypal = 5;
+  Stripe.StripeNewOneTimeDetails Stripe = 6;
 }
 
 
@@ -60,4 +87,12 @@ message GetOwnSubscriptionRecordsResponse {
     Fake.FakeSubscriptionRecord Fake = 2;
     repeated Paypal.PaypalSubscriptionFullRecord Paypal = 5;
     repeated Stripe.StripeSubscriptionFullRecord Stripe = 6;
+}
+
+
+message GetOwnOneTimeRecordsRequest {
+}
+
+message GetOwnOneTimeRecordsResponse {
+    repeated Stripe.StripeOneTimeFullRecord StripeOneTime = 6;
 }

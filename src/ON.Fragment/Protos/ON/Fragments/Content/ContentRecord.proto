@@ -44,6 +44,7 @@ message ContentPublicData {
   repeated string CategoryIds = 8;
   repeated string ChannelIds = 9;
   repeated string Tags = 10;
+  uint32 OneTimeAmountCents = 11;
 
   oneof ContentData_oneof {
 	  AudioContentPublicData Audio = 20;

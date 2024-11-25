@@ -10,8 +10,7 @@ enum SubscriptionStatus {
 }
 
 enum PaymentStatus {
-    
-Payment_Pending = 0;
+    Payment_Pending = 0;
     Payment_Complete = 1;
     Payment_Failed = 2;
     Payment_Refunded = 3;

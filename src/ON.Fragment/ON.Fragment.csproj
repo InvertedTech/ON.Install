@@ -23,6 +23,7 @@
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Paypal\PaypalSubscriptionRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\SharedTypes.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeInterface.proto" />
+    <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeOneTimeRecord.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeRecords.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSettings.proto" />
     <None Remove="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSubscriptionRecord.proto" />
@@ -93,6 +94,7 @@
     </Protobuf>
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeRecords.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeSettings.proto" GrpcServices="None" />
+    <Protobuf Include="Protos\ON\Fragments\Authorization\Payment\Stripe\StripeOneTimeRecord.proto" />
     <Protobuf Include="Protos\ON\Fragments\Authorization\SharedTypes.proto" GrpcServices="None" />
     <Protobuf Include="Protos\ON\Fragments\Comment\CommentInterface.proto" />
     <Protobuf Include="Protos\ON\Fragments\Comment\CommentRecord.proto" GrpcServices="None" />
