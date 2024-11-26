@@ -155,17 +155,25 @@ namespace ON.Authorization.Payment.Stripe.Clients
             string domainName
         )
         {
-            var product = Products.Records.FirstOrDefault(r => r.ProductId == internalId);
-            if (product == null)
+            try
+            {
+                var product = Products.Records.FirstOrDefault(r => r.ProductId == internalId);
+                if (product == null)
+                    return null;
+
+                var url = await CreateOneTimeCheckoutSession(product, userToken, domainName);
+                if (string.IsNullOrEmpty(url))
+                    return null;
+
+                var details = new StripeNewOneTimeDetails() { PaymentLink = url, };
+
+                return details;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, ex);
                 return null;
-
-            var url = await CreateOneTimeCheckoutSession(product, userToken, domainName);
-            if (string.IsNullOrEmpty(url))
-                return null;
-
-            var details = new StripeNewOneTimeDetails() { PaymentLink = url, };
-
-            return details;
+            }
         }
 
         public async Task<string?> CreateOneTimeCheckoutSession(
