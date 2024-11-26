@@ -157,11 +157,29 @@ namespace ON.Authorization.Payment.Stripe.Clients
         {
             try
             {
-                var product = Products.Records.FirstOrDefault(r => r.ProductId == internalId);
+                var product = await productService.SearchAsync(
+                    new() { Query = $"metadata['internal_id']:'{internalId}'" }
+                );
                 if (product == null)
                     return null;
 
-                var url = await CreateOneTimeCheckoutSession(product, userToken, domainName);
+                var newProduct = product.FirstOrDefault();
+                if (newProduct == null)
+                    return null;
+
+                var url = await CreateOneTimeCheckoutSession(
+                    new ProductRecord()
+                    {
+                        PriceId = newProduct.DefaultPriceId,
+                        Price = new(),
+                        Name = newProduct.Name,
+                        ProductId = newProduct.Id,
+                        CheckoutUrl = newProduct.Url
+                    },
+                    userToken,
+                    domainName
+                );
+                ;
                 if (string.IsNullOrEmpty(url))
                     return null;
 
