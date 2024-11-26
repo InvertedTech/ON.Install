@@ -135,14 +135,13 @@ namespace ON.Authorization.Payment.Service
                 return new();
             }
 
-            return new GetNewOneTimeDetailsResponse
-            {
-                Stripe = await stripeClient.GetNewOneTimeDetails(
-                    request.InternalId,
-                    userToken,
-                    request.DomainName
-                )
-            };
+            var details = await stripeClient.GetNewOneTimeDetails(
+                request.InternalId,
+                userToken,
+                request.DomainName
+            );
+
+            return new() { Stripe = details };
         }
 
         // TODO: Implement
