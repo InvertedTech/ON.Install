@@ -171,7 +171,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, ex);
+                logger.LogError($"Stripe Client: {ex.Message}", ex);
                 return null;
             }
         }
