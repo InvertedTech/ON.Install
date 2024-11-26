@@ -20,7 +20,14 @@ namespace ON.Authorization.Payment.Stripe.Services
         private readonly StripeClient client;
         private readonly SettingsClient settingsClient;
 
-        public StripeService(ILogger<StripeService> logger, DataMergeService dataMerger, ISubscriptionRecordProvider subscriptionProvider, IPaymentRecordProvider paymentProvider, StripeClient client, SettingsClient settingsClient)
+        public StripeService(
+            ILogger<StripeService> logger,
+            DataMergeService dataMerger,
+            ISubscriptionRecordProvider subscriptionProvider,
+            IPaymentRecordProvider paymentProvider,
+            StripeClient client,
+            SettingsClient settingsClient
+        )
         {
             this.logger = logger;
             this.dataMerger = dataMerger;
@@ -31,7 +38,10 @@ namespace ON.Authorization.Payment.Stripe.Services
         }
 
         [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
-        public override async Task<StripeCheckOtherSubscriptionResponse> StripeCheckOtherSubscription(StripeCheckOtherSubscriptionRequest request, ServerCallContext context)
+        public override async Task<StripeCheckOtherSubscriptionResponse> StripeCheckOtherSubscription(
+            StripeCheckOtherSubscriptionRequest request,
+            ServerCallContext context
+        )
         {
             try
             {
@@ -60,13 +70,25 @@ namespace ON.Authorization.Payment.Stripe.Services
                             SubscriptionID = Guid.NewGuid().ToString(),
                             StripeSubscriptionID = stripeSub.Id.ToString(),
                             CustomerId = customer.Id,
-                            CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.Created),
-                            ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
-                            LastPaidUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.CurrentPeriodStart),
-                            PaidThruUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.CurrentPeriodEnd.AddDays(5)),
-                            RenewsOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.CurrentPeriodEnd),
+                            CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                                stripeSub.Created
+                            ),
+                            ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                                DateTime.UtcNow
+                            ),
+                            LastPaidUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                                stripeSub.CurrentPeriodStart
+                            ),
+                            PaidThruUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                                stripeSub.CurrentPeriodEnd.AddDays(5)
+                            ),
+                            RenewsOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                                stripeSub.CurrentPeriodEnd
+                            ),
                             Status = ConvertStatus(stripeSub.Status),
-                            AmountCents = (uint)(stripeSub.Items.FirstOrDefault()?.Plan?.Amount ?? 0),
+                            AmountCents = (uint)(
+                                stripeSub.Items.FirstOrDefault()?.Plan?.Amount ?? 0
+                            ),
                         };
 
                         await subscriptionProvider.Save(dbSub);
@@ -78,7 +100,10 @@ namespace ON.Authorization.Payment.Stripe.Services
                             PaymentID = Guid.NewGuid().ToString(),
                             StripePaymentID = stripeSub.LatestInvoiceId,
                             AmountCents = dbSub.AmountCents,
-                            Status = dbSub.Status == SubscriptionStatus.SubscriptionActive ? PaymentStatus.PaymentComplete : PaymentStatus.PaymentFailed,
+                            Status =
+                                dbSub.Status == SubscriptionStatus.SubscriptionActive
+                                    ? PaymentStatus.PaymentComplete
+                                    : PaymentStatus.PaymentFailed,
                             CreatedOnUTC = dbSub.CreatedOnUTC,
                             ChangedOnUTC = dbSub.ChangedOnUTC,
                             PaidOnUTC = dbSub.LastPaidUTC,
@@ -100,7 +125,10 @@ namespace ON.Authorization.Payment.Stripe.Services
             }
         }
 
-        public override async Task<StripeCheckOwnSubscriptionResponse> StripeCheckOwnSubscription(StripeCheckOwnSubscriptionRequest request, ServerCallContext context)
+        public override async Task<StripeCheckOwnSubscriptionResponse> StripeCheckOwnSubscription(
+            StripeCheckOwnSubscriptionRequest request,
+            ServerCallContext context
+        )
         {
             try
             {
@@ -127,13 +155,25 @@ namespace ON.Authorization.Payment.Stripe.Services
                             SubscriptionID = Guid.NewGuid().ToString(),
                             StripeSubscriptionID = stripeSub.Id.ToString(),
                             CustomerId = customer.Id,
-                            CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.Created),
-                            ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
-                            LastPaidUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.CurrentPeriodStart),
-                            PaidThruUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.CurrentPeriodEnd.AddDays(5)),
-                            RenewsOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripeSub.CurrentPeriodEnd),
+                            CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                                stripeSub.Created
+                            ),
+                            ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                                DateTime.UtcNow
+                            ),
+                            LastPaidUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                                stripeSub.CurrentPeriodStart
+                            ),
+                            PaidThruUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                                stripeSub.CurrentPeriodEnd.AddDays(5)
+                            ),
+                            RenewsOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                                stripeSub.CurrentPeriodEnd
+                            ),
                             Status = ConvertStatus(stripeSub.Status),
-                            AmountCents = (uint)(stripeSub.Items.FirstOrDefault()?.Plan?.Amount ?? 0),
+                            AmountCents = (uint)(
+                                stripeSub.Items.FirstOrDefault()?.Plan?.Amount ?? 0
+                            ),
                         };
 
                         await subscriptionProvider.Save(dbSub);
@@ -145,7 +185,10 @@ namespace ON.Authorization.Payment.Stripe.Services
                             PaymentID = Guid.NewGuid().ToString(),
                             StripePaymentID = stripeSub.LatestInvoiceId,
                             AmountCents = dbSub.AmountCents,
-                            Status = dbSub.Status == SubscriptionStatus.SubscriptionActive ? PaymentStatus.PaymentComplete : PaymentStatus.PaymentFailed,
+                            Status =
+                                dbSub.Status == SubscriptionStatus.SubscriptionActive
+                                    ? PaymentStatus.PaymentComplete
+                                    : PaymentStatus.PaymentFailed,
                             CreatedOnUTC = dbSub.CreatedOnUTC,
                             ChangedOnUTC = dbSub.ChangedOnUTC,
                             PaidOnUTC = dbSub.LastPaidUTC,
@@ -198,7 +241,10 @@ namespace ON.Authorization.Payment.Stripe.Services
         }
 
         [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
-        public override async Task<StripeCancelOtherSubscriptionResponse> StripeCancelOtherSubscription(StripeCancelOtherSubscriptionRequest request, ServerCallContext context)
+        public override async Task<StripeCancelOtherSubscriptionResponse> StripeCancelOtherSubscription(
+            StripeCancelOtherSubscriptionRequest request,
+            ServerCallContext context
+        )
         {
             try
             {
@@ -222,22 +268,30 @@ namespace ON.Authorization.Payment.Stripe.Services
 
                 if (sub.Status == "active")
                 {
-                    var canceled = await client.CancelSubscription(record.StripeSubscriptionID, request.Reason ?? "None");
+                    var canceled = await client.CancelSubscription(
+                        record.StripeSubscriptionID,
+                        request.Reason ?? "None"
+                    );
                     if (!canceled)
                         return new() { Error = "Unable to cancel subscription" };
                 }
 
-                record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
-                record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                    DateTime.UtcNow
+                );
+                record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                    DateTime.UtcNow
+                );
                 record.RenewsOnUTC = null;
-                record.Status = Fragments.Authorization.Payment.SubscriptionStatus.SubscriptionStopped;
+                record.Status = Fragments
+                    .Authorization
+                    .Payment
+                    .SubscriptionStatus
+                    .SubscriptionStopped;
 
                 await subscriptionProvider.Save(record);
 
-                return new()
-                {
-                    Record = record
-                };
+                return new() { Record = record };
             }
             catch
             {
@@ -245,7 +299,10 @@ namespace ON.Authorization.Payment.Stripe.Services
             }
         }
 
-        public override async Task<StripeCancelOwnSubscriptionResponse> StripeCancelOwnSubscription(StripeCancelOwnSubscriptionRequest request, ServerCallContext context)
+        public override async Task<StripeCancelOwnSubscriptionResponse> StripeCancelOwnSubscription(
+            StripeCancelOwnSubscriptionRequest request,
+            ServerCallContext context
+        )
         {
             try
             {
@@ -267,26 +324,87 @@ namespace ON.Authorization.Payment.Stripe.Services
 
                 if (sub.Status == "active")
                 {
-                    var canceled = await client.CancelSubscription(record.StripeSubscriptionID, request.Reason ?? "None");
+                    var canceled = await client.CancelSubscription(
+                        record.StripeSubscriptionID,
+                        request.Reason ?? "None"
+                    );
                     if (!canceled)
                         return new() { Error = "Unable to cancel subscription" };
                 }
 
-                record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
-                record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+                record.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                    DateTime.UtcNow
+                );
+                record.CanceledOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(
+                    DateTime.UtcNow
+                );
                 record.RenewsOnUTC = null;
-                record.Status = Fragments.Authorization.Payment.SubscriptionStatus.SubscriptionStopped;
+                record.Status = Fragments
+                    .Authorization
+                    .Payment
+                    .SubscriptionStatus
+                    .SubscriptionStopped;
 
                 await subscriptionProvider.Save(record);
 
-                return new()
-                {
-                    Record = record
-                };
+                return new() { Record = record };
             }
             catch
             {
                 return new() { Error = "Unknown error" };
+            }
+        }
+
+        //[Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
+        public override async Task<StripeCreateProductResponse> StripeCreateProduct(
+            StripeCreateProductRequest request,
+            ServerCallContext context
+        )
+        {
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "No user token specified" };
+
+                var res = await client.CreateProduct(request);
+                if (res == null)
+                    return new() { Error = "Failed To Get A Response From Stripe Client" };
+
+                if (!string.IsNullOrEmpty(res.Error))
+                    return res;
+
+                return new();
+            }
+            catch (Exception e)
+            {
+                return new() { Error = e.Message };
+            }
+        }
+
+        public override async Task<StripeModifyProductResponse> StripeModifyProduct(
+            StripeModifyProductRequest request,
+            ServerCallContext context
+        )
+        {
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "No user token specified" };
+
+                var updated = await client.StripeModifyProduct(request);
+                if (updated == null)
+                    return new() { Error = "Failed To Get A Response From The Stripe Client" };
+
+                if (!string.IsNullOrEmpty(updated.Error))
+                    return updated;
+
+                return new();
+            }
+            catch (Exception e)
+            {
+                return new() { Error = e.Message };
             }
         }
 
