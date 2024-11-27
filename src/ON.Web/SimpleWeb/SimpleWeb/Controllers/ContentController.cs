@@ -159,6 +159,7 @@ namespace ON.SimpleWeb.Controllers
                 YoutubeVideoId = res.Public.Data.Video.YoutubeVideoId,
                 Body = res.Public.Data.Video.HtmlBody,
                 Level = res.Public.Data.SubscriptionLevel,
+                OneTimeAmountCents = res.Public.Data.OneTimeAmountCents,
             };
 
             return View("EditVideo", vm);
@@ -206,6 +207,7 @@ namespace ON.SimpleWeb.Controllers
                 Author = res.Public.Data.Author,
                 Body = res.Public.Data.Written.HtmlBody,
                 Level = res.Public.Data.SubscriptionLevel,
+                OneTimeAmountCents = res.Public.Data.OneTimeAmountCents,
             };
 
             return View("EditWritten", vm);

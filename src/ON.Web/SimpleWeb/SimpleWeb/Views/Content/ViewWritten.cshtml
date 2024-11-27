@@ -33,7 +33,7 @@ else
 <br />
 <br />
 
-@if (Model.Record.Data.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
+@if (Model.CanShowContent(userHelper.MyUser))
 {
     @Html.Raw(Model.Record.Data.Written.HtmlBody)
 
@@ -41,19 +41,17 @@ else
 }
 else
 {
-    if (Model.Record.Data.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    <br />
+    <br />
+    if (userHelper.MyUser == null)
     {
-        @Html.Raw(Model.Record.Data.Written.HtmlBody)
-
-        @await Html.PartialAsync("ViewComments", Model.Comments)
+        <pre>To see the content <a href="/register">sign up</a> for an account</pre>
     }
     else
     {
-        <br />
-        <br />
-        if (userHelper.MyUser == null)
+        if (Model.Record.Data.OneTimeAmountCents > 0)
         {
-            <pre>To see the content <a href="/register">sign up</a> for an account</pre>
+            <pre>To see the content please purchase for <a href="/content/@(Model.Record.ContentID)/purchase">@((Model.Record.Data.OneTimeAmountCents / 100.0).ToString("$###,##0.00"))</a> </pre>
         }
         else
         {
