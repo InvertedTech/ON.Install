@@ -156,7 +156,7 @@ namespace ON.Authorization.Payment.Service
 
             var res = new GetOwnOneTimeRecordsResponse();
 
-            throw new NotImplementedException();
+            return res;
         }
     }
 }

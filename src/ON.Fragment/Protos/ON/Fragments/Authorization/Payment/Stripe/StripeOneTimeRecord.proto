@@ -6,10 +6,6 @@ import "google/protobuf/timestamp.proto";
 
 import "Protos/ON/Fragments/Authorization/Payment/SharedTypes.proto";
 
-message StripeOneTimeFullRecord {
-	repeated StripeOneTimePaymentRecord Payments = 1;
-}
-
 message StripeOneTimePaymentRecord {
   string UserID = 1; // Guid for the user
   string InternalID = 2; // Guid for the Internal object that was purchased, ex: Guid of video

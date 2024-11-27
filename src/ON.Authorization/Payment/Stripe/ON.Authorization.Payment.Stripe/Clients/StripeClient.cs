@@ -171,7 +171,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
                     new ProductRecord()
                     {
                         PriceId = newProduct.DefaultPriceId,
-                        Price = new(),
+                        Price = 200,
                         Name = newProduct.Name,
                         ProductId = newProduct.Id,
                         CheckoutUrl = newProduct.Url

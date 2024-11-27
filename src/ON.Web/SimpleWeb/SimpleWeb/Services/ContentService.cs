@@ -38,6 +38,7 @@ namespace ON.SimpleWeb.Services
                     Description = vm.Subtitle,
                     Author = vm.Author,
                     SubscriptionLevel = vm.Level,
+                    OneTimeAmountCents = vm.OneTimeAmountCents,
 
                     Video = new()
                     {
@@ -73,6 +74,7 @@ namespace ON.SimpleWeb.Services
                     Description = vm.Subtitle,
                     Author = vm.Author,
                     SubscriptionLevel = vm.Level,
+                    OneTimeAmountCents = vm.OneTimeAmountCents,
 
                     Written = new()
                     {
@@ -203,6 +205,7 @@ namespace ON.SimpleWeb.Services
             record.Public.Data.Description = vm.Subtitle;
             record.Public.Data.Author = vm.Author;
             record.Public.Data.SubscriptionLevel = vm.Level;
+            record.Public.Data.OneTimeAmountCents = vm.OneTimeAmountCents;
             record.Public.Data.Video.RumbleVideoId = vm.RumbleVideoId ?? "";
             record.Public.Data.Video.YoutubeVideoId = vm.YoutubeVideoId ?? "";
             record.Public.Data.Video.HtmlBody = vm.Body;
@@ -231,6 +234,7 @@ namespace ON.SimpleWeb.Services
             record.Public.Data.Description = vm.Subtitle;
             record.Public.Data.Author = vm.Author;
             record.Public.Data.SubscriptionLevel = vm.Level;
+            record.Public.Data.OneTimeAmountCents = vm.OneTimeAmountCents;
             record.Public.Data.Written.HtmlBody = vm.Body;
 
             var req = new ModifyContentRequest()

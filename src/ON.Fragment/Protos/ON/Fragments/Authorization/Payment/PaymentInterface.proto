@@ -94,5 +94,5 @@ message GetOwnOneTimeRecordsRequest {
 }
 
 message GetOwnOneTimeRecordsResponse {
-    repeated Stripe.StripeOneTimeFullRecord StripeOneTime = 6;
+    repeated Stripe.StripeOneTimePaymentRecord Stripe = 6;
 }
