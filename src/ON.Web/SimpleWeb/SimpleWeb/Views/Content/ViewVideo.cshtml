@@ -32,7 +32,7 @@ else
 <br />
 <br />
 
-@if (Model.Record.Data.SubscriptionLevel == 0 || (userHelper.MyUser?.IsWriterOrHigher ?? false))
+@if (Model.CanShowContent(userHelper.MyUser))
 {
     @if (Model.Record.Data.Video.RumbleVideoId != "")
     {
@@ -46,25 +46,17 @@ else
 }
 else
 {
-    if (Model.Record.Data.SubscriptionLevel <= (userHelper.MyUser?.SubscriptionLevel ?? 0))
+    <br />
+    <br />
+    if (userHelper.MyUser == null)
     {
-        @if (Model.Record.Data.Video.RumbleVideoId != "")
-        {
-            <iframe loading="lazy" class="rumble" width="100%" height="100%" src="https://rumble.com/embed/@Model.Record.Data.Video.RumbleVideoId" frameborder="0" allowfullscreen style="min-height:500px"></iframe>
-        }
-        else if (Model.Record.Data.Video.YoutubeVideoId != "")
-        {
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/@Model.Record.Data.Video.YoutubeVideoId" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="youtubeframe" style="min-height:500px"></iframe>
-        }
-        @Html.Raw(Model.Record.Data.Video.HtmlBody)
+        <pre>To see the content <a href="/register">sign up</a> for an account</pre>
     }
     else
     {
-        <br />
-        <br />
-        if (userHelper.MyUser == null)
+        if (Model.Record.Data.OneTimeAmountCents > 0)
         {
-            <pre>To see the content <a href="/register">sign up</a> for an account</pre>
+            <pre>To see the content please purchase for <a href="/content/@(Model.Record.ContentID)/purchase">@((Model.Record.Data.OneTimeAmountCents / 100.0).ToString("$###,##0.00"))</a> </pre>
         }
         else
         {

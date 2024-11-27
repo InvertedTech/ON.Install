@@ -16,6 +16,7 @@ service StripeInterface {
   rpc StripeCreateBillingPortal (StripeCreateBillingPortalRequest) returns (StripeCreateBillingPortalResponse) {}
   rpc StripeCreateCheckoutSession(StripeCheckoutSessionRequest) returns (StripeCheckoutSessionResponse) {}
   rpc StripeCreateProduct(StripeCreateProductRequest) returns (StripeCreateProductResponse) {}
+  rpc StripeGetProduct(StripeGetProductRequest) returns (StripeGetProductResponse) {}
   rpc StripeModifyProduct(StripeModifyProductRequest) returns (StripeModifyProductResponse) {}
 }
 
@@ -105,8 +106,8 @@ message StripeNewOwnSubscriptionResponse {
 message StripeCreateProductRequest {
 	string InternalId = 1;
 	string Name = 2;
-	string MinimumPrice = 11;
-	string MaximumPrice = 12;
+	uint32 MinimumPrice = 11;
+	uint32 MaximumPrice = 12;
 }
 
 message StripeCreateProductResponse {
@@ -114,11 +115,23 @@ message StripeCreateProductResponse {
 }
 
 
+message StripeGetProductRequest {
+	string InternalId = 1;
+}
+
+message StripeGetProductResponse {
+	string Error = 1;
+	string Name = 2;
+	uint32 MinimumPrice = 11;
+	uint32 MaximumPrice = 12;
+}
+
+
 message StripeModifyProductRequest {
 	string InternalId = 1;
 	string Name = 2;
-	string MinimumPrice = 11;
-	string MaximumPrice = 12;
+	uint32 MinimumPrice = 11;
+	uint32 MaximumPrice = 12;
 }
 
 message StripeModifyProductResponse {

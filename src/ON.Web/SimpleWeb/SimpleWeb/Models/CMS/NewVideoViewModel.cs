@@ -31,6 +31,9 @@ namespace ON.SimpleWeb.Models.CMS
         [DataType(DataType.Currency)]
         public uint Level { get; set; }
 
+        [Display(Name = "Single purchase amount in cents")]
+        public uint OneTimeAmountCents { get; set; }
+
         [Required]
         [Display(Name = "Author")]
         [StringLength(100, ErrorMessage = "{0} length must be less than {1}.")]
