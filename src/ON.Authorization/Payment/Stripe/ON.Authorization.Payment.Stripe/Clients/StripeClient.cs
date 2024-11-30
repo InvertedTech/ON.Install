@@ -1,13 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using ON.Authentication;
-using ON.Authorization.Payment.Stripe.Data;
-using ON.Authorization.Payment.Stripe.Models;
-using ON.Fragments.Authorization;
-using ON.Fragments.Authorization.Payment.Stripe;
-using ON.Settings;
-using Stripe;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -17,6 +8,15 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using ON.Authentication;
+using ON.Authorization.Payment.Stripe.Data;
+using ON.Authorization.Payment.Stripe.Models;
+using ON.Fragments.Authorization;
+using ON.Fragments.Authorization.Payment.Stripe;
+using ON.Settings;
+using Stripe;
 
 namespace ON.Authorization.Payment.Stripe.Clients
 {
@@ -34,10 +34,14 @@ namespace ON.Authorization.Payment.Stripe.Clients
         private PriceService priceService = new();
         private SubscriptionService subService = new();
 
-
         private object syncObject = new();
 
-        public StripeClient(ILogger<StripeClient> logger, IOptions<AppSettings> settings, IProductRecordProvider recordProvider, SettingsClient settingsClient)
+        public StripeClient(
+            ILogger<StripeClient> logger,
+            IOptions<AppSettings> settings,
+            IProductRecordProvider recordProvider,
+            SettingsClient settingsClient
+        )
         {
             this.settings = settings.Value;
             this.logger = logger;
@@ -51,23 +55,185 @@ namespace ON.Authorization.Payment.Stripe.Clients
             EnsureProducts();
         }
 
-        public async Task<StripeNewDetails?> GetNewDetails(uint level, ONUser userToken, string domainName)
+        public async Task<StripeCreateProductResponse> CreateProduct(
+            StripeCreateProductRequest request
+        )
+        {
+            try
+            {
+                var newProductOpts = new ProductCreateOptions()
+                {
+                    Id = request.InternalId,
+                    Active = true,
+                    Name = request.Name,
+                    Metadata = new Dictionary<string, string>()
+                    {
+                        { "internal_id", request.InternalId },
+                    },
+                    DefaultPriceData = { Currency = "usd", }
+                };
+
+                newProductOpts.ExtraParams.Add(
+                    "default_price_data.custom_unit_amount.enabled",
+                    true
+                );
+                newProductOpts.ExtraParams.Add(
+                    "default_price_data.custom_unit_amount.minimum",
+                    request.MinimumPrice
+                );
+                newProductOpts.ExtraParams.Add(
+                    "default_price_data.custom_unit_amount.maximum",
+                    request.MaximumPrice
+                );
+
+                var createdProduct = await productService.CreateAsync(newProductOpts);
+                if (createdProduct == null)
+                    return new() { Error = "Failed To Create Product" };
+
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return new() { Error = ex.Message, };
+            }
+        }
+
+        public async Task<StripeModifyProductResponse> StripeModifyProduct(
+            StripeModifyProductRequest request
+        )
+        {
+            try
+            {
+                var modifyProductOpts = new ProductUpdateOptions { Name = request.Name, };
+
+                modifyProductOpts.ExtraParams.Add(
+                    "default_price_data.custom_unit_amount.minimum",
+                    request.MinimumPrice
+                );
+
+                modifyProductOpts.ExtraParams.Add(
+                    "default_price_data.custom_unit_amount.maximum",
+                    request.MaximumPrice
+                );
+                var updated = await productService.UpdateAsync(
+                    request.InternalId,
+                    modifyProductOpts
+                );
+                if (updated == null)
+                    return new() { Error = "Unable to update product" };
+
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return new() { Error = ex.Message };
+            }
+        }
+
+        public async Task<StripeNewDetails?> GetNewDetails(
+            uint level,
+            ONUser userToken,
+            string domainName
+        )
         {
             var product = Products.Records.FirstOrDefault(r => r.Price == level);
-            if (product == null) return null;
+            if (product == null)
+                return null;
 
             var url = await CreateCheckoutSession(product, userToken, domainName);
-            if (url == null) return null;
+            if (url == null)
+                return null;
 
-            var details = new StripeNewDetails()
-            {
-                PaymentLink = url,
-            };
+            var details = new StripeNewDetails() { PaymentLink = url, };
 
             return details;
         }
 
-        public async Task<string?> CreateCheckoutSession(ProductRecord product, ONUser userToken, string domainName)
+        public async Task<StripeNewOneTimeDetails?> GetNewOneTimeDetails(
+            string internalId,
+            ONUser userToken,
+            string domainName
+        )
+        {
+            try
+            {
+                var product = await productService.SearchAsync(
+                    new() { Query = $"metadata['internal_id']:'{internalId}'" }
+                );
+                if (product == null)
+                    return null;
+
+                var newProduct = product.FirstOrDefault();
+                if (newProduct == null)
+                    return null;
+
+                var url = await CreateOneTimeCheckoutSession(
+                    new ProductRecord()
+                    {
+                        PriceId = newProduct.DefaultPriceId,
+                        Price = 200,
+                        Name = newProduct.Name,
+                        ProductId = newProduct.Id,
+                        CheckoutUrl = newProduct.Url
+                    },
+                    userToken,
+                    domainName
+                );
+                ;
+                if (string.IsNullOrEmpty(url))
+                    return null;
+
+                var details = new StripeNewOneTimeDetails() { PaymentLink = url, };
+
+                return details;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Stripe Client: {ex.Message}", ex);
+                return null;
+            }
+        }
+
+        public async Task<string?> CreateOneTimeCheckoutSession(
+            ProductRecord product,
+            ONUser userToken,
+            string domainName
+        )
+        {
+            try
+            {
+                var customer = await EnsureCustomerByUserId(userToken.Id);
+                if (customer == null)
+                    return null;
+                var chekoutOpts = new global::Stripe.Checkout.SessionCreateOptions
+                {
+                    ClientReferenceId = userToken.Id.ToString(),
+                    SuccessUrl = domainName + "/payment/stripe/check",
+                    CancelUrl = domainName + "/payment/",
+                    Mode = "payment",
+                    LineItems = new()
+                    {
+                        new() { Price = product.PriceId, Quantity = 1, },
+                    },
+                    Customer = customer.Id
+                };
+
+                var service = new global::Stripe.Checkout.SessionService();
+                var session = await service.CreateAsync(chekoutOpts);
+
+                return session.Url;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<string?> CreateCheckoutSession(
+            ProductRecord product,
+            ONUser userToken,
+            string domainName
+        )
         {
             try
             {
@@ -83,11 +249,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
                     Mode = "subscription",
                     LineItems = new()
                     {
-                        new ()
-                        {
-                            Price = product.PriceId,
-                            Quantity = 1,
-                        },
+                        new() { Price = product.PriceId, Quantity = 1, },
                     },
                     Customer = customer.Id
                 };
@@ -125,7 +287,9 @@ namespace ON.Authorization.Payment.Stripe.Clients
         {
             try
             {
-                var res = await customerService.SearchAsync(new() { Query = $"metadata['id']:'{userId.ToString()}'" });
+                var res = await customerService.SearchAsync(
+                    new() { Query = $"metadata['id']:'{userId.ToString()}'" }
+                );
                 return res.FirstOrDefault();
             }
             catch { }
@@ -139,11 +303,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
             {
                 LineItems = new List<PaymentLinkLineItemOptions>
                 {
-                    new PaymentLinkLineItemOptions
-                    {
-                        Price = priceId,
-                        Quantity = 1,
-                    },
+                    new PaymentLinkLineItemOptions { Price = priceId, Quantity = 1, },
                 },
             };
 
@@ -173,27 +333,51 @@ namespace ON.Authorization.Payment.Stripe.Clients
             recordProvider.SaveAll(Products).Wait();
         }
 
-        private ProductRecord EnsureProduct(SubscriptionTier t, StripeList<Product> stripeProducts, StripeList<Price> stripePrices)
+        private ProductRecord EnsureProduct(
+            SubscriptionTier t,
+            StripeList<Product> stripeProducts,
+            StripeList<Price> stripePrices
+        )
         {
             var savedProduct = Products.Records.FirstOrDefault(r => r.Price == t.AmountCents);
             if (savedProduct != null)
             {
-                bool alreadyCorrect = IsSavedRecordIsCorrect(t, savedProduct, stripeProducts, stripePrices);
+                bool alreadyCorrect = IsSavedRecordIsCorrect(
+                    t,
+                    savedProduct,
+                    stripeProducts,
+                    stripePrices
+                );
                 if (alreadyCorrect)
                     return savedProduct;
             }
 
-            var activeProduct = stripeProducts.Where(p => p.Active).Where(p => p.Name.ToLower() == t.Name.ToLower()).FirstOrDefault();
+            var activeProduct = stripeProducts
+                .Where(p => p.Active)
+                .Where(p => p.Name.ToLower() == t.Name.ToLower())
+                .FirstOrDefault();
             if (activeProduct == null)
             {
-                var productInactive = stripeProducts.Where(p => p.Name.ToLower() == t.Name.ToLower()).FirstOrDefault();
+                var productInactive = stripeProducts
+                    .Where(p => p.Name.ToLower() == t.Name.ToLower())
+                    .FirstOrDefault();
                 if (productInactive != null)
                 {
-                    activeProduct = productService.Update(productInactive.Id, new() { Active = true });
+                    activeProduct = productService.Update(
+                        productInactive.Id,
+                        new() { Active = true }
+                    );
                 }
                 else
                 {
-                    activeProduct = productService.Create(new() { Active = true, Name = t.Name, Description = t.Description });
+                    activeProduct = productService.Create(
+                        new()
+                        {
+                            Active = true,
+                            Name = t.Name,
+                            Description = t.Description
+                        }
+                    );
                 }
             }
 
@@ -211,7 +395,12 @@ namespace ON.Authorization.Payment.Stripe.Clients
             };
         }
 
-        private bool IsSavedRecordIsCorrect(SubscriptionTier t, ProductRecord savedProduct, StripeList<Product> stripeProducts, StripeList<Price> stripePrices)
+        private bool IsSavedRecordIsCorrect(
+            SubscriptionTier t,
+            ProductRecord savedProduct,
+            StripeList<Product> stripeProducts,
+            StripeList<Price> stripePrices
+        )
         {
             if (savedProduct == null)
                 return false;
@@ -262,7 +451,11 @@ namespace ON.Authorization.Payment.Stripe.Clients
             return true;
         }
 
-        private Price EnsurePrice(SubscriptionTier t, Product product, StripeList<Price> stripePrices)
+        private Price EnsurePrice(
+            SubscriptionTier t,
+            Product product,
+            StripeList<Price> stripePrices
+        )
         {
             foreach (Price price in stripePrices.Where(p => p.Active))
             {
@@ -270,18 +463,17 @@ namespace ON.Authorization.Payment.Stripe.Clients
                     return price;
             }
 
-            var newPrice = priceService.Create(new()
-            {
-                Active = true,
-                Currency = "usd",
-                UnitAmount = t.AmountCents,
-                Nickname = t.Name,
-                Product = product.Id,
-                Recurring = new()
+            var newPrice = priceService.Create(
+                new()
                 {
-                    Interval = "month",
+                    Active = true,
+                    Currency = "usd",
+                    UnitAmount = t.AmountCents,
+                    Nickname = t.Name,
+                    Product = product.Id,
+                    Recurring = new() { Interval = "month", }
                 }
-            });
+            );
 
             return newPrice;
         }
@@ -302,8 +494,29 @@ namespace ON.Authorization.Payment.Stripe.Clients
         {
             try
             {
-                var customer = await customerService.GetAsync(id, new() { Expand = new() { "subscriptions" } });
+                var customer = await customerService.GetAsync(
+                    id,
+                    new() { Expand = new() { "subscriptions" } }
+                );
                 return customer.Subscriptions.ToList();
+            }
+            catch { }
+
+            return new();
+        }
+
+        public async Task<List<StripeOneTimePaymentRecord>> GetOneTimePaymentsByCustomerId(
+            string id
+        )
+        {
+            try
+            {
+                var customer = await customerService.GetAsync(
+                    id,
+                    new() { Expand = new() { "subscriptions" } }
+                );
+
+                throw new NotImplementedException();
             }
             catch { }
 
@@ -314,7 +527,10 @@ namespace ON.Authorization.Payment.Stripe.Clients
         {
             try
             {
-                var sub = await subService.CancelAsync(id, new() { CancellationDetails = new() { Comment = reason } });
+                var sub = await subService.CancelAsync(
+                    id,
+                    new() { CancellationDetails = new() { Comment = reason } }
+                );
                 return true;
             }
             catch { }
