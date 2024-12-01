@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -32,7 +33,9 @@ namespace ON.Authorization.Payment.Stripe.Clients
         private readonly ILogger<StripeClient> logger;
         private readonly SettingsClient settingsClient;
 
+        private global::Stripe.Checkout.SessionService checkoutService = new();
         private CustomerService customerService = new();
+        private PaymentIntentService paymentService = new();
         private ProductService productService = new();
         private PriceService priceService = new();
         private SubscriptionService subService = new();
@@ -71,6 +74,32 @@ namespace ON.Authorization.Payment.Stripe.Clients
 
                 if (product.Name != request.Name)
                     return await ModifyOneTimeProduct(request);
+
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return new() { Error = ex.Message, };
+            }
+        }
+
+        public async Task<StripeEnsureOneTimeProductResponse> EnsureOneTimeProductHasDefaultPrice(StripeEnsureOneTimeProductRequest request)
+        {
+            try
+            {
+                var product = await GetProduct(request);
+                var price = await GetPrice(request);
+
+                if (product == null)
+                    return new() { Error = "Can't find product for " + request.InternalId, };
+                if (price == null)
+                    return new() { Error = "Can't find price for " + request.InternalId, };
+
+                if (product.DefaultPriceId == price.Id)
+                    return new();
+
+                var modifyProductOpts = new ProductUpdateOptions { DefaultPrice = price.Id };
+                var updated = await productService.UpdateAsync(PRODUCT_ONETIME_PREFIX + request.InternalId, modifyProductOpts);
 
                 return new();
             }
@@ -140,8 +169,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
         {
             try
             {
-                var prices = await priceService.SearchAsync(new PriceSearchOptions() { Query = "active:\"true\" AND product: \"" + PRODUCT_ONETIME_PREFIX + request.InternalId + "\"" });
-                var price = prices.FirstOrDefault();
+                var price = await GetPrice(request);
                 if (price == null)
                     return await CreateOneTimePrice(request);
 
@@ -165,6 +193,20 @@ namespace ON.Authorization.Payment.Stripe.Clients
             }
         }
 
+        private Task<Price?> GetPrice(StripeEnsureOneTimeProductRequest request) => GetPrice(request.InternalId);
+
+        private async Task<Price?> GetPrice(string internalId)
+        {
+            try
+            {
+                var prices = await priceService.SearchAsync(new PriceSearchOptions() { Query = "active:\"true\" AND product: \"" + PRODUCT_ONETIME_PREFIX + internalId + "\"" });
+                return prices.FirstOrDefault();
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         private async Task<StripeEnsureOneTimeProductResponse> CreateOneTimePrice(StripeEnsureOneTimeProductRequest request)
         {
@@ -280,8 +322,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
                     Customer = customer.Id
                 };
 
-                var service = new global::Stripe.Checkout.SessionService();
-                var session = await service.CreateAsync(chekoutOpts);
+                var session = await checkoutService.CreateAsync(chekoutOpts);
 
                 return session.Url;
             }
@@ -312,8 +353,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
                     Customer = customer.Id
                 };
 
-                var service = new global::Stripe.Checkout.SessionService();
-                var session = await service.CreateAsync(chekoutOpts);
+                var session = await checkoutService.CreateAsync(chekoutOpts);
 
                 return session.Url;
             }
@@ -565,16 +605,15 @@ namespace ON.Authorization.Payment.Stripe.Clients
             return new();
         }
 
-        public async Task<List<StripeOneTimePaymentRecord>> GetOneTimePaymentsByCustomerId(string id)
+        public async Task<List<PaymentIntent>> GetOneTimePaymentsByCustomerId(string id)
         {
             try
             {
-                var customer = await customerService.GetAsync(
-                    id,
-                    new() { Expand = new() { "subscriptions" } }
+                var payments = await paymentService.ListAsync(
+                    new() { Customer = id }
                 );
 
-                throw new NotImplementedException();
+                return payments.ToList();
             }
             catch { }
 
@@ -594,6 +633,18 @@ namespace ON.Authorization.Payment.Stripe.Clients
             catch { }
 
             return false;
+        }
+
+        internal async Task<global::Stripe.Checkout.Session?> GetCheckoutSessionByPaymentIntentId(string paymentIntentId)
+        {
+            try
+            {
+                var sessions = await checkoutService.ListAsync(new() { PaymentIntent = paymentIntentId, Expand = new() { "data.line_items" } });
+                return sessions.FirstOrDefault();
+            }
+            catch { }
+
+            return null;
         }
     }
 }

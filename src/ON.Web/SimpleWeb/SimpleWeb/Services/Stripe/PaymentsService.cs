@@ -57,6 +57,16 @@ namespace ON.SimpleWeb.Services.Stripe
             return reply;
         }
 
+        public async Task<StripeCheckOwnOneTimeResponse> CheckOneTime()
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.StripeCheckOwnOneTimeAsync(new(), GetMetadata());
+            return reply;
+        }
+
         public async Task<List<StripeSubscriptionRecord>> GetRecords()
         {
             if (!IsLoggedIn)

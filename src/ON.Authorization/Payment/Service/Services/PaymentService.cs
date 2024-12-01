@@ -22,7 +22,7 @@ namespace ON.Authorization.Payment.Service
         private readonly FakeD.ISubscriptionRecordProvider fakeProvider;
         private readonly PaypalD.DataMergeService paypalProvider;
         private readonly StripeD.DataMergeService stripeProvider;
-        private readonly StripeD.FileSystemOneTimeRecordProvider stripeOneTimeProvider;
+        private readonly StripeD.IOneTimeRecordProvider stripeOneTimeProvider;
 
         public PaymentService(
             ILogger<PaymentService> logger,
@@ -31,7 +31,7 @@ namespace ON.Authorization.Payment.Service
             FakeD.ISubscriptionRecordProvider fakeProvider,
             PaypalD.DataMergeService paypalProvider,
             StripeD.DataMergeService stripeProvider,
-            StripeD.FileSystemOneTimeRecordProvider stripeOneTimeProvider
+            StripeD.IOneTimeRecordProvider stripeOneTimeProvider
         )
         {
             this.logger = logger;

@@ -21,16 +21,18 @@ namespace ON.SimpleWeb.Controllers
         private readonly ILogger logger;
         private readonly ContentService contentService;
         private readonly CommentService commentService;
+        private readonly MainPaymentsService paymentsService;
         private readonly StatsService statsService;
         private readonly ONUserHelper userHelper;
 
-        public ContentController(ILogger<ContentController> logger, ContentService contentService, CommentService commentService, StatsService statsService, ONUserHelper userHelper)
+        public ContentController(ILogger<ContentController> logger, ContentService contentService, CommentService commentService, StatsService statsService, ONUserHelper userHelper, MainPaymentsService paymentsService)
         {
             this.logger = logger;
             this.contentService = contentService;
             this.commentService = commentService;
             this.statsService = statsService;
             this.userHelper = userHelper;
+            this.paymentsService = paymentsService;
         }
 
         [AllowAnonymous]
@@ -235,6 +237,24 @@ namespace ON.SimpleWeb.Controllers
             var res2 = await contentService.UpdateContent(contentId, vm);
 
             return Redirect("/content/" + res2.Public.ContentID);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("/content/{id}/purchase")]
+        public async Task<IActionResult> Purchase(string id)
+        {
+            Guid contentId;
+            if (!Guid.TryParse(id, out contentId))
+                return NotFound();
+
+            var domainName = Request.Host.Host == "localhost" ? "http" : "https";
+            domainName += "://" + Request.Host.Host;
+
+            var res = await paymentsService.GetNewOneTimeDetails(contentId, domainName);
+            if (res?.Stripe?.PaymentLink != null)
+                return Redirect(res.Stripe.PaymentLink);
+
+            return Redirect("/content/" + id.ToString());
         }
 
         [Authorize(Roles = ONUser.ROLE_CAN_PUBLISH)]

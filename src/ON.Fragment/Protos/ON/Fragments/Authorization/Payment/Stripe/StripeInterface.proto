@@ -4,12 +4,14 @@ package ON.Fragments.Authorization.Payment.Stripe;
 
 import "Protos/ON/Fragments/Authorization/Payment/Stripe/ProductRecord.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeSubscriptionRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeOneTimeRecord.proto";
 
 service StripeInterface {
   rpc StripeCancelOtherSubscription (StripeCancelOtherSubscriptionRequest) returns (StripeCancelOtherSubscriptionResponse) {}
   rpc StripeCancelOwnSubscription (StripeCancelOwnSubscriptionRequest) returns (StripeCancelOwnSubscriptionResponse) {}
   rpc StripeCheckOtherSubscription (StripeCheckOtherSubscriptionRequest) returns (StripeCheckOtherSubscriptionResponse) {}
   rpc StripeCheckOwnSubscription (StripeCheckOwnSubscriptionRequest) returns (StripeCheckOwnSubscriptionResponse) {}
+  rpc StripeCheckOwnOneTime (StripeCheckOwnOneTimeRequest) returns (StripeCheckOwnOneTimeResponse) {}
   rpc StripeGetAccountDetails (StripeGetAccountDetailsRequest) returns (StripeGetAccountDetailsResponse) {}
   rpc StripeGetOwnSubscriptionRecords (StripeGetOwnSubscriptionRecordsRequest) returns (StripeGetOwnSubscriptionRecordsResponse) {}
   rpc StripeNewOwnSubscription (StripeNewOwnSubscriptionRequest) returns (StripeNewOwnSubscriptionResponse) {}
@@ -32,6 +34,14 @@ message StripeCheckOwnSubscriptionRequest {
 
 message StripeCheckOwnSubscriptionResponse {
 	repeated StripeSubscriptionFullRecord Records = 1;
+	string Error = 2;
+}
+ 
+message StripeCheckOwnOneTimeRequest {
+}
+
+message StripeCheckOwnOneTimeResponse {
+	repeated StripeOneTimePaymentRecord Records = 1;
 	string Error = 2;
 }
  

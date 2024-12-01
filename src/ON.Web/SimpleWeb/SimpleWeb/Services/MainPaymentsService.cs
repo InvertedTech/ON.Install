@@ -3,7 +3,9 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Fragments.Authorization.Payment;
 using ON.Fragments.Authorization.Payment.Fake;
+using ON.Fragments.Authorization.Payment.Stripe;
 using ON.Settings;
+using System;
 using System.Threading.Tasks;
 
 namespace ON.SimpleWeb.Services
@@ -39,6 +41,23 @@ namespace ON.SimpleWeb.Services
             var client = new PaymentInterface.PaymentInterfaceClient(nameHelper.PaymentServiceChannel);
             var reply = await client.GetNewDetailsAsync(new GetNewDetailsRequest() { Level = level, DomainName = domainName }, GetMetadata());
             return reply;
+        }
+
+        public async Task<GetNewOneTimeDetailsResponse> GetNewOneTimeDetails(Guid contentId, string domainName)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            try
+            {
+                var client = new PaymentInterface.PaymentInterfaceClient(nameHelper.PaymentServiceChannel);
+                var reply = await client.GetNewOneTimeDetailsAsync(new() { InternalId = contentId.ToString(), DomainName = domainName }, GetMetadata());
+                return reply;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<GetOwnSubscriptionRecordsResponse> GetOwnSubscriptionRecord()

@@ -17,6 +17,7 @@ namespace ON.Authorization.Payment.Stripe.Services
         private readonly DataMergeService dataMerger;
         private readonly ISubscriptionRecordProvider subscriptionProvider;
         private readonly IPaymentRecordProvider paymentProvider;
+        private readonly IOneTimeRecordProvider oneTimeProvider;
         private readonly StripeClient client;
         private readonly SettingsClient settingsClient;
 
@@ -25,6 +26,7 @@ namespace ON.Authorization.Payment.Stripe.Services
             DataMergeService dataMerger,
             ISubscriptionRecordProvider subscriptionProvider,
             IPaymentRecordProvider paymentProvider,
+            IOneTimeRecordProvider oneTimeProvider,
             StripeClient client,
             SettingsClient settingsClient
         )
@@ -33,6 +35,7 @@ namespace ON.Authorization.Payment.Stripe.Services
             this.dataMerger = dataMerger;
             this.subscriptionProvider = subscriptionProvider;
             this.paymentProvider = paymentProvider;
+            this.oneTimeProvider = oneTimeProvider;
             this.client = client;
             this.settingsClient = settingsClient;
         }
@@ -125,10 +128,7 @@ namespace ON.Authorization.Payment.Stripe.Services
             }
         }
 
-        public override async Task<StripeCheckOwnSubscriptionResponse> StripeCheckOwnSubscription(
-            StripeCheckOwnSubscriptionRequest request,
-            ServerCallContext context
-        )
+        public override async Task<StripeCheckOwnSubscriptionResponse> StripeCheckOwnSubscription(StripeCheckOwnSubscriptionRequest request, ServerCallContext context)
         {
             try
             {
@@ -215,6 +215,74 @@ namespace ON.Authorization.Payment.Stripe.Services
             }
         }
 
+        public override async Task<StripeCheckOwnOneTimeResponse> StripeCheckOwnOneTime(StripeCheckOwnOneTimeRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
+                if (userToken == null)
+                    return new() { Error = "No user token specified" };
+
+                var customer = await client.GetCustomerByUserId(userToken.Id);
+                if (customer == null)
+                    return new() { };
+
+                var payments = await client.GetOneTimePaymentsByCustomerId(customer.Id);
+
+                var dbPayments = await oneTimeProvider.GetAllByUserId(userToken.Id);
+
+                foreach (var stripePayment in payments)
+                {
+                    var dbPayment = dbPayments.FirstOrDefault(s => s.StripePaymentID == stripePayment.Id);
+                    if (dbPayment == null)
+                    {
+                        var checkout = await client.GetCheckoutSessionByPaymentIntentId(stripePayment.Id);
+                        if (checkout == null)
+                            continue;
+
+                        var lineItem = checkout.LineItems.FirstOrDefault();
+                        if (lineItem == null)
+                            continue;
+
+                        dbPayment = new()
+                        {
+                            UserID = userToken.Id.ToString(),
+                            PaymentID = Guid.NewGuid().ToString(),
+                            StripePaymentID = stripePayment.Id.ToString(),
+                            InternalID = lineItem.Price.ProductId.Replace(StripeClient.PRODUCT_ONETIME_PREFIX, ""),
+                            CreatedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripePayment.Created),
+                            ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow),
+                            PaidOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(stripePayment.Created),
+                            Status = ConvertPaymentStatus(stripePayment.Status),
+                            AmountCents = (uint)(stripePayment.Amount),
+                        };
+
+                        await oneTimeProvider.Save(dbPayment);
+                    }
+                    else
+                    {
+                        var newStatus = ConvertPaymentStatus(stripePayment.Status);
+                        if (dbPayment.Status != newStatus)
+                        {
+                            dbPayment.Status = newStatus;
+                            dbPayment.ChangedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
+
+                            await oneTimeProvider.Save(dbPayment);
+                        }
+                    }
+                }
+
+                var ret = new StripeCheckOwnOneTimeResponse();
+                ret.Records.AddRange(await oneTimeProvider.GetAllByUserId(userToken.Id));
+
+                return ret;
+            }
+            catch
+            {
+                return new() { Error = "Unknown error" };
+            }
+        }
+
         //private async Task EnsureAllPayments(ONUser userToken, StripeSubscriptionRecord dbSub)
         //{
         //    var dbPayments = paymentProvider.GetAllBySubscriptionId(userToken.Id, dbSub.SubscriptionID.ToGuid());
@@ -237,6 +305,24 @@ namespace ON.Authorization.Payment.Stripe.Services
                 case "past_due":
                 default:
                     return SubscriptionStatus.SubscriptionPaused;
+            }
+        }
+
+        private PaymentStatus ConvertPaymentStatus(string status)
+        {
+            switch (status)
+            {
+                case "requires_payment_method":
+                case "requires_confirmation":
+                case "requires_capture":
+                case "requires_action":
+                case "processing":
+                    return PaymentStatus.PaymentPending;
+                case "succeeded":
+                    return PaymentStatus.PaymentComplete;
+                case "canceled":
+                default:
+                    return PaymentStatus.PaymentFailed;
             }
         }
 
@@ -372,6 +458,7 @@ namespace ON.Authorization.Payment.Stripe.Services
                 if (!string.IsNullOrEmpty(res.Error))
                     return res;
 
+                await client.EnsureOneTimeProductHasDefaultPrice(request);
 
                 return new();
             }

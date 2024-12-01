@@ -19,6 +19,7 @@ namespace ON.Authorization.Payment.Stripe.Helper
             services.AddSingleton<IPaymentRecordProvider, FileSystemPaymentRecordProvider>();
             services.AddSingleton<IProductRecordProvider, FileSystemProductRecordProvider>();
             services.AddSingleton<ISubscriptionRecordProvider, FileSystemSubscriptionRecordProvider>();
+            services.AddSingleton<IOneTimeRecordProvider, FileSystemOneTimeRecordProvider>();
         }
     }
 }
