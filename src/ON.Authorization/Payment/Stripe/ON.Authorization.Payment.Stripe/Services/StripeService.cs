@@ -299,10 +299,7 @@ namespace ON.Authorization.Payment.Stripe.Services
             }
         }
 
-        public override async Task<StripeCancelOwnSubscriptionResponse> StripeCancelOwnSubscription(
-            StripeCancelOwnSubscriptionRequest request,
-            ServerCallContext context
-        )
+        public override async Task<StripeCancelOwnSubscriptionResponse> StripeCancelOwnSubscription(StripeCancelOwnSubscriptionRequest request, ServerCallContext context)
         {
             try
             {
@@ -339,11 +336,7 @@ namespace ON.Authorization.Payment.Stripe.Services
                     DateTime.UtcNow
                 );
                 record.RenewsOnUTC = null;
-                record.Status = Fragments
-                    .Authorization
-                    .Payment
-                    .SubscriptionStatus
-                    .SubscriptionStopped;
+                record.Status = SubscriptionStatus.SubscriptionStopped;
 
                 await subscriptionProvider.Save(record);
 
@@ -355,11 +348,8 @@ namespace ON.Authorization.Payment.Stripe.Services
             }
         }
 
-        //[Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER)]
-        public override async Task<StripeCreateProductResponse> StripeCreateProduct(
-            StripeCreateProductRequest request,
-            ServerCallContext context
-        )
+        [Authorize(Roles = ONUser.ROLE_CAN_CREATE_CONTENT)]
+        public override async Task<StripeEnsureOneTimeProductResponse> StripeEnsureOneTimeProduct(StripeEnsureOneTimeProductRequest request, ServerCallContext context)
         {
             try
             {
@@ -367,38 +357,21 @@ namespace ON.Authorization.Payment.Stripe.Services
                 if (userToken == null)
                     return new() { Error = "No user token specified" };
 
-                var res = await client.CreateProduct(request);
+                var res = await client.EnsureOneTimeProduct(request);
                 if (res == null)
                     return new() { Error = "Failed To Get A Response From Stripe Client" };
 
                 if (!string.IsNullOrEmpty(res.Error))
                     return res;
 
-                return new();
-            }
-            catch (Exception e)
-            {
-                return new() { Error = e.Message };
-            }
-        }
 
-        public override async Task<StripeModifyProductResponse> StripeModifyProduct(
-            StripeModifyProductRequest request,
-            ServerCallContext context
-        )
-        {
-            try
-            {
-                var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
-                if (userToken == null)
-                    return new() { Error = "No user token specified" };
+                res = await client.EnsureOneTimePrice(request);
+                if (res == null)
+                    return new() { Error = "Failed To Get A Response From Stripe Client" };
 
-                var updated = await client.StripeModifyProduct(request);
-                if (updated == null)
-                    return new() { Error = "Failed To Get A Response From The Stripe Client" };
+                if (!string.IsNullOrEmpty(res.Error))
+                    return res;
 
-                if (!string.IsNullOrEmpty(updated.Error))
-                    return updated;
 
                 return new();
             }

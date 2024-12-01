@@ -22,6 +22,7 @@ namespace ON.Authorization.Payment.Service
         private readonly FakeD.ISubscriptionRecordProvider fakeProvider;
         private readonly PaypalD.DataMergeService paypalProvider;
         private readonly StripeD.DataMergeService stripeProvider;
+        private readonly StripeD.FileSystemOneTimeRecordProvider stripeOneTimeProvider;
 
         public PaymentService(
             ILogger<PaymentService> logger,
@@ -29,7 +30,8 @@ namespace ON.Authorization.Payment.Service
             Stripe.Clients.StripeClient stripeClient,
             FakeD.ISubscriptionRecordProvider fakeProvider,
             PaypalD.DataMergeService paypalProvider,
-            StripeD.DataMergeService stripeProvider
+            StripeD.DataMergeService stripeProvider,
+            StripeD.FileSystemOneTimeRecordProvider stripeOneTimeProvider
         )
         {
             this.logger = logger;
@@ -38,6 +40,7 @@ namespace ON.Authorization.Payment.Service
             this.fakeProvider = fakeProvider;
             this.paypalProvider = paypalProvider;
             this.stripeProvider = stripeProvider;
+            this.stripeOneTimeProvider = stripeOneTimeProvider;
         }
 
         public override async Task<GetNewDetailsResponse> GetNewDetails(
@@ -121,10 +124,7 @@ namespace ON.Authorization.Payment.Service
             return res;
         }
 
-        public override async Task<GetNewOneTimeDetailsResponse> GetNewOneTimeDetails(
-            GetNewOneTimeDetailsRequest request,
-            ServerCallContext context
-        )
+        public override async Task<GetNewOneTimeDetailsResponse> GetNewOneTimeDetails(GetNewOneTimeDetailsRequest request, ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
@@ -135,26 +135,22 @@ namespace ON.Authorization.Payment.Service
                 return new();
             }
 
-            var details = await stripeClient.GetNewOneTimeDetails(
-                request.InternalId,
-                userToken,
-                request.DomainName
-            );
+            var details = await stripeClient.GetNewOneTimeDetails(request.InternalId, userToken, request.DomainName);
 
             return new() { Stripe = details };
         }
 
         // TODO: Implement
-        public override async Task<GetOwnOneTimeRecordsResponse> GetOwnOneTimeRecords(
-            GetOwnOneTimeRecordsRequest request,
-            ServerCallContext context
-        )
+        public override async Task<GetOwnOneTimeRecordsResponse> GetOwnOneTimeRecords(GetOwnOneTimeRecordsRequest request, ServerCallContext context)
         {
             var userToken = ONUserHelper.ParseUser(context.GetHttpContext());
             if (userToken == null)
                 return new();
 
+            var records = await stripeOneTimeProvider.GetAllByUserId(userToken.Id);
+
             var res = new GetOwnOneTimeRecordsResponse();
+            res.Stripe.AddRange(records);
 
             return res;
         }

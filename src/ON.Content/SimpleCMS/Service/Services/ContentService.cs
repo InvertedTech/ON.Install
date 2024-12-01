@@ -81,7 +81,7 @@ namespace ON.Content.SimpleCMS.Service
 
             await dataProvider.Save(record);
 
-            await EnsureOneTimeProduct(record);
+            await EnsureOneTimeProduct(record, user);
 
             return new() { Record = record };
         }
@@ -473,7 +473,7 @@ namespace ON.Content.SimpleCMS.Service
 
             await dataProvider.Save(record);
 
-            await EnsureOneTimeProduct(record);
+            await EnsureOneTimeProduct(record, user);
 
             return new() { Record = record };
         }
@@ -851,35 +851,15 @@ namespace ON.Content.SimpleCMS.Service
             return false;
         }
 
-        private async Task EnsureOneTimeProduct(ContentRecord rec)
+        private async Task EnsureOneTimeProduct(ContentRecord rec, ONUser user)
         {
             if ((rec?.Public?.Data.OneTimeAmountCents ?? 0) == 0)
                 return;
 
-            var product = await GetOneTimeProduct(rec);
-            if (product == null)
-            {
-                await CreateOneTimeProduct(rec);
-                return;
-            }
-
-            if (!IsOneTimeProductSame(rec, product))
-                await ModifyOneTimeProduct(rec);
-        }
-
-        private bool IsOneTimeProductSame(ContentRecord rec, StripeGetProductResponse product)
-        {
-            if (rec.Public.Data.Title != product.Name) return false;
-            if (rec.Public.Data.OneTimeAmountCents != product.MinimumPrice) return false;
-            return true;
-        }
-
-        private async Task<StripeCreateProductResponse> CreateOneTimeProduct(ContentRecord rec)
-        {
             try
             {
                 var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
-                var res = await client.StripeCreateProductAsync(
+                var res = await client.StripeEnsureOneTimeProductAsync(
                     new()
                     {
                         InternalId = rec.Public.ContentID,
@@ -887,51 +867,9 @@ namespace ON.Content.SimpleCMS.Service
                         MinimumPrice = rec.Public.Data.OneTimeAmountCents,
                         MaximumPrice = 100000,
                     },
-                    GetServiceMetadata(), DateTime.UtcNow.AddSeconds(3));
-                return res;
+                    GetMetadata(user));//, DateTime.UtcNow.AddSeconds(3));
             }
             catch { }
-
-            return null;
-        }
-
-        private async Task<StripeGetProductResponse> GetOneTimeProduct(ContentRecord rec)
-        {
-            try
-            {
-                var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
-                var res = await client.StripeGetProductAsync(
-                    new()
-                    {
-                        InternalId = rec.Public.ContentID,
-                    },
-                    GetServiceMetadata(), DateTime.UtcNow.AddSeconds(3));
-                return res;
-            }
-            catch { }
-
-            return null;
-        }
-
-        private async Task<StripeModifyProductResponse> ModifyOneTimeProduct(ContentRecord rec)
-        {
-            try
-            {
-                var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
-                var res = await client.StripeModifyProductAsync(
-                    new()
-                    {
-                        InternalId = rec.Public.ContentID,
-                        Name = rec.Public.Data.Title,
-                        MinimumPrice = rec.Public.Data.OneTimeAmountCents,
-                        MaximumPrice = 100000,
-                    },
-                    GetServiceMetadata(), DateTime.UtcNow.AddSeconds(3));
-                return res;
-            }
-            catch { }
-
-            return null;
         }
 
         private Metadata GetMetadata(ONUser user)
@@ -939,14 +877,6 @@ namespace ON.Content.SimpleCMS.Service
             var data = new Metadata();
             if (user != null && !string.IsNullOrWhiteSpace(user.JwtToken))
                 data.Add("Authorization", "Bearer " + user.JwtToken);
-
-            return data;
-        }
-
-        private Metadata GetServiceMetadata()
-        {
-            var data = new Metadata();
-            data.Add("Authorization", "Bearer " + nameHelper.ServiceToken);
 
             return data;
         }

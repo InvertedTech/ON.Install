@@ -22,6 +22,9 @@ namespace ON.Authorization.Payment.Stripe.Clients
 {
     public class StripeClient
     {
+        public const string PRODUCT_SUBSCRIPTION_PREFIX = "prod_sub_";
+        public const string PRODUCT_ONETIME_PREFIX = "prod_one_";
+
         public ProductList Products { get; private set; }
 
         private readonly AppSettings settings;
@@ -55,36 +58,53 @@ namespace ON.Authorization.Payment.Stripe.Clients
             EnsureProducts();
         }
 
-        public async Task<StripeCreateProductResponse> CreateProduct(
-            StripeCreateProductRequest request
-        )
+        public async Task<StripeEnsureOneTimeProductResponse> EnsureOneTimeProduct(StripeEnsureOneTimeProductRequest request)
+        {
+            try
+            {
+                var product = await GetProduct(request);
+                if (product == null)
+                    return await CreateOneTimeProduct(request);
+
+                if (product.Active != true)
+                    return await ModifyOneTimeProduct(request);
+
+                if (product.Name != request.Name)
+                    return await ModifyOneTimeProduct(request);
+
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return new() { Error = ex.Message, };
+            }
+        }
+
+        private Task<Product?> GetProduct(StripeEnsureOneTimeProductRequest request) => GetProduct(request.InternalId);
+
+        private async Task<Product?> GetProduct(string internalId)
+        {
+            try
+            {
+                return await productService.GetAsync(PRODUCT_ONETIME_PREFIX + internalId);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private async Task<StripeEnsureOneTimeProductResponse> CreateOneTimeProduct(StripeEnsureOneTimeProductRequest request)
         {
             try
             {
                 var newProductOpts = new ProductCreateOptions()
                 {
-                    Id = request.InternalId,
+                    Id = PRODUCT_ONETIME_PREFIX + request.InternalId,
                     Active = true,
                     Name = request.Name,
-                    Metadata = new Dictionary<string, string>()
-                    {
-                        { "internal_id", request.InternalId },
-                    },
-                    DefaultPriceData = { Currency = "usd", }
+                    Description = request.Name,
                 };
-
-                newProductOpts.ExtraParams.Add(
-                    "default_price_data.custom_unit_amount.enabled",
-                    true
-                );
-                newProductOpts.ExtraParams.Add(
-                    "default_price_data.custom_unit_amount.minimum",
-                    request.MinimumPrice
-                );
-                newProductOpts.ExtraParams.Add(
-                    "default_price_data.custom_unit_amount.maximum",
-                    request.MaximumPrice
-                );
 
                 var createdProduct = await productService.CreateAsync(newProductOpts);
                 if (createdProduct == null)
@@ -98,27 +118,13 @@ namespace ON.Authorization.Payment.Stripe.Clients
             }
         }
 
-        public async Task<StripeModifyProductResponse> StripeModifyProduct(
-            StripeModifyProductRequest request
-        )
+        private async Task<StripeEnsureOneTimeProductResponse> ModifyOneTimeProduct(StripeEnsureOneTimeProductRequest request)
         {
             try
             {
-                var modifyProductOpts = new ProductUpdateOptions { Name = request.Name, };
+                var modifyProductOpts = new ProductUpdateOptions { Name = request.Name, Active = true };
 
-                modifyProductOpts.ExtraParams.Add(
-                    "default_price_data.custom_unit_amount.minimum",
-                    request.MinimumPrice
-                );
-
-                modifyProductOpts.ExtraParams.Add(
-                    "default_price_data.custom_unit_amount.maximum",
-                    request.MaximumPrice
-                );
-                var updated = await productService.UpdateAsync(
-                    request.InternalId,
-                    modifyProductOpts
-                );
+                var updated = await productService.UpdateAsync(PRODUCT_ONETIME_PREFIX + request.InternalId, modifyProductOpts);
                 if (updated == null)
                     return new() { Error = "Unable to update product" };
 
@@ -130,11 +136,93 @@ namespace ON.Authorization.Payment.Stripe.Clients
             }
         }
 
-        public async Task<StripeNewDetails?> GetNewDetails(
-            uint level,
-            ONUser userToken,
-            string domainName
-        )
+        public async Task<StripeEnsureOneTimeProductResponse> EnsureOneTimePrice(StripeEnsureOneTimeProductRequest request)
+        {
+            try
+            {
+                var prices = await priceService.SearchAsync(new PriceSearchOptions() { Query = "active:\"true\" AND product: \"" + PRODUCT_ONETIME_PREFIX + request.InternalId + "\"" });
+                var price = prices.FirstOrDefault();
+                if (price == null)
+                    return await CreateOneTimePrice(request);
+
+                if (price.Active != true)
+                    return await ModifyOneTimePrice(price, request);
+
+                if (price.CustomUnitAmount == null)
+                    return await ModifyOneTimePrice(price, request);
+
+                if (price.CustomUnitAmount.Minimum != request.MinimumPrice)
+                    return await ModifyOneTimePrice(price, request);
+
+                if (price.CustomUnitAmount.Maximum != request.MaximumPrice)
+                    return await ModifyOneTimePrice(price, request);
+
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return new() { Error = ex.Message, };
+            }
+        }
+
+
+        private async Task<StripeEnsureOneTimeProductResponse> CreateOneTimePrice(StripeEnsureOneTimeProductRequest request)
+        {
+            try
+            {
+                var newPriceOpts = new PriceCreateOptions()
+                {
+                    Currency = "usd",
+                    Active = true,
+                    Metadata = new()
+                    {
+                        { "internal_id", request.InternalId },
+                    },
+                    Nickname = request.Name,
+                    Product = PRODUCT_ONETIME_PREFIX + request.InternalId,
+                    CustomUnitAmount = new PriceCustomUnitAmountOptions()
+                    {
+                        Enabled = true,
+                        Minimum = request.MinimumPrice,
+                        Preset = request.MinimumPrice,
+                        Maximum = request.MaximumPrice,
+                    }
+                };
+
+                var createdPrice = await priceService.CreateAsync(newPriceOpts);
+                if (createdPrice == null)
+                    return new() { Error = "Failed To Create Price" };
+
+                return new();
+            }
+            catch (Exception ex)
+            {
+                return new() { Error = ex.Message, };
+            }
+        }
+
+        private async Task<StripeEnsureOneTimeProductResponse> ModifyOneTimePrice(Price price, StripeEnsureOneTimeProductRequest request)
+        {
+            try
+            {
+                var priceOpts = new PriceUpdateOptions()
+                {
+                    Active = false,
+                };
+
+                var updatedPrice = await priceService.UpdateAsync(price.Id, priceOpts);
+                if (updatedPrice == null)
+                    return new() { Error = "Failed To Create Price" };
+
+                return await CreateOneTimePrice(request);
+            }
+            catch (Exception ex)
+            {
+                return new() { Error = ex.Message, };
+            }
+        }
+
+        public async Task<StripeNewDetails?> GetNewDetails(uint level, ONUser userToken, string domainName)
         {
             var product = Products.Records.FirstOrDefault(r => r.Price == level);
             if (product == null)
@@ -149,37 +237,15 @@ namespace ON.Authorization.Payment.Stripe.Clients
             return details;
         }
 
-        public async Task<StripeNewOneTimeDetails?> GetNewOneTimeDetails(
-            string internalId,
-            ONUser userToken,
-            string domainName
-        )
+        public async Task<StripeNewOneTimeDetails?> GetNewOneTimeDetails(string internalId, ONUser userToken, string domainName)
         {
             try
             {
-                var product = await productService.SearchAsync(
-                    new() { Query = $"metadata['internal_id']:'{internalId}'" }
-                );
+                var product = await GetProduct(internalId);
                 if (product == null)
                     return null;
 
-                var newProduct = product.FirstOrDefault();
-                if (newProduct == null)
-                    return null;
-
-                var url = await CreateOneTimeCheckoutSession(
-                    new ProductRecord()
-                    {
-                        PriceId = newProduct.DefaultPriceId,
-                        Price = 200,
-                        Name = newProduct.Name,
-                        ProductId = newProduct.Id,
-                        CheckoutUrl = newProduct.Url
-                    },
-                    userToken,
-                    domainName
-                );
-                ;
+                var url = await CreateOneTimeCheckoutSession(product.DefaultPriceId, userToken, domainName);
                 if (string.IsNullOrEmpty(url))
                     return null;
 
@@ -194,11 +260,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
             }
         }
 
-        public async Task<string?> CreateOneTimeCheckoutSession(
-            ProductRecord product,
-            ONUser userToken,
-            string domainName
-        )
+        public async Task<string?> CreateOneTimeCheckoutSession(string priceId, ONUser userToken, string domainName)
         {
             try
             {
@@ -213,7 +275,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
                     Mode = "payment",
                     LineItems = new()
                     {
-                        new() { Price = product.PriceId, Quantity = 1, },
+                        new() { Price = priceId, Quantity = 1, },
                     },
                     Customer = customer.Id
                 };
@@ -229,11 +291,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
             }
         }
 
-        public async Task<string?> CreateCheckoutSession(
-            ProductRecord product,
-            ONUser userToken,
-            string domainName
-        )
+        public async Task<string?> CreateCheckoutSession(ProductRecord product, ONUser userToken, string domainName)
         {
             try
             {
@@ -315,8 +373,9 @@ namespace ON.Authorization.Payment.Stripe.Clients
         // TODO: Validate metadata has key url
         private void EnsureProducts()
         {
-            var stripeProducts = productService.List();
-            var stripePrices = priceService.List();
+            var ptest = productService.List();
+            var stripeProducts = productService.List().Where(p => p.Id.StartsWith(PRODUCT_SUBSCRIPTION_PREFIX)).ToList();
+            var stripePrices = priceService.List().Where(p => p.ProductId.StartsWith(PRODUCT_SUBSCRIPTION_PREFIX)).ToList();
             logger.LogWarning($"****PRODS: {stripeProducts}");
 
             var tiers = settingsClient.PublicData.Subscription.Tiers.ToList();
@@ -335,8 +394,8 @@ namespace ON.Authorization.Payment.Stripe.Clients
 
         private ProductRecord EnsureProduct(
             SubscriptionTier t,
-            StripeList<Product> stripeProducts,
-            StripeList<Price> stripePrices
+            List<Product> stripeProducts,
+            List<Price> stripePrices
         )
         {
             var savedProduct = Products.Records.FirstOrDefault(r => r.Price == t.AmountCents);
@@ -373,6 +432,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
                     activeProduct = productService.Create(
                         new()
                         {
+                            Id = PRODUCT_SUBSCRIPTION_PREFIX + Guid.NewGuid().ToString(),
                             Active = true,
                             Name = t.Name,
                             Description = t.Description
@@ -398,8 +458,8 @@ namespace ON.Authorization.Payment.Stripe.Clients
         private bool IsSavedRecordIsCorrect(
             SubscriptionTier t,
             ProductRecord savedProduct,
-            StripeList<Product> stripeProducts,
-            StripeList<Price> stripePrices
+            List<Product> stripeProducts,
+            List<Price> stripePrices
         )
         {
             if (savedProduct == null)
@@ -454,7 +514,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
         private Price EnsurePrice(
             SubscriptionTier t,
             Product product,
-            StripeList<Price> stripePrices
+            List<Price> stripePrices
         )
         {
             foreach (Price price in stripePrices.Where(p => p.Active))
@@ -505,9 +565,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
             return new();
         }
 
-        public async Task<List<StripeOneTimePaymentRecord>> GetOneTimePaymentsByCustomerId(
-            string id
-        )
+        public async Task<List<StripeOneTimePaymentRecord>> GetOneTimePaymentsByCustomerId(string id)
         {
             try
             {

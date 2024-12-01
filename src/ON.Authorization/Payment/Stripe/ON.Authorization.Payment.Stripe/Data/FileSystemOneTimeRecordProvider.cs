@@ -19,7 +19,7 @@ namespace ON.Authorization.Payment.Stripe.Data
         {
             var root = new DirectoryInfo(settings.Value.DataStore);
             root.Create();
-            dataDir = root.CreateSubdirectory("stripe").CreateSubdirectory("one-time");
+            dataDir = root.CreateSubdirectory("stripe").CreateSubdirectory("onetime");
         }
 
         public Task<bool> Exists(Guid userId, Guid recordId)

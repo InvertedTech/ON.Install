@@ -15,9 +15,7 @@ service StripeInterface {
   rpc StripeNewOwnSubscription (StripeNewOwnSubscriptionRequest) returns (StripeNewOwnSubscriptionResponse) {}
   rpc StripeCreateBillingPortal (StripeCreateBillingPortalRequest) returns (StripeCreateBillingPortalResponse) {}
   rpc StripeCreateCheckoutSession(StripeCheckoutSessionRequest) returns (StripeCheckoutSessionResponse) {}
-  rpc StripeCreateProduct(StripeCreateProductRequest) returns (StripeCreateProductResponse) {}
-  rpc StripeGetProduct(StripeGetProductRequest) returns (StripeGetProductResponse) {}
-  rpc StripeModifyProduct(StripeModifyProductRequest) returns (StripeModifyProductResponse) {}
+  rpc StripeEnsureOneTimeProduct(StripeEnsureOneTimeProductRequest) returns (StripeEnsureOneTimeProductResponse) {}
 }
 
 message StripeCheckOtherSubscriptionRequest {
@@ -103,37 +101,13 @@ message StripeNewOwnSubscriptionResponse {
 }
 
 
-message StripeCreateProductRequest {
+message StripeEnsureOneTimeProductRequest {
 	string InternalId = 1;
 	string Name = 2;
 	uint32 MinimumPrice = 11;
 	uint32 MaximumPrice = 12;
 }
 
-message StripeCreateProductResponse {
-	string Error = 1;
-}
-
-
-message StripeGetProductRequest {
-	string InternalId = 1;
-}
-
-message StripeGetProductResponse {
-	string Error = 1;
-	string Name = 2;
-	uint32 MinimumPrice = 11;
-	uint32 MaximumPrice = 12;
-}
-
-
-message StripeModifyProductRequest {
-	string InternalId = 1;
-	string Name = 2;
-	uint32 MinimumPrice = 11;
-	uint32 MaximumPrice = 12;
-}
-
-message StripeModifyProductResponse {
+message StripeEnsureOneTimeProductResponse {
 	string Error = 1;
 }
