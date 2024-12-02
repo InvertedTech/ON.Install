@@ -22,8 +22,8 @@ Use this field to specify paginate your results, by using page size and number. 
 
 ```json
 {
-  "number": null,
-  "size": null
+  "number": 1,
+  "size": 50
 }
 ```
 

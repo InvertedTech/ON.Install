@@ -12,15 +12,16 @@ namespace FortisAPI.Standard.Controllers
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using APIMatic.Core;
+    using APIMatic.Core.Types;
+    using APIMatic.Core.Utilities;
+    using APIMatic.Core.Utilities.Date.Xml;
     using FortisAPI.Standard;
-    using FortisAPI.Standard.Authentication;
     using FortisAPI.Standard.Exceptions;
     using FortisAPI.Standard.Http.Client;
-    using FortisAPI.Standard.Http.Request;
-    using FortisAPI.Standard.Http.Request.Configuration;
-    using FortisAPI.Standard.Http.Response;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json.Converters;
+    using System.Net.Http;
 
     /// <summary>
     /// WebhooksController.
@@ -30,255 +31,136 @@ namespace FortisAPI.Standard.Controllers
         /// <summary>
         /// Initializes a new instance of the <see cref="WebhooksController"/> class.
         /// </summary>
-        /// <param name="config"> config instance. </param>
-        /// <param name="httpClient"> httpClient. </param>
-        /// <param name="authManagers"> authManager. </param>
-        /// <param name="httpCallBack"> httpCallBack. </param>
-        internal WebhooksController(IConfiguration config, IHttpClient httpClient, IDictionary<string, IAuthManager> authManagers, HttpCallBack httpCallBack = null)
-            : base(config, httpClient, authManagers, httpCallBack)
-        {
-        }
+        internal WebhooksController(GlobalConfiguration globalConfiguration) : base(globalConfiguration) { }
 
         /// <summary>
-        /// Create a new transaction batch postback config.
+        /// Create a new transaction batch postback config EndPoint.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public Models.ResponseWebhook CreateANewTransactionBatchPostbackConfig(
-                Models.V1WebhooksBatchRequest body)
-        {
-            Task<Models.ResponseWebhook> t = this.CreateANewTransactionBatchPostbackConfigAsync(body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+                Models.V1WebhooksBatchRequest body,
+                List<Models.Expand101Enum> expand = null)
+            => CoreHelper.RunTask(CreateANewTransactionBatchPostbackConfigAsync(body, expand));
 
         /// <summary>
-        /// Create a new transaction batch postback config.
+        /// Create a new transaction batch postback config EndPoint.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public async Task<Models.ResponseWebhook> CreateANewTransactionBatchPostbackConfigAsync(
                 Models.V1WebhooksBatchRequest body,
+                List<Models.Expand101Enum> expand = null,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
-
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/webhooks/batch");
-
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PostBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseWebhook>(response.Body);
-        }
+            => await CreateApiCall<Models.ResponseWebhook>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/webhooks/batch")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         /// <summary>
-        /// Create a new contact postback config.
+        /// Create a new contact postback config EndPoint.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public Models.ResponseWebhook CreateANewContactPostbackConfig(
-                Models.V1WebhooksContactRequest body)
-        {
-            Task<Models.ResponseWebhook> t = this.CreateANewContactPostbackConfigAsync(body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+                Models.V1WebhooksContactRequest body,
+                List<Models.Expand101Enum> expand = null)
+            => CoreHelper.RunTask(CreateANewContactPostbackConfigAsync(body, expand));
 
         /// <summary>
-        /// Create a new contact postback config.
+        /// Create a new contact postback config EndPoint.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public async Task<Models.ResponseWebhook> CreateANewContactPostbackConfigAsync(
                 Models.V1WebhooksContactRequest body,
+                List<Models.Expand101Enum> expand = null,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
-
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/webhooks/contact");
-
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PostBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseWebhook>(response.Body);
-        }
+            => await CreateApiCall<Models.ResponseWebhook>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/webhooks/contact")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         /// <summary>
-        /// Create a new transaction postback config.
+        /// Create a new transaction postback config EndPoint.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public Models.ResponseWebhook CreateANewTransactionPostbackConfig(
-                Models.V1WebhooksTransactionRequest body)
-        {
-            Task<Models.ResponseWebhook> t = this.CreateANewTransactionPostbackConfigAsync(body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+                Models.V1WebhooksTransactionRequest body,
+                List<Models.Expand101Enum> expand = null)
+            => CoreHelper.RunTask(CreateANewTransactionPostbackConfigAsync(body, expand));
 
         /// <summary>
-        /// Create a new transaction postback config.
+        /// Create a new transaction postback config EndPoint.
         /// </summary>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public async Task<Models.ResponseWebhook> CreateANewTransactionPostbackConfigAsync(
                 Models.V1WebhooksTransactionRequest body,
+                List<Models.Expand101Enum> expand = null,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
-
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/webhooks/transaction");
-
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PostBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseWebhook>(response.Body);
-        }
+            => await CreateApiCall<Models.ResponseWebhook>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Post, "/v1/webhooks/transaction")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         /// <summary>
-        /// Delete a postback config.
+        /// Delete a postback config EndPoint.
         /// </summary>
         /// <param name="webhookId">Required parameter: Postback Config ID.</param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public Models.ResponseWebhook DeleteAPostbackConfig(
                 string webhookId)
-        {
-            Task<Models.ResponseWebhook> t = this.DeleteAPostbackConfigAsync(webhookId);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+            => CoreHelper.RunTask(DeleteAPostbackConfigAsync(webhookId));
 
         /// <summary>
-        /// Delete a postback config.
+        /// Delete a postback config EndPoint.
         /// </summary>
         /// <param name="webhookId">Required parameter: Postback Config ID.</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
@@ -286,309 +168,150 @@ namespace FortisAPI.Standard.Controllers
         public async Task<Models.ResponseWebhook> DeleteAPostbackConfigAsync(
                 string webhookId,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
-
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/webhooks/{webhook_id}");
-
-            // process optional template parameters.
-            ApiHelper.AppendUrlWithTemplateParameters(queryBuilder, new Dictionary<string, object>()
-            {
-                { "webhook_id", webhookId },
-            });
-
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-            };
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().Delete(queryBuilder.ToString(), headers, null);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseWebhook>(response.Body);
-        }
+            => await CreateApiCall<Models.ResponseWebhook>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(HttpMethod.Delete, "/v1/webhooks/{webhook_id}")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Template(_template => _template.Setup("webhook_id", webhookId))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         /// <summary>
-        /// Update transaction batch postback config.
+        /// Update transaction batch postback config EndPoint.
         /// </summary>
         /// <param name="webhookId">Required parameter: Postback Config ID.</param>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public Models.ResponseWebhook UpdateTransactionBatchPostbackConfig(
                 string webhookId,
-                Models.V1WebhooksBatchRequest1 body)
-        {
-            Task<Models.ResponseWebhook> t = this.UpdateTransactionBatchPostbackConfigAsync(webhookId, body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+                Models.V1WebhooksBatchRequest1 body,
+                List<Models.Expand101Enum> expand = null)
+            => CoreHelper.RunTask(UpdateTransactionBatchPostbackConfigAsync(webhookId, body, expand));
 
         /// <summary>
-        /// Update transaction batch postback config.
+        /// Update transaction batch postback config EndPoint.
         /// </summary>
         /// <param name="webhookId">Required parameter: Postback Config ID.</param>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public async Task<Models.ResponseWebhook> UpdateTransactionBatchPostbackConfigAsync(
                 string webhookId,
                 Models.V1WebhooksBatchRequest1 body,
+                List<Models.Expand101Enum> expand = null,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
-
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/webhooks/{webhook_id}/batch");
-
-            // process optional template parameters.
-            ApiHelper.AppendUrlWithTemplateParameters(queryBuilder, new Dictionary<string, object>()
-            {
-                { "webhook_id", webhookId },
-            });
-
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PatchBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseWebhook>(response.Body);
-        }
+            => await CreateApiCall<Models.ResponseWebhook>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(new HttpMethod("PATCH"), "/v1/webhooks/{webhook_id}/batch")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Template(_template => _template.Setup("webhook_id", webhookId))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         /// <summary>
-        /// Update contact postback config.
+        /// Update contact postback config EndPoint.
         /// </summary>
         /// <param name="webhookId">Required parameter: Postback Config ID.</param>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public Models.ResponseWebhook UpdateContactPostbackConfig(
                 string webhookId,
-                Models.V1WebhooksContactRequest1 body)
-        {
-            Task<Models.ResponseWebhook> t = this.UpdateContactPostbackConfigAsync(webhookId, body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+                Models.V1WebhooksContactRequest1 body,
+                List<Models.Expand101Enum> expand = null)
+            => CoreHelper.RunTask(UpdateContactPostbackConfigAsync(webhookId, body, expand));
 
         /// <summary>
-        /// Update contact postback config.
+        /// Update contact postback config EndPoint.
         /// </summary>
         /// <param name="webhookId">Required parameter: Postback Config ID.</param>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public async Task<Models.ResponseWebhook> UpdateContactPostbackConfigAsync(
                 string webhookId,
                 Models.V1WebhooksContactRequest1 body,
+                List<Models.Expand101Enum> expand = null,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
-
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/webhooks/{webhook_id}/contact");
-
-            // process optional template parameters.
-            ApiHelper.AppendUrlWithTemplateParameters(queryBuilder, new Dictionary<string, object>()
-            {
-                { "webhook_id", webhookId },
-            });
-
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PatchBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseWebhook>(response.Body);
-        }
+            => await CreateApiCall<Models.ResponseWebhook>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(new HttpMethod("PATCH"), "/v1/webhooks/{webhook_id}/contact")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Template(_template => _template.Setup("webhook_id", webhookId))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         /// <summary>
-        /// Update transaction postback config.
+        /// Update transaction postback config EndPoint.
         /// </summary>
         /// <param name="webhookId">Required parameter: Postback Config ID.</param>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public Models.ResponseWebhook UpdateTransactionPostbackConfig(
                 string webhookId,
-                Models.V1WebhooksTransactionRequest1 body)
-        {
-            Task<Models.ResponseWebhook> t = this.UpdateTransactionPostbackConfigAsync(webhookId, body);
-            ApiHelper.RunTaskSynchronously(t);
-            return t.Result;
-        }
+                Models.V1WebhooksTransactionRequest1 body,
+                List<Models.Expand101Enum> expand = null)
+            => CoreHelper.RunTask(UpdateTransactionPostbackConfigAsync(webhookId, body, expand));
 
         /// <summary>
-        /// Update transaction postback config.
+        /// Update transaction postback config EndPoint.
         /// </summary>
         /// <param name="webhookId">Required parameter: Postback Config ID.</param>
         /// <param name="body">Required parameter: Example: .</param>
+        /// <param name="expand">Optional parameter: Most endpoints in the API have a way to retrieve extra data related to the current record being retrieved. For example, if the API request is for the accountvaults endpoint, and the end user also needs to know which contact the token belongs to, this data can be returned in the accountvaults endpoint request..</param>
         /// <param name="cancellationToken"> cancellationToken. </param>
         /// <returns>Returns the Models.ResponseWebhook response from the API call.</returns>
         public async Task<Models.ResponseWebhook> UpdateTransactionPostbackConfigAsync(
                 string webhookId,
                 Models.V1WebhooksTransactionRequest1 body,
+                List<Models.Expand101Enum> expand = null,
                 CancellationToken cancellationToken = default)
-        {
-            // the base uri for api requests.
-            string baseUri = this.Config.GetBaseUri();
-
-            // prepare query string for API call.
-            StringBuilder queryBuilder = new StringBuilder(baseUri);
-            queryBuilder.Append("/v1/webhooks/{webhook_id}/transaction");
-
-            // process optional template parameters.
-            ApiHelper.AppendUrlWithTemplateParameters(queryBuilder, new Dictionary<string, object>()
-            {
-                { "webhook_id", webhookId },
-            });
-
-            // append request with appropriate headers and parameters
-            var headers = new Dictionary<string, string>()
-            {
-                { "user-agent", this.UserAgent },
-                { "accept", "application/json" },
-                { "Content-Type", "application/json" },
-            };
-
-            // append body params.
-            var bodyText = ApiHelper.JsonSerialize(body);
-
-            // prepare the API call request to fetch the response.
-            HttpRequest httpRequest = this.GetClientInstance().PatchBody(queryBuilder.ToString(), headers, bodyText);
-
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnBeforeHttpRequestEventHandler(this.GetClientInstance(), httpRequest);
-            }
-
-            httpRequest = await this.AuthManagers["global"].ApplyAsync(httpRequest).ConfigureAwait(false);
-
-            // invoke request and get response.
-            HttpStringResponse response = await this.GetClientInstance().ExecuteAsStringAsync(httpRequest, cancellationToken: cancellationToken).ConfigureAwait(false);
-            HttpContext context = new HttpContext(httpRequest, response);
-            if (this.HttpCallBack != null)
-            {
-                this.HttpCallBack.OnAfterHttpResponseEventHandler(this.GetClientInstance(), response);
-            }
-
-            if (response.StatusCode == 401)
-            {
-                throw new Response401tokenException("Unauthorized", context);
-            }
-
-            if (response.StatusCode == 412)
-            {
-                throw new Response412Exception("Precondition Failed", context);
-            }
-
-            // handle errors defined at the API level.
-            this.ValidateResponse(response, context);
-
-            return ApiHelper.JsonDeserialize<Models.ResponseWebhook>(response.Body);
-        }
+            => await CreateApiCall<Models.ResponseWebhook>()
+              .RequestBuilder(_requestBuilder => _requestBuilder
+                  .Setup(new HttpMethod("PATCH"), "/v1/webhooks/{webhook_id}/transaction")
+                  .WithAndAuth(_andAuth => _andAuth
+                      .Add("user-id")
+                      .Add("user-api-key")
+                      .Add("developer-id")
+                  )
+                  .Parameters(_parameters => _parameters
+                      .Body(_bodyParameter => _bodyParameter.Setup(body))
+                      .Template(_template => _template.Setup("webhook_id", webhookId))
+                      .Header(_header => _header.Setup("Content-Type", "application/json"))
+                      .Query(_query => _query.Setup("expand", expand?.Select(a => ApiHelper.JsonSerialize(a).Trim('\"')).ToList()))))
+              .ResponseHandler(_responseHandler => _responseHandler
+                  .ErrorCase("401", CreateErrorCase("Unauthorized", (_reason, _context) => new Response401tokenException(_reason, _context)))
+                  .ErrorCase("412", CreateErrorCase("Precondition Failed", (_reason, _context) => new Response412Exception(_reason, _context))))
+              .ExecuteAsync(cancellationToken).ConfigureAwait(false);
     }
 }

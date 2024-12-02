@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,42 +19,41 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1TransactionsPartialReversalRequest.
     /// </summary>
-    public class V1TransactionsPartialReversalRequest
+    public class V1TransactionsPartialReversalRequest : BaseModel
     {
         private string checkinDate;
         private string checkoutDate;
         private string clerkNumber;
         private string contactApiId;
         private string contactId;
-        private string customData;
         private string customerId;
         private string description;
         private Models.IiasIndEnum? iiasInd;
         private string imageFront;
         private string imageBack;
-        private double? installmentNumber;
-        private double? installmentCount;
+        private int? installmentNumber;
+        private int? installmentCount;
         private string locationApiId;
         private string locationId;
+        private string productTransactionId;
         private string notificationEmailAddress;
         private string orderNumber;
         private string poNumber;
-        private string previousTransactionId;
-        private string productTransactionId;
         private string quickInvoiceId;
-        private double? recurringNumber;
+        private int? recurringNumber;
         private string roomNum;
-        private double? roomRate;
+        private int? roomRate;
         private string saveAccountTitle;
         private int? subtotalAmount;
         private int? surchargeAmount;
+        private List<string> tags;
         private int? tax;
         private int? tipAmount;
+        private int? secondaryAmount;
         private string transactionApiId;
         private string transactionC1;
         private string transactionC2;
         private string transactionC3;
-        private string transactionC4;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
             { "checkin_date", false },
@@ -61,7 +61,6 @@ namespace FortisAPI.Standard.Models
             { "clerk_number", false },
             { "contact_api_id", false },
             { "contact_id", false },
-            { "custom_data", false },
             { "customer_id", false },
             { "description", false },
             { "iias_ind", false },
@@ -71,11 +70,10 @@ namespace FortisAPI.Standard.Models
             { "installment_count", false },
             { "location_api_id", false },
             { "location_id", false },
+            { "product_transaction_id", false },
             { "notification_email_address", false },
             { "order_number", false },
             { "po_number", false },
-            { "previous_transaction_id", false },
-            { "product_transaction_id", false },
             { "quick_invoice_id", false },
             { "recurring_number", false },
             { "room_num", false },
@@ -83,13 +81,14 @@ namespace FortisAPI.Standard.Models
             { "save_account_title", false },
             { "subtotal_amount", false },
             { "surcharge_amount", false },
+            { "tags", false },
             { "tax", false },
             { "tip_amount", false },
+            { "secondary_amount", false },
             { "transaction_api_id", false },
             { "transaction_c1", false },
             { "transaction_c2", false },
             { "transaction_c3", false },
-            { "transaction_c4", false },
         };
 
         /// <summary>
@@ -122,12 +121,12 @@ namespace FortisAPI.Standard.Models
         /// <param name="installmentCount">installment_count.</param>
         /// <param name="locationApiId">location_api_id.</param>
         /// <param name="locationId">location_id.</param>
+        /// <param name="productTransactionId">product_transaction_id.</param>
+        /// <param name="advanceDeposit">advance_deposit.</param>
         /// <param name="noShow">no_show.</param>
         /// <param name="notificationEmailAddress">notification_email_address.</param>
         /// <param name="orderNumber">order_number.</param>
         /// <param name="poNumber">po_number.</param>
-        /// <param name="previousTransactionId">previous_transaction_id.</param>
-        /// <param name="productTransactionId">product_transaction_id.</param>
         /// <param name="quickInvoiceId">quick_invoice_id.</param>
         /// <param name="recurring">recurring.</param>
         /// <param name="recurringNumber">recurring_number.</param>
@@ -140,55 +139,65 @@ namespace FortisAPI.Standard.Models
         /// <param name="tags">tags.</param>
         /// <param name="tax">tax.</param>
         /// <param name="tipAmount">tip_amount.</param>
+        /// <param name="secondaryAmount">secondary_amount.</param>
         /// <param name="transactionApiId">transaction_api_id.</param>
         /// <param name="transactionC1">transaction_c1.</param>
         /// <param name="transactionC2">transaction_c2.</param>
         /// <param name="transactionC3">transaction_c3.</param>
-        /// <param name="transactionC4">transaction_c4.</param>
+        /// <param name="bankFundedOnlyOverride">bank_funded_only_override.</param>
+        /// <param name="allowPartialAuthorizationOverride">allow_partial_authorization_override.</param>
+        /// <param name="autoDeclineCvvOverride">auto_decline_cvv_override.</param>
+        /// <param name="autoDeclineStreetOverride">auto_decline_street_override.</param>
+        /// <param name="autoDeclineZipOverride">auto_decline_zip_override.</param>
         public V1TransactionsPartialReversalRequest(
             int transactionAmount,
             List<Models.AdditionalAmount> additionalAmounts = null,
-            Models.BillingAddress2 billingAddress = null,
+            Models.BillingAddress billingAddress = null,
             string checkinDate = null,
             string checkoutDate = null,
             string clerkNumber = null,
             string contactApiId = null,
             string contactId = null,
-            string customData = null,
+            object customData = null,
             string customerId = null,
             string description = null,
-            Models.IdentityVerification2 identityVerification = null,
+            Models.IdentityVerification identityVerification = null,
             Models.IiasIndEnum? iiasInd = null,
             string imageFront = null,
             string imageBack = null,
             bool? installment = null,
-            double? installmentNumber = null,
-            double? installmentCount = null,
+            int? installmentNumber = null,
+            int? installmentCount = null,
             string locationApiId = null,
             string locationId = null,
+            string productTransactionId = null,
+            bool? advanceDeposit = null,
             bool? noShow = null,
             string notificationEmailAddress = null,
             string orderNumber = null,
             string poNumber = null,
-            string previousTransactionId = null,
-            string productTransactionId = null,
             string quickInvoiceId = null,
             bool? recurring = null,
-            double? recurringNumber = null,
+            int? recurringNumber = null,
             string roomNum = null,
-            double? roomRate = null,
+            int? roomRate = null,
             bool? saveAccount = null,
             string saveAccountTitle = null,
             int? subtotalAmount = null,
             int? surchargeAmount = null,
-            List<Models.Tag> tags = null,
+            List<string> tags = null,
             int? tax = null,
             int? tipAmount = null,
+            int? secondaryAmount = null,
             string transactionApiId = null,
             string transactionC1 = null,
             string transactionC2 = null,
             string transactionC3 = null,
-            string transactionC4 = null)
+            bool? bankFundedOnlyOverride = null,
+            bool? allowPartialAuthorizationOverride = null,
+            bool? autoDeclineCvvOverride = null,
+            bool? autoDeclineStreetOverride = null,
+            bool? autoDeclineZipOverride = null)
         {
             this.AdditionalAmounts = additionalAmounts;
             this.BillingAddress = billingAddress;
@@ -217,11 +226,7 @@ namespace FortisAPI.Standard.Models
                 this.ContactId = contactId;
             }
 
-            if (customData != null)
-            {
-                this.CustomData = customData;
-            }
-
+            this.CustomData = customData;
             if (customerId != null)
             {
                 this.CustomerId = customerId;
@@ -269,6 +274,12 @@ namespace FortisAPI.Standard.Models
                 this.LocationId = locationId;
             }
 
+            if (productTransactionId != null)
+            {
+                this.ProductTransactionId = productTransactionId;
+            }
+
+            this.AdvanceDeposit = advanceDeposit;
             this.NoShow = noShow;
             if (notificationEmailAddress != null)
             {
@@ -283,16 +294,6 @@ namespace FortisAPI.Standard.Models
             if (poNumber != null)
             {
                 this.PoNumber = poNumber;
-            }
-
-            if (previousTransactionId != null)
-            {
-                this.PreviousTransactionId = previousTransactionId;
-            }
-
-            if (productTransactionId != null)
-            {
-                this.ProductTransactionId = productTransactionId;
             }
 
             if (quickInvoiceId != null)
@@ -332,7 +333,11 @@ namespace FortisAPI.Standard.Models
                 this.SurchargeAmount = surchargeAmount;
             }
 
-            this.Tags = tags;
+            if (tags != null)
+            {
+                this.Tags = tags;
+            }
+
             if (tax != null)
             {
                 this.Tax = tax;
@@ -344,6 +349,11 @@ namespace FortisAPI.Standard.Models
             }
 
             this.TransactionAmount = transactionAmount;
+            if (secondaryAmount != null)
+            {
+                this.SecondaryAmount = secondaryAmount;
+            }
+
             if (transactionApiId != null)
             {
                 this.TransactionApiId = transactionApiId;
@@ -364,11 +374,11 @@ namespace FortisAPI.Standard.Models
                 this.TransactionC3 = transactionC3;
             }
 
-            if (transactionC4 != null)
-            {
-                this.TransactionC4 = transactionC4;
-            }
-
+            this.BankFundedOnlyOverride = bankFundedOnlyOverride;
+            this.AllowPartialAuthorizationOverride = allowPartialAuthorizationOverride;
+            this.AutoDeclineCvvOverride = autoDeclineCvvOverride;
+            this.AutoDeclineStreetOverride = autoDeclineStreetOverride;
+            this.AutoDeclineZipOverride = autoDeclineZipOverride;
         }
 
         /// <summary>
@@ -378,10 +388,10 @@ namespace FortisAPI.Standard.Models
         public List<Models.AdditionalAmount> AdditionalAmounts { get; set; }
 
         /// <summary>
-        /// The City portion of the address associated with the Credit Card (CC) or Bank Account (ACH).
+        /// Billing Address Object
         /// </summary>
         [JsonProperty("billing_address", NullValueHandling = NullValueHandling.Ignore)]
-        public Models.BillingAddress2 BillingAddress { get; set; }
+        public Models.BillingAddress BillingAddress { get; set; }
 
         /// <summary>
         /// Checkin Date - The time difference between checkin_date and checkout_date must be less than or equal to 99 days.
@@ -476,23 +486,11 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// A field that allows custom JSON to be entered to store extra data.
         /// </summary>
-        [JsonProperty("custom_data")]
-        public string CustomData
-        {
-            get
-            {
-                return this.customData;
-            }
-
-            set
-            {
-                this.shouldSerialize["custom_data"] = true;
-                this.customData = value;
-            }
-        }
+        [JsonProperty("custom_data", NullValueHandling = NullValueHandling.Ignore)]
+        public object CustomData { get; set; }
 
         /// <summary>
-        /// Can be used by Merchants to identify Contacts in our system by an ID from another system.
+        /// Can be used by Merchants to identify Contacts in our system by an ID from another system.
         /// </summary>
         [JsonProperty("customer_id")]
         public string CustomerId
@@ -531,7 +529,7 @@ namespace FortisAPI.Standard.Models
         /// Identity Verification
         /// </summary>
         [JsonProperty("identity_verification", NullValueHandling = NullValueHandling.Ignore)]
-        public Models.IdentityVerification2 IdentityVerification { get; set; }
+        public Models.IdentityVerification IdentityVerification { get; set; }
 
         /// <summary>
         /// Possible values are '0', '1','2'
@@ -552,7 +550,7 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// A base64 encoded string for the image.  Used with Check21 ACH transactions.
+        /// A base64 encoded string for the image.  Used with Check21 ACH transactions.
         /// </summary>
         [JsonProperty("image_front")]
         public string ImageFront
@@ -570,7 +568,7 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// A base64 encoded string for the image.  Used with Check21 ACH transactions.
+        /// A base64 encoded string for the image.  Used with Check21 ACH transactions.
         /// </summary>
         [JsonProperty("image_back")]
         public string ImageBack
@@ -597,7 +595,7 @@ namespace FortisAPI.Standard.Models
         /// If this is a fixed installment plan and installment field is being passed as 1, then this field must have a vlue of 1-999 specifying the current installment number that is running.
         /// </summary>
         [JsonProperty("installment_number")]
-        public double? InstallmentNumber
+        public int? InstallmentNumber
         {
             get
             {
@@ -615,7 +613,7 @@ namespace FortisAPI.Standard.Models
         /// If this is a fixed installment plan and installment field is being passed as 1, then this field must have a vlue of 1-999 specifying the total number of installments on the plan. This number must be grater than or equal to installment_number.
         /// </summary>
         [JsonProperty("installment_count")]
-        public double? InstallmentCount
+        public int? InstallmentCount
         {
             get
             {
@@ -664,6 +662,30 @@ namespace FortisAPI.Standard.Models
                 this.locationId = value;
             }
         }
+
+        /// <summary>
+        /// The Product's method (cc/ach) has to match the action. If not provided, the API will use the default configured for the Location.
+        /// </summary>
+        [JsonProperty("product_transaction_id")]
+        public string ProductTransactionId
+        {
+            get
+            {
+                return this.productTransactionId;
+            }
+
+            set
+            {
+                this.shouldSerialize["product_transaction_id"] = true;
+                this.productTransactionId = value;
+            }
+        }
+
+        /// <summary>
+        /// Advance Deposit
+        /// </summary>
+        [JsonProperty("advance_deposit", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? AdvanceDeposit { get; set; }
 
         /// <summary>
         /// Used in Lodging
@@ -726,43 +748,7 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// previous_transaction_id is used as token to run transaction. Account details OR previous_transaction_id should be passed to run transaction.
-        /// </summary>
-        [JsonProperty("previous_transaction_id")]
-        public string PreviousTransactionId
-        {
-            get
-            {
-                return this.previousTransactionId;
-            }
-
-            set
-            {
-                this.shouldSerialize["previous_transaction_id"] = true;
-                this.previousTransactionId = value;
-            }
-        }
-
-        /// <summary>
-        /// The Product's method (cc/ach) has to match the action. If not provided, the API will use the default configured for the Location.
-        /// </summary>
-        [JsonProperty("product_transaction_id")]
-        public string ProductTransactionId
-        {
-            get
-            {
-                return this.productTransactionId;
-            }
-
-            set
-            {
-                this.shouldSerialize["product_transaction_id"] = true;
-                this.productTransactionId = value;
-            }
-        }
-
-        /// <summary>
-        /// Can be used to associate a transaction to a Quick Invoice.  Quick Invoice transactions will have a value for this field automatically.
+        /// Can be used to associate a transaction to a Quick Invoice.  Quick Invoice transactions will have a value for this field automatically.
         /// </summary>
         [JsonProperty("quick_invoice_id")]
         public string QuickInvoiceId
@@ -789,7 +775,7 @@ namespace FortisAPI.Standard.Models
         /// If this is an ongoing recurring and recurring field is being passed as 1, then this field must have a vlue of 1-999 specifying the current recurring number that is running.
         /// </summary>
         [JsonProperty("recurring_number")]
-        public double? RecurringNumber
+        public int? RecurringNumber
         {
             get
             {
@@ -825,7 +811,7 @@ namespace FortisAPI.Standard.Models
         /// Required if merchant industry type is lodging.
         /// </summary>
         [JsonProperty("room_rate")]
-        public double? RoomRate
+        public int? RoomRate
         {
             get
             {
@@ -846,7 +832,7 @@ namespace FortisAPI.Standard.Models
         public bool? SaveAccount { get; set; }
 
         /// <summary>
-        /// If saving account vault while running a transaction, this will be the title of the account vault.
+        /// If saving token while running a transaction, this will be the title of the token.
         /// </summary>
         [JsonProperty("save_account_title")]
         public string SaveAccountTitle
@@ -902,8 +888,20 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Tags
         /// </summary>
-        [JsonProperty("tags", NullValueHandling = NullValueHandling.Ignore)]
-        public List<Models.Tag> Tags { get; set; }
+        [JsonProperty("tags")]
+        public List<string> Tags
+        {
+            get
+            {
+                return this.tags;
+            }
+
+            set
+            {
+                this.shouldSerialize["tags"] = true;
+                this.tags = value;
+            }
+        }
 
         /// <summary>
         /// Amount of Sales tax - If supplied, this amount should be included in the total transaction_amount field. Use only integer numbers, so $10.99 will be 1099.
@@ -948,7 +946,25 @@ namespace FortisAPI.Standard.Models
         public int TransactionAmount { get; set; }
 
         /// <summary>
-        /// See api_id page for more details
+        /// Retained Amount of the transaction. This should always be less than transaction amount. Use only integer numbers, so $10.99 will be 1099
+        /// </summary>
+        [JsonProperty("secondary_amount")]
+        public int? SecondaryAmount
+        {
+            get
+            {
+                return this.secondaryAmount;
+            }
+
+            set
+            {
+                this.shouldSerialize["secondary_amount"] = true;
+                this.secondaryAmount = value;
+            }
+        }
+
+        /// <summary>
+        /// See api_id page for more details
         /// </summary>
         [JsonProperty("transaction_api_id")]
         public string TransactionApiId
@@ -1020,22 +1036,34 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Custom field 4 for api users to store custom data
+        /// Bank Funded Only Override
         /// </summary>
-        [JsonProperty("transaction_c4")]
-        public string TransactionC4
-        {
-            get
-            {
-                return this.transactionC4;
-            }
+        [JsonProperty("bank_funded_only_override", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? BankFundedOnlyOverride { get; set; }
 
-            set
-            {
-                this.shouldSerialize["transaction_c4"] = true;
-                this.transactionC4 = value;
-            }
-        }
+        /// <summary>
+        /// Allow Partial Authorization Override
+        /// </summary>
+        [JsonProperty("allow_partial_authorization_override", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? AllowPartialAuthorizationOverride { get; set; }
+
+        /// <summary>
+        /// Auto Decline CVV Override
+        /// </summary>
+        [JsonProperty("auto_decline_cvv_override", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? AutoDeclineCvvOverride { get; set; }
+
+        /// <summary>
+        /// Auto Decline Street Override
+        /// </summary>
+        [JsonProperty("auto_decline_street_override", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? AutoDeclineStreetOverride { get; set; }
+
+        /// <summary>
+        /// Auto Decline Zip Override
+        /// </summary>
+        [JsonProperty("auto_decline_zip_override", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? AutoDeclineZipOverride { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -1085,14 +1113,6 @@ namespace FortisAPI.Standard.Models
         public void UnsetContactId()
         {
             this.shouldSerialize["contact_id"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetCustomData()
-        {
-            this.shouldSerialize["custom_data"] = false;
         }
 
         /// <summary>
@@ -1170,6 +1190,14 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
+        public void UnsetProductTransactionId()
+        {
+            this.shouldSerialize["product_transaction_id"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
         public void UnsetNotificationEmailAddress()
         {
             this.shouldSerialize["notification_email_address"] = false;
@@ -1189,22 +1217,6 @@ namespace FortisAPI.Standard.Models
         public void UnsetPoNumber()
         {
             this.shouldSerialize["po_number"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetPreviousTransactionId()
-        {
-            this.shouldSerialize["previous_transaction_id"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetProductTransactionId()
-        {
-            this.shouldSerialize["product_transaction_id"] = false;
         }
 
         /// <summary>
@@ -1266,6 +1278,14 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
+        public void UnsetTags()
+        {
+            this.shouldSerialize["tags"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
         public void UnsetTax()
         {
             this.shouldSerialize["tax"] = false;
@@ -1277,6 +1297,14 @@ namespace FortisAPI.Standard.Models
         public void UnsetTipAmount()
         {
             this.shouldSerialize["tip_amount"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetSecondaryAmount()
+        {
+            this.shouldSerialize["secondary_amount"] = false;
         }
 
         /// <summary>
@@ -1309,14 +1337,6 @@ namespace FortisAPI.Standard.Models
         public void UnsetTransactionC3()
         {
             this.shouldSerialize["transaction_c3"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetTransactionC4()
-        {
-            this.shouldSerialize["transaction_c4"] = false;
         }
 
         /// <summary>
@@ -1362,15 +1382,6 @@ namespace FortisAPI.Standard.Models
         public bool ShouldSerializeContactId()
         {
             return this.shouldSerialize["contact_id"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeCustomData()
-        {
-            return this.shouldSerialize["custom_data"];
         }
 
         /// <summary>
@@ -1458,6 +1469,15 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeProductTransactionId()
+        {
+            return this.shouldSerialize["product_transaction_id"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
         public bool ShouldSerializeNotificationEmailAddress()
         {
             return this.shouldSerialize["notification_email_address"];
@@ -1479,24 +1499,6 @@ namespace FortisAPI.Standard.Models
         public bool ShouldSerializePoNumber()
         {
             return this.shouldSerialize["po_number"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializePreviousTransactionId()
-        {
-            return this.shouldSerialize["previous_transaction_id"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeProductTransactionId()
-        {
-            return this.shouldSerialize["product_transaction_id"];
         }
 
         /// <summary>
@@ -1566,6 +1568,15 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTags()
+        {
+            return this.shouldSerialize["tags"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
         public bool ShouldSerializeTax()
         {
             return this.shouldSerialize["tax"];
@@ -1578,6 +1589,15 @@ namespace FortisAPI.Standard.Models
         public bool ShouldSerializeTipAmount()
         {
             return this.shouldSerialize["tip_amount"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeSecondaryAmount()
+        {
+            return this.shouldSerialize["secondary_amount"];
         }
 
         /// <summary>
@@ -1616,15 +1636,6 @@ namespace FortisAPI.Standard.Models
             return this.shouldSerialize["transaction_c3"];
         }
 
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTransactionC4()
-        {
-            return this.shouldSerialize["transaction_c4"];
-        }
-
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
@@ -1637,9 +1648,7 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1TransactionsPartialReversalRequest other &&
-                ((this.AdditionalAmounts == null && other.AdditionalAmounts == null) || (this.AdditionalAmounts?.Equals(other.AdditionalAmounts) == true)) &&
+            return obj is V1TransactionsPartialReversalRequest other &&                ((this.AdditionalAmounts == null && other.AdditionalAmounts == null) || (this.AdditionalAmounts?.Equals(other.AdditionalAmounts) == true)) &&
                 ((this.BillingAddress == null && other.BillingAddress == null) || (this.BillingAddress?.Equals(other.BillingAddress) == true)) &&
                 ((this.CheckinDate == null && other.CheckinDate == null) || (this.CheckinDate?.Equals(other.CheckinDate) == true)) &&
                 ((this.CheckoutDate == null && other.CheckoutDate == null) || (this.CheckoutDate?.Equals(other.CheckoutDate) == true)) &&
@@ -1658,12 +1667,12 @@ namespace FortisAPI.Standard.Models
                 ((this.InstallmentCount == null && other.InstallmentCount == null) || (this.InstallmentCount?.Equals(other.InstallmentCount) == true)) &&
                 ((this.LocationApiId == null && other.LocationApiId == null) || (this.LocationApiId?.Equals(other.LocationApiId) == true)) &&
                 ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
+                ((this.ProductTransactionId == null && other.ProductTransactionId == null) || (this.ProductTransactionId?.Equals(other.ProductTransactionId) == true)) &&
+                ((this.AdvanceDeposit == null && other.AdvanceDeposit == null) || (this.AdvanceDeposit?.Equals(other.AdvanceDeposit) == true)) &&
                 ((this.NoShow == null && other.NoShow == null) || (this.NoShow?.Equals(other.NoShow) == true)) &&
                 ((this.NotificationEmailAddress == null && other.NotificationEmailAddress == null) || (this.NotificationEmailAddress?.Equals(other.NotificationEmailAddress) == true)) &&
                 ((this.OrderNumber == null && other.OrderNumber == null) || (this.OrderNumber?.Equals(other.OrderNumber) == true)) &&
                 ((this.PoNumber == null && other.PoNumber == null) || (this.PoNumber?.Equals(other.PoNumber) == true)) &&
-                ((this.PreviousTransactionId == null && other.PreviousTransactionId == null) || (this.PreviousTransactionId?.Equals(other.PreviousTransactionId) == true)) &&
-                ((this.ProductTransactionId == null && other.ProductTransactionId == null) || (this.ProductTransactionId?.Equals(other.ProductTransactionId) == true)) &&
                 ((this.QuickInvoiceId == null && other.QuickInvoiceId == null) || (this.QuickInvoiceId?.Equals(other.QuickInvoiceId) == true)) &&
                 ((this.Recurring == null && other.Recurring == null) || (this.Recurring?.Equals(other.Recurring) == true)) &&
                 ((this.RecurringNumber == null && other.RecurringNumber == null) || (this.RecurringNumber?.Equals(other.RecurringNumber) == true)) &&
@@ -1677,63 +1686,74 @@ namespace FortisAPI.Standard.Models
                 ((this.Tax == null && other.Tax == null) || (this.Tax?.Equals(other.Tax) == true)) &&
                 ((this.TipAmount == null && other.TipAmount == null) || (this.TipAmount?.Equals(other.TipAmount) == true)) &&
                 this.TransactionAmount.Equals(other.TransactionAmount) &&
+                ((this.SecondaryAmount == null && other.SecondaryAmount == null) || (this.SecondaryAmount?.Equals(other.SecondaryAmount) == true)) &&
                 ((this.TransactionApiId == null && other.TransactionApiId == null) || (this.TransactionApiId?.Equals(other.TransactionApiId) == true)) &&
                 ((this.TransactionC1 == null && other.TransactionC1 == null) || (this.TransactionC1?.Equals(other.TransactionC1) == true)) &&
                 ((this.TransactionC2 == null && other.TransactionC2 == null) || (this.TransactionC2?.Equals(other.TransactionC2) == true)) &&
                 ((this.TransactionC3 == null && other.TransactionC3 == null) || (this.TransactionC3?.Equals(other.TransactionC3) == true)) &&
-                ((this.TransactionC4 == null && other.TransactionC4 == null) || (this.TransactionC4?.Equals(other.TransactionC4) == true));
+                ((this.BankFundedOnlyOverride == null && other.BankFundedOnlyOverride == null) || (this.BankFundedOnlyOverride?.Equals(other.BankFundedOnlyOverride) == true)) &&
+                ((this.AllowPartialAuthorizationOverride == null && other.AllowPartialAuthorizationOverride == null) || (this.AllowPartialAuthorizationOverride?.Equals(other.AllowPartialAuthorizationOverride) == true)) &&
+                ((this.AutoDeclineCvvOverride == null && other.AutoDeclineCvvOverride == null) || (this.AutoDeclineCvvOverride?.Equals(other.AutoDeclineCvvOverride) == true)) &&
+                ((this.AutoDeclineStreetOverride == null && other.AutoDeclineStreetOverride == null) || (this.AutoDeclineStreetOverride?.Equals(other.AutoDeclineStreetOverride) == true)) &&
+                ((this.AutoDeclineZipOverride == null && other.AutoDeclineZipOverride == null) || (this.AutoDeclineZipOverride?.Equals(other.AutoDeclineZipOverride) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.AdditionalAmounts = {(this.AdditionalAmounts == null ? "null" : $"[{string.Join(", ", this.AdditionalAmounts)} ]")}");
             toStringOutput.Add($"this.BillingAddress = {(this.BillingAddress == null ? "null" : this.BillingAddress.ToString())}");
-            toStringOutput.Add($"this.CheckinDate = {(this.CheckinDate == null ? "null" : this.CheckinDate == string.Empty ? "" : this.CheckinDate)}");
-            toStringOutput.Add($"this.CheckoutDate = {(this.CheckoutDate == null ? "null" : this.CheckoutDate == string.Empty ? "" : this.CheckoutDate)}");
-            toStringOutput.Add($"this.ClerkNumber = {(this.ClerkNumber == null ? "null" : this.ClerkNumber == string.Empty ? "" : this.ClerkNumber)}");
-            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId == string.Empty ? "" : this.ContactApiId)}");
-            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId == string.Empty ? "" : this.ContactId)}");
-            toStringOutput.Add($"this.CustomData = {(this.CustomData == null ? "null" : this.CustomData == string.Empty ? "" : this.CustomData)}");
-            toStringOutput.Add($"this.CustomerId = {(this.CustomerId == null ? "null" : this.CustomerId == string.Empty ? "" : this.CustomerId)}");
-            toStringOutput.Add($"this.Description = {(this.Description == null ? "null" : this.Description == string.Empty ? "" : this.Description)}");
+            toStringOutput.Add($"this.CheckinDate = {(this.CheckinDate == null ? "null" : this.CheckinDate)}");
+            toStringOutput.Add($"this.CheckoutDate = {(this.CheckoutDate == null ? "null" : this.CheckoutDate)}");
+            toStringOutput.Add($"this.ClerkNumber = {(this.ClerkNumber == null ? "null" : this.ClerkNumber)}");
+            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId)}");
+            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId)}");
+            toStringOutput.Add($"CustomData = {(this.CustomData == null ? "null" : this.CustomData.ToString())}");
+            toStringOutput.Add($"this.CustomerId = {(this.CustomerId == null ? "null" : this.CustomerId)}");
+            toStringOutput.Add($"this.Description = {(this.Description == null ? "null" : this.Description)}");
             toStringOutput.Add($"this.IdentityVerification = {(this.IdentityVerification == null ? "null" : this.IdentityVerification.ToString())}");
             toStringOutput.Add($"this.IiasInd = {(this.IiasInd == null ? "null" : this.IiasInd.ToString())}");
-            toStringOutput.Add($"this.ImageFront = {(this.ImageFront == null ? "null" : this.ImageFront == string.Empty ? "" : this.ImageFront)}");
-            toStringOutput.Add($"this.ImageBack = {(this.ImageBack == null ? "null" : this.ImageBack == string.Empty ? "" : this.ImageBack)}");
+            toStringOutput.Add($"this.ImageFront = {(this.ImageFront == null ? "null" : this.ImageFront)}");
+            toStringOutput.Add($"this.ImageBack = {(this.ImageBack == null ? "null" : this.ImageBack)}");
             toStringOutput.Add($"this.Installment = {(this.Installment == null ? "null" : this.Installment.ToString())}");
             toStringOutput.Add($"this.InstallmentNumber = {(this.InstallmentNumber == null ? "null" : this.InstallmentNumber.ToString())}");
             toStringOutput.Add($"this.InstallmentCount = {(this.InstallmentCount == null ? "null" : this.InstallmentCount.ToString())}");
-            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId == string.Empty ? "" : this.LocationApiId)}");
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
+            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId)}");
+            toStringOutput.Add($"this.AdvanceDeposit = {(this.AdvanceDeposit == null ? "null" : this.AdvanceDeposit.ToString())}");
             toStringOutput.Add($"this.NoShow = {(this.NoShow == null ? "null" : this.NoShow.ToString())}");
-            toStringOutput.Add($"this.NotificationEmailAddress = {(this.NotificationEmailAddress == null ? "null" : this.NotificationEmailAddress == string.Empty ? "" : this.NotificationEmailAddress)}");
-            toStringOutput.Add($"this.OrderNumber = {(this.OrderNumber == null ? "null" : this.OrderNumber == string.Empty ? "" : this.OrderNumber)}");
-            toStringOutput.Add($"this.PoNumber = {(this.PoNumber == null ? "null" : this.PoNumber == string.Empty ? "" : this.PoNumber)}");
-            toStringOutput.Add($"this.PreviousTransactionId = {(this.PreviousTransactionId == null ? "null" : this.PreviousTransactionId == string.Empty ? "" : this.PreviousTransactionId)}");
-            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId == string.Empty ? "" : this.ProductTransactionId)}");
-            toStringOutput.Add($"this.QuickInvoiceId = {(this.QuickInvoiceId == null ? "null" : this.QuickInvoiceId == string.Empty ? "" : this.QuickInvoiceId)}");
+            toStringOutput.Add($"this.NotificationEmailAddress = {(this.NotificationEmailAddress == null ? "null" : this.NotificationEmailAddress)}");
+            toStringOutput.Add($"this.OrderNumber = {(this.OrderNumber == null ? "null" : this.OrderNumber)}");
+            toStringOutput.Add($"this.PoNumber = {(this.PoNumber == null ? "null" : this.PoNumber)}");
+            toStringOutput.Add($"this.QuickInvoiceId = {(this.QuickInvoiceId == null ? "null" : this.QuickInvoiceId)}");
             toStringOutput.Add($"this.Recurring = {(this.Recurring == null ? "null" : this.Recurring.ToString())}");
             toStringOutput.Add($"this.RecurringNumber = {(this.RecurringNumber == null ? "null" : this.RecurringNumber.ToString())}");
-            toStringOutput.Add($"this.RoomNum = {(this.RoomNum == null ? "null" : this.RoomNum == string.Empty ? "" : this.RoomNum)}");
+            toStringOutput.Add($"this.RoomNum = {(this.RoomNum == null ? "null" : this.RoomNum)}");
             toStringOutput.Add($"this.RoomRate = {(this.RoomRate == null ? "null" : this.RoomRate.ToString())}");
             toStringOutput.Add($"this.SaveAccount = {(this.SaveAccount == null ? "null" : this.SaveAccount.ToString())}");
-            toStringOutput.Add($"this.SaveAccountTitle = {(this.SaveAccountTitle == null ? "null" : this.SaveAccountTitle == string.Empty ? "" : this.SaveAccountTitle)}");
+            toStringOutput.Add($"this.SaveAccountTitle = {(this.SaveAccountTitle == null ? "null" : this.SaveAccountTitle)}");
             toStringOutput.Add($"this.SubtotalAmount = {(this.SubtotalAmount == null ? "null" : this.SubtotalAmount.ToString())}");
             toStringOutput.Add($"this.SurchargeAmount = {(this.SurchargeAmount == null ? "null" : this.SurchargeAmount.ToString())}");
             toStringOutput.Add($"this.Tags = {(this.Tags == null ? "null" : $"[{string.Join(", ", this.Tags)} ]")}");
             toStringOutput.Add($"this.Tax = {(this.Tax == null ? "null" : this.Tax.ToString())}");
             toStringOutput.Add($"this.TipAmount = {(this.TipAmount == null ? "null" : this.TipAmount.ToString())}");
             toStringOutput.Add($"this.TransactionAmount = {this.TransactionAmount}");
-            toStringOutput.Add($"this.TransactionApiId = {(this.TransactionApiId == null ? "null" : this.TransactionApiId == string.Empty ? "" : this.TransactionApiId)}");
-            toStringOutput.Add($"this.TransactionC1 = {(this.TransactionC1 == null ? "null" : this.TransactionC1 == string.Empty ? "" : this.TransactionC1)}");
-            toStringOutput.Add($"this.TransactionC2 = {(this.TransactionC2 == null ? "null" : this.TransactionC2 == string.Empty ? "" : this.TransactionC2)}");
-            toStringOutput.Add($"this.TransactionC3 = {(this.TransactionC3 == null ? "null" : this.TransactionC3 == string.Empty ? "" : this.TransactionC3)}");
-            toStringOutput.Add($"this.TransactionC4 = {(this.TransactionC4 == null ? "null" : this.TransactionC4 == string.Empty ? "" : this.TransactionC4)}");
+            toStringOutput.Add($"this.SecondaryAmount = {(this.SecondaryAmount == null ? "null" : this.SecondaryAmount.ToString())}");
+            toStringOutput.Add($"this.TransactionApiId = {(this.TransactionApiId == null ? "null" : this.TransactionApiId)}");
+            toStringOutput.Add($"this.TransactionC1 = {(this.TransactionC1 == null ? "null" : this.TransactionC1)}");
+            toStringOutput.Add($"this.TransactionC2 = {(this.TransactionC2 == null ? "null" : this.TransactionC2)}");
+            toStringOutput.Add($"this.TransactionC3 = {(this.TransactionC3 == null ? "null" : this.TransactionC3)}");
+            toStringOutput.Add($"this.BankFundedOnlyOverride = {(this.BankFundedOnlyOverride == null ? "null" : this.BankFundedOnlyOverride.ToString())}");
+            toStringOutput.Add($"this.AllowPartialAuthorizationOverride = {(this.AllowPartialAuthorizationOverride == null ? "null" : this.AllowPartialAuthorizationOverride.ToString())}");
+            toStringOutput.Add($"this.AutoDeclineCvvOverride = {(this.AutoDeclineCvvOverride == null ? "null" : this.AutoDeclineCvvOverride.ToString())}");
+            toStringOutput.Add($"this.AutoDeclineStreetOverride = {(this.AutoDeclineStreetOverride == null ? "null" : this.AutoDeclineStreetOverride.ToString())}");
+            toStringOutput.Add($"this.AutoDeclineZipOverride = {(this.AutoDeclineZipOverride == null ? "null" : this.AutoDeclineZipOverride.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

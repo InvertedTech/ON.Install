@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Stripe;
+
+import "google/protobuf/timestamp.proto";
+
+import "Protos/ON/Fragments/Authorization/Payment/SharedTypes.proto";
+
+message StripeSubscriptionFullRecord {
+	StripeSubscriptionRecord Subscription = 1;
+	repeated StripePaymentRecord Payments = 2;
+}
+
+// User claim's record
+message StripeSubscriptionRecord {
+  string UserID = 1; // Guid for the user
+  string SubscriptionID = 2; // Guid for the Subscription
+  string StripeSubscriptionID = 3;
+  string CustomerId = 4;
+  uint32 AmountCents = 5;
+  SubscriptionStatus Status = 6;
+  google.protobuf.Timestamp CreatedOnUTC = 11;
+  google.protobuf.Timestamp LastPaidUTC = 12;
+  google.protobuf.Timestamp PaidThruUTC = 13;
+  google.protobuf.Timestamp RenewsOnUTC = 14;
+  google.protobuf.Timestamp CanceledOnUTC = 15;
+  google.protobuf.Timestamp ChangedOnUTC = 16;
+}
+
+message StripePaymentRecord {
+  string UserID = 1; // Guid for the user
+  string SubscriptionID = 2; // Guid for the Subscription
+  string PaymentID = 3; // Guid for the Payment
+  string StripePaymentID = 4;
+  uint32 AmountCents = 5;
+  PaymentStatus Status = 6;
+  google.protobuf.Timestamp CreatedOnUTC = 11;
+  google.protobuf.Timestamp PaidOnUTC = 12;
+  google.protobuf.Timestamp PaidThruUTC = 13;
+  google.protobuf.Timestamp ChangedOnUTC = 14;
+}

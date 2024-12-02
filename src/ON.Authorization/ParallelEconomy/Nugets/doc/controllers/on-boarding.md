@@ -24,7 +24,7 @@ MerchantBoardingAsync(
 
 | Parameter | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `body` | [`Models.V1OnboardingRequest`](../../doc/models/v1-onboarding-request.md) | Body, Required | - |
+| `body` | [`V1OnboardingRequest`](../../doc/models/v1-onboarding-request.md) | Body, Required | - |
 
 ## Response Type
 
@@ -33,26 +33,83 @@ MerchantBoardingAsync(
 ## Example Usage
 
 ```csharp
-var body = new V1OnboardingRequest();
-body.PrimaryPrincipal = new PrimaryPrincipal();
-body.PrimaryPrincipal.FirstName = "Bob";
-body.PrimaryPrincipal.LastName = "Fairview";
-body.TemplateCode = "1234YourTemplateCode";
-body.Email = "email@domain.com";
-body.DbaName = "Discount Home Goods";
-body.Location = new Location();
-body.Location.PhoneNumber = "555-555-1212";
-body.AppDelivery = AppDeliveryEnum.Direct;
-body.BankAccount = new BankAccount();
-body.AltBankAccount = new AltBankAccount();
-body.Contact = new Contact();
-body.Contact.PhoneNumber = "555-555-3456";
+V1OnboardingRequest body = new V1OnboardingRequest
+{
+    PrimaryPrincipal = new PrimaryPrincipal
+    {
+        FirstName = "Bob",
+        LastName = "Fairview",
+        MiddleName = "Nathaniel",
+        Title = "Dr",
+        DateOfBirth = "2021-12-01",
+        AddressLine1 = "1354 Oak St.",
+        AddressLine2 = "Unit 203",
+        City = "Dover",
+        StateProvince = "DE",
+        PostalCode = "55022",
+        OwnershipPercent = 100,
+        PhoneNumber = "555-555-1234",
+    },
+    TemplateCode = "1234YourTemplateCode",
+    Email = "email@domain.com",
+    DbaName = "Discount Home Goods",
+    Location = new Location5
+    {
+        PhoneNumber = "555-555-1212",
+        AddressLine1 = "1200 West Hartford Pkwy",
+        AddressLine2 = "Suite 2000",
+        City = "Dover",
+        StateProvince = "DE",
+        PostalCode = "55022",
+    },
+    AppDelivery = AppDeliveryEnum.Direct,
+    BankAccount = new BankAccount1
+    {
+        RoutingNumber = "011103093",
+        AccountNumber = "01234567890123",
+        AccountHolderName = "Bob Fairview",
+    },
+    AltBankAccount = new AltBankAccount
+    {
+        RoutingNumber = "011103093",
+        AccountNumber = "01234567890123",
+        AccountHolderName = "Bob Fairview",
+        DepositType = "fees_adjustments",
+    },
+    Contact = new Contact
+    {
+        PhoneNumber = "555-555-3456",
+        FirstName = "Jeffery",
+        LastName = "Todd",
+        Email = "jtodd@example.com",
+    },
+    ParentId = "11e95f8ec39de8fbdb0a4f1a",
+    BusinessCategory = BusinessCategoryEnum.Education,
+    SwipedPercent = 0,
+    KeyedPercent = 0,
+    EcommercePercent = 100,
+    OwnershipType = OwnershipTypeEnum.Llp,
+    FedTaxId = "0000000000",
+    CcAverageTicketRange = 5,
+    CcMonthlyVolumeRange = 1,
+    CcHighTicket = 1500,
+    EcAverageTicketRange = 5,
+    EcMonthlyVolumeRange = 2,
+    EcHighTicket = 1500,
+    Website = "http://www.example.com",
+    LegalName = "Total Home Goods, LLP",
+    ClientAppId = "ABC123",
+};
 
 try
 {
     ResponseOnboarding result = await onBoardingController.MerchantBoardingAsync(body);
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*
@@ -119,7 +176,8 @@ catch (ApiException e){};
       "email": "jtodd@example.com",
       "phone_number": "555-555-3456"
     },
-    "client_app_id": "ABC123"
+    "client_app_id": "ABC123",
+    "app_link": "https://mpa.example.com/signup/123456788"
   }
 }
 ```

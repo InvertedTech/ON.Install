@@ -3,6 +3,7 @@ include:
   - path: ../common/auth.yml
   - path: ../common/cms.yml
   - path: ../common/comment.yml
+  - path: ../common/notification.yml
   - path: ../common/payment.yml
   - path: ../common/settings.yml
   - path: ../common/stats.yml

@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Async.
     /// </summary>
-    public class Async
+    public class Async : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Async"/> class.
@@ -74,21 +75,20 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Async other &&
-                this.Code.Equals(other.Code) &&
+            return obj is Async other &&                this.Code.Equals(other.Code) &&
                 ((this.Link == null && other.Link == null) || (this.Link?.Equals(other.Link) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.Code = {this.Code}");
-            toStringOutput.Add($"this.Link = {(this.Link == null ? "null" : this.Link == string.Empty ? "" : this.Link)}");
+            toStringOutput.Add($"this.Link = {(this.Link == null ? "null" : this.Link)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

@@ -29,6 +29,7 @@
 <table border="1">
     <thead>
         <tr>
+            <th>Type</th>
             <th>Created</th>
             <th>Status</th>
             <th>Amount</th>
@@ -37,7 +38,17 @@
     @foreach (var sub in Model.Subscriptions)
     {
         <tr>
-            <td><a asp-action="Single" asp-route-subId="@sub.SubscriptionId.ToString()">@sub.StartedOnUTC.ToShortDateString()</a></td>
+            <td>@sub.Type</td>
+            <td>
+                @if (sub.Type == "Fake")
+                {
+                    <a asp-controller="SubscriptionFake" asp-action="Cancel">Cancel</a>
+                }
+                else
+                {
+                    <a asp-action="Single" asp-route-subId="@sub.SubscriptionId.ToString()">@sub.StartedOnUTC.ToShortDateString()</a>
+                }
+            </td>
             <td>@sub.StatusPretty</td>
             <td>$@((sub.AmountCents / 100.0).ToString("###,##0.00"))</td>
         </tr>

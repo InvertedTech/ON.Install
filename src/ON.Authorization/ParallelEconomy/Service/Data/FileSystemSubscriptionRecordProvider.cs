@@ -22,7 +22,7 @@ namespace ON.Authorization.ParallelEconomy.Service.Data
             dataDir = root.CreateSubdirectory("data");
         }
 
-        public async Task<SubscriptionRecord> GetById(Guid userId)
+        public async Task<ParallelEconomySubscriptionRecord> GetById(Guid userId)
         {
             var fd = GetDataFilePath(userId);
             if (!fd.Exists)
@@ -30,12 +30,12 @@ namespace ON.Authorization.ParallelEconomy.Service.Data
 
             var last = (await File.ReadAllLinesAsync(fd.FullName)).Last();
 
-            return SubscriptionRecord.Parser.ParseFrom(Convert.FromBase64String(last));
+            return ParallelEconomySubscriptionRecord.Parser.ParseFrom(Convert.FromBase64String(last));
         }
 
-        public async Task Save(SubscriptionRecord rec)
+        public async Task Save(ParallelEconomySubscriptionRecord rec)
         {
-            var id = new Guid(rec.UserID.Span);
+            var id = new Guid(rec.UserID);
             var fd = GetDataFilePath(id);
             await File.AppendAllTextAsync(fd.FullName, Convert.ToBase64String(rec.ToByteArray()) + "\n");
         }

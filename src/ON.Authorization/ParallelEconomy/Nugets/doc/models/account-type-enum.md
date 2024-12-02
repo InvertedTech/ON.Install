@@ -1,7 +1,7 @@
 
 # Account Type Enum
 
-Account Type
+Account type. Either "checking" or "savings"
 
 ## Enumeration
 
@@ -11,19 +11,12 @@ Account Type
 
 | Name |
 |  --- |
-| `Unknown` |
 | `Checking` |
-| `Credit` |
-| `CashBenefit` |
-| `Snap` |
-| `Prepaid` |
 | `Savings` |
-| `SpendingPower` |
-| `Universal` |
 
 ## Example
 
 ```
-credit
+checking
 ```
 

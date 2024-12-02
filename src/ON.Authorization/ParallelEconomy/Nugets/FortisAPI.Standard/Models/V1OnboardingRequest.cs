@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1OnboardingRequest.
     /// </summary>
-    public class V1OnboardingRequest
+    public class V1OnboardingRequest : BaseModel
     {
         private string parentId;
         private Models.BusinessCategoryEnum? businessCategory;
@@ -102,9 +103,9 @@ namespace FortisAPI.Standard.Models
             string templateCode,
             string email,
             string dbaName,
-            Models.Location location,
+            Models.Location5 location,
             Models.AppDeliveryEnum appDelivery,
-            Models.BankAccount bankAccount,
+            Models.BankAccount1 bankAccount,
             Models.AltBankAccount altBankAccount,
             Models.Contact contact,
             string parentId = null,
@@ -273,18 +274,18 @@ namespace FortisAPI.Standard.Models
         /// The Location.
         /// </summary>
         [JsonProperty("location")]
-        public Models.Location Location { get; set; }
+        public Models.Location5 Location { get; set; }
 
         /// <summary>
         /// The delivery method of the app to the merchant.
         /// </summary>
-        [JsonProperty("app_delivery", ItemConverterType = typeof(StringEnumConverter))]
+        [JsonProperty("app_delivery")]
         public Models.AppDeliveryEnum AppDelivery { get; set; }
 
         /// <summary>
         /// The Category of the merchant's business
         /// </summary>
-        [JsonProperty("business_category", ItemConverterType = typeof(StringEnumConverter))]
+        [JsonProperty("business_category")]
         public Models.BusinessCategoryEnum? BusinessCategory
         {
             get
@@ -302,7 +303,7 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// The Type of a merchant's business.
         /// </summary>
-        [JsonProperty("business_type", ItemConverterType = typeof(StringEnumConverter))]
+        [JsonProperty("business_type")]
         public Models.BusinessTypeEnum? BusinessType
         {
             get
@@ -392,7 +393,7 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// The Ownership Type of the merchant's business.
         /// </summary>
-        [JsonProperty("ownership_type", ItemConverterType = typeof(StringEnumConverter))]
+        [JsonProperty("ownership_type")]
         public Models.OwnershipTypeEnum? OwnershipType
         {
             get
@@ -555,7 +556,7 @@ namespace FortisAPI.Standard.Models
         /// The Bank Account.
         /// </summary>
         [JsonProperty("bank_account")]
-        public Models.BankAccount BankAccount { get; set; }
+        public Models.BankAccount1 BankAccount { get; set; }
 
         /// <summary>
         /// The Alternative Bank Account.
@@ -588,7 +589,7 @@ namespace FortisAPI.Standard.Models
         public Models.Contact Contact { get; set; }
 
         /// <summary>
-        /// Client-Issued ID to uniquely identify the merchant (Returned unmodified).
+        /// Client Issues Id to track that can be used to track each submitted merchant application. This id should be generated and sent in the request payload, and will be returned in the response payload. If no id is submitted in the payload request, this field will be null in the response.
         /// </summary>
         [JsonProperty("client_app_id")]
         public string ClientAppId
@@ -933,9 +934,7 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1OnboardingRequest other &&
-                ((this.ParentId == null && other.ParentId == null) || (this.ParentId?.Equals(other.ParentId) == true)) &&
+            return obj is V1OnboardingRequest other &&                ((this.ParentId == null && other.ParentId == null) || (this.ParentId?.Equals(other.ParentId) == true)) &&
                 ((this.PrimaryPrincipal == null && other.PrimaryPrincipal == null) || (this.PrimaryPrincipal?.Equals(other.PrimaryPrincipal) == true)) &&
                 ((this.TemplateCode == null && other.TemplateCode == null) || (this.TemplateCode?.Equals(other.TemplateCode) == true)) &&
                 ((this.Email == null && other.Email == null) || (this.Email?.Equals(other.Email) == true)) &&
@@ -964,40 +963,41 @@ namespace FortisAPI.Standard.Models
                 ((this.ClientAppId == null && other.ClientAppId == null) || (this.ClientAppId?.Equals(other.ClientAppId) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.ParentId = {(this.ParentId == null ? "null" : this.ParentId == string.Empty ? "" : this.ParentId)}");
+            toStringOutput.Add($"this.ParentId = {(this.ParentId == null ? "null" : this.ParentId)}");
             toStringOutput.Add($"this.PrimaryPrincipal = {(this.PrimaryPrincipal == null ? "null" : this.PrimaryPrincipal.ToString())}");
-            toStringOutput.Add($"this.TemplateCode = {(this.TemplateCode == null ? "null" : this.TemplateCode == string.Empty ? "" : this.TemplateCode)}");
-            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email == string.Empty ? "" : this.Email)}");
-            toStringOutput.Add($"this.DbaName = {(this.DbaName == null ? "null" : this.DbaName == string.Empty ? "" : this.DbaName)}");
+            toStringOutput.Add($"this.TemplateCode = {(this.TemplateCode == null ? "null" : this.TemplateCode)}");
+            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email)}");
+            toStringOutput.Add($"this.DbaName = {(this.DbaName == null ? "null" : this.DbaName)}");
             toStringOutput.Add($"this.Location = {(this.Location == null ? "null" : this.Location.ToString())}");
             toStringOutput.Add($"this.AppDelivery = {this.AppDelivery}");
             toStringOutput.Add($"this.BusinessCategory = {(this.BusinessCategory == null ? "null" : this.BusinessCategory.ToString())}");
             toStringOutput.Add($"this.BusinessType = {(this.BusinessType == null ? "null" : this.BusinessType.ToString())}");
-            toStringOutput.Add($"this.BusinessDescription = {(this.BusinessDescription == null ? "null" : this.BusinessDescription == string.Empty ? "" : this.BusinessDescription)}");
+            toStringOutput.Add($"this.BusinessDescription = {(this.BusinessDescription == null ? "null" : this.BusinessDescription)}");
             toStringOutput.Add($"this.SwipedPercent = {(this.SwipedPercent == null ? "null" : this.SwipedPercent.ToString())}");
             toStringOutput.Add($"this.KeyedPercent = {(this.KeyedPercent == null ? "null" : this.KeyedPercent.ToString())}");
             toStringOutput.Add($"this.EcommercePercent = {(this.EcommercePercent == null ? "null" : this.EcommercePercent.ToString())}");
             toStringOutput.Add($"this.OwnershipType = {(this.OwnershipType == null ? "null" : this.OwnershipType.ToString())}");
-            toStringOutput.Add($"this.FedTaxId = {(this.FedTaxId == null ? "null" : this.FedTaxId == string.Empty ? "" : this.FedTaxId)}");
+            toStringOutput.Add($"this.FedTaxId = {(this.FedTaxId == null ? "null" : this.FedTaxId)}");
             toStringOutput.Add($"this.CcAverageTicketRange = {(this.CcAverageTicketRange == null ? "null" : this.CcAverageTicketRange.ToString())}");
             toStringOutput.Add($"this.CcMonthlyVolumeRange = {(this.CcMonthlyVolumeRange == null ? "null" : this.CcMonthlyVolumeRange.ToString())}");
             toStringOutput.Add($"this.CcHighTicket = {(this.CcHighTicket == null ? "null" : this.CcHighTicket.ToString())}");
             toStringOutput.Add($"this.EcAverageTicketRange = {(this.EcAverageTicketRange == null ? "null" : this.EcAverageTicketRange.ToString())}");
             toStringOutput.Add($"this.EcMonthlyVolumeRange = {(this.EcMonthlyVolumeRange == null ? "null" : this.EcMonthlyVolumeRange.ToString())}");
             toStringOutput.Add($"this.EcHighTicket = {(this.EcHighTicket == null ? "null" : this.EcHighTicket.ToString())}");
-            toStringOutput.Add($"this.Website = {(this.Website == null ? "null" : this.Website == string.Empty ? "" : this.Website)}");
+            toStringOutput.Add($"this.Website = {(this.Website == null ? "null" : this.Website)}");
             toStringOutput.Add($"this.BankAccount = {(this.BankAccount == null ? "null" : this.BankAccount.ToString())}");
             toStringOutput.Add($"this.AltBankAccount = {(this.AltBankAccount == null ? "null" : this.AltBankAccount.ToString())}");
-            toStringOutput.Add($"this.LegalName = {(this.LegalName == null ? "null" : this.LegalName == string.Empty ? "" : this.LegalName)}");
+            toStringOutput.Add($"this.LegalName = {(this.LegalName == null ? "null" : this.LegalName)}");
             toStringOutput.Add($"this.Contact = {(this.Contact == null ? "null" : this.Contact.ToString())}");
-            toStringOutput.Add($"this.ClientAppId = {(this.ClientAppId == null ? "null" : this.ClientAppId == string.Empty ? "" : this.ClientAppId)}");
+            toStringOutput.Add($"this.ClientAppId = {(this.ClientAppId == null ? "null" : this.ClientAppId)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

@@ -26,7 +26,7 @@
                 @if (Model.Status != ON.Fragments.Authorization.Payment.SubscriptionStatus.SubscriptionStopped)
                 {
                     <span>&nbsp; &nbsp; &nbsp;</span>
-                    <a asp-controller="SubscriptionPaypal" asp-action="Cancel" asp-route-id="@Model.SubscriptionId.ToString()">Cancel</a>
+                    <a asp-controller="SubscriptionStripe" asp-action="Cancel" asp-route-id="@Model.SubscriptionId.ToString()">Cancel</a>
                 }
             </td>
         </tr>

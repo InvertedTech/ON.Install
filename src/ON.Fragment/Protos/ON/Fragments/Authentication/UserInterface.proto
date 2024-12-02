@@ -135,6 +135,14 @@ service UserInterface {
     };
   }
 
+  // Get User record
+  rpc GetOtherUserByEmail (GetOtherUserByEmailRequest) returns (GetOtherUserByEmailResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/auth/admin/userByEmail/{Email}"
+    };
+  }
+
   // Get User public record
   rpc GetOtherPublicUser (GetOtherPublicUserRequest) returns (GetOtherPublicUserResponse)
   {
@@ -312,6 +320,16 @@ message CreateUserRequest {
   string DisplayName = 3;             // Public display name of the user
   string Bio = 4;                     // Biographical info of the user
   repeated string Emails = 5;         // Private email(s) used for password resets
+
+  string FirstName = 21;
+  string LastName = 22;
+
+  string MailingAddressLine1 = 51;
+  string MailingAddressLine2 = 52;
+  string MailingAddressCity = 53;
+  string MailingAddressState = 54;
+  string MailingAddressPostalCode = 55;
+  string MailingAddressCountryCode = 56;
 }
   
 message CreateUserResponse {
@@ -408,6 +426,14 @@ message GetOtherUserResponse {
   UserNormalRecord Record = 1;
 }
 
+message GetOtherUserByEmailRequest {
+  string Email = 1;                   // Email for the user
+}
+  
+message GetOtherUserByEmailResponse {
+  UserNormalRecord Record = 1;
+}
+
 message GetOtherPublicUserRequest {
   string UserID = 1;                   // Guid for the user
 }
@@ -466,6 +492,16 @@ message ModifyOtherUserRequest {
   string DisplayName = 3;     // Public display name of the user
   string Bio = 4;             // Biographical info of the user
   repeated string Emails = 5; // Private email(s) used for password resets
+
+  string FirstName = 21;
+  string LastName = 22;
+
+  string MailingAddressLine1 = 51;
+  string MailingAddressLine2 = 52;
+  string MailingAddressCity = 53;
+  string MailingAddressState = 54;
+  string MailingAddressPostalCode = 55;
+  string MailingAddressCountryCode = 56;
 }
   
 message ModifyOtherUserResponse {
@@ -486,6 +522,16 @@ message ModifyOwnUserRequest {
   string DisplayName = 2;     // Public display name of the user
   string Bio = 3;             // Biographical info of the user
   repeated string Emails = 4; // Private email(s) used for password resets
+
+  string FirstName = 21;
+  string LastName = 22;
+
+  string MailingAddressLine1 = 51;
+  string MailingAddressLine2 = 52;
+  string MailingAddressCity = 53;
+  string MailingAddressState = 54;
+  string MailingAddressPostalCode = 55;
+  string MailingAddressCountryCode = 56;
 }
   
 message ModifyOwnUserResponse {

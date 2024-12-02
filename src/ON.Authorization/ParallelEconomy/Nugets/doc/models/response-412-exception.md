@@ -9,19 +9,22 @@
 
 | Name | Type | Tags | Description |
 |  --- | --- | --- | --- |
+| `Type` | `string` | Optional | - |
+| `Id` | `string` | Optional | - |
 | `StatusCode` | `int?` | Optional | Response code |
-| `Error` | `string` | Optional | Error description |
-| `Message` | `string` | Optional | Error message |
-| `Details` | [`List<Models.Detail>`](../../doc/models/detail.md) | Optional | Error detail |
+| `Title` | `string` | Optional | Error description |
+| `Detail` | `string` | Optional | Error details |
+| `Meta` | [`Meta`](../../doc/models/meta.md) | Optional | - |
 
 ## Example (as JSON)
 
 ```json
 {
-  "statusCode": null,
-  "error": null,
-  "message": null,
-  "details": null
+  "type": "clj4ge1234004t9ptdoz34567",
+  "id": "clj4ge1234004t9ptdoz34567",
+  "statusCode": 412,
+  "title": "Precondition Failed",
+  "detail": "\"fieldName\" is required"
 }
 ```
 

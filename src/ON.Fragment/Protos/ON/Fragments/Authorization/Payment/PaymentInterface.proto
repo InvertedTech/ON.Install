@@ -7,6 +7,9 @@ import "Protos/ON/Fragments/Authorization/Payment/Crypto/CryptoRecords.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Fake/FakeSubscriptionRecord.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Paypal/PaypalRecords.proto";
 import "Protos/ON/Fragments/Authorization/Payment/Paypal/PaypalSubscriptionRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeRecords.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeSubscriptionRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeOneTimeRecord.proto";
 
 service PaymentInterface {
   rpc GetNewDetails (GetNewDetailsRequest) returns (GetNewDetailsResponse)
@@ -16,21 +19,64 @@ service PaymentInterface {
     };
   }
 
+  rpc GetNewOneTimeDetails (GetNewOneTimeDetailsRequest) returns (GetNewOneTimeDetailsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/payment/single/new"
+    };
+  }
+
+  rpc GetOtherSubscriptionRecords (GetOtherSubscriptionRecordsRequest) returns (GetOtherSubscriptionRecordsResponse)
+  {
+  }
+
   rpc GetOwnSubscriptionRecords (GetOwnSubscriptionRecordsRequest) returns (GetOwnSubscriptionRecordsResponse)
   {
     option (google.api.http) = {
       get: "/api/payment/subscription"
     };
   }
+
+  rpc GetOwnOneTimeRecords (GetOwnOneTimeRecordsRequest) returns (GetOwnOneTimeRecordsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/payment/single"
+    };
+  }
 }
 
 message GetNewDetailsRequest {
   uint32 Level = 1;
+  string DomainName = 2;
 }
 
 message GetNewDetailsResponse {
   Crypto.CryptoNewDetails Crypto = 1;
   Paypal.PaypalNewDetails Paypal = 5;
+  Stripe.StripeNewDetails Stripe = 6;
+}
+
+
+message GetNewOneTimeDetailsRequest {
+  string InternalId = 1;
+  string DomainName = 2;
+}
+
+message GetNewOneTimeDetailsResponse {
+  //Crypto.CryptoNewOneTimeDetails Crypto = 1;
+  //Paypal.PaypalNewOneTimeDetails Paypal = 5;
+  Stripe.StripeNewOneTimeDetails Stripe = 6;
+}
+
+
+message GetOtherSubscriptionRecordsRequest {
+    string UserID = 1;
+}
+
+message GetOtherSubscriptionRecordsResponse {
+    Fake.FakeSubscriptionRecord Fake = 2;
+    repeated Paypal.PaypalSubscriptionFullRecord Paypal = 5;
+    repeated Stripe.StripeSubscriptionFullRecord Stripe = 6;
 }
 
 
@@ -40,4 +86,13 @@ message GetOwnSubscriptionRecordsRequest {
 message GetOwnSubscriptionRecordsResponse {
     Fake.FakeSubscriptionRecord Fake = 2;
     repeated Paypal.PaypalSubscriptionFullRecord Paypal = 5;
+    repeated Stripe.StripeSubscriptionFullRecord Stripe = 6;
+}
+
+
+message GetOwnOneTimeRecordsRequest {
+}
+
+message GetOwnOneTimeRecordsResponse {
+    repeated Stripe.StripeOneTimePaymentRecord Stripe = 6;
 }

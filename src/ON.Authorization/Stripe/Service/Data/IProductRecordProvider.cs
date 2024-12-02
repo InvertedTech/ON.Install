@@ -1,5 +1,5 @@
 ﻿using ON.Fragments.Authorization;
-using ON.Fragments.Authorization.Payments.Stripe;
+using ON.Fragments.Authorization.Payment.Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;

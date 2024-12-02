@@ -23,13 +23,13 @@ namespace ON.SimpleWeb.Services.Stripe
             Products = res.Products.Records.ToArray();
         }
 
-        private GetAccountDetailsResponse GetDetails()
+        private StripeGetAccountDetailsResponse GetDetails()
         {
             if (nameHelper.PaymentServiceChannel == null)
                 return null;
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
-            var reply = client.GetAccountDetails(new GetAccountDetailsRequest());
+            var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = client.StripeGetAccountDetails(new StripeGetAccountDetailsRequest());
             return reply;
         }
     }

@@ -20,10 +20,10 @@ The Alternative Bank Account.
 
 ```json
 {
-  "routing_number": null,
-  "account_number": null,
-  "account_holder_name": null,
-  "deposit_type": null
+  "routing_number": "011103093",
+  "account_number": "01234567890123",
+  "account_holder_name": "Bob Fairview",
+  "deposit_type": "fees_adjustments"
 }
 ```
 

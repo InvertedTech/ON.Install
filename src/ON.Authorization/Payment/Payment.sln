@@ -20,7 +20,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authorization.Payment.Pa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FortisAPI.Standard", "ParallelEconomy\Nugets\FortisAPI.Standard\FortisAPI.Standard.csproj", "{B5AFBF36-2A84-41E7-B62C-7120E003F9A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ON.Authorization.Payment.Fake", "Fake\ON.Authorization.Payment.Fake\ON.Authorization.Payment.Fake.csproj", "{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authorization.Payment.Fake", "Fake\ON.Authorization.Payment.Fake\ON.Authorization.Payment.Fake.csproj", "{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ON.Authorization.Payment.Stripe", "Stripe\ON.Authorization.Payment.Stripe\ON.Authorization.Payment.Stripe.csproj", "{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -116,6 +118,18 @@ Global
 		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Release|x64.Build.0 = Release|Any CPU
 		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Release|x86.ActiveCfg = Release|Any CPU
 		{61258EE3-EB84-4AC9-8147-E4B8CFB213FB}.Release|x86.Build.0 = Release|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Debug|x64.Build.0 = Debug|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Debug|x86.Build.0 = Debug|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Release|x64.ActiveCfg = Release|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Release|x64.Build.0 = Release|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Release|x86.ActiveCfg = Release|Any CPU
+		{B75A57D4-5B1F-4E20-8C6D-BA6D1425157C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

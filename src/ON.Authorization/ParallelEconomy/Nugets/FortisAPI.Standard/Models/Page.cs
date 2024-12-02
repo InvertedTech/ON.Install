@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Page.
     /// </summary>
-    public class Page
+    public class Page : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Page"/> class.
@@ -74,21 +75,20 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Page other &&
-                ((this.Number == null && other.Number == null) || (this.Number?.Equals(other.Number) == true)) &&
+            return obj is Page other &&                ((this.Number == null && other.Number == null) || (this.Number?.Equals(other.Number) == true)) &&
                 ((this.Size == null && other.Size == null) || (this.Size?.Equals(other.Size) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.Number = {(this.Number == null ? "null" : this.Number.ToString())}");
             toStringOutput.Add($"this.Size = {(this.Size == null ? "null" : this.Size.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

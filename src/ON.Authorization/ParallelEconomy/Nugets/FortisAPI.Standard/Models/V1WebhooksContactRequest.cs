@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1WebhooksContactRequest.
     /// </summary>
-    public class V1WebhooksContactRequest
+    public class V1WebhooksContactRequest : BaseModel
     {
         private int? attemptInterval;
         private string basicAuthUsername;
@@ -28,7 +29,7 @@ namespace FortisAPI.Standard.Models
         private string locationApiId;
         private string postbackConfigId;
         private string productTransactionId;
-        private Models.Resource4Enum? resource;
+        private Models.Resource12Enum? resource;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
             { "attempt_interval", true },
@@ -71,9 +72,9 @@ namespace FortisAPI.Standard.Models
         public V1WebhooksContactRequest(
             bool isActive,
             string locationId,
-            Models.OnCreateEnum onCreate,
-            Models.OnUpdateEnum onUpdate,
-            Models.OnDeleteEnum onDelete,
+            bool onCreate,
+            bool onUpdate,
+            bool onDelete,
             int numberOfAttempts,
             string url,
             int? attemptInterval = 300,
@@ -84,7 +85,7 @@ namespace FortisAPI.Standard.Models
             string locationApiId = null,
             string postbackConfigId = null,
             string productTransactionId = null,
-            Models.Resource4Enum? resource = null)
+            Models.Resource12Enum? resource = null)
         {
             this.AttemptInterval = attemptInterval;
             if (basicAuthUsername != null)
@@ -211,7 +212,7 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Options include: api-default
         /// </summary>
-        [JsonProperty("format", ItemConverterType = typeof(StringEnumConverter))]
+        [JsonProperty("format")]
         public Models.FormatEnum? Format
         {
             get
@@ -260,19 +261,19 @@ namespace FortisAPI.Standard.Models
         /// To receive postbacks on the creation of a resource
         /// </summary>
         [JsonProperty("on_create")]
-        public Models.OnCreateEnum OnCreate { get; set; }
+        public bool OnCreate { get; set; }
 
         /// <summary>
         /// To receive postbacks on the updating of a resource
         /// </summary>
         [JsonProperty("on_update")]
-        public Models.OnUpdateEnum OnUpdate { get; set; }
+        public bool OnUpdate { get; set; }
 
         /// <summary>
         /// To receive postbacks when the record is deleted
         /// </summary>
         [JsonProperty("on_delete")]
-        public Models.OnDeleteEnum OnDelete { get; set; }
+        public bool OnDelete { get; set; }
 
         /// <summary>
         /// Postback Config ID
@@ -313,8 +314,8 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// The resource you want to subscribe the postbacks to.
         /// </summary>
-        [JsonProperty("resource", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.Resource4Enum? Resource
+        [JsonProperty("resource")]
+        public Models.Resource12Enum? Resource
         {
             get
             {
@@ -515,9 +516,7 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1WebhooksContactRequest other &&
-                ((this.AttemptInterval == null && other.AttemptInterval == null) || (this.AttemptInterval?.Equals(other.AttemptInterval) == true)) &&
+            return obj is V1WebhooksContactRequest other &&                ((this.AttemptInterval == null && other.AttemptInterval == null) || (this.AttemptInterval?.Equals(other.AttemptInterval) == true)) &&
                 ((this.BasicAuthUsername == null && other.BasicAuthUsername == null) || (this.BasicAuthUsername?.Equals(other.BasicAuthUsername) == true)) &&
                 ((this.BasicAuthPassword == null && other.BasicAuthPassword == null) || (this.BasicAuthPassword?.Equals(other.BasicAuthPassword) == true)) &&
                 ((this.Expands == null && other.Expands == null) || (this.Expands?.Equals(other.Expands) == true)) &&
@@ -535,29 +534,30 @@ namespace FortisAPI.Standard.Models
                 ((this.Url == null && other.Url == null) || (this.Url?.Equals(other.Url) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.AttemptInterval = {(this.AttemptInterval == null ? "null" : this.AttemptInterval.ToString())}");
-            toStringOutput.Add($"this.BasicAuthUsername = {(this.BasicAuthUsername == null ? "null" : this.BasicAuthUsername == string.Empty ? "" : this.BasicAuthUsername)}");
-            toStringOutput.Add($"this.BasicAuthPassword = {(this.BasicAuthPassword == null ? "null" : this.BasicAuthPassword == string.Empty ? "" : this.BasicAuthPassword)}");
-            toStringOutput.Add($"this.Expands = {(this.Expands == null ? "null" : this.Expands == string.Empty ? "" : this.Expands)}");
+            toStringOutput.Add($"this.BasicAuthUsername = {(this.BasicAuthUsername == null ? "null" : this.BasicAuthUsername)}");
+            toStringOutput.Add($"this.BasicAuthPassword = {(this.BasicAuthPassword == null ? "null" : this.BasicAuthPassword)}");
+            toStringOutput.Add($"this.Expands = {(this.Expands == null ? "null" : this.Expands)}");
             toStringOutput.Add($"this.Format = {(this.Format == null ? "null" : this.Format.ToString())}");
             toStringOutput.Add($"this.IsActive = {this.IsActive}");
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId == string.Empty ? "" : this.LocationApiId)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId)}");
             toStringOutput.Add($"this.OnCreate = {this.OnCreate}");
             toStringOutput.Add($"this.OnUpdate = {this.OnUpdate}");
             toStringOutput.Add($"this.OnDelete = {this.OnDelete}");
-            toStringOutput.Add($"this.PostbackConfigId = {(this.PostbackConfigId == null ? "null" : this.PostbackConfigId == string.Empty ? "" : this.PostbackConfigId)}");
-            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId == string.Empty ? "" : this.ProductTransactionId)}");
+            toStringOutput.Add($"this.PostbackConfigId = {(this.PostbackConfigId == null ? "null" : this.PostbackConfigId)}");
+            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId)}");
             toStringOutput.Add($"this.Resource = {(this.Resource == null ? "null" : this.Resource.ToString())}");
             toStringOutput.Add($"this.NumberOfAttempts = {this.NumberOfAttempts}");
-            toStringOutput.Add($"this.Url = {(this.Url == null ? "null" : this.Url == string.Empty ? "" : this.Url)}");
+            toStringOutput.Add($"this.Url = {(this.Url == null ? "null" : this.Url)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1TerminalsRequest.
     /// </summary>
-    public class V1TerminalsRequest
+    public class V1TerminalsRequest : BaseModel
     {
         private string defaultProductTransactionId;
         private string terminalCvmId;
@@ -37,7 +38,7 @@ namespace FortisAPI.Standard.Models
         private string trailerLine5;
         private string defaultCheckin;
         private string defaultCheckout;
-        private double? defaultRoomRate;
+        private int? defaultRoomRate;
         private string defaultRoomNumber;
         private Models.CommunicationTypeEnum? communicationType;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
@@ -78,10 +79,7 @@ namespace FortisAPI.Standard.Models
         /// <param name="terminalApplicationId">terminal_application_id.</param>
         /// <param name="terminalManufacturerCode">terminal_manufacturer_code.</param>
         /// <param name="title">title.</param>
-        /// <param name="localIpAddress">local_ip_address.</param>
-        /// <param name="port">port.</param>
         /// <param name="serialNumber">serial_number.</param>
-        /// <param name="terminalNumber">terminal_number.</param>
         /// <param name="debit">debit.</param>
         /// <param name="emv">emv.</param>
         /// <param name="cashbackEnable">cashback_enable.</param>
@@ -90,6 +88,9 @@ namespace FortisAPI.Standard.Models
         /// <param name="defaultProductTransactionId">default_product_transaction_id.</param>
         /// <param name="terminalCvmId">terminal_cvm_id.</param>
         /// <param name="macAddress">mac_address.</param>
+        /// <param name="localIpAddress">local_ip_address.</param>
+        /// <param name="port">port.</param>
+        /// <param name="terminalNumber">terminal_number.</param>
         /// <param name="terminalTimeouts">terminal_timeouts.</param>
         /// <param name="tipPercents">tip_percents.</param>
         /// <param name="locationApiId">location_api_id.</param>
@@ -112,15 +113,13 @@ namespace FortisAPI.Standard.Models
         /// <param name="tipEnable">tip_enable.</param>
         /// <param name="validatedDecryption">validated_decryption.</param>
         /// <param name="communicationType">communication_type.</param>
+        /// <param name="active">active.</param>
         public V1TerminalsRequest(
             string locationId,
             string terminalApplicationId,
             Models.TerminalManufacturerCodeEnum terminalManufacturerCode,
             string title,
-            string localIpAddress,
-            int port,
             string serialNumber,
-            string terminalNumber,
             bool debit,
             bool emv,
             bool cashbackEnable,
@@ -129,6 +128,9 @@ namespace FortisAPI.Standard.Models
             string defaultProductTransactionId = null,
             string terminalCvmId = null,
             string macAddress = null,
+            string localIpAddress = null,
+            int? port = 10009,
+            string terminalNumber = null,
             Models.TerminalTimeouts terminalTimeouts = null,
             Models.TipPercents tipPercents = null,
             string locationApiId = null,
@@ -145,12 +147,13 @@ namespace FortisAPI.Standard.Models
             string trailerLine5 = null,
             string defaultCheckin = null,
             string defaultCheckout = null,
-            double? defaultRoomRate = null,
+            int? defaultRoomRate = null,
             string defaultRoomNumber = null,
             bool? isProvisioned = null,
             bool? tipEnable = null,
             bool? validatedDecryption = null,
-            Models.CommunicationTypeEnum? communicationType = null)
+            Models.CommunicationTypeEnum? communicationType = null,
+            bool? active = null)
         {
             this.LocationId = locationId;
             if (defaultProductTransactionId != null)
@@ -270,6 +273,7 @@ namespace FortisAPI.Standard.Models
                 this.CommunicationType = communicationType;
             }
 
+            this.Active = active;
         }
 
         /// <summary>
@@ -353,14 +357,14 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Terminal Local IP Address
         /// </summary>
-        [JsonProperty("local_ip_address")]
+        [JsonProperty("local_ip_address", NullValueHandling = NullValueHandling.Ignore)]
         public string LocalIpAddress { get; set; }
 
         /// <summary>
         /// Terminal Port
         /// </summary>
-        [JsonProperty("port")]
-        public int Port { get; set; }
+        [JsonProperty("port", NullValueHandling = NullValueHandling.Ignore)]
+        public int? Port { get; set; }
 
         /// <summary>
         /// Terminal Serial Number
@@ -371,7 +375,7 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Terminal Number
         /// </summary>
-        [JsonProperty("terminal_number")]
+        [JsonProperty("terminal_number", NullValueHandling = NullValueHandling.Ignore)]
         public string TerminalNumber { get; set; }
 
         /// <summary>
@@ -642,7 +646,7 @@ namespace FortisAPI.Standard.Models
         /// Default Room Rate
         /// </summary>
         [JsonProperty("default_room_rate")]
-        public double? DefaultRoomRate
+        public int? DefaultRoomRate
         {
             get
             {
@@ -725,7 +729,7 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Communication Type
         /// </summary>
-        [JsonProperty("communication_type", ItemConverterType = typeof(StringEnumConverter))]
+        [JsonProperty("communication_type")]
         public Models.CommunicationTypeEnum? CommunicationType
         {
             get
@@ -739,6 +743,12 @@ namespace FortisAPI.Standard.Models
                 this.communicationType = value;
             }
         }
+
+        /// <summary>
+        /// Active
+        /// </summary>
+        [JsonProperty("active", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Active { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -1102,9 +1112,7 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1TerminalsRequest other &&
-                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
+            return obj is V1TerminalsRequest other &&                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
                 ((this.DefaultProductTransactionId == null && other.DefaultProductTransactionId == null) || (this.DefaultProductTransactionId?.Equals(other.DefaultProductTransactionId) == true)) &&
                 ((this.TerminalApplicationId == null && other.TerminalApplicationId == null) || (this.TerminalApplicationId?.Equals(other.TerminalApplicationId) == true)) &&
                 ((this.TerminalCvmId == null && other.TerminalCvmId == null) || (this.TerminalCvmId?.Equals(other.TerminalCvmId) == true)) &&
@@ -1112,7 +1120,7 @@ namespace FortisAPI.Standard.Models
                 ((this.Title == null && other.Title == null) || (this.Title?.Equals(other.Title) == true)) &&
                 ((this.MacAddress == null && other.MacAddress == null) || (this.MacAddress?.Equals(other.MacAddress) == true)) &&
                 ((this.LocalIpAddress == null && other.LocalIpAddress == null) || (this.LocalIpAddress?.Equals(other.LocalIpAddress) == true)) &&
-                this.Port.Equals(other.Port) &&
+                ((this.Port == null && other.Port == null) || (this.Port?.Equals(other.Port) == true)) &&
                 ((this.SerialNumber == null && other.SerialNumber == null) || (this.SerialNumber?.Equals(other.SerialNumber) == true)) &&
                 ((this.TerminalNumber == null && other.TerminalNumber == null) || (this.TerminalNumber?.Equals(other.TerminalNumber) == true)) &&
                 ((this.TerminalTimeouts == null && other.TerminalTimeouts == null) || (this.TerminalTimeouts?.Equals(other.TerminalTimeouts) == true)) &&
@@ -1141,45 +1149,45 @@ namespace FortisAPI.Standard.Models
                 ((this.IsProvisioned == null && other.IsProvisioned == null) || (this.IsProvisioned?.Equals(other.IsProvisioned) == true)) &&
                 ((this.TipEnable == null && other.TipEnable == null) || (this.TipEnable?.Equals(other.TipEnable) == true)) &&
                 ((this.ValidatedDecryption == null && other.ValidatedDecryption == null) || (this.ValidatedDecryption?.Equals(other.ValidatedDecryption) == true)) &&
-                ((this.CommunicationType == null && other.CommunicationType == null) || (this.CommunicationType?.Equals(other.CommunicationType) == true));
+                ((this.CommunicationType == null && other.CommunicationType == null) || (this.CommunicationType?.Equals(other.CommunicationType) == true)) &&
+                ((this.Active == null && other.Active == null) || (this.Active?.Equals(other.Active) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.DefaultProductTransactionId = {(this.DefaultProductTransactionId == null ? "null" : this.DefaultProductTransactionId == string.Empty ? "" : this.DefaultProductTransactionId)}");
-            toStringOutput.Add($"this.TerminalApplicationId = {(this.TerminalApplicationId == null ? "null" : this.TerminalApplicationId == string.Empty ? "" : this.TerminalApplicationId)}");
-            toStringOutput.Add($"this.TerminalCvmId = {(this.TerminalCvmId == null ? "null" : this.TerminalCvmId == string.Empty ? "" : this.TerminalCvmId)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.DefaultProductTransactionId = {(this.DefaultProductTransactionId == null ? "null" : this.DefaultProductTransactionId)}");
+            toStringOutput.Add($"this.TerminalApplicationId = {(this.TerminalApplicationId == null ? "null" : this.TerminalApplicationId)}");
+            toStringOutput.Add($"this.TerminalCvmId = {(this.TerminalCvmId == null ? "null" : this.TerminalCvmId)}");
             toStringOutput.Add($"this.TerminalManufacturerCode = {this.TerminalManufacturerCode}");
-            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title == string.Empty ? "" : this.Title)}");
-            toStringOutput.Add($"this.MacAddress = {(this.MacAddress == null ? "null" : this.MacAddress == string.Empty ? "" : this.MacAddress)}");
-            toStringOutput.Add($"this.LocalIpAddress = {(this.LocalIpAddress == null ? "null" : this.LocalIpAddress == string.Empty ? "" : this.LocalIpAddress)}");
-            toStringOutput.Add($"this.Port = {this.Port}");
-            toStringOutput.Add($"this.SerialNumber = {(this.SerialNumber == null ? "null" : this.SerialNumber == string.Empty ? "" : this.SerialNumber)}");
-            toStringOutput.Add($"this.TerminalNumber = {(this.TerminalNumber == null ? "null" : this.TerminalNumber == string.Empty ? "" : this.TerminalNumber)}");
+            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title)}");
+            toStringOutput.Add($"this.MacAddress = {(this.MacAddress == null ? "null" : this.MacAddress)}");
+            toStringOutput.Add($"this.LocalIpAddress = {(this.LocalIpAddress == null ? "null" : this.LocalIpAddress)}");
+            toStringOutput.Add($"this.Port = {(this.Port == null ? "null" : this.Port.ToString())}");
+            toStringOutput.Add($"this.SerialNumber = {(this.SerialNumber == null ? "null" : this.SerialNumber)}");
+            toStringOutput.Add($"this.TerminalNumber = {(this.TerminalNumber == null ? "null" : this.TerminalNumber)}");
             toStringOutput.Add($"this.TerminalTimeouts = {(this.TerminalTimeouts == null ? "null" : this.TerminalTimeouts.ToString())}");
             toStringOutput.Add($"this.TipPercents = {(this.TipPercents == null ? "null" : this.TipPercents.ToString())}");
-            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId == string.Empty ? "" : this.LocationApiId)}");
-            toStringOutput.Add($"this.TerminalApiId = {(this.TerminalApiId == null ? "null" : this.TerminalApiId == string.Empty ? "" : this.TerminalApiId)}");
-            toStringOutput.Add($"this.HeaderLine1 = {(this.HeaderLine1 == null ? "null" : this.HeaderLine1 == string.Empty ? "" : this.HeaderLine1)}");
-            toStringOutput.Add($"this.HeaderLine2 = {(this.HeaderLine2 == null ? "null" : this.HeaderLine2 == string.Empty ? "" : this.HeaderLine2)}");
-            toStringOutput.Add($"this.HeaderLine3 = {(this.HeaderLine3 == null ? "null" : this.HeaderLine3 == string.Empty ? "" : this.HeaderLine3)}");
-            toStringOutput.Add($"this.HeaderLine4 = {(this.HeaderLine4 == null ? "null" : this.HeaderLine4 == string.Empty ? "" : this.HeaderLine4)}");
-            toStringOutput.Add($"this.HeaderLine5 = {(this.HeaderLine5 == null ? "null" : this.HeaderLine5 == string.Empty ? "" : this.HeaderLine5)}");
-            toStringOutput.Add($"this.TrailerLine1 = {(this.TrailerLine1 == null ? "null" : this.TrailerLine1 == string.Empty ? "" : this.TrailerLine1)}");
-            toStringOutput.Add($"this.TrailerLine2 = {(this.TrailerLine2 == null ? "null" : this.TrailerLine2 == string.Empty ? "" : this.TrailerLine2)}");
-            toStringOutput.Add($"this.TrailerLine3 = {(this.TrailerLine3 == null ? "null" : this.TrailerLine3 == string.Empty ? "" : this.TrailerLine3)}");
-            toStringOutput.Add($"this.TrailerLine4 = {(this.TrailerLine4 == null ? "null" : this.TrailerLine4 == string.Empty ? "" : this.TrailerLine4)}");
-            toStringOutput.Add($"this.TrailerLine5 = {(this.TrailerLine5 == null ? "null" : this.TrailerLine5 == string.Empty ? "" : this.TrailerLine5)}");
-            toStringOutput.Add($"this.DefaultCheckin = {(this.DefaultCheckin == null ? "null" : this.DefaultCheckin == string.Empty ? "" : this.DefaultCheckin)}");
-            toStringOutput.Add($"this.DefaultCheckout = {(this.DefaultCheckout == null ? "null" : this.DefaultCheckout == string.Empty ? "" : this.DefaultCheckout)}");
+            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId)}");
+            toStringOutput.Add($"this.TerminalApiId = {(this.TerminalApiId == null ? "null" : this.TerminalApiId)}");
+            toStringOutput.Add($"this.HeaderLine1 = {(this.HeaderLine1 == null ? "null" : this.HeaderLine1)}");
+            toStringOutput.Add($"this.HeaderLine2 = {(this.HeaderLine2 == null ? "null" : this.HeaderLine2)}");
+            toStringOutput.Add($"this.HeaderLine3 = {(this.HeaderLine3 == null ? "null" : this.HeaderLine3)}");
+            toStringOutput.Add($"this.HeaderLine4 = {(this.HeaderLine4 == null ? "null" : this.HeaderLine4)}");
+            toStringOutput.Add($"this.HeaderLine5 = {(this.HeaderLine5 == null ? "null" : this.HeaderLine5)}");
+            toStringOutput.Add($"this.TrailerLine1 = {(this.TrailerLine1 == null ? "null" : this.TrailerLine1)}");
+            toStringOutput.Add($"this.TrailerLine2 = {(this.TrailerLine2 == null ? "null" : this.TrailerLine2)}");
+            toStringOutput.Add($"this.TrailerLine3 = {(this.TrailerLine3 == null ? "null" : this.TrailerLine3)}");
+            toStringOutput.Add($"this.TrailerLine4 = {(this.TrailerLine4 == null ? "null" : this.TrailerLine4)}");
+            toStringOutput.Add($"this.TrailerLine5 = {(this.TrailerLine5 == null ? "null" : this.TrailerLine5)}");
+            toStringOutput.Add($"this.DefaultCheckin = {(this.DefaultCheckin == null ? "null" : this.DefaultCheckin)}");
+            toStringOutput.Add($"this.DefaultCheckout = {(this.DefaultCheckout == null ? "null" : this.DefaultCheckout)}");
             toStringOutput.Add($"this.DefaultRoomRate = {(this.DefaultRoomRate == null ? "null" : this.DefaultRoomRate.ToString())}");
-            toStringOutput.Add($"this.DefaultRoomNumber = {(this.DefaultRoomNumber == null ? "null" : this.DefaultRoomNumber == string.Empty ? "" : this.DefaultRoomNumber)}");
+            toStringOutput.Add($"this.DefaultRoomNumber = {(this.DefaultRoomNumber == null ? "null" : this.DefaultRoomNumber)}");
             toStringOutput.Add($"this.Debit = {this.Debit}");
             toStringOutput.Add($"this.Emv = {this.Emv}");
             toStringOutput.Add($"this.CashbackEnable = {this.CashbackEnable}");
@@ -1189,6 +1197,9 @@ namespace FortisAPI.Standard.Models
             toStringOutput.Add($"this.TipEnable = {(this.TipEnable == null ? "null" : this.TipEnable.ToString())}");
             toStringOutput.Add($"this.ValidatedDecryption = {(this.ValidatedDecryption == null ? "null" : this.ValidatedDecryption.ToString())}");
             toStringOutput.Add($"this.CommunicationType = {(this.CommunicationType == null ? "null" : this.CommunicationType.ToString())}");
+            toStringOutput.Add($"this.Active = {(this.Active == null ? "null" : this.Active.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

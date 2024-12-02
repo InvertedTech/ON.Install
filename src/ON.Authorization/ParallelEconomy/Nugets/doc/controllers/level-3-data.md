@@ -1,40 +1,5 @@
 # Level 3 Data
 
-The Level 3 Data endpoint is used to create/update/retrieve/delete Level 3 Data associated with a transaction.
-
-For Locations/Merchants that have Level 3 Data enabled:
-
-1. The Level 3 Data endpoint can be used to supply all the extra data necessary to help qualify the transactions. The Level 3 Data is submitted the same for every processor, but is submitted differently for Visa vs Mastercard transactions (see examples below).
-2. The initial Level 3 Data is submitted by the API up front.
-   1. Each transaction that is run with a commercial (or purchasing) card will have default Level 3 Data sent to the processor. This is helpful so that even if a merchant doesn't update the transaction with the necessary Level 3 Data, it will still contain a basic record of Level 3 Data to help with the qualifications.
-3. If a merchant needs to update the Level 3 Data to supply more specific information, this is done by an additional POST request to the `/v1/transactions/{transaction_id}/level3/{card_type}` endpoint.
-   1. Every POST will overwrite any previous Level 3 Data submitted for the transaction.
-      1. Additional POSTs will need to contain ALL the Level 3 Data that needs to be submitted to the processor.
-      2. Omitting a previously supplied value will clear that value from the transaction record.
-
-If you are not sure if you can use the Level 3 Data endpoint, perform these steps to determine whether you are able:
-
-1. Run a transaction.
-
-2. Once the initial transaction is complete, submit a GET request to:
-   
-   `/v1/transactions/{transaction_id}?expand=transaction_level3`
-
-3. You should get a response with typical transaction data, but you should also notice an extra field in the response called "transaction_level3".
-
-4. If the transaction_level3 field has Level 3 Data then you can use the Level 3 Data endpoint.
-
-5. If this field is null then you cannot use the Level 3 Data endpoint.
-
-### Industry Support by Processor
-
-| Industry         | TSYS     | FirstData | Vantiv   |
-|------------------|----------|-----------|----------|
-| Retail           | &#10003; | &#10003;  | &#10003; |
-| Ecommerce        | &#10003; | &#10003;  | &#10003; |
-| Direct Marketing | &#10003; | &#10003;  | &#10003; |
-| Lodging          |          | &#10003;  |          |
-
 ```csharp
 Level3DataController level3DataController = client.Level3DataController;
 ```
@@ -53,53 +18,81 @@ Level3DataController level3DataController = client.Level3DataController;
 
 # Create a New Level 3 Entry for a Master Card
 
-Create a new Level3 entry for a MasterCard
-
 ```csharp
 CreateANewLevel3EntryForAMasterCardAsync(
-    Models.V1TransactionsLevel3MasterCardRequest body,
-    string transactionId)
+    string transactionId,
+    Models.V1TransactionsLevel3MasterCardRequest body)
 ```
 
 ## Parameters
 
 | Parameter | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `body` | [`Models.V1TransactionsLevel3MasterCardRequest`](../../doc/models/v1-transactions-level-3-master-card-request.md) | Body, Required | - |
-| `transactionId` | `string` | Template, Required | - |
+| `transactionId` | `string` | Template, Required | Transaction ID |
+| `body` | [`V1TransactionsLevel3MasterCardRequest`](../../doc/models/v1-transactions-level-3-master-card-request.md) | Body, Required | - |
 
 ## Response Type
 
-[`Task<Models.ResponseTransationLevel3Master>`](../../doc/models/response-transation-level-3-master.md)
+[`Task<Models.ResponseTransactionLevel3Master>`](../../doc/models/response-transaction-level-3-master.md)
 
 ## Example Usage
 
 ```csharp
-var body = new V1TransactionsLevel3MasterCardRequest();
-body.Level3Data = new Level3Data3();
-body.Level3Data.LineItems = new List<LineItem3>();
-
-var bodyLevel3DataLineItems0 = new LineItem3();
-bodyLevel3DataLineItems0.Description = "cool drink";
-bodyLevel3DataLineItems0.ProductCode = "coke12345678";
-bodyLevel3DataLineItems0.UnitCode = "gll";
-bodyLevel3DataLineItems0.UnitCost = 47.21;
-body.Level3Data.LineItems.Add(bodyLevel3DataLineItems0);
-
-string transactionId = "transaction_id8";
+string transactionId = "11e95f8ec39de8fbdb0a4f1a";
+V1TransactionsLevel3MasterCardRequest body = new V1TransactionsLevel3MasterCardRequest
+{
+    Level3Data = new Level3Data5
+    {
+        LineItems = new List<Models.LineItem5>
+        {
+            new LineItem5
+            {
+                Description = "cool drink",
+                ProductCode = "coke12345678",
+                UnitCode = "gll",
+                UnitCost = 10,
+                AlternateTaxId = "1234",
+                DebitCredit = DebitCreditEnum.C,
+                DiscountAmount = 10,
+                DiscountRate = 11,
+                Quantity = 5,
+                TaxAmount = 3,
+                TaxRate = 0,
+                TaxTypeApplied = "22",
+                TaxTypeId = "11",
+            },
+        },
+        DestinationCountryCode = "840",
+        DutyAmount = 0,
+        FreightAmount = 0,
+        NationalTax = 2,
+        SalesTax = 200,
+        ShipfromZipCode = "AZ12345",
+        ShiptoZipCode = "MI48335",
+        TaxAmount = 0,
+        TaxExempt = TaxExemptEnum.Enum0,
+    },
+};
 
 try
 {
-    ResponseTransationLevel3Master result = await level3DataController.CreateANewLevel3EntryForAMasterCardAsync(body, transactionId);
+    ResponseTransactionLevel3Master result = await level3DataController.CreateANewLevel3EntryForAMasterCardAsync(
+        transactionId,
+        body
+    );
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*
 
 ```json
 {
-  "type": "TransationLevel3Master",
+  "type": "TransactionLevel3Master",
   "data": {
     "id": "11e95f8ec39de8fbdb0a4f1a",
     "transaction_id": "11e95f8ec39de8fbdb0a4f1a",
@@ -112,7 +105,7 @@ catch (ApiException e){};
       "shipfrom_zip_code": "AZ1234",
       "shipto_zip_code": "FL1234",
       "tax_amount": 10,
-      "tax_exempt": 0,
+      "tax_exempt": "0",
       "customer_vat_registration": "12345678",
       "merchant_vat_registration": "123456",
       "order_date": "171006",
@@ -153,54 +146,84 @@ catch (ApiException e){};
 
 # Create a New Level 3 Entry for a Visa
 
-Create a new Level3 entry for a Visa
-
 ```csharp
 CreateANewLevel3EntryForAVisaAsync(
-    Models.V1TransactionsLevel3VisaRequest body,
-    string transactionId)
+    string transactionId,
+    Models.V1TransactionsLevel3VisaRequest body)
 ```
 
 ## Parameters
 
 | Parameter | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `body` | [`Models.V1TransactionsLevel3VisaRequest`](../../doc/models/v1-transactions-level-3-visa-request.md) | Body, Required | - |
-| `transactionId` | `string` | Template, Required | - |
+| `transactionId` | `string` | Template, Required | Transaction ID |
+| `body` | [`V1TransactionsLevel3VisaRequest`](../../doc/models/v1-transactions-level-3-visa-request.md) | Body, Required | - |
 
 ## Response Type
 
-[`Task<Models.ResponseTransationLevel3Visa>`](../../doc/models/response-transation-level-3-visa.md)
+[`Task<Models.ResponseTransactionLevel3Visa>`](../../doc/models/response-transaction-level-3-visa.md)
 
 ## Example Usage
 
 ```csharp
-var body = new V1TransactionsLevel3VisaRequest();
-body.Level3Data = new Level3Data4();
-body.Level3Data.LineItems = new List<LineItem4>();
-
-var bodyLevel3DataLineItems0 = new LineItem4();
-bodyLevel3DataLineItems0.Description = "cool drink";
-bodyLevel3DataLineItems0.CommodityCode = "cc123456";
-bodyLevel3DataLineItems0.ProductCode = "fanta123456";
-bodyLevel3DataLineItems0.UnitCode = "gll";
-bodyLevel3DataLineItems0.UnitCost = 47.21;
-body.Level3Data.LineItems.Add(bodyLevel3DataLineItems0);
-
-string transactionId = "transaction_id8";
+string transactionId = "11e95f8ec39de8fbdb0a4f1a";
+V1TransactionsLevel3VisaRequest body = new V1TransactionsLevel3VisaRequest
+{
+    Level3Data = new Level3Data6
+    {
+        LineItems = new List<Models.LineItem6>
+        {
+            new LineItem6
+            {
+                Description = "cool drink",
+                CommodityCode = "cc123456",
+                ProductCode = "fanta123456",
+                UnitCode = "gll",
+                UnitCost = 3,
+                DiscountAmount = 0,
+                OtherTaxAmount = 0,
+                Quantity = 12,
+                TaxAmount = 4,
+                TaxRate = 0,
+            },
+        },
+        DestinationCountryCode = "840",
+        DutyAmount = 0,
+        FreightAmount = 0,
+        NationalTax = 2,
+        SalesTax = 200,
+        ShipfromZipCode = "AZ1234",
+        ShiptoZipCode = "FL1234",
+        TaxAmount = 10,
+        TaxExempt = TaxExemptEnum.Enum0,
+        CustomerVatRegistration = "12345678",
+        MerchantVatRegistration = "123456",
+        OrderDate = "171006",
+        SummaryCommodityCode = "C1K2",
+        TaxRate = 0,
+        UniqueVatRefNumber = "vat1234",
+    },
+};
 
 try
 {
-    ResponseTransationLevel3Visa result = await level3DataController.CreateANewLevel3EntryForAVisaAsync(body, transactionId);
+    ResponseTransactionLevel3Visa result = await level3DataController.CreateANewLevel3EntryForAVisaAsync(
+        transactionId,
+        body
+    );
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*
 
 ```json
 {
-  "type": "TransationLevel3Visa",
+  "type": "TransactionLevel3Visa",
   "data": {
     "id": "11e95f8ec39de8fbdb0a4f1a",
     "transaction_id": "11e95f8ec39de8fbdb0a4f1a",
@@ -213,7 +236,7 @@ catch (ApiException e){};
       "shipfrom_zip_code": "AZ1234",
       "shipto_zip_code": "FL1234",
       "tax_amount": 10,
-      "tax_exempt": 0,
+      "tax_exempt": "0",
       "customer_vat_registration": "12345678",
       "merchant_vat_registration": "123456",
       "order_date": "171006",
@@ -254,8 +277,6 @@ catch (ApiException e){};
 
 # Delete a Single Level 3 Record
 
-Delete a single level3 record
-
 ```csharp
 DeleteASingleLevel3RecordAsync(
     string transactionId,
@@ -266,31 +287,37 @@ DeleteASingleLevel3RecordAsync(
 
 | Parameter | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `transactionId` | `string` | Template, Required | - |
-| `level3Id` | `string` | Template, Required | - |
+| `transactionId` | `string` | Template, Required | Transaction ID |
+| `level3Id` | `string` | Template, Required | Level 3 ID |
 
 ## Response Type
 
-[`Task<Models.ResponseTransationLevel3>`](../../doc/models/response-transation-level-3.md)
+[`Task<Models.ResponseTransactionLevel3>`](../../doc/models/response-transaction-level-3.md)
 
 ## Example Usage
 
 ```csharp
-string transactionId = "transaction_id8";
-string level3Id = "level3_id6";
-
+string transactionId = "11e95f8ec39de8fbdb0a4f1a";
+string level3Id = "11e95f8ec39de8fbdb0a4f1a";
 try
 {
-    ResponseTransationLevel3 result = await level3DataController.DeleteASingleLevel3RecordAsync(transactionId, level3Id);
+    ResponseTransactionLevel3 result = await level3DataController.DeleteASingleLevel3RecordAsync(
+        transactionId,
+        level3Id
+    );
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*
 
 ```json
 {
-  "type": "TransationLevel3",
+  "type": "TransactionLevel3",
   "data": {
     "id": "11e95f8ec39de8fbdb0a4f1a",
     "transaction_id": "11e95f8ec39de8fbdb0a4f1a",
@@ -303,7 +330,7 @@ catch (ApiException e){};
       "shipfrom_zip_code": "AZ1234",
       "shipto_zip_code": "FL1234",
       "tax_amount": 10,
-      "tax_exempt": 0,
+      "tax_exempt": "0",
       "customer_vat_registration": "12345678",
       "merchant_vat_registration": "123456",
       "order_date": "171006",
@@ -343,8 +370,6 @@ catch (ApiException e){};
 
 # View Single Level 3 Record
 
-View single level3 record
-
 ```csharp
 ViewSingleLevel3RecordAsync(
     string transactionId,
@@ -355,31 +380,37 @@ ViewSingleLevel3RecordAsync(
 
 | Parameter | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `transactionId` | `string` | Template, Required | - |
-| `level3Id` | `string` | Template, Required | - |
+| `transactionId` | `string` | Template, Required | Transaction ID |
+| `level3Id` | `string` | Template, Required | Level 3 ID |
 
 ## Response Type
 
-[`Task<Models.ResponseTransationLevel3>`](../../doc/models/response-transation-level-3.md)
+[`Task<Models.ResponseTransactionLevel3>`](../../doc/models/response-transaction-level-3.md)
 
 ## Example Usage
 
 ```csharp
-string transactionId = "transaction_id8";
-string level3Id = "level3_id6";
-
+string transactionId = "11e95f8ec39de8fbdb0a4f1a";
+string level3Id = "11e95f8ec39de8fbdb0a4f1a";
 try
 {
-    ResponseTransationLevel3 result = await level3DataController.ViewSingleLevel3RecordAsync(transactionId, level3Id);
+    ResponseTransactionLevel3 result = await level3DataController.ViewSingleLevel3RecordAsync(
+        transactionId,
+        level3Id
+    );
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*
 
 ```json
 {
-  "type": "TransationLevel3",
+  "type": "TransactionLevel3",
   "data": {
     "id": "11e95f8ec39de8fbdb0a4f1a",
     "transaction_id": "11e95f8ec39de8fbdb0a4f1a",
@@ -392,7 +423,7 @@ catch (ApiException e){};
       "shipfrom_zip_code": "AZ1234",
       "shipto_zip_code": "FL1234",
       "tax_amount": 10,
-      "tax_exempt": 0,
+      "tax_exempt": "0",
       "customer_vat_registration": "12345678",
       "merchant_vat_registration": "123456",
       "order_date": "171006",

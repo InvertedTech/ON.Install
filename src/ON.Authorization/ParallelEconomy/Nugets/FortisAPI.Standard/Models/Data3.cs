@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,44 +19,24 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Data3.
     /// </summary>
-    public class Data3
+    public class Data3 : BaseModel
     {
-        private string accountNumber;
-        private string contactApiId;
-        private string firstName;
-        private string cellPhone;
-        private double? balance;
-        private string companyName;
-        private string headerMessage;
-        private string dateOfBirth;
-        private string homePhone;
-        private string officePhone;
-        private string officePhoneExt;
-        private Models.UpdateIfExistsEnum? updateIfExists;
-        private string contactC1;
-        private string contactC2;
-        private string contactC3;
-        private string parentId;
-        private string email;
+        private string declinedTransactionId;
+        private string paymentTransactionId;
+        private string recurringId;
+        private int? createdTs;
+        private string createdUserId;
+        private int? modifiedTs;
+        private string modifiedUserId;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
-            { "account_number", false },
-            { "contact_api_id", false },
-            { "first_name", false },
-            { "cell_phone", false },
-            { "balance", false },
-            { "company_name", false },
-            { "header_message", false },
-            { "date_of_birth", false },
-            { "home_phone", false },
-            { "office_phone", false },
-            { "office_phone_ext", false },
-            { "update_if_exists", false },
-            { "contact_c1", false },
-            { "contact_c2", false },
-            { "contact_c3", false },
-            { "parent_id", false },
-            { "email", false },
+            { "declined_transaction_id", false },
+            { "payment_transaction_id", false },
+            { "recurring_id", false },
+            { "created_ts", false },
+            { "created_user_id", false },
+            { "modified_ts", false },
+            { "modified_user_id", false },
         };
 
         /// <summary>
@@ -68,515 +49,202 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Data3"/> class.
         /// </summary>
-        /// <param name="locationId">location_id.</param>
-        /// <param name="lastName">last_name.</param>
-        /// <param name="emailTrxReceipt">email_trx_receipt.</param>
-        /// <param name="headerMessageType">header_message_type.</param>
         /// <param name="id">id.</param>
+        /// <param name="declinedTransactionId">declined_transaction_id.</param>
+        /// <param name="paymentTransactionId">payment_transaction_id.</param>
+        /// <param name="status">status.</param>
+        /// <param name="recurringId">recurring_id.</param>
         /// <param name="createdTs">created_ts.</param>
+        /// <param name="createdUserId">created_user_id.</param>
         /// <param name="modifiedTs">modified_ts.</param>
-        /// <param name="active">active.</param>
-        /// <param name="accountNumber">account_number.</param>
-        /// <param name="contactApiId">contact_api_id.</param>
-        /// <param name="firstName">first_name.</param>
-        /// <param name="cellPhone">cell_phone.</param>
-        /// <param name="balance">balance.</param>
-        /// <param name="address">address.</param>
-        /// <param name="companyName">company_name.</param>
-        /// <param name="headerMessage">header_message.</param>
-        /// <param name="dateOfBirth">date_of_birth.</param>
-        /// <param name="homePhone">home_phone.</param>
-        /// <param name="officePhone">office_phone.</param>
-        /// <param name="officePhoneExt">office_phone_ext.</param>
-        /// <param name="updateIfExists">update_if_exists.</param>
-        /// <param name="contactC1">contact_c1.</param>
-        /// <param name="contactC2">contact_c2.</param>
-        /// <param name="contactC3">contact_c3.</param>
-        /// <param name="parentId">parent_id.</param>
-        /// <param name="email">email.</param>
+        /// <param name="modifiedUserId">modified_user_id.</param>
         public Data3(
-            string locationId,
-            string lastName,
-            bool emailTrxReceipt,
-            int headerMessageType,
-            string id,
-            int createdTs,
-            int modifiedTs,
-            int active,
-            string accountNumber = null,
-            string contactApiId = null,
-            string firstName = null,
-            string cellPhone = null,
-            double? balance = null,
-            Models.Address address = null,
-            string companyName = null,
-            string headerMessage = null,
-            string dateOfBirth = null,
-            string homePhone = null,
-            string officePhone = null,
-            string officePhoneExt = null,
-            Models.UpdateIfExistsEnum? updateIfExists = null,
-            string contactC1 = null,
-            string contactC2 = null,
-            string contactC3 = null,
-            string parentId = null,
-            string email = null)
+            string id = null,
+            string declinedTransactionId = null,
+            string paymentTransactionId = null,
+            Models.Status3Enum? status = null,
+            string recurringId = null,
+            int? createdTs = null,
+            string createdUserId = null,
+            int? modifiedTs = null,
+            string modifiedUserId = null)
         {
-            this.LocationId = locationId;
-            if (accountNumber != null)
-            {
-                this.AccountNumber = accountNumber;
-            }
-
-            if (contactApiId != null)
-            {
-                this.ContactApiId = contactApiId;
-            }
-
-            if (firstName != null)
-            {
-                this.FirstName = firstName;
-            }
-
-            this.LastName = lastName;
-            if (cellPhone != null)
-            {
-                this.CellPhone = cellPhone;
-            }
-
-            if (balance != null)
-            {
-                this.Balance = balance;
-            }
-
-            this.Address = address;
-            if (companyName != null)
-            {
-                this.CompanyName = companyName;
-            }
-
-            if (headerMessage != null)
-            {
-                this.HeaderMessage = headerMessage;
-            }
-
-            if (dateOfBirth != null)
-            {
-                this.DateOfBirth = dateOfBirth;
-            }
-
-            this.EmailTrxReceipt = emailTrxReceipt;
-            if (homePhone != null)
-            {
-                this.HomePhone = homePhone;
-            }
-
-            if (officePhone != null)
-            {
-                this.OfficePhone = officePhone;
-            }
-
-            if (officePhoneExt != null)
-            {
-                this.OfficePhoneExt = officePhoneExt;
-            }
-
-            this.HeaderMessageType = headerMessageType;
-            if (updateIfExists != null)
-            {
-                this.UpdateIfExists = updateIfExists;
-            }
-
-            if (contactC1 != null)
-            {
-                this.ContactC1 = contactC1;
-            }
-
-            if (contactC2 != null)
-            {
-                this.ContactC2 = contactC2;
-            }
-
-            if (contactC3 != null)
-            {
-                this.ContactC3 = contactC3;
-            }
-
-            if (parentId != null)
-            {
-                this.ParentId = parentId;
-            }
-
-            if (email != null)
-            {
-                this.Email = email;
-            }
-
             this.Id = id;
-            this.CreatedTs = createdTs;
-            this.ModifiedTs = modifiedTs;
-            this.Active = active;
+            if (declinedTransactionId != null)
+            {
+                this.DeclinedTransactionId = declinedTransactionId;
+            }
+
+            if (paymentTransactionId != null)
+            {
+                this.PaymentTransactionId = paymentTransactionId;
+            }
+
+            this.Status = status;
+            if (recurringId != null)
+            {
+                this.RecurringId = recurringId;
+            }
+
+            if (createdTs != null)
+            {
+                this.CreatedTs = createdTs;
+            }
+
+            if (createdUserId != null)
+            {
+                this.CreatedUserId = createdUserId;
+            }
+
+            if (modifiedTs != null)
+            {
+                this.ModifiedTs = modifiedTs;
+            }
+
+            if (modifiedUserId != null)
+            {
+                this.ModifiedUserId = modifiedUserId;
+            }
+
         }
 
         /// <summary>
-        /// Location ID
+        /// Id
         /// </summary>
-        [JsonProperty("location_id")]
-        public string LocationId { get; set; }
-
-        /// <summary>
-        /// Contact Account Number
-        /// </summary>
-        [JsonProperty("account_number")]
-        public string AccountNumber
-        {
-            get
-            {
-                return this.accountNumber;
-            }
-
-            set
-            {
-                this.shouldSerialize["account_number"] = true;
-                this.accountNumber = value;
-            }
-        }
-
-        /// <summary>
-        /// Contact API Id
-        /// </summary>
-        [JsonProperty("contact_api_id")]
-        public string ContactApiId
-        {
-            get
-            {
-                return this.contactApiId;
-            }
-
-            set
-            {
-                this.shouldSerialize["contact_api_id"] = true;
-                this.contactApiId = value;
-            }
-        }
-
-        /// <summary>
-        /// First Name
-        /// </summary>
-        [JsonProperty("first_name")]
-        public string FirstName
-        {
-            get
-            {
-                return this.firstName;
-            }
-
-            set
-            {
-                this.shouldSerialize["first_name"] = true;
-                this.firstName = value;
-            }
-        }
-
-        /// <summary>
-        /// Last Name
-        /// </summary>
-        [JsonProperty("last_name")]
-        public string LastName { get; set; }
-
-        /// <summary>
-        /// Cell phone of contact
-        /// </summary>
-        [JsonProperty("cell_phone")]
-        public string CellPhone
-        {
-            get
-            {
-                return this.cellPhone;
-            }
-
-            set
-            {
-                this.shouldSerialize["cell_phone"] = true;
-                this.cellPhone = value;
-            }
-        }
-
-        /// <summary>
-        /// Balance
-        /// </summary>
-        [JsonProperty("balance")]
-        public double? Balance
-        {
-            get
-            {
-                return this.balance;
-            }
-
-            set
-            {
-                this.shouldSerialize["balance"] = true;
-                this.balance = value;
-            }
-        }
-
-        /// <summary>
-        /// Address of contact
-        /// </summary>
-        [JsonProperty("address", NullValueHandling = NullValueHandling.Ignore)]
-        public Models.Address Address { get; set; }
-
-        /// <summary>
-        /// Company Name
-        /// </summary>
-        [JsonProperty("company_name")]
-        public string CompanyName
-        {
-            get
-            {
-                return this.companyName;
-            }
-
-            set
-            {
-                this.shouldSerialize["company_name"] = true;
-                this.companyName = value;
-            }
-        }
-
-        /// <summary>
-        /// Header Message
-        /// </summary>
-        [JsonProperty("header_message")]
-        public string HeaderMessage
-        {
-            get
-            {
-                return this.headerMessage;
-            }
-
-            set
-            {
-                this.shouldSerialize["header_message"] = true;
-                this.headerMessage = value;
-            }
-        }
-
-        /// <summary>
-        /// Contacts DOB, Format: yyyy-MM-dd
-        /// </summary>
-        [JsonProperty("date_of_birth")]
-        public string DateOfBirth
-        {
-            get
-            {
-                return this.dateOfBirth;
-            }
-
-            set
-            {
-                this.shouldSerialize["date_of_birth"] = true;
-                this.dateOfBirth = value;
-            }
-        }
-
-        /// <summary>
-        /// Whether or not to email all transactions receipts to contact (1 or 0)
-        /// </summary>
-        [JsonProperty("email_trx_receipt")]
-        public bool EmailTrxReceipt { get; set; }
-
-        /// <summary>
-        /// Contacts home phone
-        /// </summary>
-        [JsonProperty("home_phone")]
-        public string HomePhone
-        {
-            get
-            {
-                return this.homePhone;
-            }
-
-            set
-            {
-                this.shouldSerialize["home_phone"] = true;
-                this.homePhone = value;
-            }
-        }
-
-        /// <summary>
-        /// Contacts office phone
-        /// </summary>
-        [JsonProperty("office_phone")]
-        public string OfficePhone
-        {
-            get
-            {
-                return this.officePhone;
-            }
-
-            set
-            {
-                this.shouldSerialize["office_phone"] = true;
-                this.officePhone = value;
-            }
-        }
-
-        /// <summary>
-        /// Contacts office phone extension for office phone
-        /// </summary>
-        [JsonProperty("office_phone_ext")]
-        public string OfficePhoneExt
-        {
-            get
-            {
-                return this.officePhoneExt;
-            }
-
-            set
-            {
-                this.shouldSerialize["office_phone_ext"] = true;
-                this.officePhoneExt = value;
-            }
-        }
-
-        /// <summary>
-        /// Header Message Type
-        /// </summary>
-        [JsonProperty("header_message_type")]
-        public int HeaderMessageType { get; set; }
-
-        /// <summary>
-        /// Update If Exists
-        /// </summary>
-        [JsonProperty("update_if_exists")]
-        public Models.UpdateIfExistsEnum? UpdateIfExists
-        {
-            get
-            {
-                return this.updateIfExists;
-            }
-
-            set
-            {
-                this.shouldSerialize["update_if_exists"] = true;
-                this.updateIfExists = value;
-            }
-        }
-
-        /// <summary>
-        /// Custom field 1 for api users to store custom data
-        /// </summary>
-        [JsonProperty("contact_c1")]
-        public string ContactC1
-        {
-            get
-            {
-                return this.contactC1;
-            }
-
-            set
-            {
-                this.shouldSerialize["contact_c1"] = true;
-                this.contactC1 = value;
-            }
-        }
-
-        /// <summary>
-        /// Custom field 2 for api users to store custom data
-        /// </summary>
-        [JsonProperty("contact_c2")]
-        public string ContactC2
-        {
-            get
-            {
-                return this.contactC2;
-            }
-
-            set
-            {
-                this.shouldSerialize["contact_c2"] = true;
-                this.contactC2 = value;
-            }
-        }
-
-        /// <summary>
-        /// Custom field 3 for api users to store custom data
-        /// </summary>
-        [JsonProperty("contact_c3")]
-        public string ContactC3
-        {
-            get
-            {
-                return this.contactC3;
-            }
-
-            set
-            {
-                this.shouldSerialize["contact_c3"] = true;
-                this.contactC3 = value;
-            }
-        }
-
-        /// <summary>
-        /// Parent Id
-        /// </summary>
-        [JsonProperty("parent_id")]
-        public string ParentId
-        {
-            get
-            {
-                return this.parentId;
-            }
-
-            set
-            {
-                this.shouldSerialize["parent_id"] = true;
-                this.parentId = value;
-            }
-        }
-
-        /// <summary>
-        /// Email of contact
-        /// </summary>
-        [JsonProperty("email")]
-        public string Email
-        {
-            get
-            {
-                return this.email;
-            }
-
-            set
-            {
-                this.shouldSerialize["email"] = true;
-                this.email = value;
-            }
-        }
-
-        /// <summary>
-        /// Contact ID
-        /// </summary>
-        [JsonProperty("id")]
+        [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
         public string Id { get; set; }
+
+        /// <summary>
+        /// Declined Transaction Id
+        /// </summary>
+        [JsonProperty("declined_transaction_id")]
+        public string DeclinedTransactionId
+        {
+            get
+            {
+                return this.declinedTransactionId;
+            }
+
+            set
+            {
+                this.shouldSerialize["declined_transaction_id"] = true;
+                this.declinedTransactionId = value;
+            }
+        }
+
+        /// <summary>
+        /// Payment Transaction Id
+        /// </summary>
+        [JsonProperty("payment_transaction_id")]
+        public string PaymentTransactionId
+        {
+            get
+            {
+                return this.paymentTransactionId;
+            }
+
+            set
+            {
+                this.shouldSerialize["payment_transaction_id"] = true;
+                this.paymentTransactionId = value;
+            }
+        }
+
+        /// <summary>
+        /// Status
+        /// </summary>
+        [JsonProperty("status", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Status3Enum? Status { get; set; }
+
+        /// <summary>
+        /// Recurring Id
+        /// </summary>
+        [JsonProperty("recurring_id")]
+        public string RecurringId
+        {
+            get
+            {
+                return this.recurringId;
+            }
+
+            set
+            {
+                this.shouldSerialize["recurring_id"] = true;
+                this.recurringId = value;
+            }
+        }
 
         /// <summary>
         /// Created Time Stamp
         /// </summary>
         [JsonProperty("created_ts")]
-        public int CreatedTs { get; set; }
+        public int? CreatedTs
+        {
+            get
+            {
+                return this.createdTs;
+            }
+
+            set
+            {
+                this.shouldSerialize["created_ts"] = true;
+                this.createdTs = value;
+            }
+        }
+
+        /// <summary>
+        /// User ID Created the register
+        /// </summary>
+        [JsonProperty("created_user_id")]
+        public string CreatedUserId
+        {
+            get
+            {
+                return this.createdUserId;
+            }
+
+            set
+            {
+                this.shouldSerialize["created_user_id"] = true;
+                this.createdUserId = value;
+            }
+        }
 
         /// <summary>
         /// Modified Time Stamp
         /// </summary>
         [JsonProperty("modified_ts")]
-        public int ModifiedTs { get; set; }
+        public int? ModifiedTs
+        {
+            get
+            {
+                return this.modifiedTs;
+            }
+
+            set
+            {
+                this.shouldSerialize["modified_ts"] = true;
+                this.modifiedTs = value;
+            }
+        }
 
         /// <summary>
-        /// Active
+        /// Last User ID that updated the register
         /// </summary>
-        [JsonProperty("active")]
-        public int Active { get; set; }
+        [JsonProperty("modified_user_id")]
+        public string ModifiedUserId
+        {
+            get
+            {
+                return this.modifiedUserId;
+            }
+
+            set
+            {
+                this.shouldSerialize["modified_user_id"] = true;
+                this.modifiedUserId = value;
+            }
+        }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -591,290 +259,120 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAccountNumber()
+        public void UnsetDeclinedTransactionId()
         {
-            this.shouldSerialize["account_number"] = false;
+            this.shouldSerialize["declined_transaction_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetContactApiId()
+        public void UnsetPaymentTransactionId()
         {
-            this.shouldSerialize["contact_api_id"] = false;
+            this.shouldSerialize["payment_transaction_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetFirstName()
+        public void UnsetRecurringId()
         {
-            this.shouldSerialize["first_name"] = false;
+            this.shouldSerialize["recurring_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetCellPhone()
+        public void UnsetCreatedTs()
         {
-            this.shouldSerialize["cell_phone"] = false;
+            this.shouldSerialize["created_ts"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetBalance()
+        public void UnsetCreatedUserId()
         {
-            this.shouldSerialize["balance"] = false;
+            this.shouldSerialize["created_user_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetCompanyName()
+        public void UnsetModifiedTs()
         {
-            this.shouldSerialize["company_name"] = false;
+            this.shouldSerialize["modified_ts"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetHeaderMessage()
+        public void UnsetModifiedUserId()
         {
-            this.shouldSerialize["header_message"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetDateOfBirth()
-        {
-            this.shouldSerialize["date_of_birth"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetHomePhone()
-        {
-            this.shouldSerialize["home_phone"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetOfficePhone()
-        {
-            this.shouldSerialize["office_phone"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetOfficePhoneExt()
-        {
-            this.shouldSerialize["office_phone_ext"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetUpdateIfExists()
-        {
-            this.shouldSerialize["update_if_exists"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetContactC1()
-        {
-            this.shouldSerialize["contact_c1"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetContactC2()
-        {
-            this.shouldSerialize["contact_c2"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetContactC3()
-        {
-            this.shouldSerialize["contact_c3"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetParentId()
-        {
-            this.shouldSerialize["parent_id"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetEmail()
-        {
-            this.shouldSerialize["email"] = false;
+            this.shouldSerialize["modified_user_id"] = false;
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAccountNumber()
+        public bool ShouldSerializeDeclinedTransactionId()
         {
-            return this.shouldSerialize["account_number"];
+            return this.shouldSerialize["declined_transaction_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeContactApiId()
+        public bool ShouldSerializePaymentTransactionId()
         {
-            return this.shouldSerialize["contact_api_id"];
+            return this.shouldSerialize["payment_transaction_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeFirstName()
+        public bool ShouldSerializeRecurringId()
         {
-            return this.shouldSerialize["first_name"];
+            return this.shouldSerialize["recurring_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeCellPhone()
+        public bool ShouldSerializeCreatedTs()
         {
-            return this.shouldSerialize["cell_phone"];
+            return this.shouldSerialize["created_ts"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeBalance()
+        public bool ShouldSerializeCreatedUserId()
         {
-            return this.shouldSerialize["balance"];
+            return this.shouldSerialize["created_user_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeCompanyName()
+        public bool ShouldSerializeModifiedTs()
         {
-            return this.shouldSerialize["company_name"];
+            return this.shouldSerialize["modified_ts"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeHeaderMessage()
+        public bool ShouldSerializeModifiedUserId()
         {
-            return this.shouldSerialize["header_message"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeDateOfBirth()
-        {
-            return this.shouldSerialize["date_of_birth"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeHomePhone()
-        {
-            return this.shouldSerialize["home_phone"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeOfficePhone()
-        {
-            return this.shouldSerialize["office_phone"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeOfficePhoneExt()
-        {
-            return this.shouldSerialize["office_phone_ext"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeUpdateIfExists()
-        {
-            return this.shouldSerialize["update_if_exists"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeContactC1()
-        {
-            return this.shouldSerialize["contact_c1"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeContactC2()
-        {
-            return this.shouldSerialize["contact_c2"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeContactC3()
-        {
-            return this.shouldSerialize["contact_c3"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeParentId()
-        {
-            return this.shouldSerialize["parent_id"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeEmail()
-        {
-            return this.shouldSerialize["email"];
+            return this.shouldSerialize["modified_user_id"];
         }
 
         /// <inheritdoc/>
@@ -889,69 +387,34 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Data3 other &&
-                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
-                ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
-                ((this.ContactApiId == null && other.ContactApiId == null) || (this.ContactApiId?.Equals(other.ContactApiId) == true)) &&
-                ((this.FirstName == null && other.FirstName == null) || (this.FirstName?.Equals(other.FirstName) == true)) &&
-                ((this.LastName == null && other.LastName == null) || (this.LastName?.Equals(other.LastName) == true)) &&
-                ((this.CellPhone == null && other.CellPhone == null) || (this.CellPhone?.Equals(other.CellPhone) == true)) &&
-                ((this.Balance == null && other.Balance == null) || (this.Balance?.Equals(other.Balance) == true)) &&
-                ((this.Address == null && other.Address == null) || (this.Address?.Equals(other.Address) == true)) &&
-                ((this.CompanyName == null && other.CompanyName == null) || (this.CompanyName?.Equals(other.CompanyName) == true)) &&
-                ((this.HeaderMessage == null && other.HeaderMessage == null) || (this.HeaderMessage?.Equals(other.HeaderMessage) == true)) &&
-                ((this.DateOfBirth == null && other.DateOfBirth == null) || (this.DateOfBirth?.Equals(other.DateOfBirth) == true)) &&
-                this.EmailTrxReceipt.Equals(other.EmailTrxReceipt) &&
-                ((this.HomePhone == null && other.HomePhone == null) || (this.HomePhone?.Equals(other.HomePhone) == true)) &&
-                ((this.OfficePhone == null && other.OfficePhone == null) || (this.OfficePhone?.Equals(other.OfficePhone) == true)) &&
-                ((this.OfficePhoneExt == null && other.OfficePhoneExt == null) || (this.OfficePhoneExt?.Equals(other.OfficePhoneExt) == true)) &&
-                this.HeaderMessageType.Equals(other.HeaderMessageType) &&
-                ((this.UpdateIfExists == null && other.UpdateIfExists == null) || (this.UpdateIfExists?.Equals(other.UpdateIfExists) == true)) &&
-                ((this.ContactC1 == null && other.ContactC1 == null) || (this.ContactC1?.Equals(other.ContactC1) == true)) &&
-                ((this.ContactC2 == null && other.ContactC2 == null) || (this.ContactC2?.Equals(other.ContactC2) == true)) &&
-                ((this.ContactC3 == null && other.ContactC3 == null) || (this.ContactC3?.Equals(other.ContactC3) == true)) &&
-                ((this.ParentId == null && other.ParentId == null) || (this.ParentId?.Equals(other.ParentId) == true)) &&
-                ((this.Email == null && other.Email == null) || (this.Email?.Equals(other.Email) == true)) &&
-                ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
-                this.CreatedTs.Equals(other.CreatedTs) &&
-                this.ModifiedTs.Equals(other.ModifiedTs) &&
-                this.Active.Equals(other.Active);
+            return obj is Data3 other &&                ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
+                ((this.DeclinedTransactionId == null && other.DeclinedTransactionId == null) || (this.DeclinedTransactionId?.Equals(other.DeclinedTransactionId) == true)) &&
+                ((this.PaymentTransactionId == null && other.PaymentTransactionId == null) || (this.PaymentTransactionId?.Equals(other.PaymentTransactionId) == true)) &&
+                ((this.Status == null && other.Status == null) || (this.Status?.Equals(other.Status) == true)) &&
+                ((this.RecurringId == null && other.RecurringId == null) || (this.RecurringId?.Equals(other.RecurringId) == true)) &&
+                ((this.CreatedTs == null && other.CreatedTs == null) || (this.CreatedTs?.Equals(other.CreatedTs) == true)) &&
+                ((this.CreatedUserId == null && other.CreatedUserId == null) || (this.CreatedUserId?.Equals(other.CreatedUserId) == true)) &&
+                ((this.ModifiedTs == null && other.ModifiedTs == null) || (this.ModifiedTs?.Equals(other.ModifiedTs) == true)) &&
+                ((this.ModifiedUserId == null && other.ModifiedUserId == null) || (this.ModifiedUserId?.Equals(other.ModifiedUserId) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber == string.Empty ? "" : this.AccountNumber)}");
-            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId == string.Empty ? "" : this.ContactApiId)}");
-            toStringOutput.Add($"this.FirstName = {(this.FirstName == null ? "null" : this.FirstName == string.Empty ? "" : this.FirstName)}");
-            toStringOutput.Add($"this.LastName = {(this.LastName == null ? "null" : this.LastName == string.Empty ? "" : this.LastName)}");
-            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone == string.Empty ? "" : this.CellPhone)}");
-            toStringOutput.Add($"this.Balance = {(this.Balance == null ? "null" : this.Balance.ToString())}");
-            toStringOutput.Add($"this.Address = {(this.Address == null ? "null" : this.Address.ToString())}");
-            toStringOutput.Add($"this.CompanyName = {(this.CompanyName == null ? "null" : this.CompanyName == string.Empty ? "" : this.CompanyName)}");
-            toStringOutput.Add($"this.HeaderMessage = {(this.HeaderMessage == null ? "null" : this.HeaderMessage == string.Empty ? "" : this.HeaderMessage)}");
-            toStringOutput.Add($"this.DateOfBirth = {(this.DateOfBirth == null ? "null" : this.DateOfBirth == string.Empty ? "" : this.DateOfBirth)}");
-            toStringOutput.Add($"this.EmailTrxReceipt = {this.EmailTrxReceipt}");
-            toStringOutput.Add($"this.HomePhone = {(this.HomePhone == null ? "null" : this.HomePhone == string.Empty ? "" : this.HomePhone)}");
-            toStringOutput.Add($"this.OfficePhone = {(this.OfficePhone == null ? "null" : this.OfficePhone == string.Empty ? "" : this.OfficePhone)}");
-            toStringOutput.Add($"this.OfficePhoneExt = {(this.OfficePhoneExt == null ? "null" : this.OfficePhoneExt == string.Empty ? "" : this.OfficePhoneExt)}");
-            toStringOutput.Add($"this.HeaderMessageType = {this.HeaderMessageType}");
-            toStringOutput.Add($"this.UpdateIfExists = {(this.UpdateIfExists == null ? "null" : this.UpdateIfExists.ToString())}");
-            toStringOutput.Add($"this.ContactC1 = {(this.ContactC1 == null ? "null" : this.ContactC1 == string.Empty ? "" : this.ContactC1)}");
-            toStringOutput.Add($"this.ContactC2 = {(this.ContactC2 == null ? "null" : this.ContactC2 == string.Empty ? "" : this.ContactC2)}");
-            toStringOutput.Add($"this.ContactC3 = {(this.ContactC3 == null ? "null" : this.ContactC3 == string.Empty ? "" : this.ContactC3)}");
-            toStringOutput.Add($"this.ParentId = {(this.ParentId == null ? "null" : this.ParentId == string.Empty ? "" : this.ParentId)}");
-            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email == string.Empty ? "" : this.Email)}");
-            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id == string.Empty ? "" : this.Id)}");
-            toStringOutput.Add($"this.CreatedTs = {this.CreatedTs}");
-            toStringOutput.Add($"this.ModifiedTs = {this.ModifiedTs}");
-            toStringOutput.Add($"this.Active = {this.Active}");
+            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id)}");
+            toStringOutput.Add($"this.DeclinedTransactionId = {(this.DeclinedTransactionId == null ? "null" : this.DeclinedTransactionId)}");
+            toStringOutput.Add($"this.PaymentTransactionId = {(this.PaymentTransactionId == null ? "null" : this.PaymentTransactionId)}");
+            toStringOutput.Add($"this.Status = {(this.Status == null ? "null" : this.Status.ToString())}");
+            toStringOutput.Add($"this.RecurringId = {(this.RecurringId == null ? "null" : this.RecurringId)}");
+            toStringOutput.Add($"this.CreatedTs = {(this.CreatedTs == null ? "null" : this.CreatedTs.ToString())}");
+            toStringOutput.Add($"this.CreatedUserId = {(this.CreatedUserId == null ? "null" : this.CreatedUserId)}");
+            toStringOutput.Add($"this.ModifiedTs = {(this.ModifiedTs == null ? "null" : this.ModifiedTs.ToString())}");
+            toStringOutput.Add($"this.ModifiedUserId = {(this.ModifiedUserId == null ? "null" : this.ModifiedUserId)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

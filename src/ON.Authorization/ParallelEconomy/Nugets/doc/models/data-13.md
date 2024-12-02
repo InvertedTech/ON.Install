@@ -9,56 +9,63 @@
 
 | Name | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `AccountHolderName` | `string` | Optional | Account holder name<br>**Constraints**: *Minimum Length*: `1`, *Maximum Length*: `32` |
-| `AccountNumber` | `string` | Optional | Account number<br>**Constraints**: *Minimum Length*: `4`, *Maximum Length*: `19`, *Pattern*: `^[\d]+$` |
-| `AccountVaultApiId` | `string` | Optional | This field can be used to correlate Account Vaults in our system to data within an outside software integration<br>**Constraints**: *Minimum Length*: `1`, *Maximum Length*: `36` |
-| `AccountvaultC1` | `string` | Optional | Custom field 1 for API users to store custom data<br>**Constraints**: *Minimum Length*: `1`, *Maximum Length*: `128` |
-| `AccountvaultC2` | `string` | Optional | Custom field 2 for API users to store custom data<br>**Constraints**: *Minimum Length*: `1`, *Maximum Length*: `128` |
-| `AccountvaultC3` | `string` | Optional | Custom field 3 for API users to store custom data<br>**Constraints**: *Minimum Length*: `1`, *Maximum Length*: `128` |
-| `AchSecCode` | [`Models.AchSecCodeEnum?`](../../doc/models/ach-sec-code-enum.md) | Optional | SEC code for the account |
-| `BillingAddress` | [`Models.BillingAddress`](../../doc/models/billing-address.md) | Optional | The Street portion of the address associated with the Credit Card (CC) or Bank Account (ACH). |
-| `ContactId` | `string` | Optional | Used to associate the Account Vault with a Contact.<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `CustomerId` | `string` | Optional | Used to store a customer identification number.<br>**Constraints**: *Minimum Length*: `1`, *Maximum Length*: `50` |
-| `IdentityVerification` | [`Models.IdentityVerification`](../../doc/models/identity-verification.md) | Optional | Identity verification |
-| `LocationId` | `string` | Required | A valid Location Id associated with the Contact for this Token<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `PreviousAccountVaultApiId` | `string` | Optional | Can be used to pull payment info from a previous account vault api id.<br>**Constraints**: *Maximum Length*: `64` |
-| `PreviousAccountVaultId` | `string` | Optional | Can be used to pull payment info from a previous account vault.<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `PreviousTransactionId` | `string` | Optional | Can be used to pull payment info from a previous transaction.<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `TermsAgree` | `bool?` | Optional | Terms agreement. |
-| `TermsAgreeIp` | `string` | Optional | The ip address of the client that agreed to terms. |
-| `Title` | `string` | Optional | Used to describe the Token for easier identification within our UI.<br>**Constraints**: *Minimum Length*: `1`, *Maximum Length*: `16` |
-| `Id` | `string` | Required | A unique, system-generated identifier for the Token.<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `AccountType` | `string` | Required | Account type<br>**Constraints**: *Minimum Length*: `1`, *Maximum Length*: `32` |
-| `Active` | `bool?` | Optional | Register is Active |
-| `CauSummaryStatusId` | [`Models.CauSummaryStatusIdEnum`](../../doc/models/cau-summary-status-id-enum.md) | Required | CAU Summary Status ID. |
+| `LocationId` | `string` | Optional | Location ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `CcProductTransactionId` | `string` | Optional | cc_product_transaction_id<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `Email` | `string` | Optional | Email<br>**Constraints**: *Maximum Length*: `128` |
+| `AmountDue` | `int` | Required | Amount Due<br>**Constraints**: `>= 1`, `<= 999999999` |
+| `LocationApiId` | `string` | Optional | Location Api Id |
+| `ContactId` | `string` | Optional | Contact Id<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `ContactApiId` | `string` | Optional | Contact Api Id |
+| `PaylinkApiId` | `string` | Optional | Paylinke Api Id<br>**Constraints**: *Maximum Length*: `64` |
+| `AchProductTransactionId` | `string` | Optional | Ach Product Transaction Id<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `ExpireDate` | `string` | Optional | Expire Date<br>**Constraints**: *Maximum Length*: `10`, *Pattern*: `^[\d]{4}-[\d]{2}-[\d]{2}$` |
+| `DisplayProductTransactionReceiptDetails` | `bool?` | Optional | Display Product Transaction Receipt Details |
+| `DisplayBillingFields` | `bool?` | Optional | Display Billing Fields |
+| `DeliveryMethod` | [`DeliveryMethodEnum?`](../../doc/models/delivery-method-enum.md) | Optional | Delivery Method<br><br>> 0 - Do not send<br>> <br>> 1 - Email<br>> <br>> 2 - SMS<br>> <br>> 3 - Both |
+| `CellPhone` | `string` | Optional | Cell Phone<br>**Constraints**: *Minimum Length*: `10`, *Maximum Length*: `10`, *Pattern*: `^\d{10}$` |
+| `Description` | `string` | Optional | Description<br>**Constraints**: *Maximum Length*: `64` |
+| `StoreToken` | `bool?` | Optional | Store Token |
+| `StoreTokenTitle` | `string` | Optional | Store Token Title<br>**Constraints**: *Maximum Length*: `16` |
+| `PaylinkAction` | [`PaylinkActionEnum?`](../../doc/models/paylink-action-enum.md) | Optional | Paylink Action |
+| `BankFundedOnlyOverride` | `bool?` | Optional | Bank Funded Only Override |
+| `Tags` | `List<string>` | Optional | Used to apply tags to a paylink. |
+| `Id` | `string` | Required | Paylink Id<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `StatusId` | `bool?` | Optional | (DEPRECATED) Status Id |
+| `StatusCode` | [`StatusCode12Enum?`](../../doc/models/status-code-12-enum.md) | Optional | Status Code |
+| `Active` | `bool?` | Optional | Active |
 | `CreatedTs` | `int` | Required | Created Time Stamp |
-| `ESerialNumber` | `string` | Optional | E Serial Number<br>**Constraints**: *Maximum Length*: `36`, *Pattern*: `^[a-zA-Z0-9]*$` |
-| `ETrackData` | `string` | Optional | E Track Data |
-| `EFormat` | `string` | Optional | E Format |
-| `EKeyedData` | `string` | Optional | E Keyed Data |
-| `ExpiringInMonths` | `int?` | Optional | Determined by API based on card exp_date. |
-| `FirstSix` | `string` | Required | The first six numbers of an account number.  System will generate a value for this field automatically.<br>**Constraints**: *Maximum Length*: `6` |
-| `HasRecurring` | `bool` | Required | True indicates that this account vault is tied to a Recurring Payment |
-| `LastFour` | `string` | Required | The last four numbers of an account number.  System will generate a value for this field automatically.<br>**Constraints**: *Maximum Length*: `4` |
 | `ModifiedTs` | `int` | Required | Modified Time Stamp |
-| `PaymentMethod` | [`Models.PaymentMethod2Enum`](../../doc/models/payment-method-2-enum.md) | Required | Must be provided as either 'cc' or 'ach'. |
-| `Ticket` | `string` | Optional | A valid ticket that was created to store the token.<br>**Constraints**: *Maximum Length*: `36` |
-| `TrackData` | `string` | Optional | Track Data from a magnetic card swipe.<br>**Constraints**: *Maximum Length*: `256` |
+| `CreatedUserId` | `string` | Optional | User ID Created the register<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `ModifiedUserId` | `string` | Optional | Last User ID that updated the register<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
 
 ## Example (as JSON)
 
 ```json
 {
   "location_id": "11e95f8ec39de8fbdb0a4f1a",
+  "cc_product_transaction_id": "11e95f8ec39de8fbdb0a4f1a",
+  "email": "email@domain.com",
+  "amount_due": 1,
+  "contact_id": "11e95f8ec39de8fbdb0a4f1a",
+  "ach_product_transaction_id": "11e95f8ec39de8fbdb0a4f1a",
+  "expire_date": "2021-12-01",
+  "display_product_transaction_receipt_details": true,
+  "display_billing_fields": true,
+  "delivery_method": 0,
+  "cell_phone": "3339998822",
+  "description": "Description",
+  "store_token": false,
+  "store_token_title": "John Account",
+  "bank_funded_only_override": false,
   "id": "11e95f8ec39de8fbdb0a4f1a",
-  "account_type": "checking",
-  "cau_summary_status_id": 1,
+  "status_id": true,
+  "status_code": 1,
+  "active": true,
   "created_ts": 1422040992,
-  "first_six": "700953",
-  "has_recurring": false,
-  "last_four": "3657",
   "modified_ts": 1422040992,
-  "payment_method": "cc"
+  "created_user_id": "11e95f8ec39de8fbdb0a4f1a",
+  "modified_user_id": "11e95f8ec39de8fbdb0a4f1a",
+  "location_api_id": "location_api_id8"
 }
 ```
 

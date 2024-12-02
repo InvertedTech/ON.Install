@@ -1,7 +1,7 @@
 
 # Payment Method Enum
 
-Payment Method
+Payment method
 
 ## Enumeration
 
@@ -13,6 +13,7 @@ Payment Method
 |  --- |
 | `Cc` |
 | `Ach` |
+| `Cash` |
 
 ## Example
 

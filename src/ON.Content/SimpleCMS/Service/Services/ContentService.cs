@@ -9,8 +9,11 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Content.SimpleCMS.Service.Data;
 using ON.Content.SimpleCMS.Service.Helpers;
+using ON.Fragments.Authorization.Payment;
+using ON.Fragments.Authorization.Payment.Stripe;
 using ON.Fragments.Content;
 using ON.Fragments.Generic;
+using ON.Settings;
 
 namespace ON.Content.SimpleCMS.Service
 {
@@ -19,12 +22,14 @@ namespace ON.Content.SimpleCMS.Service
     {
         private readonly ILogger logger;
         private readonly IContentDataProvider dataProvider;
+        private readonly ServiceNameHelper nameHelper;
         //private readonly StatsClient statsClient;
 
-        public ContentService(ILogger<ContentService> logger, IContentDataProvider dataProvider/*, StatsClient statsClient*/)
+        public ContentService(ILogger<ContentService> logger, IContentDataProvider dataProvider, ServiceNameHelper nameHelper /*, StatsClient statsClient*/)
         {
             this.logger = logger;
             this.dataProvider = dataProvider;
+            this.nameHelper = nameHelper;
             //this.statsClient = statsClient;
         }
 
@@ -75,6 +80,8 @@ namespace ON.Content.SimpleCMS.Service
             };
 
             await dataProvider.Save(record);
+
+            await EnsureOneTimeProduct(record, user);
 
             return new() { Record = record };
         }
@@ -179,7 +186,7 @@ namespace ON.Content.SimpleCMS.Service
                 list.Add(listRec);
             }
 
-            res.Records.AddRange(list.OrderByDescending(r => r.PublishOnUTC).OrderByDescending(r=>r.PinnedOnUTC));
+            res.Records.AddRange(list.OrderByDescending(r => r.PublishOnUTC).OrderByDescending(r => r.PinnedOnUTC));
             res.PageTotalItems = (uint)res.Records.Count;
 
             if (request.PageSize > 0)
@@ -304,7 +311,7 @@ namespace ON.Content.SimpleCMS.Service
                 if (!CanShowInList(rec, user))
                     return new();
 
-                if (!CanShowContent(rec, user))
+                if (!await CanShowContent(rec, user))
                     ClearPublicData(rec.Public.Data);
 
                 //await statsClient.RecordView(contentId, user);
@@ -335,7 +342,7 @@ namespace ON.Content.SimpleCMS.Service
             if (!CanShowInList(rec, user))
                 return new();
 
-            if (!CanShowContent(rec, user))
+            if (!await CanShowContent(rec, user))
                 ClearPublicData(rec.Public.Data);
 
             return new() { Record = rec.Public };
@@ -379,7 +386,7 @@ namespace ON.Content.SimpleCMS.Service
             int num = Math.Min((int)request.NumTags, 100);
 
             List<string> allTags = new();
-            await foreach (var rec in dataProvider.GetAll().Where(r => r.Public.PublishOnUTC != null).OrderByDescending(r=> r.Public.PublishOnUTC))
+            await foreach (var rec in dataProvider.GetAll().Where(r => r.Public.PublishOnUTC != null).OrderByDescending(r => r.Public.PublishOnUTC))
             {
                 allTags.AddRange(rec.Public.Data.Tags.Where(t => !allTags.Contains(t)));
                 if (allTags.Count > num)
@@ -398,7 +405,7 @@ namespace ON.Content.SimpleCMS.Service
 
             Guid contentId = request.ContentID.ToGuid();
             if (contentId == Guid.Empty)
-                return new ();
+                return new();
 
             var curRec = await dataProvider.GetById(contentId);
             if (curRec == null)
@@ -465,6 +472,8 @@ namespace ON.Content.SimpleCMS.Service
             record.Private.ModifiedBy = user.Id.ToString();
 
             await dataProvider.Save(record);
+
+            await EnsureOneTimeProduct(record, user);
 
             return new() { Record = record };
         }
@@ -629,7 +638,7 @@ namespace ON.Content.SimpleCMS.Service
             return new() { Record = record };
         }
 
-        private bool CanShowContent(ContentRecord rec, ONUser user)
+        private async Task<bool> CanShowContent(ContentRecord rec, ONUser user)
         {
             if (user?.IsWriterOrHigher ?? false)
                 return true;
@@ -641,7 +650,36 @@ namespace ON.Content.SimpleCMS.Service
             if (recLevel > (user?.SubscriptionLevel ?? 0))
                 return false;
 
+            var oneTime = rec.Public.Data.OneTimeAmountCents;
+            if (oneTime > 0)
+                return await CanShowOneTimeContent(rec, user);
+
             return true;
+        }
+
+        private async Task<bool> CanShowOneTimeContent(ContentRecord rec, ONUser user)
+        {
+            if (user == null) return false;
+            if (!user.IsLoggedIn) return false;
+
+            var id = rec.Public.ContentID;
+
+            try
+            {
+                var client = new PaymentInterface.PaymentInterfaceClient(nameHelper.PaymentServiceChannel);
+                var res = await client.GetOwnOneTimeRecordsAsync(new(), GetMetadata(user), DateTime.UtcNow.AddSeconds(3));
+                if (res == null) return false;
+
+                foreach (var record in res.Stripe)
+                {
+                    if (record.InternalID == id)
+                        if (record.Status == PaymentStatus.PaymentComplete)
+                            return true;
+                }
+            }
+            catch { }
+
+            return false;
         }
 
         private bool CanShowInList(ContentRecord rec, ONUser user)
@@ -811,6 +849,36 @@ namespace ON.Content.SimpleCMS.Service
                 if (haystack.Contains(bit))
                     return true;
             return false;
+        }
+
+        private async Task EnsureOneTimeProduct(ContentRecord rec, ONUser user)
+        {
+            if ((rec?.Public?.Data.OneTimeAmountCents ?? 0) == 0)
+                return;
+
+            try
+            {
+                var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
+                var res = await client.StripeEnsureOneTimeProductAsync(
+                    new()
+                    {
+                        InternalId = rec.Public.ContentID,
+                        Name = rec.Public.Data.Title,
+                        MinimumPrice = rec.Public.Data.OneTimeAmountCents,
+                        MaximumPrice = 100000,
+                    },
+                    GetMetadata(user));//, DateTime.UtcNow.AddSeconds(3));
+            }
+            catch { }
+        }
+
+        private Metadata GetMetadata(ONUser user)
+        {
+            var data = new Metadata();
+            if (user != null && !string.IsNullOrWhiteSpace(user.JwtToken))
+                data.Add("Authorization", "Bearer " + user.JwtToken);
+
+            return data;
         }
     }
 }

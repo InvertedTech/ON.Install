@@ -6,12 +6,17 @@ namespace FortisAPI.Standard.Models
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.Serialization;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// IiasIndEnum.
     /// </summary>
+
+    [JsonConverter(typeof(NumberEnumConverter))]
     public enum IiasIndEnum
     {
         /// <summary>

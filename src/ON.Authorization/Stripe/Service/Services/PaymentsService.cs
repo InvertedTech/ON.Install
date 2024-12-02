@@ -7,7 +7,7 @@ using ON.Authorization.Stripe.Service.Data;
 using ON.Authorization.Stripe.Service.Models;
 using ON.Authorization.Stripe.Service.Services;
 using ON.Fragments.Authorization;
-using ON.Fragments.Authorization.Payments.Stripe;
+using ON.Fragments.Authorization.Payment.Stripe;
 using ON.Fragments.Generic;
 using Stripe;
 using System;

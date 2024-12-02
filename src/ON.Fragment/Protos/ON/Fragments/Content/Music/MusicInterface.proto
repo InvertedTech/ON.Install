@@ -1,0 +1,333 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Music;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "Protos/ON/Fragments/Content/ContentRecord.proto";
+
+// Service for Content fragment interface
+service MusicInterface {
+  rpc AnnounceContent (AnnounceContentRequest) returns (AnnounceContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/content/{ContentID}/announce"
+      body: "*"
+    };
+  }
+  rpc CreateContent (CreateContentRequest) returns (CreateContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/content"
+      body: "*"
+    };
+  }
+  rpc DeleteContent (DeleteContentRequest) returns (DeleteContentResponse)
+  {
+    option (google.api.http) = {
+      delete: "/api/cms/admin/content/{ContentID}"
+    };
+  }
+  rpc GetAllContent (GetAllContentRequest) returns (GetAllContentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/content"
+    };
+  }
+  rpc GetAllContentAdmin (GetAllContentAdminRequest) returns (GetAllContentAdminResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/admin/content"
+    };
+  }
+  rpc GetContent (GetContentRequest) returns (GetContentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/content/{ContentID}"
+    };
+  }
+  rpc GetContentByUrl (GetContentByUrlRequest) returns (GetContentByUrlResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/content/url"
+    };
+  }
+  rpc GetContentAdmin (GetContentAdminRequest) returns (GetContentAdminResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/admin/content/{ContentID}"
+    };
+  }
+  rpc GetRecentCategories (GetRecentCategoriesRequest) returns (GetRecentCategoriesResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/categories/recent"
+    };
+  }
+  rpc GetRecentTags (GetRecentTagsRequest) returns (GetRecentTagsResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/tags/recent"
+    };
+  }
+  rpc GetRelatedContent (GetRelatedContentRequest) returns (GetRelatedContentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/content/{ContentID}/related"
+    };
+  }
+  rpc ModifyContent (ModifyContentRequest) returns (ModifyContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/content/{ContentID}"
+      body: "*"
+    };
+  }
+  rpc PublishContent (PublishContentRequest) returns (PublishContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/content/{ContentID}/publish"
+      body: "*"
+    };
+  }
+  rpc SearchContent (SearchContentRequest) returns (SearchContentResponse)
+  {
+    option (google.api.http) = {
+      get: "/api/cms/search"
+    };
+  }
+  rpc UnannounceContent (UnannounceContentRequest) returns (UnannounceContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/content/{ContentID}/unannounce"
+    };
+  }
+  rpc UndeleteContent (UndeleteContentRequest) returns (UndeleteContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/content/{ContentID}/undelete"
+    };
+  }
+  rpc UnpublishContent (UnpublishContentRequest) returns (UnpublishContentResponse)
+  {
+    option (google.api.http) = {
+      post: "/api/cms/admin/content/{ContentID}/unpublish"
+    };
+  }
+}
+  
+message AnnounceContentRequest {
+  string ContentID = 1;   // Guid for the content record
+  google.protobuf.Timestamp AnnounceOnUTC = 3; // UTC timestamp when content was or will be announced
+}
+  
+message AnnounceContentResponse {
+  ContentRecord Record = 1;
+}
+  
+message CreateContentRequest {
+  ContentPublicData Public = 1;
+  ContentPrivateData Private = 2;
+}
+  
+message CreateContentResponse {
+  ContentRecord Record = 1;
+}
+
+message DeleteContentRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message DeleteContentResponse {
+  ContentRecord Record = 1;
+}
+  
+message GetAllContentRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  repeated string PossibleContentIDs = 6;
+  SubscriptionLevelSearch SubscriptionSearch = 10;
+  ContentType ContentType = 11;
+  string CategoryId = 12;
+  string ChannelId = 13;
+  string Tag = 14;
+  string AuthorId = 15;
+  bool OnlyLive = 16;
+  google.protobuf.Timestamp PublishedAfterUTC = 21;
+  google.protobuf.Timestamp PublishedBeforeUTC = 22;
+}
+  
+message GetAllContentResponse {
+  repeated ContentListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+  
+message GetAllContentAdminRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  repeated string PossibleContentIDs = 6;
+  SubscriptionLevelSearch SubscriptionSearch = 10;
+  ContentType ContentType = 11;
+  string CategoryId = 12;
+  string ChannelId = 13;
+  string Tag = 14;
+  bool OnlyLive = 15;
+  bool Deleted = 21;
+}
+  
+message GetAllContentAdminResponse {
+  repeated ContentListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+  
+message GetContentRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message GetContentResponse {
+  ContentPublicRecord Record = 1;
+}
+  
+message GetContentByUrlRequest {
+  string ContentUrl = 1;
+}
+  
+message GetContentByUrlResponse {
+  ContentPublicRecord Record = 1;
+}
+  
+message GetContentAdminRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message GetContentAdminResponse {
+  ContentRecord Record = 1;
+}
+
+message GetRecentCategoriesRequest {
+  uint32 NumCategories = 1;
+}
+  
+message GetRecentCategoriesResponse {
+  repeated string CategoryIds = 1;
+}
+
+message GetRecentTagsRequest {
+  uint32 NumTags = 1;
+}
+  
+message GetRecentTagsResponse {
+  repeated string Tags = 1;
+}
+  
+message GetRelatedContentRequest {
+  string ContentID = 1;   // Guid for the content record
+  uint32 PageSize = 2;
+  uint32 PageOffset = 3;
+}
+  
+message GetRelatedContentResponse {
+  repeated ContentListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+  
+message ModifyContentRequest {
+  string ContentID = 1;   // Guid for the content record
+  ContentPublicData Public = 2;
+  ContentPrivateData Private = 3;
+}
+  
+message ModifyContentResponse {
+  ContentRecord Record = 1;
+}
+
+message ContentListRecord {
+  string ContentID = 1;                         // Guid for the content record
+  google.protobuf.Timestamp CreatedOnUTC = 2;   // UTC timestamp when content was created
+  google.protobuf.Timestamp PublishOnUTC = 3; // UTC timestamp when content was published
+  google.protobuf.Timestamp PinnedOnUTC = 4; // UTC timestamp when content was published
+  string Title = 10;
+  string Description = 11;
+  uint32 SubscriptionLevel = 12;
+  string URL = 13;
+  string Author = 14;
+  string AuthorID = 15;
+  string FeaturedImageAssetID = 20;
+  repeated string CategoryIds = 21;
+  repeated string ChannelIds = 22;
+  bool IsLiveStream = 23;
+  bool IsLive = 24;
+  ContentType ContentType = 25;
+}
+
+message PublishContentRequest {
+  string ContentID = 1;   // Guid for the content record
+  google.protobuf.Timestamp PublishOnUTC = 3; // UTC timestamp when content was or will be published
+}
+  
+message PublishContentResponse {
+  ContentRecord Record = 1;
+}
+  
+message SearchContentRequest {
+  uint32 PageSize = 1;
+  uint32 PageOffset = 2;
+  string Query = 6;
+  SubscriptionLevelSearch SubscriptionSearch = 10;
+  ContentType ContentType = 11;
+  string CategoryId = 12;
+  string ChannelId = 13;
+  string Tag = 14;
+  bool OnlyLive = 15;
+}
+  
+message SearchContentResponse {
+  repeated ContentListRecord Records = 1;
+  uint32 PageOffsetStart = 11;
+  uint32 PageOffsetEnd = 12;
+  uint32 PageTotalItems = 13;
+}
+  
+message UnannounceContentRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message UnannounceContentResponse {
+  ContentRecord Record = 1;
+}
+  
+message UndeleteContentRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message UndeleteContentResponse {
+  ContentRecord Record = 1;
+}
+  
+message UnpublishContentRequest {
+  string ContentID = 1;   // Guid for the content record
+}
+  
+message UnpublishContentResponse {
+  ContentRecord Record = 1;
+}
+  
+enum ContentType {
+  None = 0;
+  Audio = 1;
+  Picture = 2;
+  Video = 3;
+  Written = 4;
+}
+
+message SubscriptionLevelSearch {
+  uint32 MinimumLevel = 1;
+  uint32 MaximumLevel = 2;
+}
+  

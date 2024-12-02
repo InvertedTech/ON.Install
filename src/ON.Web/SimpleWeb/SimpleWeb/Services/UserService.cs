@@ -217,6 +217,22 @@ namespace ON.SimpleWeb.Services
             return reply.Record;
         }
 
+        public async Task<UserNormalRecord> GetOtherUserByEmail(string email)
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            if (nameHelper.UserServiceChannel == null)
+                return null;
+
+            if (!User.IsAdminOrHigher)
+                return null;
+
+            var client = new UserInterface.UserInterfaceClient(nameHelper.UserServiceChannel);
+            var reply = await client.GetOtherUserByEmailAsync(new () { Email = email }, GetMetadata());
+            return reply.Record;
+        }
+
         public async Task<UserPublicRecord> GetUserPublic(string userId)
         {
             try

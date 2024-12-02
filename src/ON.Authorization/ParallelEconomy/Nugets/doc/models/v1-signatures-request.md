@@ -10,8 +10,8 @@
 | Name | Type | Tags | Description |
 |  --- | --- | --- | --- |
 | `Signature` | `string` | Required | Signature |
-| `Resource` | [`Models.ResourceEnum`](../../doc/models/resource-enum.md) | Required | Resource |
-| `ResourceId` | `string` | Required | Resource ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `Resource` | [`ResourceEnum`](../../doc/models/resource-enum.md) | Required | Resource |
+| `ResourceId` | `string` | Required | Resource ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
 
 ## Example (as JSON)
 

@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,52 +19,46 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Data13.
     /// </summary>
-    public class Data13
+    public class Data13 : BaseModel
     {
-        private string accountHolderName;
-        private string accountNumber;
-        private string accountVaultApiId;
-        private string accountvaultC1;
-        private string accountvaultC2;
-        private string accountvaultC3;
-        private Models.AchSecCodeEnum? achSecCode;
+        private string locationId;
+        private string ccProductTransactionId;
+        private string email;
+        private string locationApiId;
         private string contactId;
-        private string customerId;
-        private string previousAccountVaultApiId;
-        private string previousAccountVaultId;
-        private string previousTransactionId;
-        private string termsAgreeIp;
-        private string title;
-        private string eSerialNumber;
-        private string eTrackData;
-        private string eFormat;
-        private string eKeyedData;
-        private int? expiringInMonths;
-        private string ticket;
-        private string trackData;
+        private string contactApiId;
+        private string paylinkApiId;
+        private string achProductTransactionId;
+        private string expireDate;
+        private Models.DeliveryMethodEnum? deliveryMethod;
+        private string cellPhone;
+        private string description;
+        private string storeTokenTitle;
+        private Models.PaylinkActionEnum? paylinkAction;
+        private List<string> tags;
+        private Models.StatusCode12Enum? statusCode;
+        private string createdUserId;
+        private string modifiedUserId;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
-            { "account_holder_name", false },
-            { "account_number", false },
-            { "account_vault_api_id", false },
-            { "accountvault_c1", false },
-            { "accountvault_c2", false },
-            { "accountvault_c3", false },
-            { "ach_sec_code", false },
+            { "location_id", false },
+            { "cc_product_transaction_id", false },
+            { "email", false },
+            { "location_api_id", false },
             { "contact_id", false },
-            { "customer_id", false },
-            { "previous_account_vault_api_id", false },
-            { "previous_account_vault_id", false },
-            { "previous_transaction_id", false },
-            { "terms_agree_ip", false },
-            { "title", false },
-            { "e_serial_number", false },
-            { "e_track_data", false },
-            { "e_format", false },
-            { "e_keyed_data", false },
-            { "expiring_in_months", false },
-            { "ticket", false },
-            { "track_data", false },
+            { "contact_api_id", false },
+            { "paylink_api_id", false },
+            { "ach_product_transaction_id", false },
+            { "expire_date", false },
+            { "delivery_method", false },
+            { "cell_phone", false },
+            { "description", false },
+            { "store_token_title", false },
+            { "paylink_action", false },
+            { "tags", false },
+            { "status_code", false },
+            { "created_user_id", false },
+            { "modified_user_id", false },
         };
 
         /// <summary>
@@ -76,333 +71,246 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Data13"/> class.
         /// </summary>
-        /// <param name="locationId">location_id.</param>
+        /// <param name="amountDue">amount_due.</param>
         /// <param name="id">id.</param>
-        /// <param name="accountType">account_type.</param>
-        /// <param name="cauSummaryStatusId">cau_summary_status_id.</param>
         /// <param name="createdTs">created_ts.</param>
-        /// <param name="firstSix">first_six.</param>
-        /// <param name="hasRecurring">has_recurring.</param>
-        /// <param name="lastFour">last_four.</param>
         /// <param name="modifiedTs">modified_ts.</param>
-        /// <param name="paymentMethod">payment_method.</param>
-        /// <param name="accountHolderName">account_holder_name.</param>
-        /// <param name="accountNumber">account_number.</param>
-        /// <param name="accountVaultApiId">account_vault_api_id.</param>
-        /// <param name="accountvaultC1">accountvault_c1.</param>
-        /// <param name="accountvaultC2">accountvault_c2.</param>
-        /// <param name="accountvaultC3">accountvault_c3.</param>
-        /// <param name="achSecCode">ach_sec_code.</param>
-        /// <param name="billingAddress">billing_address.</param>
+        /// <param name="locationId">location_id.</param>
+        /// <param name="ccProductTransactionId">cc_product_transaction_id.</param>
+        /// <param name="email">email.</param>
+        /// <param name="locationApiId">location_api_id.</param>
         /// <param name="contactId">contact_id.</param>
-        /// <param name="customerId">customer_id.</param>
-        /// <param name="identityVerification">identity_verification.</param>
-        /// <param name="previousAccountVaultApiId">previous_account_vault_api_id.</param>
-        /// <param name="previousAccountVaultId">previous_account_vault_id.</param>
-        /// <param name="previousTransactionId">previous_transaction_id.</param>
-        /// <param name="termsAgree">terms_agree.</param>
-        /// <param name="termsAgreeIp">terms_agree_ip.</param>
-        /// <param name="title">title.</param>
+        /// <param name="contactApiId">contact_api_id.</param>
+        /// <param name="paylinkApiId">paylink_api_id.</param>
+        /// <param name="achProductTransactionId">ach_product_transaction_id.</param>
+        /// <param name="expireDate">expire_date.</param>
+        /// <param name="displayProductTransactionReceiptDetails">display_product_transaction_receipt_details.</param>
+        /// <param name="displayBillingFields">display_billing_fields.</param>
+        /// <param name="deliveryMethod">delivery_method.</param>
+        /// <param name="cellPhone">cell_phone.</param>
+        /// <param name="description">description.</param>
+        /// <param name="storeToken">store_token.</param>
+        /// <param name="storeTokenTitle">store_token_title.</param>
+        /// <param name="paylinkAction">paylink_action.</param>
+        /// <param name="bankFundedOnlyOverride">bank_funded_only_override.</param>
+        /// <param name="tags">tags.</param>
+        /// <param name="statusId">status_id.</param>
+        /// <param name="statusCode">status_code.</param>
         /// <param name="active">active.</param>
-        /// <param name="eSerialNumber">e_serial_number.</param>
-        /// <param name="eTrackData">e_track_data.</param>
-        /// <param name="eFormat">e_format.</param>
-        /// <param name="eKeyedData">e_keyed_data.</param>
-        /// <param name="expiringInMonths">expiring_in_months.</param>
-        /// <param name="ticket">ticket.</param>
-        /// <param name="trackData">track_data.</param>
+        /// <param name="createdUserId">created_user_id.</param>
+        /// <param name="modifiedUserId">modified_user_id.</param>
         public Data13(
-            string locationId,
+            int amountDue,
             string id,
-            string accountType,
-            Models.CauSummaryStatusIdEnum cauSummaryStatusId,
             int createdTs,
-            string firstSix,
-            bool hasRecurring,
-            string lastFour,
             int modifiedTs,
-            Models.PaymentMethod2Enum paymentMethod,
-            string accountHolderName = null,
-            string accountNumber = null,
-            string accountVaultApiId = null,
-            string accountvaultC1 = null,
-            string accountvaultC2 = null,
-            string accountvaultC3 = null,
-            Models.AchSecCodeEnum? achSecCode = null,
-            Models.BillingAddress billingAddress = null,
+            string locationId = null,
+            string ccProductTransactionId = null,
+            string email = null,
+            string locationApiId = null,
             string contactId = null,
-            string customerId = null,
-            Models.IdentityVerification identityVerification = null,
-            string previousAccountVaultApiId = null,
-            string previousAccountVaultId = null,
-            string previousTransactionId = null,
-            bool? termsAgree = null,
-            string termsAgreeIp = null,
-            string title = null,
+            string contactApiId = null,
+            string paylinkApiId = null,
+            string achProductTransactionId = null,
+            string expireDate = null,
+            bool? displayProductTransactionReceiptDetails = null,
+            bool? displayBillingFields = null,
+            Models.DeliveryMethodEnum? deliveryMethod = null,
+            string cellPhone = null,
+            string description = null,
+            bool? storeToken = null,
+            string storeTokenTitle = null,
+            Models.PaylinkActionEnum? paylinkAction = null,
+            bool? bankFundedOnlyOverride = null,
+            List<string> tags = null,
+            bool? statusId = null,
+            Models.StatusCode12Enum? statusCode = null,
             bool? active = null,
-            string eSerialNumber = null,
-            string eTrackData = null,
-            string eFormat = null,
-            string eKeyedData = null,
-            int? expiringInMonths = null,
-            string ticket = null,
-            string trackData = null)
+            string createdUserId = null,
+            string modifiedUserId = null)
         {
-            if (accountHolderName != null)
+            if (locationId != null)
             {
-                this.AccountHolderName = accountHolderName;
+                this.LocationId = locationId;
             }
 
-            if (accountNumber != null)
+            if (ccProductTransactionId != null)
             {
-                this.AccountNumber = accountNumber;
+                this.CcProductTransactionId = ccProductTransactionId;
             }
 
-            if (accountVaultApiId != null)
+            if (email != null)
             {
-                this.AccountVaultApiId = accountVaultApiId;
+                this.Email = email;
             }
 
-            if (accountvaultC1 != null)
+            this.AmountDue = amountDue;
+            if (locationApiId != null)
             {
-                this.AccountvaultC1 = accountvaultC1;
+                this.LocationApiId = locationApiId;
             }
 
-            if (accountvaultC2 != null)
-            {
-                this.AccountvaultC2 = accountvaultC2;
-            }
-
-            if (accountvaultC3 != null)
-            {
-                this.AccountvaultC3 = accountvaultC3;
-            }
-
-            if (achSecCode != null)
-            {
-                this.AchSecCode = achSecCode;
-            }
-
-            this.BillingAddress = billingAddress;
             if (contactId != null)
             {
                 this.ContactId = contactId;
             }
 
-            if (customerId != null)
+            if (contactApiId != null)
             {
-                this.CustomerId = customerId;
+                this.ContactApiId = contactApiId;
             }
 
-            this.IdentityVerification = identityVerification;
-            this.LocationId = locationId;
-            if (previousAccountVaultApiId != null)
+            if (paylinkApiId != null)
             {
-                this.PreviousAccountVaultApiId = previousAccountVaultApiId;
+                this.PaylinkApiId = paylinkApiId;
             }
 
-            if (previousAccountVaultId != null)
+            if (achProductTransactionId != null)
             {
-                this.PreviousAccountVaultId = previousAccountVaultId;
+                this.AchProductTransactionId = achProductTransactionId;
             }
 
-            if (previousTransactionId != null)
+            if (expireDate != null)
             {
-                this.PreviousTransactionId = previousTransactionId;
+                this.ExpireDate = expireDate;
             }
 
-            this.TermsAgree = termsAgree;
-            if (termsAgreeIp != null)
+            this.DisplayProductTransactionReceiptDetails = displayProductTransactionReceiptDetails;
+            this.DisplayBillingFields = displayBillingFields;
+            if (deliveryMethod != null)
             {
-                this.TermsAgreeIp = termsAgreeIp;
+                this.DeliveryMethod = deliveryMethod;
             }
 
-            if (title != null)
+            if (cellPhone != null)
             {
-                this.Title = title;
+                this.CellPhone = cellPhone;
+            }
+
+            if (description != null)
+            {
+                this.Description = description;
+            }
+
+            this.StoreToken = storeToken;
+            if (storeTokenTitle != null)
+            {
+                this.StoreTokenTitle = storeTokenTitle;
+            }
+
+            if (paylinkAction != null)
+            {
+                this.PaylinkAction = paylinkAction;
+            }
+
+            this.BankFundedOnlyOverride = bankFundedOnlyOverride;
+            if (tags != null)
+            {
+                this.Tags = tags;
             }
 
             this.Id = id;
-            this.AccountType = accountType;
+            this.StatusId = statusId;
+            if (statusCode != null)
+            {
+                this.StatusCode = statusCode;
+            }
+
             this.Active = active;
-            this.CauSummaryStatusId = cauSummaryStatusId;
             this.CreatedTs = createdTs;
-            if (eSerialNumber != null)
-            {
-                this.ESerialNumber = eSerialNumber;
-            }
-
-            if (eTrackData != null)
-            {
-                this.ETrackData = eTrackData;
-            }
-
-            if (eFormat != null)
-            {
-                this.EFormat = eFormat;
-            }
-
-            if (eKeyedData != null)
-            {
-                this.EKeyedData = eKeyedData;
-            }
-
-            if (expiringInMonths != null)
-            {
-                this.ExpiringInMonths = expiringInMonths;
-            }
-
-            this.FirstSix = firstSix;
-            this.HasRecurring = hasRecurring;
-            this.LastFour = lastFour;
             this.ModifiedTs = modifiedTs;
-            this.PaymentMethod = paymentMethod;
-            if (ticket != null)
+            if (createdUserId != null)
             {
-                this.Ticket = ticket;
+                this.CreatedUserId = createdUserId;
             }
 
-            if (trackData != null)
+            if (modifiedUserId != null)
             {
-                this.TrackData = trackData;
+                this.ModifiedUserId = modifiedUserId;
             }
 
         }
 
         /// <summary>
-        /// Account holder name
+        /// Location ID
         /// </summary>
-        [JsonProperty("account_holder_name")]
-        public string AccountHolderName
+        [JsonProperty("location_id")]
+        public string LocationId
         {
             get
             {
-                return this.accountHolderName;
+                return this.locationId;
             }
 
             set
             {
-                this.shouldSerialize["account_holder_name"] = true;
-                this.accountHolderName = value;
+                this.shouldSerialize["location_id"] = true;
+                this.locationId = value;
             }
         }
 
         /// <summary>
-        /// Account number
+        /// cc_product_transaction_id
         /// </summary>
-        [JsonProperty("account_number")]
-        public string AccountNumber
+        [JsonProperty("cc_product_transaction_id")]
+        public string CcProductTransactionId
         {
             get
             {
-                return this.accountNumber;
+                return this.ccProductTransactionId;
             }
 
             set
             {
-                this.shouldSerialize["account_number"] = true;
-                this.accountNumber = value;
+                this.shouldSerialize["cc_product_transaction_id"] = true;
+                this.ccProductTransactionId = value;
             }
         }
 
         /// <summary>
-        /// This field can be used to correlate Account Vaults in our system to data within an outside software integration
+        /// Email
         /// </summary>
-        [JsonProperty("account_vault_api_id")]
-        public string AccountVaultApiId
+        [JsonProperty("email")]
+        public string Email
         {
             get
             {
-                return this.accountVaultApiId;
+                return this.email;
             }
 
             set
             {
-                this.shouldSerialize["account_vault_api_id"] = true;
-                this.accountVaultApiId = value;
+                this.shouldSerialize["email"] = true;
+                this.email = value;
             }
         }
 
         /// <summary>
-        /// Custom field 1 for API users to store custom data
+        /// Amount Due
         /// </summary>
-        [JsonProperty("accountvault_c1")]
-        public string AccountvaultC1
+        [JsonProperty("amount_due")]
+        public int AmountDue { get; set; }
+
+        /// <summary>
+        /// Location Api Id
+        /// </summary>
+        [JsonProperty("location_api_id")]
+        public string LocationApiId
         {
             get
             {
-                return this.accountvaultC1;
+                return this.locationApiId;
             }
 
             set
             {
-                this.shouldSerialize["accountvault_c1"] = true;
-                this.accountvaultC1 = value;
+                this.shouldSerialize["location_api_id"] = true;
+                this.locationApiId = value;
             }
         }
 
         /// <summary>
-        /// Custom field 2 for API users to store custom data
-        /// </summary>
-        [JsonProperty("accountvault_c2")]
-        public string AccountvaultC2
-        {
-            get
-            {
-                return this.accountvaultC2;
-            }
-
-            set
-            {
-                this.shouldSerialize["accountvault_c2"] = true;
-                this.accountvaultC2 = value;
-            }
-        }
-
-        /// <summary>
-        /// Custom field 3 for API users to store custom data
-        /// </summary>
-        [JsonProperty("accountvault_c3")]
-        public string AccountvaultC3
-        {
-            get
-            {
-                return this.accountvaultC3;
-            }
-
-            set
-            {
-                this.shouldSerialize["accountvault_c3"] = true;
-                this.accountvaultC3 = value;
-            }
-        }
-
-        /// <summary>
-        /// SEC code for the account
-        /// </summary>
-        [JsonProperty("ach_sec_code", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.AchSecCodeEnum? AchSecCode
-        {
-            get
-            {
-                return this.achSecCode;
-            }
-
-            set
-            {
-                this.shouldSerialize["ach_sec_code"] = true;
-                this.achSecCode = value;
-            }
-        }
-
-        /// <summary>
-        /// The Street portion of the address associated with the Credit Card (CC) or Bank Account (ACH).
-        /// </summary>
-        [JsonProperty("billing_address", NullValueHandling = NullValueHandling.Ignore)]
-        public Models.BillingAddress BillingAddress { get; set; }
-
-        /// <summary>
-        /// Used to associate the Account Vault with a Contact.
+        /// Contact Id
         /// </summary>
         [JsonProperty("contact_id")]
         public string ContactId
@@ -420,154 +328,252 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Used to store a customer identification number.
+        /// Contact Api Id
         /// </summary>
-        [JsonProperty("customer_id")]
-        public string CustomerId
+        [JsonProperty("contact_api_id")]
+        public string ContactApiId
         {
             get
             {
-                return this.customerId;
+                return this.contactApiId;
             }
 
             set
             {
-                this.shouldSerialize["customer_id"] = true;
-                this.customerId = value;
+                this.shouldSerialize["contact_api_id"] = true;
+                this.contactApiId = value;
             }
         }
 
         /// <summary>
-        /// Identity verification
+        /// Paylinke Api Id
         /// </summary>
-        [JsonProperty("identity_verification", NullValueHandling = NullValueHandling.Ignore)]
-        public Models.IdentityVerification IdentityVerification { get; set; }
-
-        /// <summary>
-        /// A valid Location Id associated with the Contact for this Token
-        /// </summary>
-        [JsonProperty("location_id")]
-        public string LocationId { get; set; }
-
-        /// <summary>
-        /// Can be used to pull payment info from a previous account vault api id.
-        /// </summary>
-        [JsonProperty("previous_account_vault_api_id")]
-        public string PreviousAccountVaultApiId
+        [JsonProperty("paylink_api_id")]
+        public string PaylinkApiId
         {
             get
             {
-                return this.previousAccountVaultApiId;
+                return this.paylinkApiId;
             }
 
             set
             {
-                this.shouldSerialize["previous_account_vault_api_id"] = true;
-                this.previousAccountVaultApiId = value;
+                this.shouldSerialize["paylink_api_id"] = true;
+                this.paylinkApiId = value;
             }
         }
 
         /// <summary>
-        /// Can be used to pull payment info from a previous account vault.
+        /// Ach Product Transaction Id
         /// </summary>
-        [JsonProperty("previous_account_vault_id")]
-        public string PreviousAccountVaultId
+        [JsonProperty("ach_product_transaction_id")]
+        public string AchProductTransactionId
         {
             get
             {
-                return this.previousAccountVaultId;
+                return this.achProductTransactionId;
             }
 
             set
             {
-                this.shouldSerialize["previous_account_vault_id"] = true;
-                this.previousAccountVaultId = value;
+                this.shouldSerialize["ach_product_transaction_id"] = true;
+                this.achProductTransactionId = value;
             }
         }
 
         /// <summary>
-        /// Can be used to pull payment info from a previous transaction.
+        /// Expire Date
         /// </summary>
-        [JsonProperty("previous_transaction_id")]
-        public string PreviousTransactionId
+        [JsonProperty("expire_date")]
+        public string ExpireDate
         {
             get
             {
-                return this.previousTransactionId;
+                return this.expireDate;
             }
 
             set
             {
-                this.shouldSerialize["previous_transaction_id"] = true;
-                this.previousTransactionId = value;
+                this.shouldSerialize["expire_date"] = true;
+                this.expireDate = value;
             }
         }
 
         /// <summary>
-        /// Terms agreement.
+        /// Display Product Transaction Receipt Details
         /// </summary>
-        [JsonProperty("terms_agree", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? TermsAgree { get; set; }
+        [JsonProperty("display_product_transaction_receipt_details", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? DisplayProductTransactionReceiptDetails { get; set; }
 
         /// <summary>
-        /// The ip address of the client that agreed to terms.
+        /// Display Billing Fields
         /// </summary>
-        [JsonProperty("terms_agree_ip")]
-        public string TermsAgreeIp
+        [JsonProperty("display_billing_fields", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? DisplayBillingFields { get; set; }
+
+        /// <summary>
+        /// Delivery Method
+        /// >0 - Do not send
+        /// >
+        /// >1 - Email
+        /// >
+        /// >2 - SMS
+        /// >
+        /// >3 - Both
+        /// >
+        /// </summary>
+        [JsonProperty("delivery_method")]
+        public Models.DeliveryMethodEnum? DeliveryMethod
         {
             get
             {
-                return this.termsAgreeIp;
+                return this.deliveryMethod;
             }
 
             set
             {
-                this.shouldSerialize["terms_agree_ip"] = true;
-                this.termsAgreeIp = value;
+                this.shouldSerialize["delivery_method"] = true;
+                this.deliveryMethod = value;
             }
         }
 
         /// <summary>
-        /// Used to describe the Token for easier identification within our UI.
+        /// Cell Phone
         /// </summary>
-        [JsonProperty("title")]
-        public string Title
+        [JsonProperty("cell_phone")]
+        public string CellPhone
         {
             get
             {
-                return this.title;
+                return this.cellPhone;
             }
 
             set
             {
-                this.shouldSerialize["title"] = true;
-                this.title = value;
+                this.shouldSerialize["cell_phone"] = true;
+                this.cellPhone = value;
             }
         }
 
         /// <summary>
-        /// A unique, system-generated identifier for the Token.
+        /// Description
+        /// </summary>
+        [JsonProperty("description")]
+        public string Description
+        {
+            get
+            {
+                return this.description;
+            }
+
+            set
+            {
+                this.shouldSerialize["description"] = true;
+                this.description = value;
+            }
+        }
+
+        /// <summary>
+        /// Store Token
+        /// </summary>
+        [JsonProperty("store_token", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? StoreToken { get; set; }
+
+        /// <summary>
+        /// Store Token Title
+        /// </summary>
+        [JsonProperty("store_token_title")]
+        public string StoreTokenTitle
+        {
+            get
+            {
+                return this.storeTokenTitle;
+            }
+
+            set
+            {
+                this.shouldSerialize["store_token_title"] = true;
+                this.storeTokenTitle = value;
+            }
+        }
+
+        /// <summary>
+        /// Paylink Action
+        /// </summary>
+        [JsonProperty("paylink_action")]
+        public Models.PaylinkActionEnum? PaylinkAction
+        {
+            get
+            {
+                return this.paylinkAction;
+            }
+
+            set
+            {
+                this.shouldSerialize["paylink_action"] = true;
+                this.paylinkAction = value;
+            }
+        }
+
+        /// <summary>
+        /// Bank Funded Only Override
+        /// </summary>
+        [JsonProperty("bank_funded_only_override", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? BankFundedOnlyOverride { get; set; }
+
+        /// <summary>
+        /// Used to apply tags to a paylink.
+        /// </summary>
+        [JsonProperty("tags")]
+        public List<string> Tags
+        {
+            get
+            {
+                return this.tags;
+            }
+
+            set
+            {
+                this.shouldSerialize["tags"] = true;
+                this.tags = value;
+            }
+        }
+
+        /// <summary>
+        /// Paylink Id
         /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
 
         /// <summary>
-        /// Account type
+        /// (DEPRECATED) Status Id
         /// </summary>
-        [JsonProperty("account_type")]
-        public string AccountType { get; set; }
+        [JsonProperty("status_id", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? StatusId { get; set; }
 
         /// <summary>
-        /// Register is Active
+        /// Status Code
+        /// </summary>
+        [JsonProperty("status_code")]
+        public Models.StatusCode12Enum? StatusCode
+        {
+            get
+            {
+                return this.statusCode;
+            }
+
+            set
+            {
+                this.shouldSerialize["status_code"] = true;
+                this.statusCode = value;
+            }
+        }
+
+        /// <summary>
+        /// Active
         /// </summary>
         [JsonProperty("active", NullValueHandling = NullValueHandling.Ignore)]
         public bool? Active { get; set; }
-
-        /// <summary>
-        /// CAU Summary Status ID.
-        /// </summary>
-        [JsonProperty("cau_summary_status_id")]
-        public Models.CauSummaryStatusIdEnum CauSummaryStatusId { get; set; }
 
         /// <summary>
         /// Created Time Stamp
@@ -576,158 +582,44 @@ namespace FortisAPI.Standard.Models
         public int CreatedTs { get; set; }
 
         /// <summary>
-        /// E Serial Number
-        /// </summary>
-        [JsonProperty("e_serial_number")]
-        public string ESerialNumber
-        {
-            get
-            {
-                return this.eSerialNumber;
-            }
-
-            set
-            {
-                this.shouldSerialize["e_serial_number"] = true;
-                this.eSerialNumber = value;
-            }
-        }
-
-        /// <summary>
-        /// E Track Data
-        /// </summary>
-        [JsonProperty("e_track_data")]
-        public string ETrackData
-        {
-            get
-            {
-                return this.eTrackData;
-            }
-
-            set
-            {
-                this.shouldSerialize["e_track_data"] = true;
-                this.eTrackData = value;
-            }
-        }
-
-        /// <summary>
-        /// E Format
-        /// </summary>
-        [JsonProperty("e_format")]
-        public string EFormat
-        {
-            get
-            {
-                return this.eFormat;
-            }
-
-            set
-            {
-                this.shouldSerialize["e_format"] = true;
-                this.eFormat = value;
-            }
-        }
-
-        /// <summary>
-        /// E Keyed Data
-        /// </summary>
-        [JsonProperty("e_keyed_data")]
-        public string EKeyedData
-        {
-            get
-            {
-                return this.eKeyedData;
-            }
-
-            set
-            {
-                this.shouldSerialize["e_keyed_data"] = true;
-                this.eKeyedData = value;
-            }
-        }
-
-        /// <summary>
-        /// Determined by API based on card exp_date.
-        /// </summary>
-        [JsonProperty("expiring_in_months")]
-        public int? ExpiringInMonths
-        {
-            get
-            {
-                return this.expiringInMonths;
-            }
-
-            set
-            {
-                this.shouldSerialize["expiring_in_months"] = true;
-                this.expiringInMonths = value;
-            }
-        }
-
-        /// <summary>
-        /// The first six numbers of an account number.  System will generate a value for this field automatically.
-        /// </summary>
-        [JsonProperty("first_six")]
-        public string FirstSix { get; set; }
-
-        /// <summary>
-        /// True indicates that this account vault is tied to a Recurring Payment
-        /// </summary>
-        [JsonProperty("has_recurring")]
-        public bool HasRecurring { get; set; }
-
-        /// <summary>
-        /// The last four numbers of an account number.  System will generate a value for this field automatically.
-        /// </summary>
-        [JsonProperty("last_four")]
-        public string LastFour { get; set; }
-
-        /// <summary>
         /// Modified Time Stamp
         /// </summary>
         [JsonProperty("modified_ts")]
         public int ModifiedTs { get; set; }
 
         /// <summary>
-        /// Must be provided as either 'cc' or 'ach'.
+        /// User ID Created the register
         /// </summary>
-        [JsonProperty("payment_method", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.PaymentMethod2Enum PaymentMethod { get; set; }
-
-        /// <summary>
-        /// A valid ticket that was created to store the token.
-        /// </summary>
-        [JsonProperty("ticket")]
-        public string Ticket
+        [JsonProperty("created_user_id")]
+        public string CreatedUserId
         {
             get
             {
-                return this.ticket;
+                return this.createdUserId;
             }
 
             set
             {
-                this.shouldSerialize["ticket"] = true;
-                this.ticket = value;
+                this.shouldSerialize["created_user_id"] = true;
+                this.createdUserId = value;
             }
         }
 
         /// <summary>
-        /// Track Data from a magnetic card swipe.
+        /// Last User ID that updated the register
         /// </summary>
-        [JsonProperty("track_data")]
-        public string TrackData
+        [JsonProperty("modified_user_id")]
+        public string ModifiedUserId
         {
             get
             {
-                return this.trackData;
+                return this.modifiedUserId;
             }
 
             set
             {
-                this.shouldSerialize["track_data"] = true;
-                this.trackData = value;
+                this.shouldSerialize["modified_user_id"] = true;
+                this.modifiedUserId = value;
             }
         }
 
@@ -744,57 +636,33 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAccountHolderName()
+        public void UnsetLocationId()
         {
-            this.shouldSerialize["account_holder_name"] = false;
+            this.shouldSerialize["location_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAccountNumber()
+        public void UnsetCcProductTransactionId()
         {
-            this.shouldSerialize["account_number"] = false;
+            this.shouldSerialize["cc_product_transaction_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAccountVaultApiId()
+        public void UnsetEmail()
         {
-            this.shouldSerialize["account_vault_api_id"] = false;
+            this.shouldSerialize["email"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAccountvaultC1()
+        public void UnsetLocationApiId()
         {
-            this.shouldSerialize["accountvault_c1"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetAccountvaultC2()
-        {
-            this.shouldSerialize["accountvault_c2"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetAccountvaultC3()
-        {
-            this.shouldSerialize["accountvault_c3"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetAchSecCode()
-        {
-            this.shouldSerialize["ach_sec_code"] = false;
+            this.shouldSerialize["location_api_id"] = false;
         }
 
         /// <summary>
@@ -808,168 +676,141 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetCustomerId()
+        public void UnsetContactApiId()
         {
-            this.shouldSerialize["customer_id"] = false;
+            this.shouldSerialize["contact_api_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetPreviousAccountVaultApiId()
+        public void UnsetPaylinkApiId()
         {
-            this.shouldSerialize["previous_account_vault_api_id"] = false;
+            this.shouldSerialize["paylink_api_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetPreviousAccountVaultId()
+        public void UnsetAchProductTransactionId()
         {
-            this.shouldSerialize["previous_account_vault_id"] = false;
+            this.shouldSerialize["ach_product_transaction_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetPreviousTransactionId()
+        public void UnsetExpireDate()
         {
-            this.shouldSerialize["previous_transaction_id"] = false;
+            this.shouldSerialize["expire_date"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTermsAgreeIp()
+        public void UnsetDeliveryMethod()
         {
-            this.shouldSerialize["terms_agree_ip"] = false;
+            this.shouldSerialize["delivery_method"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTitle()
+        public void UnsetCellPhone()
         {
-            this.shouldSerialize["title"] = false;
+            this.shouldSerialize["cell_phone"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetESerialNumber()
+        public void UnsetDescription()
         {
-            this.shouldSerialize["e_serial_number"] = false;
+            this.shouldSerialize["description"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetETrackData()
+        public void UnsetStoreTokenTitle()
         {
-            this.shouldSerialize["e_track_data"] = false;
+            this.shouldSerialize["store_token_title"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetEFormat()
+        public void UnsetPaylinkAction()
         {
-            this.shouldSerialize["e_format"] = false;
+            this.shouldSerialize["paylink_action"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetEKeyedData()
+        public void UnsetTags()
         {
-            this.shouldSerialize["e_keyed_data"] = false;
+            this.shouldSerialize["tags"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetExpiringInMonths()
+        public void UnsetStatusCode()
         {
-            this.shouldSerialize["expiring_in_months"] = false;
+            this.shouldSerialize["status_code"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTicket()
+        public void UnsetCreatedUserId()
         {
-            this.shouldSerialize["ticket"] = false;
+            this.shouldSerialize["created_user_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetTrackData()
+        public void UnsetModifiedUserId()
         {
-            this.shouldSerialize["track_data"] = false;
+            this.shouldSerialize["modified_user_id"] = false;
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAccountHolderName()
+        public bool ShouldSerializeLocationId()
         {
-            return this.shouldSerialize["account_holder_name"];
+            return this.shouldSerialize["location_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAccountNumber()
+        public bool ShouldSerializeCcProductTransactionId()
         {
-            return this.shouldSerialize["account_number"];
+            return this.shouldSerialize["cc_product_transaction_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAccountVaultApiId()
+        public bool ShouldSerializeEmail()
         {
-            return this.shouldSerialize["account_vault_api_id"];
+            return this.shouldSerialize["email"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAccountvaultC1()
+        public bool ShouldSerializeLocationApiId()
         {
-            return this.shouldSerialize["accountvault_c1"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAccountvaultC2()
-        {
-            return this.shouldSerialize["accountvault_c2"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAccountvaultC3()
-        {
-            return this.shouldSerialize["accountvault_c3"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAchSecCode()
-        {
-            return this.shouldSerialize["ach_sec_code"];
+            return this.shouldSerialize["location_api_id"];
         }
 
         /// <summary>
@@ -985,117 +826,117 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeCustomerId()
+        public bool ShouldSerializeContactApiId()
         {
-            return this.shouldSerialize["customer_id"];
+            return this.shouldSerialize["contact_api_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializePreviousAccountVaultApiId()
+        public bool ShouldSerializePaylinkApiId()
         {
-            return this.shouldSerialize["previous_account_vault_api_id"];
+            return this.shouldSerialize["paylink_api_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializePreviousAccountVaultId()
+        public bool ShouldSerializeAchProductTransactionId()
         {
-            return this.shouldSerialize["previous_account_vault_id"];
+            return this.shouldSerialize["ach_product_transaction_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializePreviousTransactionId()
+        public bool ShouldSerializeExpireDate()
         {
-            return this.shouldSerialize["previous_transaction_id"];
+            return this.shouldSerialize["expire_date"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTermsAgreeIp()
+        public bool ShouldSerializeDeliveryMethod()
         {
-            return this.shouldSerialize["terms_agree_ip"];
+            return this.shouldSerialize["delivery_method"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTitle()
+        public bool ShouldSerializeCellPhone()
         {
-            return this.shouldSerialize["title"];
+            return this.shouldSerialize["cell_phone"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeESerialNumber()
+        public bool ShouldSerializeDescription()
         {
-            return this.shouldSerialize["e_serial_number"];
+            return this.shouldSerialize["description"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeETrackData()
+        public bool ShouldSerializeStoreTokenTitle()
         {
-            return this.shouldSerialize["e_track_data"];
+            return this.shouldSerialize["store_token_title"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeEFormat()
+        public bool ShouldSerializePaylinkAction()
         {
-            return this.shouldSerialize["e_format"];
+            return this.shouldSerialize["paylink_action"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeEKeyedData()
+        public bool ShouldSerializeTags()
         {
-            return this.shouldSerialize["e_keyed_data"];
+            return this.shouldSerialize["tags"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeExpiringInMonths()
+        public bool ShouldSerializeStatusCode()
         {
-            return this.shouldSerialize["expiring_in_months"];
+            return this.shouldSerialize["status_code"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTicket()
+        public bool ShouldSerializeCreatedUserId()
         {
-            return this.shouldSerialize["ticket"];
+            return this.shouldSerialize["created_user_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTrackData()
+        public bool ShouldSerializeModifiedUserId()
         {
-            return this.shouldSerialize["track_data"];
+            return this.shouldSerialize["modified_user_id"];
         }
 
         /// <inheritdoc/>
@@ -1110,87 +951,72 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Data13 other &&
-                ((this.AccountHolderName == null && other.AccountHolderName == null) || (this.AccountHolderName?.Equals(other.AccountHolderName) == true)) &&
-                ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
-                ((this.AccountVaultApiId == null && other.AccountVaultApiId == null) || (this.AccountVaultApiId?.Equals(other.AccountVaultApiId) == true)) &&
-                ((this.AccountvaultC1 == null && other.AccountvaultC1 == null) || (this.AccountvaultC1?.Equals(other.AccountvaultC1) == true)) &&
-                ((this.AccountvaultC2 == null && other.AccountvaultC2 == null) || (this.AccountvaultC2?.Equals(other.AccountvaultC2) == true)) &&
-                ((this.AccountvaultC3 == null && other.AccountvaultC3 == null) || (this.AccountvaultC3?.Equals(other.AccountvaultC3) == true)) &&
-                ((this.AchSecCode == null && other.AchSecCode == null) || (this.AchSecCode?.Equals(other.AchSecCode) == true)) &&
-                ((this.BillingAddress == null && other.BillingAddress == null) || (this.BillingAddress?.Equals(other.BillingAddress) == true)) &&
+            return obj is Data13 other &&                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
+                ((this.CcProductTransactionId == null && other.CcProductTransactionId == null) || (this.CcProductTransactionId?.Equals(other.CcProductTransactionId) == true)) &&
+                ((this.Email == null && other.Email == null) || (this.Email?.Equals(other.Email) == true)) &&
+                this.AmountDue.Equals(other.AmountDue) &&
+                ((this.LocationApiId == null && other.LocationApiId == null) || (this.LocationApiId?.Equals(other.LocationApiId) == true)) &&
                 ((this.ContactId == null && other.ContactId == null) || (this.ContactId?.Equals(other.ContactId) == true)) &&
-                ((this.CustomerId == null && other.CustomerId == null) || (this.CustomerId?.Equals(other.CustomerId) == true)) &&
-                ((this.IdentityVerification == null && other.IdentityVerification == null) || (this.IdentityVerification?.Equals(other.IdentityVerification) == true)) &&
-                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
-                ((this.PreviousAccountVaultApiId == null && other.PreviousAccountVaultApiId == null) || (this.PreviousAccountVaultApiId?.Equals(other.PreviousAccountVaultApiId) == true)) &&
-                ((this.PreviousAccountVaultId == null && other.PreviousAccountVaultId == null) || (this.PreviousAccountVaultId?.Equals(other.PreviousAccountVaultId) == true)) &&
-                ((this.PreviousTransactionId == null && other.PreviousTransactionId == null) || (this.PreviousTransactionId?.Equals(other.PreviousTransactionId) == true)) &&
-                ((this.TermsAgree == null && other.TermsAgree == null) || (this.TermsAgree?.Equals(other.TermsAgree) == true)) &&
-                ((this.TermsAgreeIp == null && other.TermsAgreeIp == null) || (this.TermsAgreeIp?.Equals(other.TermsAgreeIp) == true)) &&
-                ((this.Title == null && other.Title == null) || (this.Title?.Equals(other.Title) == true)) &&
+                ((this.ContactApiId == null && other.ContactApiId == null) || (this.ContactApiId?.Equals(other.ContactApiId) == true)) &&
+                ((this.PaylinkApiId == null && other.PaylinkApiId == null) || (this.PaylinkApiId?.Equals(other.PaylinkApiId) == true)) &&
+                ((this.AchProductTransactionId == null && other.AchProductTransactionId == null) || (this.AchProductTransactionId?.Equals(other.AchProductTransactionId) == true)) &&
+                ((this.ExpireDate == null && other.ExpireDate == null) || (this.ExpireDate?.Equals(other.ExpireDate) == true)) &&
+                ((this.DisplayProductTransactionReceiptDetails == null && other.DisplayProductTransactionReceiptDetails == null) || (this.DisplayProductTransactionReceiptDetails?.Equals(other.DisplayProductTransactionReceiptDetails) == true)) &&
+                ((this.DisplayBillingFields == null && other.DisplayBillingFields == null) || (this.DisplayBillingFields?.Equals(other.DisplayBillingFields) == true)) &&
+                ((this.DeliveryMethod == null && other.DeliveryMethod == null) || (this.DeliveryMethod?.Equals(other.DeliveryMethod) == true)) &&
+                ((this.CellPhone == null && other.CellPhone == null) || (this.CellPhone?.Equals(other.CellPhone) == true)) &&
+                ((this.Description == null && other.Description == null) || (this.Description?.Equals(other.Description) == true)) &&
+                ((this.StoreToken == null && other.StoreToken == null) || (this.StoreToken?.Equals(other.StoreToken) == true)) &&
+                ((this.StoreTokenTitle == null && other.StoreTokenTitle == null) || (this.StoreTokenTitle?.Equals(other.StoreTokenTitle) == true)) &&
+                ((this.PaylinkAction == null && other.PaylinkAction == null) || (this.PaylinkAction?.Equals(other.PaylinkAction) == true)) &&
+                ((this.BankFundedOnlyOverride == null && other.BankFundedOnlyOverride == null) || (this.BankFundedOnlyOverride?.Equals(other.BankFundedOnlyOverride) == true)) &&
+                ((this.Tags == null && other.Tags == null) || (this.Tags?.Equals(other.Tags) == true)) &&
                 ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
-                ((this.AccountType == null && other.AccountType == null) || (this.AccountType?.Equals(other.AccountType) == true)) &&
+                ((this.StatusId == null && other.StatusId == null) || (this.StatusId?.Equals(other.StatusId) == true)) &&
+                ((this.StatusCode == null && other.StatusCode == null) || (this.StatusCode?.Equals(other.StatusCode) == true)) &&
                 ((this.Active == null && other.Active == null) || (this.Active?.Equals(other.Active) == true)) &&
-                this.CauSummaryStatusId.Equals(other.CauSummaryStatusId) &&
                 this.CreatedTs.Equals(other.CreatedTs) &&
-                ((this.ESerialNumber == null && other.ESerialNumber == null) || (this.ESerialNumber?.Equals(other.ESerialNumber) == true)) &&
-                ((this.ETrackData == null && other.ETrackData == null) || (this.ETrackData?.Equals(other.ETrackData) == true)) &&
-                ((this.EFormat == null && other.EFormat == null) || (this.EFormat?.Equals(other.EFormat) == true)) &&
-                ((this.EKeyedData == null && other.EKeyedData == null) || (this.EKeyedData?.Equals(other.EKeyedData) == true)) &&
-                ((this.ExpiringInMonths == null && other.ExpiringInMonths == null) || (this.ExpiringInMonths?.Equals(other.ExpiringInMonths) == true)) &&
-                ((this.FirstSix == null && other.FirstSix == null) || (this.FirstSix?.Equals(other.FirstSix) == true)) &&
-                this.HasRecurring.Equals(other.HasRecurring) &&
-                ((this.LastFour == null && other.LastFour == null) || (this.LastFour?.Equals(other.LastFour) == true)) &&
                 this.ModifiedTs.Equals(other.ModifiedTs) &&
-                this.PaymentMethod.Equals(other.PaymentMethod) &&
-                ((this.Ticket == null && other.Ticket == null) || (this.Ticket?.Equals(other.Ticket) == true)) &&
-                ((this.TrackData == null && other.TrackData == null) || (this.TrackData?.Equals(other.TrackData) == true));
+                ((this.CreatedUserId == null && other.CreatedUserId == null) || (this.CreatedUserId?.Equals(other.CreatedUserId) == true)) &&
+                ((this.ModifiedUserId == null && other.ModifiedUserId == null) || (this.ModifiedUserId?.Equals(other.ModifiedUserId) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.AccountHolderName = {(this.AccountHolderName == null ? "null" : this.AccountHolderName == string.Empty ? "" : this.AccountHolderName)}");
-            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber == string.Empty ? "" : this.AccountNumber)}");
-            toStringOutput.Add($"this.AccountVaultApiId = {(this.AccountVaultApiId == null ? "null" : this.AccountVaultApiId == string.Empty ? "" : this.AccountVaultApiId)}");
-            toStringOutput.Add($"this.AccountvaultC1 = {(this.AccountvaultC1 == null ? "null" : this.AccountvaultC1 == string.Empty ? "" : this.AccountvaultC1)}");
-            toStringOutput.Add($"this.AccountvaultC2 = {(this.AccountvaultC2 == null ? "null" : this.AccountvaultC2 == string.Empty ? "" : this.AccountvaultC2)}");
-            toStringOutput.Add($"this.AccountvaultC3 = {(this.AccountvaultC3 == null ? "null" : this.AccountvaultC3 == string.Empty ? "" : this.AccountvaultC3)}");
-            toStringOutput.Add($"this.AchSecCode = {(this.AchSecCode == null ? "null" : this.AchSecCode.ToString())}");
-            toStringOutput.Add($"this.BillingAddress = {(this.BillingAddress == null ? "null" : this.BillingAddress.ToString())}");
-            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId == string.Empty ? "" : this.ContactId)}");
-            toStringOutput.Add($"this.CustomerId = {(this.CustomerId == null ? "null" : this.CustomerId == string.Empty ? "" : this.CustomerId)}");
-            toStringOutput.Add($"this.IdentityVerification = {(this.IdentityVerification == null ? "null" : this.IdentityVerification.ToString())}");
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.PreviousAccountVaultApiId = {(this.PreviousAccountVaultApiId == null ? "null" : this.PreviousAccountVaultApiId == string.Empty ? "" : this.PreviousAccountVaultApiId)}");
-            toStringOutput.Add($"this.PreviousAccountVaultId = {(this.PreviousAccountVaultId == null ? "null" : this.PreviousAccountVaultId == string.Empty ? "" : this.PreviousAccountVaultId)}");
-            toStringOutput.Add($"this.PreviousTransactionId = {(this.PreviousTransactionId == null ? "null" : this.PreviousTransactionId == string.Empty ? "" : this.PreviousTransactionId)}");
-            toStringOutput.Add($"this.TermsAgree = {(this.TermsAgree == null ? "null" : this.TermsAgree.ToString())}");
-            toStringOutput.Add($"this.TermsAgreeIp = {(this.TermsAgreeIp == null ? "null" : this.TermsAgreeIp == string.Empty ? "" : this.TermsAgreeIp)}");
-            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title == string.Empty ? "" : this.Title)}");
-            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id == string.Empty ? "" : this.Id)}");
-            toStringOutput.Add($"this.AccountType = {(this.AccountType == null ? "null" : this.AccountType == string.Empty ? "" : this.AccountType)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.CcProductTransactionId = {(this.CcProductTransactionId == null ? "null" : this.CcProductTransactionId)}");
+            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email)}");
+            toStringOutput.Add($"this.AmountDue = {this.AmountDue}");
+            toStringOutput.Add($"this.LocationApiId = {(this.LocationApiId == null ? "null" : this.LocationApiId)}");
+            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId)}");
+            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId)}");
+            toStringOutput.Add($"this.PaylinkApiId = {(this.PaylinkApiId == null ? "null" : this.PaylinkApiId)}");
+            toStringOutput.Add($"this.AchProductTransactionId = {(this.AchProductTransactionId == null ? "null" : this.AchProductTransactionId)}");
+            toStringOutput.Add($"this.ExpireDate = {(this.ExpireDate == null ? "null" : this.ExpireDate)}");
+            toStringOutput.Add($"this.DisplayProductTransactionReceiptDetails = {(this.DisplayProductTransactionReceiptDetails == null ? "null" : this.DisplayProductTransactionReceiptDetails.ToString())}");
+            toStringOutput.Add($"this.DisplayBillingFields = {(this.DisplayBillingFields == null ? "null" : this.DisplayBillingFields.ToString())}");
+            toStringOutput.Add($"this.DeliveryMethod = {(this.DeliveryMethod == null ? "null" : this.DeliveryMethod.ToString())}");
+            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone)}");
+            toStringOutput.Add($"this.Description = {(this.Description == null ? "null" : this.Description)}");
+            toStringOutput.Add($"this.StoreToken = {(this.StoreToken == null ? "null" : this.StoreToken.ToString())}");
+            toStringOutput.Add($"this.StoreTokenTitle = {(this.StoreTokenTitle == null ? "null" : this.StoreTokenTitle)}");
+            toStringOutput.Add($"this.PaylinkAction = {(this.PaylinkAction == null ? "null" : this.PaylinkAction.ToString())}");
+            toStringOutput.Add($"this.BankFundedOnlyOverride = {(this.BankFundedOnlyOverride == null ? "null" : this.BankFundedOnlyOverride.ToString())}");
+            toStringOutput.Add($"this.Tags = {(this.Tags == null ? "null" : $"[{string.Join(", ", this.Tags)} ]")}");
+            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id)}");
+            toStringOutput.Add($"this.StatusId = {(this.StatusId == null ? "null" : this.StatusId.ToString())}");
+            toStringOutput.Add($"this.StatusCode = {(this.StatusCode == null ? "null" : this.StatusCode.ToString())}");
             toStringOutput.Add($"this.Active = {(this.Active == null ? "null" : this.Active.ToString())}");
-            toStringOutput.Add($"this.CauSummaryStatusId = {this.CauSummaryStatusId}");
             toStringOutput.Add($"this.CreatedTs = {this.CreatedTs}");
-            toStringOutput.Add($"this.ESerialNumber = {(this.ESerialNumber == null ? "null" : this.ESerialNumber == string.Empty ? "" : this.ESerialNumber)}");
-            toStringOutput.Add($"this.ETrackData = {(this.ETrackData == null ? "null" : this.ETrackData == string.Empty ? "" : this.ETrackData)}");
-            toStringOutput.Add($"this.EFormat = {(this.EFormat == null ? "null" : this.EFormat == string.Empty ? "" : this.EFormat)}");
-            toStringOutput.Add($"this.EKeyedData = {(this.EKeyedData == null ? "null" : this.EKeyedData == string.Empty ? "" : this.EKeyedData)}");
-            toStringOutput.Add($"this.ExpiringInMonths = {(this.ExpiringInMonths == null ? "null" : this.ExpiringInMonths.ToString())}");
-            toStringOutput.Add($"this.FirstSix = {(this.FirstSix == null ? "null" : this.FirstSix == string.Empty ? "" : this.FirstSix)}");
-            toStringOutput.Add($"this.HasRecurring = {this.HasRecurring}");
-            toStringOutput.Add($"this.LastFour = {(this.LastFour == null ? "null" : this.LastFour == string.Empty ? "" : this.LastFour)}");
             toStringOutput.Add($"this.ModifiedTs = {this.ModifiedTs}");
-            toStringOutput.Add($"this.PaymentMethod = {this.PaymentMethod}");
-            toStringOutput.Add($"this.Ticket = {(this.Ticket == null ? "null" : this.Ticket == string.Empty ? "" : this.Ticket)}");
-            toStringOutput.Add($"this.TrackData = {(this.TrackData == null ? "null" : this.TrackData == string.Empty ? "" : this.TrackData)}");
+            toStringOutput.Add($"this.CreatedUserId = {(this.CreatedUserId == null ? "null" : this.CreatedUserId)}");
+            toStringOutput.Add($"this.ModifiedUserId = {(this.ModifiedUserId == null ? "null" : this.ModifiedUserId)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

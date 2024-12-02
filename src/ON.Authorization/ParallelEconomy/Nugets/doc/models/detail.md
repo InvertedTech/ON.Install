@@ -12,16 +12,22 @@
 | `Message` | `string` | Optional | - |
 | `Path` | `List<string>` | Optional | - |
 | `Type` | `string` | Optional | - |
-| `Context` | [`Models.Context`](../../doc/models/context.md) | Optional | - |
+| `Context` | [`Context`](../../doc/models/context.md) | Optional | - |
 
 ## Example (as JSON)
 
 ```json
 {
-  "message": null,
-  "path": null,
-  "type": null,
-  "context": null
+  "message": "\"fieldName\" is required",
+  "type": "any.required",
+  "path": [
+    "path8",
+    "path9"
+  ],
+  "context": {
+    "key": "key2",
+    "label": "label2"
+  }
 }
 ```
 

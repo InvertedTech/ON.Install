@@ -17,9 +17,9 @@
 
 ```json
 {
-  "statusCode": null,
-  "error": null,
-  "message": null
+  "statusCode": 401,
+  "error": "Unauthorized",
+  "message": "Invalid token"
 }
 ```
 

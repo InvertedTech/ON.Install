@@ -301,6 +301,14 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                         ModifiedBy = (userToken?.Id ?? newGuid).ToString(),
                         Data = new()
                         {
+                            FirstName = request.FirstName,
+                            LastName = request.LastName,
+                            MailingAddressLine1 = request.MailingAddressLine1,
+                            MailingAddressLine2 = request.MailingAddressLine2,
+                            MailingAddressCity = request.MailingAddressCity,
+                            MailingAddressState = request.MailingAddressState,
+                            MailingAddressPostalCode = request.MailingAddressPostalCode,
+                            MailingAddressCountryCode = request.MailingAddressCountryCode,
                         },
                     },
                 },
@@ -675,6 +683,17 @@ namespace ON.Authentication.SimpleAuth.Service.Services
             return new() { Record = record?.Normal };
         }
 
+        [Authorize(Roles = ONUser.ROLE_IS_ADMIN_OR_OWNER_OR_SERVICE_OR_BOT)]
+        public override async Task<GetOtherUserByEmailResponse> GetOtherUserByEmail(GetOtherUserByEmailRequest request, ServerCallContext context)
+        {
+            if (offlineHelper.IsOffline)
+                return new();
+
+            var record = await dataProvider.GetByEmail(request.Email);
+
+            return new() { Record = record?.Normal };
+        }
+
         [AllowAnonymous]
         public override async Task<GetOtherPublicUserResponse> GetOtherPublicUser(GetOtherPublicUserRequest request, ServerCallContext context)
         {
@@ -835,6 +854,14 @@ namespace ON.Authentication.SimpleAuth.Service.Services
                 record.Normal.Public.Data.Bio = request.Bio;
 
                 record.Normal.Private.ModifiedBy = userToken.Id.ToString();
+                record.Normal.Private.Data.FirstName = request.FirstName;
+                record.Normal.Private.Data.LastName = request.LastName;
+                record.Normal.Private.Data.MailingAddressLine1 = request.MailingAddressLine1;
+                record.Normal.Private.Data.MailingAddressLine2 = request.MailingAddressLine2;
+                record.Normal.Private.Data.MailingAddressCity = request.MailingAddressCity;
+                record.Normal.Private.Data.MailingAddressState = request.MailingAddressState;
+                record.Normal.Private.Data.MailingAddressPostalCode = request.MailingAddressPostalCode;
+                record.Normal.Private.Data.MailingAddressCountryCode = request.MailingAddressCountryCode;
 
                 await dataProvider.Save(record);
 
@@ -905,6 +932,14 @@ namespace ON.Authentication.SimpleAuth.Service.Services
 
                 record.Normal.Public.ModifiedOnUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow);
                 record.Normal.Private.ModifiedBy = userToken.Id.ToString();
+                record.Normal.Private.Data.FirstName = request.FirstName;
+                record.Normal.Private.Data.LastName = request.LastName;
+                record.Normal.Private.Data.MailingAddressLine1 = request.MailingAddressLine1;
+                record.Normal.Private.Data.MailingAddressLine2 = request.MailingAddressLine2;
+                record.Normal.Private.Data.MailingAddressCity = request.MailingAddressCity;
+                record.Normal.Private.Data.MailingAddressState = request.MailingAddressState;
+                record.Normal.Private.Data.MailingAddressPostalCode = request.MailingAddressPostalCode;
+                record.Normal.Private.Data.MailingAddressCountryCode = request.MailingAddressCountryCode;
 
                 await dataProvider.Save(record);
                 var otherClaims = await claimsClient.GetOtherClaims(userToken.Id);

@@ -1,7 +1,7 @@
 
 # Status Id Enum
 
-Status Id
+(DEPRECATED) Status Id
 
 ## Enumeration
 

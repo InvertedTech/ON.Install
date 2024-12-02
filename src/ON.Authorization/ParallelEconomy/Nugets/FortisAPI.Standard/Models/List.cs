@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,20 +19,22 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// List.
     /// </summary>
-    public class List
+    public class List : BaseModel
     {
         private string productTransactionId;
-        private double? batchNum;
+        private int? batchNum;
         private double? isOpen;
         private string settlementFileName;
         private double? batchCloseTs;
         private string batchCloseDetail;
-        private double? totalSaleAmount;
-        private double? totalSaleCount;
-        private double? totalRefundAmount;
-        private double? totalRefundCount;
-        private double? totalVoidAmount;
-        private double? totalVoidCount;
+        private int? totalSaleAmount;
+        private int? totalSaleCount;
+        private int? totalRefundAmount;
+        private int? totalRefundCount;
+        private int? totalVoidAmount;
+        private int? totalVoidCount;
+        private int? totalBlindRefundAmount;
+        private int? totalBlindRefundCount;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
             { "product_transaction_id", false },
@@ -46,6 +49,8 @@ namespace FortisAPI.Standard.Models
             { "total_refund_count", false },
             { "total_void_amount", false },
             { "total_void_count", false },
+            { "total_blind_refund_amount", false },
+            { "total_blind_refund_count", false },
         };
 
         /// <summary>
@@ -60,7 +65,6 @@ namespace FortisAPI.Standard.Models
         /// </summary>
         /// <param name="id">id.</param>
         /// <param name="createdTs">created_ts.</param>
-        /// <param name="modifiedTs">modified_ts.</param>
         /// <param name="processingStatusId">processing_status_id.</param>
         /// <param name="productTransactionId">product_transaction_id.</param>
         /// <param name="batchNum">batch_num.</param>
@@ -74,27 +78,35 @@ namespace FortisAPI.Standard.Models
         /// <param name="totalRefundCount">total_refund_count.</param>
         /// <param name="totalVoidAmount">total_void_amount.</param>
         /// <param name="totalVoidCount">total_void_count.</param>
+        /// <param name="totalBlindRefundAmount">total_blind_refund_amount.</param>
+        /// <param name="totalBlindRefundCount">total_blind_refund_count.</param>
+        /// <param name="changelogs">changelogs.</param>
+        /// <param name="postbackLogs">postback_logs.</param>
+        /// <param name="productTransaction">product_transaction.</param>
         public List(
             string id,
             int createdTs,
-            int modifiedTs,
-            double processingStatusId,
+            int processingStatusId,
             string productTransactionId = null,
-            double? batchNum = null,
+            int? batchNum = null,
             double? isOpen = null,
             string settlementFileName = null,
             double? batchCloseTs = null,
             string batchCloseDetail = null,
-            double? totalSaleAmount = null,
-            double? totalSaleCount = null,
-            double? totalRefundAmount = null,
-            double? totalRefundCount = null,
-            double? totalVoidAmount = null,
-            double? totalVoidCount = null)
+            int? totalSaleAmount = null,
+            int? totalSaleCount = null,
+            int? totalRefundAmount = null,
+            int? totalRefundCount = null,
+            int? totalVoidAmount = null,
+            int? totalVoidCount = null,
+            int? totalBlindRefundAmount = null,
+            int? totalBlindRefundCount = null,
+            List<Models.Changelog> changelogs = null,
+            List<Models.PostbackLog> postbackLogs = null,
+            Models.ProductTransaction productTransaction = null)
         {
             this.Id = id;
             this.CreatedTs = createdTs;
-            this.ModifiedTs = modifiedTs;
             if (productTransactionId != null)
             {
                 this.ProductTransactionId = productTransactionId;
@@ -156,6 +168,19 @@ namespace FortisAPI.Standard.Models
                 this.TotalVoidCount = totalVoidCount;
             }
 
+            if (totalBlindRefundAmount != null)
+            {
+                this.TotalBlindRefundAmount = totalBlindRefundAmount;
+            }
+
+            if (totalBlindRefundCount != null)
+            {
+                this.TotalBlindRefundCount = totalBlindRefundCount;
+            }
+
+            this.Changelogs = changelogs;
+            this.PostbackLogs = postbackLogs;
+            this.ProductTransaction = productTransaction;
         }
 
         /// <summary>
@@ -169,12 +194,6 @@ namespace FortisAPI.Standard.Models
         /// </summary>
         [JsonProperty("created_ts")]
         public int CreatedTs { get; set; }
-
-        /// <summary>
-        /// Modified Time Stamp
-        /// </summary>
-        [JsonProperty("modified_ts")]
-        public int ModifiedTs { get; set; }
 
         /// <summary>
         /// Product Transaction Id
@@ -198,13 +217,13 @@ namespace FortisAPI.Standard.Models
         /// Processing Status Id
         /// </summary>
         [JsonProperty("processing_status_id")]
-        public double ProcessingStatusId { get; set; }
+        public int ProcessingStatusId { get; set; }
 
         /// <summary>
         /// Batch Number
         /// </summary>
         [JsonProperty("batch_num")]
-        public double? BatchNum
+        public int? BatchNum
         {
             get
             {
@@ -294,7 +313,7 @@ namespace FortisAPI.Standard.Models
         /// Total Sale Amount
         /// </summary>
         [JsonProperty("total_sale_amount")]
-        public double? TotalSaleAmount
+        public int? TotalSaleAmount
         {
             get
             {
@@ -312,7 +331,7 @@ namespace FortisAPI.Standard.Models
         /// Total Sale Count
         /// </summary>
         [JsonProperty("total_sale_count")]
-        public double? TotalSaleCount
+        public int? TotalSaleCount
         {
             get
             {
@@ -330,7 +349,7 @@ namespace FortisAPI.Standard.Models
         /// Total Refund Amount
         /// </summary>
         [JsonProperty("total_refund_amount")]
-        public double? TotalRefundAmount
+        public int? TotalRefundAmount
         {
             get
             {
@@ -348,7 +367,7 @@ namespace FortisAPI.Standard.Models
         /// Total Refund Count
         /// </summary>
         [JsonProperty("total_refund_count")]
-        public double? TotalRefundCount
+        public int? TotalRefundCount
         {
             get
             {
@@ -366,7 +385,7 @@ namespace FortisAPI.Standard.Models
         /// Total Void Amount
         /// </summary>
         [JsonProperty("total_void_amount")]
-        public double? TotalVoidAmount
+        public int? TotalVoidAmount
         {
             get
             {
@@ -384,7 +403,7 @@ namespace FortisAPI.Standard.Models
         /// Total Void Count
         /// </summary>
         [JsonProperty("total_void_count")]
-        public double? TotalVoidCount
+        public int? TotalVoidCount
         {
             get
             {
@@ -397,6 +416,60 @@ namespace FortisAPI.Standard.Models
                 this.totalVoidCount = value;
             }
         }
+
+        /// <summary>
+        /// Total Blind Refund Amount
+        /// </summary>
+        [JsonProperty("total_blind_refund_amount")]
+        public int? TotalBlindRefundAmount
+        {
+            get
+            {
+                return this.totalBlindRefundAmount;
+            }
+
+            set
+            {
+                this.shouldSerialize["total_blind_refund_amount"] = true;
+                this.totalBlindRefundAmount = value;
+            }
+        }
+
+        /// <summary>
+        /// Total Blind Refund Count
+        /// </summary>
+        [JsonProperty("total_blind_refund_count")]
+        public int? TotalBlindRefundCount
+        {
+            get
+            {
+                return this.totalBlindRefundCount;
+            }
+
+            set
+            {
+                this.shouldSerialize["total_blind_refund_count"] = true;
+                this.totalBlindRefundCount = value;
+            }
+        }
+
+        /// <summary>
+        /// Changelog Information on `expand`
+        /// </summary>
+        [JsonProperty("changelogs", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.Changelog> Changelogs { get; set; }
+
+        /// <summary>
+        /// Postback Log Information on `expand`
+        /// </summary>
+        [JsonProperty("postback_logs", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.PostbackLog> PostbackLogs { get; set; }
+
+        /// <summary>
+        /// Product Transaction Information on `expand`
+        /// </summary>
+        [JsonProperty("product_transaction", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.ProductTransaction ProductTransaction { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -502,6 +575,22 @@ namespace FortisAPI.Standard.Models
         public void UnsetTotalVoidCount()
         {
             this.shouldSerialize["total_void_count"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTotalBlindRefundAmount()
+        {
+            this.shouldSerialize["total_blind_refund_amount"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetTotalBlindRefundCount()
+        {
+            this.shouldSerialize["total_blind_refund_count"] = false;
         }
 
         /// <summary>
@@ -612,6 +701,24 @@ namespace FortisAPI.Standard.Models
             return this.shouldSerialize["total_void_count"];
         }
 
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTotalBlindRefundAmount()
+        {
+            return this.shouldSerialize["total_blind_refund_amount"];
+        }
+
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeTotalBlindRefundCount()
+        {
+            return this.shouldSerialize["total_blind_refund_count"];
+        }
+
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
@@ -624,11 +731,8 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is List other &&
-                ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
+            return obj is List other &&                ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
                 this.CreatedTs.Equals(other.CreatedTs) &&
-                this.ModifiedTs.Equals(other.ModifiedTs) &&
                 ((this.ProductTransactionId == null && other.ProductTransactionId == null) || (this.ProductTransactionId?.Equals(other.ProductTransactionId) == true)) &&
                 this.ProcessingStatusId.Equals(other.ProcessingStatusId) &&
                 ((this.BatchNum == null && other.BatchNum == null) || (this.BatchNum?.Equals(other.BatchNum) == true)) &&
@@ -641,32 +745,42 @@ namespace FortisAPI.Standard.Models
                 ((this.TotalRefundAmount == null && other.TotalRefundAmount == null) || (this.TotalRefundAmount?.Equals(other.TotalRefundAmount) == true)) &&
                 ((this.TotalRefundCount == null && other.TotalRefundCount == null) || (this.TotalRefundCount?.Equals(other.TotalRefundCount) == true)) &&
                 ((this.TotalVoidAmount == null && other.TotalVoidAmount == null) || (this.TotalVoidAmount?.Equals(other.TotalVoidAmount) == true)) &&
-                ((this.TotalVoidCount == null && other.TotalVoidCount == null) || (this.TotalVoidCount?.Equals(other.TotalVoidCount) == true));
+                ((this.TotalVoidCount == null && other.TotalVoidCount == null) || (this.TotalVoidCount?.Equals(other.TotalVoidCount) == true)) &&
+                ((this.TotalBlindRefundAmount == null && other.TotalBlindRefundAmount == null) || (this.TotalBlindRefundAmount?.Equals(other.TotalBlindRefundAmount) == true)) &&
+                ((this.TotalBlindRefundCount == null && other.TotalBlindRefundCount == null) || (this.TotalBlindRefundCount?.Equals(other.TotalBlindRefundCount) == true)) &&
+                ((this.Changelogs == null && other.Changelogs == null) || (this.Changelogs?.Equals(other.Changelogs) == true)) &&
+                ((this.PostbackLogs == null && other.PostbackLogs == null) || (this.PostbackLogs?.Equals(other.PostbackLogs) == true)) &&
+                ((this.ProductTransaction == null && other.ProductTransaction == null) || (this.ProductTransaction?.Equals(other.ProductTransaction) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id == string.Empty ? "" : this.Id)}");
+            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id)}");
             toStringOutput.Add($"this.CreatedTs = {this.CreatedTs}");
-            toStringOutput.Add($"this.ModifiedTs = {this.ModifiedTs}");
-            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId == string.Empty ? "" : this.ProductTransactionId)}");
+            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId)}");
             toStringOutput.Add($"this.ProcessingStatusId = {this.ProcessingStatusId}");
             toStringOutput.Add($"this.BatchNum = {(this.BatchNum == null ? "null" : this.BatchNum.ToString())}");
             toStringOutput.Add($"this.IsOpen = {(this.IsOpen == null ? "null" : this.IsOpen.ToString())}");
-            toStringOutput.Add($"this.SettlementFileName = {(this.SettlementFileName == null ? "null" : this.SettlementFileName == string.Empty ? "" : this.SettlementFileName)}");
+            toStringOutput.Add($"this.SettlementFileName = {(this.SettlementFileName == null ? "null" : this.SettlementFileName)}");
             toStringOutput.Add($"this.BatchCloseTs = {(this.BatchCloseTs == null ? "null" : this.BatchCloseTs.ToString())}");
-            toStringOutput.Add($"this.BatchCloseDetail = {(this.BatchCloseDetail == null ? "null" : this.BatchCloseDetail == string.Empty ? "" : this.BatchCloseDetail)}");
+            toStringOutput.Add($"this.BatchCloseDetail = {(this.BatchCloseDetail == null ? "null" : this.BatchCloseDetail)}");
             toStringOutput.Add($"this.TotalSaleAmount = {(this.TotalSaleAmount == null ? "null" : this.TotalSaleAmount.ToString())}");
             toStringOutput.Add($"this.TotalSaleCount = {(this.TotalSaleCount == null ? "null" : this.TotalSaleCount.ToString())}");
             toStringOutput.Add($"this.TotalRefundAmount = {(this.TotalRefundAmount == null ? "null" : this.TotalRefundAmount.ToString())}");
             toStringOutput.Add($"this.TotalRefundCount = {(this.TotalRefundCount == null ? "null" : this.TotalRefundCount.ToString())}");
             toStringOutput.Add($"this.TotalVoidAmount = {(this.TotalVoidAmount == null ? "null" : this.TotalVoidAmount.ToString())}");
             toStringOutput.Add($"this.TotalVoidCount = {(this.TotalVoidCount == null ? "null" : this.TotalVoidCount.ToString())}");
+            toStringOutput.Add($"this.TotalBlindRefundAmount = {(this.TotalBlindRefundAmount == null ? "null" : this.TotalBlindRefundAmount.ToString())}");
+            toStringOutput.Add($"this.TotalBlindRefundCount = {(this.TotalBlindRefundCount == null ? "null" : this.TotalBlindRefundCount.ToString())}");
+            toStringOutput.Add($"this.Changelogs = {(this.Changelogs == null ? "null" : $"[{string.Join(", ", this.Changelogs)} ]")}");
+            toStringOutput.Add($"this.PostbackLogs = {(this.PostbackLogs == null ? "null" : $"[{string.Join(", ", this.PostbackLogs)} ]")}");
+            toStringOutput.Add($"this.ProductTransaction = {(this.ProductTransaction == null ? "null" : this.ProductTransaction.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

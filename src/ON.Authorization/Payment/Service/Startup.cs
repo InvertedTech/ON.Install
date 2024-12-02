@@ -8,10 +8,13 @@ using ON.Authentication;
 using ON.Authorization.Payment.Fake.Helper;
 using ON.Authorization.Payment.Fake.Service;
 using ON.Authorization.Payment.Paypal.Helper;
+using ON.Authorization.Payment.Stripe.Helper;
 using FakeM = ON.Authorization.Payment.Fake.Models;
 using PaypalM = ON.Authorization.Payment.Paypal.Models;
+using StripeM = ON.Authorization.Payment.Stripe.Models;
 using ON.Authorization.Payment.Paypal.Services;
 using ON.Settings;
+using ON.Authorization.Payment.Stripe.Services;
 
 namespace ON.Authorization.Payment.Service
 {
@@ -40,9 +43,11 @@ namespace ON.Authorization.Payment.Service
 
             services.Configure<FakeM.AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<PaypalM.AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<StripeM.AppSettings>(Configuration.GetSection("AppSettings"));
 
             services.AddFakeHelpers();
             services.AddPaypalHelpers();
+            services.AddStripeHelpers();
 
             services.AddJwtAuthentication();
             services.AddSettingsHelpers();
@@ -78,6 +83,7 @@ namespace ON.Authorization.Payment.Service
                 endpoints.MapGrpcService<PaymentService>();
                 endpoints.MapGrpcService<FakeService>();
                 endpoints.MapGrpcService<PaypalService>();
+                endpoints.MapGrpcService<StripeService>();
                 endpoints.MapGrpcService<ServiceOpsService>();
             });
         }

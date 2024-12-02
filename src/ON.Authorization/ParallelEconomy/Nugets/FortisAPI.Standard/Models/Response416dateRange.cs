@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Response416dateRange.
     /// </summary>
-    public class Response416dateRange
+    public class Response416dateRange : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Response416dateRange"/> class.
@@ -83,23 +84,22 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Response416dateRange other &&
-                ((this.StatusCode == null && other.StatusCode == null) || (this.StatusCode?.Equals(other.StatusCode) == true)) &&
+            return obj is Response416dateRange other &&                ((this.StatusCode == null && other.StatusCode == null) || (this.StatusCode?.Equals(other.StatusCode) == true)) &&
                 ((this.Error == null && other.Error == null) || (this.Error?.Equals(other.Error) == true)) &&
                 ((this.Message == null && other.Message == null) || (this.Message?.Equals(other.Message) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.StatusCode = {(this.StatusCode == null ? "null" : this.StatusCode.ToString())}");
-            toStringOutput.Add($"this.Error = {(this.Error == null ? "null" : this.Error == string.Empty ? "" : this.Error)}");
-            toStringOutput.Add($"this.Message = {(this.Message == null ? "null" : this.Message == string.Empty ? "" : this.Message)}");
+            toStringOutput.Add($"this.Error = {(this.Error == null ? "null" : this.Error)}");
+            toStringOutput.Add($"this.Message = {(this.Message == null ? "null" : this.Message)}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

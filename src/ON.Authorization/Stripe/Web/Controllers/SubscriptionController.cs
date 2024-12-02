@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Authorization.Stripe.Web.Models;
 using ON.Authorization.Stripe.Web.Services;
-using ON.Fragments.Authorization.Payments.Stripe;
+using ON.Fragments.Authorization.Payment.Stripe;
 using Stripe;
 using Stripe.Checkout;
 

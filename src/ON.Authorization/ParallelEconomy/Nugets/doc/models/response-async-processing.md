@@ -10,13 +10,19 @@
 | Name | Type | Tags | Description |
 |  --- | --- | --- | --- |
 | `Type` | `string` | Required, Constant | Resource Type<br>**Default**: `"AsyncProcessing"` |
-| `Data` | [`Models.Data2`](../../doc/models/data-2.md) | Optional | - |
+| `Data` | [`Data1`](../../doc/models/data-1.md) | Optional | - |
 
 ## Example (as JSON)
 
 ```json
 {
-  "type": "AsyncProcessing"
+  "type": "AsyncProcessing",
+  "data": {
+    "async": {
+      "code": "00000038-0000-0000-0000-000000000000",
+      "link": "link8"
+    }
+  }
 }
 ```
 

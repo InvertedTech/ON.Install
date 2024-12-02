@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// TipPercents.
     /// </summary>
-    public class TipPercents
+    public class TipPercents : BaseModel
     {
         private int? percent1;
         private int? percent2;
@@ -192,23 +193,22 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is TipPercents other &&
-                ((this.Percent1 == null && other.Percent1 == null) || (this.Percent1?.Equals(other.Percent1) == true)) &&
+            return obj is TipPercents other &&                ((this.Percent1 == null && other.Percent1 == null) || (this.Percent1?.Equals(other.Percent1) == true)) &&
                 ((this.Percent2 == null && other.Percent2 == null) || (this.Percent2?.Equals(other.Percent2) == true)) &&
                 ((this.Percent3 == null && other.Percent3 == null) || (this.Percent3?.Equals(other.Percent3) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.Percent1 = {(this.Percent1 == null ? "null" : this.Percent1.ToString())}");
             toStringOutput.Add($"this.Percent2 = {(this.Percent2 == null ? "null" : this.Percent2.ToString())}");
             toStringOutput.Add($"this.Percent3 = {(this.Percent3 == null ? "null" : this.Percent3.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

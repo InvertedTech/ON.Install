@@ -8,13 +8,14 @@ namespace FortisAPI.Tests
     using System.Globalization;
     using System.IO;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Controllers;
     using FortisAPI.Standard.Exceptions;
     using FortisAPI.Standard.Http.Client;
     using FortisAPI.Standard.Http.Response;
+    using FortisAPI.Standard.Models.Containers;
     using FortisAPI.Standard.Utilities;
-    using FortisAPI.Tests.Helpers;
     using Newtonsoft.Json.Converters;
     using NUnit.Framework;
 
@@ -59,7 +60,7 @@ namespace FortisAPI.Tests
             }
 
             // Test response code
-            Assert.AreEqual(200, this.HttpCallBackHandler.Response.StatusCode, "Status should be 200");
+            Assert.AreEqual(200, HttpCallBack.Response.StatusCode, "Status should be 200");
 
             // Test headers
             Dictionary<string, string> headers = new Dictionary<string, string>();
@@ -68,15 +69,15 @@ namespace FortisAPI.Tests
             Assert.IsTrue(
                     TestHelper.AreHeadersProperSubsetOf (
                     headers,
-                    this.HttpCallBackHandler.Response.Headers),
+                    HttpCallBack.Response.Headers),
                     "Headers should match");
 
             // Test whether the captured response is as we expected
             Assert.IsNotNull(result, "Result should exist");
             Assert.IsTrue(
-                    TestHelper.IsJsonObjectProperSubsetOf(
+                    TestHelper.IsProperSubsetOf(
                     "{\"type\":\"AsyncStatus\",\"data\":{\"code\":\"406c66c3-21cb-47fb-80fc-843bc42507fb\",\"type\":\"Transaction\",\"id\":\"11e95f8ec39de8fbdb0a4f1a\",\"progress\":100,\"error\":null,\"ttl\":7956886942}}",
-                    TestHelper.ConvertStreamToString(this.HttpCallBackHandler.Response.RawBody),
+                    TestHelper.ConvertStreamToString(HttpCallBack.Response.RawBody),
                     false,
                     true,
                     false),

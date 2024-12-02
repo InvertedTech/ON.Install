@@ -9,61 +9,52 @@
 
 | Name | Type | Tags | Description |
 |  --- | --- | --- | --- |
-| `LocationId` | `string` | Required | Location ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `Title` | `string` | Required | Title<br>**Constraints**: *Maximum Length*: `64` |
-| `CcProductTransactionId` | `string` | Required | Transaction ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `AchProductTransactionId` | `string` | Optional | ACH Product Transaction Id<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `DueDate` | `string` | Required | Due Date, Format: Y-m-d<br>**Constraints**: *Maximum Length*: `10`, *Pattern*: `^[\d]{4}-[\d]{2}-[\d]{2}$` |
-| `ItemList` | [`List<Models.ItemList>`](../../doc/models/item-list.md) | Required | Item List<br>**Constraints**: *Minimum Items*: `1`, *Maximum Items*: `99`, *Unique Items Required* |
-| `AllowOverpayment` | `bool?` | Optional | Allow Overpayment. |
-| `Email` | `string` | Optional | Email<br>**Constraints**: *Maximum Length*: `128` |
-| `ContactId` | `string` | Optional | Contact ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `ContactApiId` | `string` | Optional | Contact API Id<br>**Constraints**: *Maximum Length*: `64` |
-| `CustomerId` | `string` | Optional | Customer Id<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `ExpireDate` | `string` | Optional | Expire Date.<br>**Constraints**: *Maximum Length*: `10`, *Pattern*: `^[\d]{4}-[\d]{2}-[\d]{2}$` |
-| `AllowPartialPay` | `bool?` | Optional | Allow partial pay |
-| `AttachFilesToEmail` | `bool?` | Optional | Attach Files to Email |
-| `SendEmail` | `bool?` | Optional | Send Email |
-| `InvoiceNumber` | `string` | Optional | Invoice number<br>**Constraints**: *Maximum Length*: `64` |
-| `ItemHeader` | `string` | Optional | Item Header<br>**Constraints**: *Maximum Length*: `250` |
-| `ItemFooter` | `string` | Optional | Item footer<br>**Constraints**: *Maximum Length*: `250` |
-| `AmountDue` | `double?` | Optional | Amount Due |
-| `NotificationEmail` | `string` | Optional | Notification email<br>**Constraints**: *Maximum Length*: `640` |
-| `PaymentStatusId` | `double?` | Optional | Payment Status Id<br>**Constraints**: `>= 1`, `<= 3` |
-| `StatusId` | [`Models.StatusIdEnum?`](../../doc/models/status-id-enum.md) | Optional | Status Id |
-| `Note` | `string` | Optional | Note<br>**Constraints**: *Maximum Length*: `200` |
-| `NotificationDaysBeforeDueDate` | `int?` | Optional | Notification days before due date<br>**Constraints**: `>= 0`, `<= 99` |
-| `NotificationDaysAfterDueDate` | `int?` | Optional | Notification days after due date<br>**Constraints**: `>= 0`, `<= 99` |
-| `NotificationOnDueDate` | `bool?` | Optional | Notification on due date |
-| `SendTextToPay` | `bool?` | Optional | Send Text To Pay |
-| `Files` | `object` | Optional | Files |
-| `RemainingBalance` | `double?` | Optional | Remaining Balance |
-| `SinglePaymentMinAmount` | `double?` | Optional | Single Payment Min Amount |
-| `SinglePaymentMaxAmount` | `double?` | Optional | Single Payment Max Amount<br>**Default**: `9999999.99` |
-| `CellPhone` | `string` | Optional | Cell Phone<br>**Constraints**: *Minimum Length*: `10`, *Maximum Length*: `10`, *Pattern*: `^\d{10}$` |
-| `Id` | `string` | Required | Quick Invoice ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `CreatedTs` | `int` | Required | Created Time Stamp |
-| `ModifiedTs` | `int` | Required | Modified Time Stamp |
-| `CreatedUserId` | `string` | Optional | Created User Id<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `ModifiedUserId` | `string` | Optional | Modified User Id<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F]{24})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
-| `Active` | `bool?` | Optional | Active status |
-| `IsActive` | `bool?` | Optional | Register is active |
+| `Action` | [`ActionEnum?`](../../doc/models/action-enum.md) | Optional | The action to be performed<br>**Default**: `ActionEnum.sale` |
+| `DigitalWalletsOnly` | `bool?` | Optional | **Default**: `false` |
+| `Methods` | [`List<Method3>`](../../doc/models/method-3.md) | Optional | By default the system will try to offer all the availables payment methods from your account. But if you like, you can specify exactly what services you want to use.<br>**Constraints**: *Minimum Items*: `1`, *Unique Items Required* |
+| `Amount` | [`Data8Amount`](../../doc/models/containers/data-8-amount.md) | Optional | This is a container for any-of cases. |
+| `TaxAmount` | [`Data8TaxAmount`](../../doc/models/containers/data-8-tax-amount.md) | Optional | This is a container for any-of cases.<br>**Constraints**: `>= 1`, `<= 999999999` |
+| `SecondaryAmount` | [`Data8SecondaryAmount`](../../doc/models/containers/data-8-secondary-amount.md) | Optional | This is a container for any-of cases.<br>**Constraints**: `>= 0`, `<= 999999999` |
+| `LocationId` | `string` | Optional | Location ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `ContactId` | `string` | Optional | Contact ID<br>**Constraints**: *Pattern*: `^(([0-9a-fA-F\-]{24,36})\|(([0-9a-fA-F]{8})-(([0-9a-fA-F]{4}\-){3})([0-9a-fA-F]{12})))$` |
+| `SaveAccount` | [`Data8SaveAccount`](../../doc/models/containers/data-8-save-account.md) | Optional | This is a container for any-of cases. |
+| `SaveAccountTitle` | [`Data8SaveAccountTitle`](../../doc/models/containers/data-8-save-account-title.md) | Optional | This is a container for any-of cases.<br>**Constraints**: *Maximum Length*: `16` |
+| `Title` | [`Data8Title`](../../doc/models/containers/data-8-title.md) | Optional | This is a container for any-of cases.<br>**Constraints**: *Maximum Length*: `16` |
+| `AchSecCode` | [`AchSecCodeEnum?`](../../doc/models/ach-sec-code-enum.md) | Optional | SEC code for the transaction if it's an ACH transaction<br>**Default**: `AchSecCodeEnum.WEB` |
+| `BankFundedOnlyOverride` | [`Data8BankFundedOnlyOverride`](../../doc/models/containers/data-8-bank-funded-only-override.md) | Optional | This is a container for any-of cases. |
+| `AllowPartialAuthorizationOverride` | [`Data8AllowPartialAuthorizationOverride`](../../doc/models/containers/data-8-allow-partial-authorization-override.md) | Optional | This is a container for any-of cases. |
+| `AutoDeclineCvvOverride` | [`Data8AutoDeclineCvvOverride`](../../doc/models/containers/data-8-auto-decline-cvv-override.md) | Optional | This is a container for any-of cases. |
+| `AutoDeclineStreetOverride` | [`Data8AutoDeclineStreetOverride`](../../doc/models/containers/data-8-auto-decline-street-override.md) | Optional | This is a container for any-of cases. |
+| `AutoDeclineZipOverride` | [`Data8AutoDeclineZipOverride`](../../doc/models/containers/data-8-auto-decline-zip-override.md) | Optional | This is a container for any-of cases. |
+| `Message` | `string` | Optional | A custom text message that displays after the payment is processed.<br>**Constraints**: *Maximum Length*: `120` |
+| `ClientToken` | `string` | Required | A JWT to be used to create the elements.<br><br>> This is a one-time only use token.<br>> Do not store for long term use, it expires after 48 hours. |
 
 ## Example (as JSON)
 
 ```json
 {
+  "action": "sale",
+  "digitalWalletsOnly": false,
   "location_id": "11e95f8ec39de8fbdb0a4f1a",
-  "title": "My terminal",
-  "cc_product_transaction_id": "11e95f8ec39de8fbdb0a4f1a",
-  "due_date": "2021-12-01",
-  "item_list": {
-    "name": "Bread",
-    "amount": 20.15
-  },
-  "id": "11e95f8ec39de8fbdb0a4f1a",
-  "created_ts": 1422040992,
-  "modified_ts": 1422040992
+  "contact_id": "11e95f8ec39de8fbdb0a4f1a",
+  "ach_sec_code": "WEB",
+  "client_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "methods": [
+    {
+      "type": "ach",
+      "product_transaction_id": "product_transaction_id4"
+    },
+    {
+      "type": "ach",
+      "product_transaction_id": "product_transaction_id4"
+    },
+    {
+      "type": "ach",
+      "product_transaction_id": "product_transaction_id4"
+    }
+  ],
+  "amount": 154,
+  "tax_amount": 194
 }
 ```
 

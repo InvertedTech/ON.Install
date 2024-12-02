@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Stripe;
+
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/ProductRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeSubscriptionRecord.proto";
+import "Protos/ON/Fragments/Authorization/Payment/Stripe/StripeOneTimeRecord.proto";
+
+service StripeInterface {
+  rpc StripeCancelOtherSubscription (StripeCancelOtherSubscriptionRequest) returns (StripeCancelOtherSubscriptionResponse) {}
+  rpc StripeCancelOwnSubscription (StripeCancelOwnSubscriptionRequest) returns (StripeCancelOwnSubscriptionResponse) {}
+  rpc StripeCheckOtherSubscription (StripeCheckOtherSubscriptionRequest) returns (StripeCheckOtherSubscriptionResponse) {}
+  rpc StripeCheckOwnSubscription (StripeCheckOwnSubscriptionRequest) returns (StripeCheckOwnSubscriptionResponse) {}
+  rpc StripeCheckOwnOneTime (StripeCheckOwnOneTimeRequest) returns (StripeCheckOwnOneTimeResponse) {}
+  rpc StripeGetAccountDetails (StripeGetAccountDetailsRequest) returns (StripeGetAccountDetailsResponse) {}
+  rpc StripeGetOwnSubscriptionRecords (StripeGetOwnSubscriptionRecordsRequest) returns (StripeGetOwnSubscriptionRecordsResponse) {}
+  rpc StripeNewOwnSubscription (StripeNewOwnSubscriptionRequest) returns (StripeNewOwnSubscriptionResponse) {}
+  rpc StripeCreateBillingPortal (StripeCreateBillingPortalRequest) returns (StripeCreateBillingPortalResponse) {}
+  rpc StripeCreateCheckoutSession(StripeCheckoutSessionRequest) returns (StripeCheckoutSessionResponse) {}
+  rpc StripeEnsureOneTimeProduct(StripeEnsureOneTimeProductRequest) returns (StripeEnsureOneTimeProductResponse) {}
+}
+
+message StripeCheckOtherSubscriptionRequest {
+    string UserID = 1;
+}
+
+message StripeCheckOtherSubscriptionResponse {
+	repeated StripeSubscriptionFullRecord Records = 1;
+	string Error = 2;
+}
+ 
+message StripeCheckOwnSubscriptionRequest {
+}
+
+message StripeCheckOwnSubscriptionResponse {
+	repeated StripeSubscriptionFullRecord Records = 1;
+	string Error = 2;
+}
+ 
+message StripeCheckOwnOneTimeRequest {
+}
+
+message StripeCheckOwnOneTimeResponse {
+	repeated StripeOneTimePaymentRecord Records = 1;
+	string Error = 2;
+}
+ 
+message StripeCheckoutSessionRequest {
+	string PriceId = 1;
+}
+
+message StripeCheckoutSessionResponse {
+	string SessionUrl = 1;
+	string Error = 2;
+}
+ 
+message StripeCreateBillingPortalRequest {
+	string CustomerId = 1;
+}
+
+message StripeCreateBillingPortalResponse {
+	string Url = 1;
+	string Error = 2;
+}
+
+message StripeCancelOtherSubscriptionRequest {
+  string UserID = 1;
+  string SubscriptionId = 2;
+  string Reason = 3;
+}
+  
+message StripeCancelOtherSubscriptionResponse {
+  StripeSubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
+message StripeCancelOwnSubscriptionRequest {
+  string Reason = 1;
+  string SubscriptionId = 2;
+}
+  
+message StripeCancelOwnSubscriptionResponse {
+  StripeSubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
+message StripeGetAccountDetailsRequest {
+}
+  
+message StripeGetAccountDetailsResponse {
+  ProductList Products = 1;
+  string ClientId = 2;
+}
+  
+message StripeGetOwnSubscriptionRecordsRequest {
+}
+  
+message StripeGetOwnSubscriptionRecordsResponse {
+  repeated StripeSubscriptionRecord Records = 1;
+}
+
+message StripeNewOwnSubscriptionRequest {
+  string SubscriptionId = 1;
+  uint32 SubscriptionPrice = 2;
+  string CustomerId = 3;
+}
+  
+message StripeNewOwnSubscriptionResponse {
+  StripeSubscriptionRecord Record = 1;
+  string Error = 2;
+}
+
+
+message StripeEnsureOneTimeProductRequest {
+	string InternalId = 1;
+	string Name = 2;
+	uint32 MinimumPrice = 11;
+	uint32 MaximumPrice = 12;
+}
+
+message StripeEnsureOneTimeProductResponse {
+	string Error = 1;
+}

@@ -27,5 +27,6 @@ namespace ON.SimpleWeb.Models.Subscription.Main
 
         public bool ShowFake => settingsClient?.PublicData?.Subscription?.Fake?.Enabled ?? false;
         public bool ShowPaypal => (settingsClient?.PublicData?.Subscription?.Paypal?.Enabled ?? false) && Methods?.Paypal != null;
+        public bool ShowStripe => (settingsClient?.PublicData?.Subscription?.Stripe?.Enabled ?? false) && Methods?.Stripe != null;
     }
 }

@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Data.
     /// </summary>
-    public class Data
+    public class Data : BaseModel
     {
         private string error;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
@@ -149,9 +150,7 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Data other &&
-                this.Code.Equals(other.Code) &&
+            return obj is Data other &&                this.Code.Equals(other.Code) &&
                 ((this.Type == null && other.Type == null) || (this.Type?.Equals(other.Type) == true)) &&
                 ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
                 this.Progress.Equals(other.Progress) &&
@@ -159,19 +158,20 @@ namespace FortisAPI.Standard.Models
                 this.Ttl.Equals(other.Ttl);
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.Code = {this.Code}");
-            toStringOutput.Add($"this.Type = {(this.Type == null ? "null" : this.Type == string.Empty ? "" : this.Type)}");
-            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id == string.Empty ? "" : this.Id)}");
+            toStringOutput.Add($"this.Type = {(this.Type == null ? "null" : this.Type)}");
+            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id)}");
             toStringOutput.Add($"this.Progress = {this.Progress}");
-            toStringOutput.Add($"this.Error = {(this.Error == null ? "null" : this.Error == string.Empty ? "" : this.Error)}");
+            toStringOutput.Add($"this.Error = {(this.Error == null ? "null" : this.Error)}");
             toStringOutput.Add($"this.Ttl = {this.Ttl}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

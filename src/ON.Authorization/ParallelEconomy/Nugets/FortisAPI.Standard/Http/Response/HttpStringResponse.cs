@@ -3,10 +3,8 @@
 // </copyright>
 namespace FortisAPI.Standard.Http.Response
 {
-    using System;
-    using System.Collections.Generic;
     using System.IO;
-    using FortisAPI.Standard.Utilities;
+    using System.Collections.Generic;
 
     /// <summary>
     /// HttpStringResponse inherits from HttpResponse and has additional property
@@ -21,15 +19,8 @@ namespace FortisAPI.Standard.Http.Response
         /// <param name="headers">headers.</param>
         /// <param name="rawBody">rawBody.</param>
         /// <param name="body">body.</param>
-        public HttpStringResponse(int statusCode, Dictionary<string, string> headers, Stream rawBody, string body) : base(statusCode, headers, rawBody)
-        {
-            this.Body = body;
-        }
-
-        /// <summary>
-        /// Gets the raw string body of the http response.
-        /// </summary>
-        public string Body { get; }
+        public HttpStringResponse(int statusCode, Dictionary<string, string> headers, Stream rawBody, string body)
+            : base(statusCode, headers, rawBody, body) { }
 
         /// <inheritdoc/>
         public override string ToString()

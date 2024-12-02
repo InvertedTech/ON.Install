@@ -30,6 +30,8 @@ namespace ON.SimpleWeb.Services
 
         public async Task<GetContentStatsResponse> GetContentStats(Guid contentId)
         {
+            if (User == null)
+                return null;
             if (!User.IsLoggedIn)
                 return null;
 
@@ -46,6 +48,8 @@ namespace ON.SimpleWeb.Services
 
         public async Task<IEnumerable<ContentListRecord>> GetSaves(ContentService contentService)
         {
+            if (User == null)
+                return null;
             if (!User.IsLoggedIn)
                 return null;
 
@@ -62,6 +66,8 @@ namespace ON.SimpleWeb.Services
 
         public async Task<SaveContentResponse> Save(ContentPublicRecord rec)
         {
+            if (User == null)
+                return null;
             if (!User.IsLoggedIn)
                 return null;
 
@@ -78,6 +84,8 @@ namespace ON.SimpleWeb.Services
 
         public async Task<SaveContentResponse> Unsave(ContentPublicRecord rec)
         {
+            if (User == null)
+                return null;
             if (!User.IsLoggedIn)
                 return null;
 

@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Exceptions
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Http.Client;
     using FortisAPI.Standard.Models;

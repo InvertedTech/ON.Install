@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,13 +19,11 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1UsersRequest1.
     /// </summary>
-    public class V1UsersRequest1
+    public class V1UsersRequest1 : BaseModel
     {
         private string accountNumber;
-        private string address;
         private string brandingDomainUrl;
         private string cellPhone;
-        private string city;
         private string companyName;
         private string contactId;
         private string dateOfBirth;
@@ -38,8 +37,7 @@ namespace FortisAPI.Standard.Models
         private string officeExtPhone;
         private string primaryLocationId;
         private string requiresNewPassword;
-        private string state;
-        private string termsConditionId;
+        private string termsConditionCode;
         private string tz;
         private string username;
         private string userApiKey;
@@ -50,13 +48,12 @@ namespace FortisAPI.Standard.Models
         private string locationId;
         private string contactApiId;
         private string primaryLocationApiId;
+        private Models.StatusCodeEnum? statusCode;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
             { "account_number", false },
-            { "address", false },
             { "branding_domain_url", false },
             { "cell_phone", false },
-            { "city", false },
             { "company_name", false },
             { "contact_id", false },
             { "date_of_birth", false },
@@ -70,8 +67,7 @@ namespace FortisAPI.Standard.Models
             { "office_ext_phone", false },
             { "primary_location_id", false },
             { "requires_new_password", false },
-            { "state", false },
-            { "terms_condition_id", false },
+            { "terms_condition_code", false },
             { "tz", false },
             { "username", false },
             { "user_api_key", false },
@@ -82,6 +78,7 @@ namespace FortisAPI.Standard.Models
             { "location_id", false },
             { "contact_api_id", false },
             { "primary_location_api_id", false },
+            { "status_code", false },
         };
 
         /// <summary>
@@ -95,10 +92,8 @@ namespace FortisAPI.Standard.Models
         /// Initializes a new instance of the <see cref="V1UsersRequest1"/> class.
         /// </summary>
         /// <param name="accountNumber">account_number.</param>
-        /// <param name="address">address.</param>
         /// <param name="brandingDomainUrl">branding_domain_url.</param>
         /// <param name="cellPhone">cell_phone.</param>
-        /// <param name="city">city.</param>
         /// <param name="companyName">company_name.</param>
         /// <param name="contactId">contact_id.</param>
         /// <param name="dateOfBirth">date_of_birth.</param>
@@ -113,8 +108,7 @@ namespace FortisAPI.Standard.Models
         /// <param name="officeExtPhone">office_ext_phone.</param>
         /// <param name="primaryLocationId">primary_location_id.</param>
         /// <param name="requiresNewPassword">requires_new_password.</param>
-        /// <param name="state">state.</param>
-        /// <param name="termsConditionId">terms_condition_id.</param>
+        /// <param name="termsConditionCode">terms_condition_code.</param>
         /// <param name="tz">tz.</param>
         /// <param name="uiPrefs">ui_prefs.</param>
         /// <param name="username">username.</param>
@@ -126,13 +120,14 @@ namespace FortisAPI.Standard.Models
         /// <param name="locationId">location_id.</param>
         /// <param name="contactApiId">contact_api_id.</param>
         /// <param name="primaryLocationApiId">primary_location_api_id.</param>
-        /// <param name="statusId">status_id.</param>
+        /// <param name="statusCode">status_code.</param>
+        /// <param name="apiOnly">api_only.</param>
+        /// <param name="isInvitation">is_invitation.</param>
+        /// <param name="address">address.</param>
         public V1UsersRequest1(
             string accountNumber = null,
-            string address = null,
             string brandingDomainUrl = null,
             string cellPhone = null,
-            string city = null,
             string companyName = null,
             string contactId = null,
             string dateOfBirth = null,
@@ -147,8 +142,7 @@ namespace FortisAPI.Standard.Models
             string officeExtPhone = null,
             string primaryLocationId = null,
             string requiresNewPassword = null,
-            string state = null,
-            string termsConditionId = null,
+            string termsConditionCode = null,
             string tz = null,
             Models.UiPrefs uiPrefs = null,
             string username = null,
@@ -160,16 +154,14 @@ namespace FortisAPI.Standard.Models
             string locationId = null,
             string contactApiId = null,
             string primaryLocationApiId = null,
-            bool? statusId = null)
+            Models.StatusCodeEnum? statusCode = null,
+            bool? apiOnly = null,
+            bool? isInvitation = null,
+            Models.Address2 address = null)
         {
             if (accountNumber != null)
             {
                 this.AccountNumber = accountNumber;
-            }
-
-            if (address != null)
-            {
-                this.Address = address;
             }
 
             if (brandingDomainUrl != null)
@@ -180,11 +172,6 @@ namespace FortisAPI.Standard.Models
             if (cellPhone != null)
             {
                 this.CellPhone = cellPhone;
-            }
-
-            if (city != null)
-            {
-                this.City = city;
             }
 
             if (companyName != null)
@@ -253,14 +240,9 @@ namespace FortisAPI.Standard.Models
                 this.RequiresNewPassword = requiresNewPassword;
             }
 
-            if (state != null)
+            if (termsConditionCode != null)
             {
-                this.State = state;
-            }
-
-            if (termsConditionId != null)
-            {
-                this.TermsConditionId = termsConditionId;
+                this.TermsConditionCode = termsConditionCode;
             }
 
             if (tz != null)
@@ -314,7 +296,14 @@ namespace FortisAPI.Standard.Models
                 this.PrimaryLocationApiId = primaryLocationApiId;
             }
 
-            this.StatusId = statusId;
+            if (statusCode != null)
+            {
+                this.StatusCode = statusCode;
+            }
+
+            this.ApiOnly = apiOnly;
+            this.IsInvitation = isInvitation;
+            this.Address = address;
         }
 
         /// <summary>
@@ -332,24 +321,6 @@ namespace FortisAPI.Standard.Models
             {
                 this.shouldSerialize["account_number"] = true;
                 this.accountNumber = value;
-            }
-        }
-
-        /// <summary>
-        /// Address
-        /// </summary>
-        [JsonProperty("address")]
-        public string Address
-        {
-            get
-            {
-                return this.address;
-            }
-
-            set
-            {
-                this.shouldSerialize["address"] = true;
-                this.address = value;
             }
         }
 
@@ -386,24 +357,6 @@ namespace FortisAPI.Standard.Models
             {
                 this.shouldSerialize["cell_phone"] = true;
                 this.cellPhone = value;
-            }
-        }
-
-        /// <summary>
-        /// City
-        /// </summary>
-        [JsonProperty("city")]
-        public string City
-        {
-            get
-            {
-                return this.city;
-            }
-
-            set
-            {
-                this.shouldSerialize["city"] = true;
-                this.city = value;
             }
         }
 
@@ -648,38 +601,20 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// State
+        /// Terms Condition (This field is required when updating your own password).
         /// </summary>
-        [JsonProperty("state")]
-        public string State
+        [JsonProperty("terms_condition_code")]
+        public string TermsConditionCode
         {
             get
             {
-                return this.state;
+                return this.termsConditionCode;
             }
 
             set
             {
-                this.shouldSerialize["state"] = true;
-                this.state = value;
-            }
-        }
-
-        /// <summary>
-        /// Terms Condition
-        /// </summary>
-        [JsonProperty("terms_condition_id")]
-        public string TermsConditionId
-        {
-            get
-            {
-                return this.termsConditionId;
-            }
-
-            set
-            {
-                this.shouldSerialize["terms_condition_id"] = true;
-                this.termsConditionId = value;
+                this.shouldSerialize["terms_condition_code"] = true;
+                this.termsConditionCode = value;
             }
         }
 
@@ -870,10 +805,40 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Status
+        /// Status Code
         /// </summary>
-        [JsonProperty("status_id", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? StatusId { get; set; }
+        [JsonProperty("status_code")]
+        public Models.StatusCodeEnum? StatusCode
+        {
+            get
+            {
+                return this.statusCode;
+            }
+
+            set
+            {
+                this.shouldSerialize["status_code"] = true;
+                this.statusCode = value;
+            }
+        }
+
+        /// <summary>
+        /// API Only
+        /// </summary>
+        [JsonProperty("api_only", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? ApiOnly { get; set; }
+
+        /// <summary>
+        /// Is Invitation
+        /// </summary>
+        [JsonProperty("is_invitation", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? IsInvitation { get; set; }
+
+        /// <summary>
+        /// Address
+        /// </summary>
+        [JsonProperty("address", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Address2 Address { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -896,14 +861,6 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetAddress()
-        {
-            this.shouldSerialize["address"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
         public void UnsetBrandingDomainUrl()
         {
             this.shouldSerialize["branding_domain_url"] = false;
@@ -915,14 +872,6 @@ namespace FortisAPI.Standard.Models
         public void UnsetCellPhone()
         {
             this.shouldSerialize["cell_phone"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetCity()
-        {
-            this.shouldSerialize["city"] = false;
         }
 
         /// <summary>
@@ -1032,17 +981,9 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetState()
+        public void UnsetTermsConditionCode()
         {
-            this.shouldSerialize["state"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetTermsConditionId()
-        {
-            this.shouldSerialize["terms_condition_id"] = false;
+            this.shouldSerialize["terms_condition_code"] = false;
         }
 
         /// <summary>
@@ -1126,21 +1067,20 @@ namespace FortisAPI.Standard.Models
         }
 
         /// <summary>
-        /// Checks if the field should be serialized or not.
+        /// Marks the field to not be serailized.
         /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAccountNumber()
+        public void UnsetStatusCode()
         {
-            return this.shouldSerialize["account_number"];
+            this.shouldSerialize["status_code"] = false;
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeAddress()
+        public bool ShouldSerializeAccountNumber()
         {
-            return this.shouldSerialize["address"];
+            return this.shouldSerialize["account_number"];
         }
 
         /// <summary>
@@ -1159,15 +1099,6 @@ namespace FortisAPI.Standard.Models
         public bool ShouldSerializeCellPhone()
         {
             return this.shouldSerialize["cell_phone"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeCity()
-        {
-            return this.shouldSerialize["city"];
         }
 
         /// <summary>
@@ -1291,18 +1222,9 @@ namespace FortisAPI.Standard.Models
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeState()
+        public bool ShouldSerializeTermsConditionCode()
         {
-            return this.shouldSerialize["state"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTermsConditionId()
-        {
-            return this.shouldSerialize["terms_condition_id"];
+            return this.shouldSerialize["terms_condition_code"];
         }
 
         /// <summary>
@@ -1395,6 +1317,15 @@ namespace FortisAPI.Standard.Models
             return this.shouldSerialize["primary_location_api_id"];
         }
 
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeStatusCode()
+        {
+            return this.shouldSerialize["status_code"];
+        }
+
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
@@ -1407,13 +1338,9 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1UsersRequest1 other &&
-                ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
-                ((this.Address == null && other.Address == null) || (this.Address?.Equals(other.Address) == true)) &&
+            return obj is V1UsersRequest1 other &&                ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
                 ((this.BrandingDomainUrl == null && other.BrandingDomainUrl == null) || (this.BrandingDomainUrl?.Equals(other.BrandingDomainUrl) == true)) &&
                 ((this.CellPhone == null && other.CellPhone == null) || (this.CellPhone?.Equals(other.CellPhone) == true)) &&
-                ((this.City == null && other.City == null) || (this.City?.Equals(other.City) == true)) &&
                 ((this.CompanyName == null && other.CompanyName == null) || (this.CompanyName?.Equals(other.CompanyName) == true)) &&
                 ((this.ContactId == null && other.ContactId == null) || (this.ContactId?.Equals(other.ContactId) == true)) &&
                 ((this.DateOfBirth == null && other.DateOfBirth == null) || (this.DateOfBirth?.Equals(other.DateOfBirth) == true)) &&
@@ -1428,8 +1355,7 @@ namespace FortisAPI.Standard.Models
                 ((this.OfficeExtPhone == null && other.OfficeExtPhone == null) || (this.OfficeExtPhone?.Equals(other.OfficeExtPhone) == true)) &&
                 ((this.PrimaryLocationId == null && other.PrimaryLocationId == null) || (this.PrimaryLocationId?.Equals(other.PrimaryLocationId) == true)) &&
                 ((this.RequiresNewPassword == null && other.RequiresNewPassword == null) || (this.RequiresNewPassword?.Equals(other.RequiresNewPassword) == true)) &&
-                ((this.State == null && other.State == null) || (this.State?.Equals(other.State) == true)) &&
-                ((this.TermsConditionId == null && other.TermsConditionId == null) || (this.TermsConditionId?.Equals(other.TermsConditionId) == true)) &&
+                ((this.TermsConditionCode == null && other.TermsConditionCode == null) || (this.TermsConditionCode?.Equals(other.TermsConditionCode) == true)) &&
                 ((this.Tz == null && other.Tz == null) || (this.Tz?.Equals(other.Tz) == true)) &&
                 ((this.UiPrefs == null && other.UiPrefs == null) || (this.UiPrefs?.Equals(other.UiPrefs) == true)) &&
                 ((this.Username == null && other.Username == null) || (this.Username?.Equals(other.Username) == true)) &&
@@ -1441,49 +1367,53 @@ namespace FortisAPI.Standard.Models
                 ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
                 ((this.ContactApiId == null && other.ContactApiId == null) || (this.ContactApiId?.Equals(other.ContactApiId) == true)) &&
                 ((this.PrimaryLocationApiId == null && other.PrimaryLocationApiId == null) || (this.PrimaryLocationApiId?.Equals(other.PrimaryLocationApiId) == true)) &&
-                ((this.StatusId == null && other.StatusId == null) || (this.StatusId?.Equals(other.StatusId) == true));
+                ((this.StatusCode == null && other.StatusCode == null) || (this.StatusCode?.Equals(other.StatusCode) == true)) &&
+                ((this.ApiOnly == null && other.ApiOnly == null) || (this.ApiOnly?.Equals(other.ApiOnly) == true)) &&
+                ((this.IsInvitation == null && other.IsInvitation == null) || (this.IsInvitation?.Equals(other.IsInvitation) == true)) &&
+                ((this.Address == null && other.Address == null) || (this.Address?.Equals(other.Address) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber == string.Empty ? "" : this.AccountNumber)}");
-            toStringOutput.Add($"this.Address = {(this.Address == null ? "null" : this.Address == string.Empty ? "" : this.Address)}");
-            toStringOutput.Add($"this.BrandingDomainUrl = {(this.BrandingDomainUrl == null ? "null" : this.BrandingDomainUrl == string.Empty ? "" : this.BrandingDomainUrl)}");
-            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone == string.Empty ? "" : this.CellPhone)}");
-            toStringOutput.Add($"this.City = {(this.City == null ? "null" : this.City == string.Empty ? "" : this.City)}");
-            toStringOutput.Add($"this.CompanyName = {(this.CompanyName == null ? "null" : this.CompanyName == string.Empty ? "" : this.CompanyName)}");
-            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId == string.Empty ? "" : this.ContactId)}");
-            toStringOutput.Add($"this.DateOfBirth = {(this.DateOfBirth == null ? "null" : this.DateOfBirth == string.Empty ? "" : this.DateOfBirth)}");
-            toStringOutput.Add($"this.DomainId = {(this.DomainId == null ? "null" : this.DomainId == string.Empty ? "" : this.DomainId)}");
-            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email == string.Empty ? "" : this.Email)}");
+            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber)}");
+            toStringOutput.Add($"this.BrandingDomainUrl = {(this.BrandingDomainUrl == null ? "null" : this.BrandingDomainUrl)}");
+            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone)}");
+            toStringOutput.Add($"this.CompanyName = {(this.CompanyName == null ? "null" : this.CompanyName)}");
+            toStringOutput.Add($"this.ContactId = {(this.ContactId == null ? "null" : this.ContactId)}");
+            toStringOutput.Add($"this.DateOfBirth = {(this.DateOfBirth == null ? "null" : this.DateOfBirth)}");
+            toStringOutput.Add($"this.DomainId = {(this.DomainId == null ? "null" : this.DomainId)}");
+            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email)}");
             toStringOutput.Add($"this.EmailTrxReceipt = {(this.EmailTrxReceipt == null ? "null" : this.EmailTrxReceipt.ToString())}");
-            toStringOutput.Add($"this.HomePhone = {(this.HomePhone == null ? "null" : this.HomePhone == string.Empty ? "" : this.HomePhone)}");
-            toStringOutput.Add($"this.FirstName = {(this.FirstName == null ? "null" : this.FirstName == string.Empty ? "" : this.FirstName)}");
-            toStringOutput.Add($"this.LastName = {(this.LastName == null ? "null" : this.LastName == string.Empty ? "" : this.LastName)}");
-            toStringOutput.Add($"this.Locale = {(this.Locale == null ? "null" : this.Locale == string.Empty ? "" : this.Locale)}");
-            toStringOutput.Add($"this.OfficePhone = {(this.OfficePhone == null ? "null" : this.OfficePhone == string.Empty ? "" : this.OfficePhone)}");
-            toStringOutput.Add($"this.OfficeExtPhone = {(this.OfficeExtPhone == null ? "null" : this.OfficeExtPhone == string.Empty ? "" : this.OfficeExtPhone)}");
-            toStringOutput.Add($"this.PrimaryLocationId = {(this.PrimaryLocationId == null ? "null" : this.PrimaryLocationId == string.Empty ? "" : this.PrimaryLocationId)}");
-            toStringOutput.Add($"this.RequiresNewPassword = {(this.RequiresNewPassword == null ? "null" : this.RequiresNewPassword == string.Empty ? "" : this.RequiresNewPassword)}");
-            toStringOutput.Add($"this.State = {(this.State == null ? "null" : this.State == string.Empty ? "" : this.State)}");
-            toStringOutput.Add($"this.TermsConditionId = {(this.TermsConditionId == null ? "null" : this.TermsConditionId == string.Empty ? "" : this.TermsConditionId)}");
-            toStringOutput.Add($"this.Tz = {(this.Tz == null ? "null" : this.Tz == string.Empty ? "" : this.Tz)}");
+            toStringOutput.Add($"this.HomePhone = {(this.HomePhone == null ? "null" : this.HomePhone)}");
+            toStringOutput.Add($"this.FirstName = {(this.FirstName == null ? "null" : this.FirstName)}");
+            toStringOutput.Add($"this.LastName = {(this.LastName == null ? "null" : this.LastName)}");
+            toStringOutput.Add($"this.Locale = {(this.Locale == null ? "null" : this.Locale)}");
+            toStringOutput.Add($"this.OfficePhone = {(this.OfficePhone == null ? "null" : this.OfficePhone)}");
+            toStringOutput.Add($"this.OfficeExtPhone = {(this.OfficeExtPhone == null ? "null" : this.OfficeExtPhone)}");
+            toStringOutput.Add($"this.PrimaryLocationId = {(this.PrimaryLocationId == null ? "null" : this.PrimaryLocationId)}");
+            toStringOutput.Add($"this.RequiresNewPassword = {(this.RequiresNewPassword == null ? "null" : this.RequiresNewPassword)}");
+            toStringOutput.Add($"this.TermsConditionCode = {(this.TermsConditionCode == null ? "null" : this.TermsConditionCode)}");
+            toStringOutput.Add($"this.Tz = {(this.Tz == null ? "null" : this.Tz)}");
             toStringOutput.Add($"this.UiPrefs = {(this.UiPrefs == null ? "null" : this.UiPrefs.ToString())}");
-            toStringOutput.Add($"this.Username = {(this.Username == null ? "null" : this.Username == string.Empty ? "" : this.Username)}");
-            toStringOutput.Add($"this.UserApiKey = {(this.UserApiKey == null ? "null" : this.UserApiKey == string.Empty ? "" : this.UserApiKey)}");
-            toStringOutput.Add($"this.UserHashKey = {(this.UserHashKey == null ? "null" : this.UserHashKey == string.Empty ? "" : this.UserHashKey)}");
+            toStringOutput.Add($"this.Username = {(this.Username == null ? "null" : this.Username)}");
+            toStringOutput.Add($"this.UserApiKey = {(this.UserApiKey == null ? "null" : this.UserApiKey)}");
+            toStringOutput.Add($"this.UserHashKey = {(this.UserHashKey == null ? "null" : this.UserHashKey)}");
             toStringOutput.Add($"this.UserTypeCode = {(this.UserTypeCode == null ? "null" : this.UserTypeCode.ToString())}");
-            toStringOutput.Add($"this.Password = {(this.Password == null ? "null" : this.Password == string.Empty ? "" : this.Password)}");
-            toStringOutput.Add($"this.Zip = {(this.Zip == null ? "null" : this.Zip == string.Empty ? "" : this.Zip)}");
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId == string.Empty ? "" : this.ContactApiId)}");
-            toStringOutput.Add($"this.PrimaryLocationApiId = {(this.PrimaryLocationApiId == null ? "null" : this.PrimaryLocationApiId == string.Empty ? "" : this.PrimaryLocationApiId)}");
-            toStringOutput.Add($"this.StatusId = {(this.StatusId == null ? "null" : this.StatusId.ToString())}");
+            toStringOutput.Add($"this.Password = {(this.Password == null ? "null" : this.Password)}");
+            toStringOutput.Add($"this.Zip = {(this.Zip == null ? "null" : this.Zip)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId)}");
+            toStringOutput.Add($"this.PrimaryLocationApiId = {(this.PrimaryLocationApiId == null ? "null" : this.PrimaryLocationApiId)}");
+            toStringOutput.Add($"this.StatusCode = {(this.StatusCode == null ? "null" : this.StatusCode.ToString())}");
+            toStringOutput.Add($"this.ApiOnly = {(this.ApiOnly == null ? "null" : this.ApiOnly.ToString())}");
+            toStringOutput.Add($"this.IsInvitation = {(this.IsInvitation == null ? "null" : this.IsInvitation.ToString())}");
+            toStringOutput.Add($"this.Address = {(this.Address == null ? "null" : this.Address.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

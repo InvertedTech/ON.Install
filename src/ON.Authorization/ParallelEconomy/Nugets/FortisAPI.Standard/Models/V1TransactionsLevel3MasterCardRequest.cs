@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// V1TransactionsLevel3MasterCardRequest.
     /// </summary>
-    public class V1TransactionsLevel3MasterCardRequest
+    public class V1TransactionsLevel3MasterCardRequest : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="V1TransactionsLevel3MasterCardRequest"/> class.
@@ -32,7 +33,7 @@ namespace FortisAPI.Standard.Models
         /// </summary>
         /// <param name="level3Data">level3_data.</param>
         public V1TransactionsLevel3MasterCardRequest(
-            Models.Level3Data3 level3Data)
+            Models.Level3Data5 level3Data)
         {
             this.Level3Data = level3Data;
         }
@@ -41,7 +42,7 @@ namespace FortisAPI.Standard.Models
         /// Level 3 data object
         /// </summary>
         [JsonProperty("level3_data")]
-        public Models.Level3Data3 Level3Data { get; set; }
+        public Models.Level3Data5 Level3Data { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -65,19 +66,18 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is V1TransactionsLevel3MasterCardRequest other &&
-                ((this.Level3Data == null && other.Level3Data == null) || (this.Level3Data?.Equals(other.Level3Data) == true));
+            return obj is V1TransactionsLevel3MasterCardRequest other &&                ((this.Level3Data == null && other.Level3Data == null) || (this.Level3Data?.Equals(other.Level3Data) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
             toStringOutput.Add($"this.Level3Data = {(this.Level3Data == null ? "null" : this.Level3Data.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

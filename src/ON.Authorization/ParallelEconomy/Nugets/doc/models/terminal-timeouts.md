@@ -25,15 +25,15 @@ The following options outlines some configurable timeout values that can be used
 
 ```json
 {
-  "card_entry_timeout": null,
-  "device_terms_prompt_timeout": null,
-  "overall_timeout": null,
-  "pin_entry_timeout": null,
-  "signature_input_timeout": null,
-  "signature_submit_timeout": null,
-  "status_display_time": null,
-  "tip_cashback_timeout": null,
-  "transaction_timeout": null
+  "card_entry_timeout": 47,
+  "device_terms_prompt_timeout": 30,
+  "overall_timeout": 125,
+  "pin_entry_timeout": 40,
+  "signature_input_timeout": 35,
+  "signature_submit_timeout": 38,
+  "status_display_time": 12,
+  "tip_cashback_timeout": 25,
+  "transaction_timeout": 17
 }
 ```
 

@@ -11,6 +11,7 @@ COPY ON.Crypto ON.Crypto
 COPY ON.Settings ON.Settings
 RUN dotnet restore "ON.Authorization/Payment/Service/ON.Authorization.Payment.Service.csproj"
 WORKDIR "/src/ON.Authorization/Payment/Service"
+RUN rm -f appsettings.Development.json
 RUN dotnet build "ON.Authorization.Payment.Service.csproj" -c Release -o /app/build
 
 FROM build AS publish

@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package ON.Fragments.Content.Music;
+
+import "google/protobuf/timestamp.proto";
+
+// Content record data
+message ContentRecord {
+  ContentPublicRecord Public = 1;
+  ContentPrivateRecord Private = 2;
+}
+
+message ContentPublicRecord {
+  string ContentID = 1;   // Guid for the content record
+  google.protobuf.Timestamp CreatedOnUTC = 2;  // UTC timestamp when content was created
+  google.protobuf.Timestamp ModifiedOnUTC = 3; // UTC timestamp when content record was last modified
+  google.protobuf.Timestamp PublishOnUTC = 4;  // UTC timestamp when content was or will be published
+  google.protobuf.Timestamp AnnounceOnUTC = 7;  // UTC timestamp when content was or will be announced
+  google.protobuf.Timestamp PinnedOnUTC = 5;   // UTC timestamp when content was pinned
+  google.protobuf.Timestamp DeletedOnUTC = 6;   // UTC timestamp when content was deleted
+
+  ContentPublicData Data = 21;
+}
+
+message ContentPrivateRecord {
+  string CreatedBy = 2;
+  string ModifiedBy = 3;
+  string PublishedBy = 4;
+  string AnnouncedBy = 7;
+  string PinnedBy = 5;
+  string DeletedBy = 6;
+
+  ContentPrivateData Data = 21;
+}
+
+message ContentPublicData {
+  string Title = 1;
+  string Description = 2;
+  string Author = 3;
+  string AuthorID = 13;
+  string URL = 4;
+  string FeaturedImageAssetID = 6;
+  uint32 SubscriptionLevel = 7;
+  repeated string CategoryIds = 8;
+  repeated string ChannelIds = 9;
+  repeated string Tags = 10;
+
+  oneof ContentData_oneof {
+	  AudioContentPublicData Audio = 20;
+	  PictureContentPublicData Picture = 21;
+	  VideoContentPublicData Video = 22;
+	  WrittenContentPublicData Written = 23;
+  }
+}
+
+message ContentPrivateData {
+  oneof ContentData_oneof {
+	  AudioContentPrivateData Audio = 20;
+	  PictureContentPrivateData Picture = 21;
+	  VideoContentPrivateData Video = 22;
+	  WrittenContentPrivateData Written = 23;
+  }
+
+  string OldContentID = 51;
+}
+
+message AudioContentPublicData {
+  string HtmlBody = 1;
+  string AudioAssetID = 2;
+}
+message AudioContentPrivateData {
+}
+
+message PictureContentPublicData {
+  string HtmlBody = 1;
+  repeated string ImageAssetIDs = 2;
+}
+message PictureContentPrivateData {
+}
+
+message VideoContentPublicData {
+  string HtmlBody = 1;
+  bool IsLiveStream = 2;
+  bool IsLive = 3;
+  string RumbleVideoId = 11;
+  string YoutubeVideoId = 12;
+}
+message VideoContentPrivateData {
+}
+
+message WrittenContentPublicData {
+  string HtmlBody = 1;
+}
+message WrittenContentPrivateData {
+}
+

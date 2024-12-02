@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Tag.
     /// </summary>
-    public class Tag
+    public class Tag : BaseModel
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Tag"/> class.
@@ -30,18 +31,54 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Tag"/> class.
         /// </summary>
+        /// <param name="locationId">location_id.</param>
         /// <param name="title">title.</param>
+        /// <param name="id">id.</param>
+        /// <param name="createdTs">created_ts.</param>
+        /// <param name="modifiedTs">modified_ts.</param>
         public Tag(
-            string title = null)
+            string locationId,
+            string title,
+            string id,
+            int createdTs,
+            int modifiedTs)
         {
+            this.LocationId = locationId;
             this.Title = title;
+            this.Id = id;
+            this.CreatedTs = createdTs;
+            this.ModifiedTs = modifiedTs;
         }
 
         /// <summary>
-        /// Used to apply tags to a transaction.
+        /// Location ID
         /// </summary>
-        [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("location_id")]
+        public string LocationId { get; set; }
+
+        /// <summary>
+        /// Tag Title
+        /// </summary>
+        [JsonProperty("title")]
         public string Title { get; set; }
+
+        /// <summary>
+        /// Tag ID
+        /// </summary>
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Created Time Stamp
+        /// </summary>
+        [JsonProperty("created_ts")]
+        public int CreatedTs { get; set; }
+
+        /// <summary>
+        /// Modified Time Stamp
+        /// </summary>
+        [JsonProperty("modified_ts")]
+        public int ModifiedTs { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -65,19 +102,26 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Tag other &&
-                ((this.Title == null && other.Title == null) || (this.Title?.Equals(other.Title) == true));
+            return obj is Tag other &&                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
+                ((this.Title == null && other.Title == null) || (this.Title?.Equals(other.Title) == true)) &&
+                ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
+                this.CreatedTs.Equals(other.CreatedTs) &&
+                this.ModifiedTs.Equals(other.ModifiedTs);
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title == string.Empty ? "" : this.Title)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.Title = {(this.Title == null ? "null" : this.Title)}");
+            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id)}");
+            toStringOutput.Add($"this.CreatedTs = {this.CreatedTs}");
+            toStringOutput.Add($"this.ModifiedTs = {this.ModifiedTs}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

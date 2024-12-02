@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 using ON.Authentication;
 using ON.Fragments.Authorization.Payment.Stripe;
 using ON.Settings;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ON.SimpleWeb.Services.Stripe
@@ -24,22 +27,47 @@ namespace ON.SimpleWeb.Services.Stripe
 
         public bool IsLoggedIn { get => User != null; }
 
-        public async Task<CancelOwnSubscriptionResponse> CancelSubscription(string reason)
+        public async Task<StripeCancelOwnSubscriptionResponse> CancelSubscription(Guid id, string reason)
         {
             if (!IsLoggedIn)
                 return null;
 
-            var req = new CancelOwnSubscriptionRequest()
+            var req = new StripeCancelOwnSubscriptionRequest()
             {
+                SubscriptionId = id.ToString(),
                 Reason = reason
             };
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
-            var reply = await client.CancelOwnSubscriptionAsync(req, GetMetadata());
+            var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.StripeCancelOwnSubscriptionAsync(req, GetMetadata());
             return reply;
         }
 
-        public async Task<SubscriptionRecord> GetCurrentRecord()
+        public async Task<StripeCheckOwnSubscriptionResponse> Check()
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            var req = new StripeCheckOwnSubscriptionRequest()
+            {
+            };
+
+            var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.StripeCheckOwnSubscriptionAsync(req, GetMetadata());
+            return reply;
+        }
+
+        public async Task<StripeCheckOwnOneTimeResponse> CheckOneTime()
+        {
+            if (!IsLoggedIn)
+                return null;
+
+            var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.StripeCheckOwnOneTimeAsync(new(), GetMetadata());
+            return reply;
+        }
+
+        public async Task<List<StripeSubscriptionRecord>> GetRecords()
         {
             if (!IsLoggedIn)
                 return null;
@@ -50,40 +78,40 @@ namespace ON.SimpleWeb.Services.Stripe
             logger.LogWarning($"******Trying to hopefully connect to PaymentService at:({nameHelper.PaymentServiceChannel.Target})******");
 
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
-            var reply = await client.GetOwnSubscriptionRecordAsync(new GetOwnSubscriptionRecordRequest(), GetMetadata());
-            return reply.Record;
+            var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.StripeGetOwnSubscriptionRecordsAsync(new StripeGetOwnSubscriptionRecordsRequest(), GetMetadata());
+            return reply.Records.ToList();
         }
 
-        public async Task<NewOwnSubscriptionResponse> NewSubscription(string subscriptionId, int price, string customerId)
+        public async Task<StripeNewOwnSubscriptionResponse> NewSubscription(string subscriptionId, int price, string customerId)
         {
             if (!IsLoggedIn)
                 return null;
             price /= 100;
 
-            var req = new NewOwnSubscriptionRequest()
+            var req = new StripeNewOwnSubscriptionRequest()
             {
                 SubscriptionId = subscriptionId,
                 SubscriptionPrice = (uint)price,
                 CustomerId = customerId,
             };
 
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
-            var reply = await client.NewOwnSubscriptionAsync(req, GetMetadata());
+            var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.StripeNewOwnSubscriptionAsync(req, GetMetadata());
             return reply;
         }
 
-        public async Task<CreateBillingPortalResponse> CreatePortal(string customerId)
+        public async Task<StripeCreateBillingPortalResponse> CreatePortal(string customerId)
         {
             if (!IsLoggedIn)
                 return null;
 
-            var req = new CreateBillingPortalRequest()
+            var req = new StripeCreateBillingPortalRequest()
             {
                 CustomerId = customerId
             };
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
-            var reply = await client.CreateBillingPortalAsync(req, GetMetadata());
+            var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.StripeCreateBillingPortalAsync(req, GetMetadata());
 
             return reply;
         }
@@ -98,17 +126,17 @@ namespace ON.SimpleWeb.Services.Stripe
             return data;
         }
 
-        public async Task<CheckoutSessionResponse> CreateCheckoutSession(string priceId)
+        public async Task<StripeCheckoutSessionResponse> CreateCheckoutSession(string priceId)
         {
             if (!IsLoggedIn)
                 return null;
 
-            var req = new CheckoutSessionRequest()
+            var req = new StripeCheckoutSessionRequest()
             {
                 PriceId = priceId
             };
-            var client = new PaymentsInterface.PaymentsInterfaceClient(nameHelper.PaymentServiceChannel);
-            var reply = await client.CreateCheckoutSessionAsync(req, GetMetadata());
+            var client = new StripeInterface.StripeInterfaceClient(nameHelper.PaymentServiceChannel);
+            var reply = await client.StripeCreateCheckoutSessionAsync(req, GetMetadata());
 
             return reply;
         }

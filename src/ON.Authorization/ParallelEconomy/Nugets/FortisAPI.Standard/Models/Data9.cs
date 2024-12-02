@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,32 +19,22 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// Data9.
     /// </summary>
-    public class Data9
+    public class Data9 : BaseModel
     {
-        private string description;
-        private string endDate;
-        private int? installmentTotalCount;
-        private int? notificationDays;
-        private string productTransactionId;
-        private string recurringId;
-        private string recurringApiId;
-        private string termsAgreeIp;
-        private string recurringC1;
-        private string recurringC2;
-        private string recurringC3;
+        private string parentId;
+        private string clientAppId;
+        private string legalName;
+        private string website;
+        private int? ecMonthlyVolume;
+        private Models.PreferredLanguageEnum? preferredLanguage;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
-            { "description", false },
-            { "end_date", false },
-            { "installment_total_count", false },
-            { "notification_days", false },
-            { "product_transaction_id", false },
-            { "recurring_id", false },
-            { "recurring_api_id", false },
-            { "terms_agree_ip", false },
-            { "recurring_c1", false },
-            { "recurring_c2", false },
-            { "recurring_c3", false },
+            { "parent_id", false },
+            { "client_app_id", false },
+            { "legal_name", false },
+            { "website", false },
+            { "ec_monthly_volume", false },
+            { "preferred_language", false },
         };
 
         /// <summary>
@@ -56,428 +47,384 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="Data9"/> class.
         /// </summary>
-        /// <param name="accountVaultId">account_vault_id.</param>
-        /// <param name="active">active.</param>
-        /// <param name="interval">interval.</param>
-        /// <param name="intervalType">interval_type.</param>
-        /// <param name="locationId">location_id.</param>
-        /// <param name="paymentMethod">payment_method.</param>
-        /// <param name="startDate">start_date.</param>
+        /// <param name="email">email.</param>
+        /// <param name="dbaName">dba_name.</param>
+        /// <param name="phoneNumber">phone_number.</param>
+        /// <param name="ownershipType">ownership_type.</param>
+        /// <param name="fedTaxId">fed_tax_id.</param>
+        /// <param name="averageTicket">average_ticket.</param>
+        /// <param name="highTicket">high_ticket.</param>
+        /// <param name="ccMonthlyVolume">cc_monthly_volume.</param>
+        /// <param name="mccCode">mcc_code.</param>
+        /// <param name="businessDescription">business_description.</param>
+        /// <param name="swipedPercent">swiped_percent.</param>
+        /// <param name="keyedPercent">keyed_percent.</param>
+        /// <param name="ecommercePercent">ecommerce_percent.</param>
+        /// <param name="isForeignEntity">is_foreign_entity.</param>
+        /// <param name="personallyGuaranteed">personally_guaranteed.</param>
+        /// <param name="addresses">addresses.</param>
+        /// <param name="owners">owners.</param>
+        /// <param name="bankAccounts">bank_accounts.</param>
+        /// <param name="parentId">parent_id.</param>
+        /// <param name="templateId">template_id.</param>
+        /// <param name="clientAppId">client_app_id.</param>
+        /// <param name="legalName">legal_name.</param>
+        /// <param name="website">website.</param>
+        /// <param name="ecMonthlyVolume">ec_monthly_volume.</param>
+        /// <param name="preferredLanguage">preferred_language.</param>
+        /// <param name="documents">documents.</param>
+        /// <param name="pricingElements">pricing_elements.</param>
+        /// <param name="kycResponseObjects">kyc_response_objects.</param>
+        /// <param name="metadata">metadata.</param>
+        /// <param name="result">result.</param>
         /// <param name="status">status.</param>
-        /// <param name="transactionAmount">transaction_amount.</param>
-        /// <param name="id">id.</param>
-        /// <param name="nextRunDate">next_run_date.</param>
-        /// <param name="createdTs">created_ts.</param>
-        /// <param name="modifiedTs">modified_ts.</param>
-        /// <param name="recurringTypeId">recurring_type_id.</param>
-        /// <param name="description">description.</param>
-        /// <param name="endDate">end_date.</param>
-        /// <param name="installmentTotalCount">installment_total_count.</param>
-        /// <param name="notificationDays">notification_days.</param>
-        /// <param name="productTransactionId">product_transaction_id.</param>
-        /// <param name="recurringId">recurring_id.</param>
-        /// <param name="recurringApiId">recurring_api_id.</param>
-        /// <param name="termsAgree">terms_agree.</param>
-        /// <param name="termsAgreeIp">terms_agree_ip.</param>
-        /// <param name="recurringC1">recurring_c1.</param>
-        /// <param name="recurringC2">recurring_c2.</param>
-        /// <param name="recurringC3">recurring_c3.</param>
-        /// <param name="sendToProcAsRecur">send_to_proc_as_recur.</param>
         public Data9(
-            string accountVaultId,
-            Models.ActiveEnum active,
-            int interval,
-            Models.IntervalTypeEnum intervalType,
-            string locationId,
-            Models.PaymentMethodEnum paymentMethod,
-            string startDate,
-            Models.StatusEnum status,
-            double transactionAmount,
-            string id,
-            string nextRunDate,
-            int createdTs,
-            int modifiedTs,
-            Models.RecurringTypeIdEnum recurringTypeId,
-            string description = null,
-            string endDate = null,
-            int? installmentTotalCount = null,
-            int? notificationDays = null,
-            string productTransactionId = null,
-            string recurringId = null,
-            string recurringApiId = null,
-            bool? termsAgree = null,
-            string termsAgreeIp = null,
-            string recurringC1 = null,
-            string recurringC2 = null,
-            string recurringC3 = null,
-            bool? sendToProcAsRecur = null)
+            string email,
+            string dbaName,
+            string phoneNumber,
+            Models.OwnershipTypeEnum ownershipType,
+            string fedTaxId,
+            int averageTicket,
+            int highTicket,
+            int ccMonthlyVolume,
+            string mccCode,
+            string businessDescription,
+            int swipedPercent,
+            int keyedPercent,
+            int ecommercePercent,
+            bool isForeignEntity,
+            bool personallyGuaranteed,
+            List<Models.Address22> addresses,
+            List<Models.Owner> owners,
+            List<Models.BankAccount> bankAccounts,
+            string parentId = null,
+            string templateId = null,
+            string clientAppId = null,
+            string legalName = null,
+            string website = null,
+            int? ecMonthlyVolume = null,
+            Models.PreferredLanguageEnum? preferredLanguage = null,
+            List<Models.Document> documents = null,
+            List<Models.PricingElement> pricingElements = null,
+            List<Models.KycResponseObject> kycResponseObjects = null,
+            object metadata = null,
+            Models.Result result = null,
+            Models.Status5 status = null)
         {
-            this.AccountVaultId = accountVaultId;
-            this.Active = active;
-            if (description != null)
+            if (parentId != null)
             {
-                this.Description = description;
+                this.ParentId = parentId;
             }
 
-            if (endDate != null)
+            this.TemplateId = templateId;
+            if (clientAppId != null)
             {
-                this.EndDate = endDate;
+                this.ClientAppId = clientAppId;
             }
 
-            if (installmentTotalCount != null)
+            this.Email = email;
+            this.DbaName = dbaName;
+            if (legalName != null)
             {
-                this.InstallmentTotalCount = installmentTotalCount;
+                this.LegalName = legalName;
             }
 
-            this.Interval = interval;
-            this.IntervalType = intervalType;
-            this.LocationId = locationId;
-            if (notificationDays != null)
+            if (website != null)
             {
-                this.NotificationDays = notificationDays;
+                this.Website = website;
             }
 
-            this.PaymentMethod = paymentMethod;
-            if (productTransactionId != null)
+            this.PhoneNumber = phoneNumber;
+            this.OwnershipType = ownershipType;
+            this.FedTaxId = fedTaxId;
+            this.AverageTicket = averageTicket;
+            this.HighTicket = highTicket;
+            this.CcMonthlyVolume = ccMonthlyVolume;
+            if (ecMonthlyVolume != null)
             {
-                this.ProductTransactionId = productTransactionId;
+                this.EcMonthlyVolume = ecMonthlyVolume;
             }
 
-            if (recurringId != null)
+            this.MccCode = mccCode;
+            this.BusinessDescription = businessDescription;
+            this.SwipedPercent = swipedPercent;
+            this.KeyedPercent = keyedPercent;
+            this.EcommercePercent = ecommercePercent;
+            this.IsForeignEntity = isForeignEntity;
+            this.PersonallyGuaranteed = personallyGuaranteed;
+            if (preferredLanguage != null)
             {
-                this.RecurringId = recurringId;
+                this.PreferredLanguage = preferredLanguage;
             }
 
-            if (recurringApiId != null)
-            {
-                this.RecurringApiId = recurringApiId;
-            }
-
-            this.StartDate = startDate;
+            this.Addresses = addresses;
+            this.Owners = owners;
+            this.BankAccounts = bankAccounts;
+            this.Documents = documents;
+            this.PricingElements = pricingElements;
+            this.KycResponseObjects = kycResponseObjects;
+            this.Metadata = metadata;
+            this.Result = result;
             this.Status = status;
-            this.TransactionAmount = transactionAmount;
-            this.TermsAgree = termsAgree;
-            if (termsAgreeIp != null)
-            {
-                this.TermsAgreeIp = termsAgreeIp;
-            }
-
-            if (recurringC1 != null)
-            {
-                this.RecurringC1 = recurringC1;
-            }
-
-            if (recurringC2 != null)
-            {
-                this.RecurringC2 = recurringC2;
-            }
-
-            if (recurringC3 != null)
-            {
-                this.RecurringC3 = recurringC3;
-            }
-
-            this.SendToProcAsRecur = sendToProcAsRecur;
-            this.Id = id;
-            this.NextRunDate = nextRunDate;
-            this.CreatedTs = createdTs;
-            this.ModifiedTs = modifiedTs;
-            this.RecurringTypeId = recurringTypeId;
         }
-
-        /// <summary>
-        /// Token ID
-        /// </summary>
-        [JsonProperty("account_vault_id")]
-        public string AccountVaultId { get; set; }
-
-        /// <summary>
-        /// Active
-        /// </summary>
-        [JsonProperty("active")]
-        public Models.ActiveEnum Active { get; set; }
-
-        /// <summary>
-        /// Description
-        /// </summary>
-        [JsonProperty("description")]
-        public string Description
-        {
-            get
-            {
-                return this.description;
-            }
-
-            set
-            {
-                this.shouldSerialize["description"] = true;
-                this.description = value;
-            }
-        }
-
-        /// <summary>
-        /// End date
-        /// </summary>
-        [JsonProperty("end_date")]
-        public string EndDate
-        {
-            get
-            {
-                return this.endDate;
-            }
-
-            set
-            {
-                this.shouldSerialize["end_date"] = true;
-                this.endDate = value;
-            }
-        }
-
-        /// <summary>
-        /// Installment Total Count
-        /// </summary>
-        [JsonProperty("installment_total_count")]
-        public int? InstallmentTotalCount
-        {
-            get
-            {
-                return this.installmentTotalCount;
-            }
-
-            set
-            {
-                this.shouldSerialize["installment_total_count"] = true;
-                this.installmentTotalCount = value;
-            }
-        }
-
-        /// <summary>
-        /// Interval
-        /// </summary>
-        [JsonProperty("interval")]
-        public int Interval { get; set; }
-
-        /// <summary>
-        /// Interval Type
-        /// </summary>
-        [JsonProperty("interval_type", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.IntervalTypeEnum IntervalType { get; set; }
 
         /// <summary>
         /// Location ID
         /// </summary>
-        [JsonProperty("location_id")]
-        public string LocationId { get; set; }
-
-        /// <summary>
-        /// Notification Days
-        /// </summary>
-        [JsonProperty("notification_days")]
-        public int? NotificationDays
+        [JsonProperty("parent_id")]
+        public string ParentId
         {
             get
             {
-                return this.notificationDays;
+                return this.parentId;
             }
 
             set
             {
-                this.shouldSerialize["notification_days"] = true;
-                this.notificationDays = value;
+                this.shouldSerialize["parent_id"] = true;
+                this.parentId = value;
             }
         }
 
         /// <summary>
-        /// Payment Method
+        /// The ID of the template to be used - this value will be provided by Fortis.
         /// </summary>
-        [JsonProperty("payment_method", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.PaymentMethodEnum PaymentMethod { get; set; }
+        [JsonProperty("template_id", NullValueHandling = NullValueHandling.Ignore)]
+        public string TemplateId { get; set; }
 
         /// <summary>
-        /// Product Transaction ID
+        /// Client Issues Id to track that can be used to track each submitted merchant application. This id should be generated and sent in the request payload, and will be returned in the response payload. If no id is submitted in the payload request, this field will be null in the response.
         /// </summary>
-        [JsonProperty("product_transaction_id")]
-        public string ProductTransactionId
+        [JsonProperty("client_app_id")]
+        public string ClientAppId
         {
             get
             {
-                return this.productTransactionId;
+                return this.clientAppId;
             }
 
             set
             {
-                this.shouldSerialize["product_transaction_id"] = true;
-                this.productTransactionId = value;
+                this.shouldSerialize["client_app_id"] = true;
+                this.clientAppId = value;
             }
         }
 
         /// <summary>
-        /// Recurring ID
+        /// Merchant email address.
         /// </summary>
-        [JsonProperty("recurring_id")]
-        public string RecurringId
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Merchant 'Doing Business As' name.
+        /// </summary>
+        [JsonProperty("dba_name")]
+        public string DbaName { get; set; }
+
+        /// <summary>
+        /// Merchant legal name.
+        /// </summary>
+        [JsonProperty("legal_name")]
+        public string LegalName
         {
             get
             {
-                return this.recurringId;
+                return this.legalName;
             }
 
             set
             {
-                this.shouldSerialize["recurring_id"] = true;
-                this.recurringId = value;
+                this.shouldSerialize["legal_name"] = true;
+                this.legalName = value;
             }
         }
 
         /// <summary>
-        /// Recurring Api ID
+        /// Merchant's business website.
         /// </summary>
-        [JsonProperty("recurring_api_id")]
-        public string RecurringApiId
+        [JsonProperty("website")]
+        public string Website
         {
             get
             {
-                return this.recurringApiId;
+                return this.website;
             }
 
             set
             {
-                this.shouldSerialize["recurring_api_id"] = true;
-                this.recurringApiId = value;
+                this.shouldSerialize["website"] = true;
+                this.website = value;
             }
         }
 
         /// <summary>
-        /// Start date
+        /// Merchant's phone number.
         /// </summary>
-        [JsonProperty("start_date")]
-        public string StartDate { get; set; }
+        [JsonProperty("phone_number")]
+        public string PhoneNumber { get; set; }
 
         /// <summary>
-        /// Status
+        /// The Ownership Type of the merchant's business.
         /// </summary>
-        [JsonProperty("status", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.StatusEnum Status { get; set; }
+        [JsonProperty("ownership_type")]
+        public Models.OwnershipTypeEnum OwnershipType { get; set; }
 
         /// <summary>
-        /// Transaction amount
+        /// Federal Tax ID (EIN).
         /// </summary>
-        [JsonProperty("transaction_amount")]
-        public double TransactionAmount { get; set; }
+        [JsonProperty("fed_tax_id")]
+        public string FedTaxId { get; set; }
 
         /// <summary>
-        /// Terms Agree
+        /// Average Transaction Amount.
         /// </summary>
-        [JsonProperty("terms_agree", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? TermsAgree { get; set; }
+        [JsonProperty("average_ticket")]
+        public int AverageTicket { get; set; }
 
         /// <summary>
-        /// Terms Agree Ip
+        /// Highest transaction amount rounded to the next dollar
         /// </summary>
-        [JsonProperty("terms_agree_ip")]
-        public string TermsAgreeIp
+        [JsonProperty("high_ticket")]
+        public int HighTicket { get; set; }
+
+        /// <summary>
+        /// Average monthly credit card volume rounded to the next dollar.
+        /// </summary>
+        [JsonProperty("cc_monthly_volume")]
+        public int CcMonthlyVolume { get; set; }
+
+        /// <summary>
+        /// Average monthly echeck volume rounded to the next dollar.
+        /// </summary>
+        [JsonProperty("ec_monthly_volume")]
+        public int? EcMonthlyVolume
         {
             get
             {
-                return this.termsAgreeIp;
+                return this.ecMonthlyVolume;
             }
 
             set
             {
-                this.shouldSerialize["terms_agree_ip"] = true;
-                this.termsAgreeIp = value;
+                this.shouldSerialize["ec_monthly_volume"] = true;
+                this.ecMonthlyVolume = value;
             }
         }
 
         /// <summary>
-        /// Custom field used for integrations
+        /// Merchant's MCC code.
         /// </summary>
-        [JsonProperty("recurring_c1")]
-        public string RecurringC1
+        [JsonProperty("mcc_code")]
+        public string MccCode { get; set; }
+
+        /// <summary>
+        /// Description of Goods or Services.
+        /// </summary>
+        [JsonProperty("business_description")]
+        public string BusinessDescription { get; set; }
+
+        /// <summary>
+        /// Card present/swiped percentage
+        /// </summary>
+        [JsonProperty("swiped_percent")]
+        public int SwipedPercent { get; set; }
+
+        /// <summary>
+        /// Card not present/keyed percentage
+        /// </summary>
+        [JsonProperty("keyed_percent")]
+        public int KeyedPercent { get; set; }
+
+        /// <summary>
+        /// eCommerce percentage.
+        /// </summary>
+        [JsonProperty("ecommerce_percent")]
+        public int EcommercePercent { get; set; }
+
+        /// <summary>
+        /// Indicates whether or not the merchant is a foreign entity.
+        /// </summary>
+        [JsonProperty("is_foreign_entity")]
+        public bool IsForeignEntity { get; set; }
+
+        /// <summary>
+        /// Indicates whether or not the merchant is personally guaranteed.
+        /// </summary>
+        [JsonProperty("personally_guaranteed")]
+        public bool PersonallyGuaranteed { get; set; }
+
+        /// <summary>
+        /// Merchant preferred language. English(“en-US”) will be used if no value is supplied.
+        /// </summary>
+        [JsonProperty("preferred_language")]
+        public Models.PreferredLanguageEnum? PreferredLanguage
         {
             get
             {
-                return this.recurringC1;
+                return this.preferredLanguage;
             }
 
             set
             {
-                this.shouldSerialize["recurring_c1"] = true;
-                this.recurringC1 = value;
+                this.shouldSerialize["preferred_language"] = true;
+                this.preferredLanguage = value;
             }
         }
 
         /// <summary>
-        /// Custom field used for integrations
+        /// Gets or sets Addresses.
         /// </summary>
-        [JsonProperty("recurring_c2")]
-        public string RecurringC2
-        {
-            get
-            {
-                return this.recurringC2;
-            }
-
-            set
-            {
-                this.shouldSerialize["recurring_c2"] = true;
-                this.recurringC2 = value;
-            }
-        }
+        [JsonProperty("addresses")]
+        public List<Models.Address22> Addresses { get; set; }
 
         /// <summary>
-        /// Custom field used for integrations
+        /// Gets or sets Owners.
         /// </summary>
-        [JsonProperty("recurring_c3")]
-        public string RecurringC3
-        {
-            get
-            {
-                return this.recurringC3;
-            }
-
-            set
-            {
-                this.shouldSerialize["recurring_c3"] = true;
-                this.recurringC3 = value;
-            }
-        }
+        [JsonProperty("owners")]
+        public List<Models.Owner> Owners { get; set; }
 
         /// <summary>
-        /// Send To Proc As Recur
+        /// Gets or sets BankAccounts.
         /// </summary>
-        [JsonProperty("send_to_proc_as_recur", NullValueHandling = NullValueHandling.Ignore)]
-        public bool? SendToProcAsRecur { get; set; }
+        [JsonProperty("bank_accounts")]
+        public List<Models.BankAccount> BankAccounts { get; set; }
 
         /// <summary>
-        /// Recurring ID
+        /// Gets or sets Documents.
         /// </summary>
-        [JsonProperty("id")]
-        public string Id { get; set; }
+        [JsonProperty("documents", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.Document> Documents { get; set; }
 
         /// <summary>
-        /// Next Run Date
+        /// Gets or sets PricingElements.
         /// </summary>
-        [JsonProperty("next_run_date")]
-        public string NextRunDate { get; set; }
+        [JsonProperty("pricing_elements", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.PricingElement> PricingElements { get; set; }
 
         /// <summary>
-        /// Created Time Stamp
+        /// Gets or sets KycResponseObjects.
         /// </summary>
-        [JsonProperty("created_ts")]
-        public int CreatedTs { get; set; }
+        [JsonProperty("kyc_response_objects", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.KycResponseObject> KycResponseObjects { get; set; }
 
         /// <summary>
-        /// Modified Time Stamp
+        /// Valid JSON of metadata related to merchant.
         /// </summary>
-        [JsonProperty("modified_ts")]
-        public int ModifiedTs { get; set; }
+        [JsonProperty("metadata", NullValueHandling = NullValueHandling.Ignore)]
+        public object Metadata { get; set; }
 
         /// <summary>
-        /// Recurring Type
+        /// Gets or sets Result.
         /// </summary>
-        [JsonProperty("recurring_type_id", ItemConverterType = typeof(StringEnumConverter))]
-        public Models.RecurringTypeIdEnum RecurringTypeId { get; set; }
+        [JsonProperty("result", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Result Result { get; set; }
+
+        /// <summary>
+        /// Gets or sets Status.
+        /// </summary>
+        [JsonProperty("status", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Status5 Status { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -492,188 +439,103 @@ namespace FortisAPI.Standard.Models
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetDescription()
+        public void UnsetParentId()
         {
-            this.shouldSerialize["description"] = false;
+            this.shouldSerialize["parent_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetEndDate()
+        public void UnsetClientAppId()
         {
-            this.shouldSerialize["end_date"] = false;
+            this.shouldSerialize["client_app_id"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetInstallmentTotalCount()
+        public void UnsetLegalName()
         {
-            this.shouldSerialize["installment_total_count"] = false;
+            this.shouldSerialize["legal_name"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetNotificationDays()
+        public void UnsetWebsite()
         {
-            this.shouldSerialize["notification_days"] = false;
+            this.shouldSerialize["website"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetProductTransactionId()
+        public void UnsetEcMonthlyVolume()
         {
-            this.shouldSerialize["product_transaction_id"] = false;
+            this.shouldSerialize["ec_monthly_volume"] = false;
         }
 
         /// <summary>
         /// Marks the field to not be serailized.
         /// </summary>
-        public void UnsetRecurringId()
+        public void UnsetPreferredLanguage()
         {
-            this.shouldSerialize["recurring_id"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetRecurringApiId()
-        {
-            this.shouldSerialize["recurring_api_id"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetTermsAgreeIp()
-        {
-            this.shouldSerialize["terms_agree_ip"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetRecurringC1()
-        {
-            this.shouldSerialize["recurring_c1"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetRecurringC2()
-        {
-            this.shouldSerialize["recurring_c2"] = false;
-        }
-
-        /// <summary>
-        /// Marks the field to not be serailized.
-        /// </summary>
-        public void UnsetRecurringC3()
-        {
-            this.shouldSerialize["recurring_c3"] = false;
+            this.shouldSerialize["preferred_language"] = false;
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeDescription()
+        public bool ShouldSerializeParentId()
         {
-            return this.shouldSerialize["description"];
+            return this.shouldSerialize["parent_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeEndDate()
+        public bool ShouldSerializeClientAppId()
         {
-            return this.shouldSerialize["end_date"];
+            return this.shouldSerialize["client_app_id"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeInstallmentTotalCount()
+        public bool ShouldSerializeLegalName()
         {
-            return this.shouldSerialize["installment_total_count"];
+            return this.shouldSerialize["legal_name"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeNotificationDays()
+        public bool ShouldSerializeWebsite()
         {
-            return this.shouldSerialize["notification_days"];
+            return this.shouldSerialize["website"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeProductTransactionId()
+        public bool ShouldSerializeEcMonthlyVolume()
         {
-            return this.shouldSerialize["product_transaction_id"];
+            return this.shouldSerialize["ec_monthly_volume"];
         }
 
         /// <summary>
         /// Checks if the field should be serialized or not.
         /// </summary>
         /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeRecurringId()
+        public bool ShouldSerializePreferredLanguage()
         {
-            return this.shouldSerialize["recurring_id"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeRecurringApiId()
-        {
-            return this.shouldSerialize["recurring_api_id"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeTermsAgreeIp()
-        {
-            return this.shouldSerialize["terms_agree_ip"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeRecurringC1()
-        {
-            return this.shouldSerialize["recurring_c1"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeRecurringC2()
-        {
-            return this.shouldSerialize["recurring_c2"];
-        }
-
-        /// <summary>
-        /// Checks if the field should be serialized or not.
-        /// </summary>
-        /// <returns>A boolean weather the field should be serialized or not.</returns>
-        public bool ShouldSerializeRecurringC3()
-        {
-            return this.shouldSerialize["recurring_c3"];
+            return this.shouldSerialize["preferred_language"];
         }
 
         /// <inheritdoc/>
@@ -688,71 +550,78 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is Data9 other &&
-                ((this.AccountVaultId == null && other.AccountVaultId == null) || (this.AccountVaultId?.Equals(other.AccountVaultId) == true)) &&
-                this.Active.Equals(other.Active) &&
-                ((this.Description == null && other.Description == null) || (this.Description?.Equals(other.Description) == true)) &&
-                ((this.EndDate == null && other.EndDate == null) || (this.EndDate?.Equals(other.EndDate) == true)) &&
-                ((this.InstallmentTotalCount == null && other.InstallmentTotalCount == null) || (this.InstallmentTotalCount?.Equals(other.InstallmentTotalCount) == true)) &&
-                this.Interval.Equals(other.Interval) &&
-                this.IntervalType.Equals(other.IntervalType) &&
-                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
-                ((this.NotificationDays == null && other.NotificationDays == null) || (this.NotificationDays?.Equals(other.NotificationDays) == true)) &&
-                this.PaymentMethod.Equals(other.PaymentMethod) &&
-                ((this.ProductTransactionId == null && other.ProductTransactionId == null) || (this.ProductTransactionId?.Equals(other.ProductTransactionId) == true)) &&
-                ((this.RecurringId == null && other.RecurringId == null) || (this.RecurringId?.Equals(other.RecurringId) == true)) &&
-                ((this.RecurringApiId == null && other.RecurringApiId == null) || (this.RecurringApiId?.Equals(other.RecurringApiId) == true)) &&
-                ((this.StartDate == null && other.StartDate == null) || (this.StartDate?.Equals(other.StartDate) == true)) &&
-                this.Status.Equals(other.Status) &&
-                this.TransactionAmount.Equals(other.TransactionAmount) &&
-                ((this.TermsAgree == null && other.TermsAgree == null) || (this.TermsAgree?.Equals(other.TermsAgree) == true)) &&
-                ((this.TermsAgreeIp == null && other.TermsAgreeIp == null) || (this.TermsAgreeIp?.Equals(other.TermsAgreeIp) == true)) &&
-                ((this.RecurringC1 == null && other.RecurringC1 == null) || (this.RecurringC1?.Equals(other.RecurringC1) == true)) &&
-                ((this.RecurringC2 == null && other.RecurringC2 == null) || (this.RecurringC2?.Equals(other.RecurringC2) == true)) &&
-                ((this.RecurringC3 == null && other.RecurringC3 == null) || (this.RecurringC3?.Equals(other.RecurringC3) == true)) &&
-                ((this.SendToProcAsRecur == null && other.SendToProcAsRecur == null) || (this.SendToProcAsRecur?.Equals(other.SendToProcAsRecur) == true)) &&
-                ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
-                ((this.NextRunDate == null && other.NextRunDate == null) || (this.NextRunDate?.Equals(other.NextRunDate) == true)) &&
-                this.CreatedTs.Equals(other.CreatedTs) &&
-                this.ModifiedTs.Equals(other.ModifiedTs) &&
-                this.RecurringTypeId.Equals(other.RecurringTypeId);
+            return obj is Data9 other &&                ((this.ParentId == null && other.ParentId == null) || (this.ParentId?.Equals(other.ParentId) == true)) &&
+                ((this.TemplateId == null && other.TemplateId == null) || (this.TemplateId?.Equals(other.TemplateId) == true)) &&
+                ((this.ClientAppId == null && other.ClientAppId == null) || (this.ClientAppId?.Equals(other.ClientAppId) == true)) &&
+                ((this.Email == null && other.Email == null) || (this.Email?.Equals(other.Email) == true)) &&
+                ((this.DbaName == null && other.DbaName == null) || (this.DbaName?.Equals(other.DbaName) == true)) &&
+                ((this.LegalName == null && other.LegalName == null) || (this.LegalName?.Equals(other.LegalName) == true)) &&
+                ((this.Website == null && other.Website == null) || (this.Website?.Equals(other.Website) == true)) &&
+                ((this.PhoneNumber == null && other.PhoneNumber == null) || (this.PhoneNumber?.Equals(other.PhoneNumber) == true)) &&
+                this.OwnershipType.Equals(other.OwnershipType) &&
+                ((this.FedTaxId == null && other.FedTaxId == null) || (this.FedTaxId?.Equals(other.FedTaxId) == true)) &&
+                this.AverageTicket.Equals(other.AverageTicket) &&
+                this.HighTicket.Equals(other.HighTicket) &&
+                this.CcMonthlyVolume.Equals(other.CcMonthlyVolume) &&
+                ((this.EcMonthlyVolume == null && other.EcMonthlyVolume == null) || (this.EcMonthlyVolume?.Equals(other.EcMonthlyVolume) == true)) &&
+                ((this.MccCode == null && other.MccCode == null) || (this.MccCode?.Equals(other.MccCode) == true)) &&
+                ((this.BusinessDescription == null && other.BusinessDescription == null) || (this.BusinessDescription?.Equals(other.BusinessDescription) == true)) &&
+                this.SwipedPercent.Equals(other.SwipedPercent) &&
+                this.KeyedPercent.Equals(other.KeyedPercent) &&
+                this.EcommercePercent.Equals(other.EcommercePercent) &&
+                this.IsForeignEntity.Equals(other.IsForeignEntity) &&
+                this.PersonallyGuaranteed.Equals(other.PersonallyGuaranteed) &&
+                ((this.PreferredLanguage == null && other.PreferredLanguage == null) || (this.PreferredLanguage?.Equals(other.PreferredLanguage) == true)) &&
+                ((this.Addresses == null && other.Addresses == null) || (this.Addresses?.Equals(other.Addresses) == true)) &&
+                ((this.Owners == null && other.Owners == null) || (this.Owners?.Equals(other.Owners) == true)) &&
+                ((this.BankAccounts == null && other.BankAccounts == null) || (this.BankAccounts?.Equals(other.BankAccounts) == true)) &&
+                ((this.Documents == null && other.Documents == null) || (this.Documents?.Equals(other.Documents) == true)) &&
+                ((this.PricingElements == null && other.PricingElements == null) || (this.PricingElements?.Equals(other.PricingElements) == true)) &&
+                ((this.KycResponseObjects == null && other.KycResponseObjects == null) || (this.KycResponseObjects?.Equals(other.KycResponseObjects) == true)) &&
+                ((this.Metadata == null && other.Metadata == null) || (this.Metadata?.Equals(other.Metadata) == true)) &&
+                ((this.Result == null && other.Result == null) || (this.Result?.Equals(other.Result) == true)) &&
+                ((this.Status == null && other.Status == null) || (this.Status?.Equals(other.Status) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.AccountVaultId = {(this.AccountVaultId == null ? "null" : this.AccountVaultId == string.Empty ? "" : this.AccountVaultId)}");
-            toStringOutput.Add($"this.Active = {this.Active}");
-            toStringOutput.Add($"this.Description = {(this.Description == null ? "null" : this.Description == string.Empty ? "" : this.Description)}");
-            toStringOutput.Add($"this.EndDate = {(this.EndDate == null ? "null" : this.EndDate == string.Empty ? "" : this.EndDate)}");
-            toStringOutput.Add($"this.InstallmentTotalCount = {(this.InstallmentTotalCount == null ? "null" : this.InstallmentTotalCount.ToString())}");
-            toStringOutput.Add($"this.Interval = {this.Interval}");
-            toStringOutput.Add($"this.IntervalType = {this.IntervalType}");
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.NotificationDays = {(this.NotificationDays == null ? "null" : this.NotificationDays.ToString())}");
-            toStringOutput.Add($"this.PaymentMethod = {this.PaymentMethod}");
-            toStringOutput.Add($"this.ProductTransactionId = {(this.ProductTransactionId == null ? "null" : this.ProductTransactionId == string.Empty ? "" : this.ProductTransactionId)}");
-            toStringOutput.Add($"this.RecurringId = {(this.RecurringId == null ? "null" : this.RecurringId == string.Empty ? "" : this.RecurringId)}");
-            toStringOutput.Add($"this.RecurringApiId = {(this.RecurringApiId == null ? "null" : this.RecurringApiId == string.Empty ? "" : this.RecurringApiId)}");
-            toStringOutput.Add($"this.StartDate = {(this.StartDate == null ? "null" : this.StartDate == string.Empty ? "" : this.StartDate)}");
-            toStringOutput.Add($"this.Status = {this.Status}");
-            toStringOutput.Add($"this.TransactionAmount = {this.TransactionAmount}");
-            toStringOutput.Add($"this.TermsAgree = {(this.TermsAgree == null ? "null" : this.TermsAgree.ToString())}");
-            toStringOutput.Add($"this.TermsAgreeIp = {(this.TermsAgreeIp == null ? "null" : this.TermsAgreeIp == string.Empty ? "" : this.TermsAgreeIp)}");
-            toStringOutput.Add($"this.RecurringC1 = {(this.RecurringC1 == null ? "null" : this.RecurringC1 == string.Empty ? "" : this.RecurringC1)}");
-            toStringOutput.Add($"this.RecurringC2 = {(this.RecurringC2 == null ? "null" : this.RecurringC2 == string.Empty ? "" : this.RecurringC2)}");
-            toStringOutput.Add($"this.RecurringC3 = {(this.RecurringC3 == null ? "null" : this.RecurringC3 == string.Empty ? "" : this.RecurringC3)}");
-            toStringOutput.Add($"this.SendToProcAsRecur = {(this.SendToProcAsRecur == null ? "null" : this.SendToProcAsRecur.ToString())}");
-            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id == string.Empty ? "" : this.Id)}");
-            toStringOutput.Add($"this.NextRunDate = {(this.NextRunDate == null ? "null" : this.NextRunDate == string.Empty ? "" : this.NextRunDate)}");
-            toStringOutput.Add($"this.CreatedTs = {this.CreatedTs}");
-            toStringOutput.Add($"this.ModifiedTs = {this.ModifiedTs}");
-            toStringOutput.Add($"this.RecurringTypeId = {this.RecurringTypeId}");
+            toStringOutput.Add($"this.ParentId = {(this.ParentId == null ? "null" : this.ParentId)}");
+            toStringOutput.Add($"this.TemplateId = {(this.TemplateId == null ? "null" : this.TemplateId)}");
+            toStringOutput.Add($"this.ClientAppId = {(this.ClientAppId == null ? "null" : this.ClientAppId)}");
+            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email)}");
+            toStringOutput.Add($"this.DbaName = {(this.DbaName == null ? "null" : this.DbaName)}");
+            toStringOutput.Add($"this.LegalName = {(this.LegalName == null ? "null" : this.LegalName)}");
+            toStringOutput.Add($"this.Website = {(this.Website == null ? "null" : this.Website)}");
+            toStringOutput.Add($"this.PhoneNumber = {(this.PhoneNumber == null ? "null" : this.PhoneNumber)}");
+            toStringOutput.Add($"this.OwnershipType = {this.OwnershipType}");
+            toStringOutput.Add($"this.FedTaxId = {(this.FedTaxId == null ? "null" : this.FedTaxId)}");
+            toStringOutput.Add($"this.AverageTicket = {this.AverageTicket}");
+            toStringOutput.Add($"this.HighTicket = {this.HighTicket}");
+            toStringOutput.Add($"this.CcMonthlyVolume = {this.CcMonthlyVolume}");
+            toStringOutput.Add($"this.EcMonthlyVolume = {(this.EcMonthlyVolume == null ? "null" : this.EcMonthlyVolume.ToString())}");
+            toStringOutput.Add($"this.MccCode = {(this.MccCode == null ? "null" : this.MccCode)}");
+            toStringOutput.Add($"this.BusinessDescription = {(this.BusinessDescription == null ? "null" : this.BusinessDescription)}");
+            toStringOutput.Add($"this.SwipedPercent = {this.SwipedPercent}");
+            toStringOutput.Add($"this.KeyedPercent = {this.KeyedPercent}");
+            toStringOutput.Add($"this.EcommercePercent = {this.EcommercePercent}");
+            toStringOutput.Add($"this.IsForeignEntity = {this.IsForeignEntity}");
+            toStringOutput.Add($"this.PersonallyGuaranteed = {this.PersonallyGuaranteed}");
+            toStringOutput.Add($"this.PreferredLanguage = {(this.PreferredLanguage == null ? "null" : this.PreferredLanguage.ToString())}");
+            toStringOutput.Add($"this.Addresses = {(this.Addresses == null ? "null" : $"[{string.Join(", ", this.Addresses)} ]")}");
+            toStringOutput.Add($"this.Owners = {(this.Owners == null ? "null" : $"[{string.Join(", ", this.Owners)} ]")}");
+            toStringOutput.Add($"this.BankAccounts = {(this.BankAccounts == null ? "null" : $"[{string.Join(", ", this.BankAccounts)} ]")}");
+            toStringOutput.Add($"this.Documents = {(this.Documents == null ? "null" : $"[{string.Join(", ", this.Documents)} ]")}");
+            toStringOutput.Add($"this.PricingElements = {(this.PricingElements == null ? "null" : $"[{string.Join(", ", this.PricingElements)} ]")}");
+            toStringOutput.Add($"this.KycResponseObjects = {(this.KycResponseObjects == null ? "null" : $"[{string.Join(", ", this.KycResponseObjects)} ]")}");
+            toStringOutput.Add($"Metadata = {(this.Metadata == null ? "null" : this.Metadata.ToString())}");
+            toStringOutput.Add($"this.Result = {(this.Result == null ? "null" : this.Result.ToString())}");
+            toStringOutput.Add($"this.Status = {(this.Status == null ? "null" : this.Status.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

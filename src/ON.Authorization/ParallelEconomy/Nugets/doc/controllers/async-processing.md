@@ -1,7 +1,5 @@
 # Async Processing
 
-Used for endpoints that can take more than 20 seconds to process.
-
 ```csharp
 AsyncProcessingController asyncProcessingController = client.AsyncProcessingController;
 ```
@@ -34,12 +32,15 @@ StatusCheckAsync(
 
 ```csharp
 Guid statusCode = new Guid("406c66c3-21cb-47fb-80fc-843bc42507fb");
-
 try
 {
     ResponseAsyncStatus result = await asyncProcessingController.StatusCheckAsync(statusCode);
 }
-catch (ApiException e){};
+catch (ApiException e)
+{
+    // TODO: Handle exception here
+    Console.WriteLine(e.Message);
+}
 ```
 
 ## Example Response *(as JSON)*

@@ -10,6 +10,7 @@ namespace FortisAPI.Standard.Models
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using APIMatic.Core.Utilities.Converters;
     using FortisAPI.Standard;
     using FortisAPI.Standard.Utilities;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace FortisAPI.Standard.Models
     /// <summary>
     /// List1.
     /// </summary>
-    public class List1
+    public class List1 : BaseModel
     {
         private string accountNumber;
         private string contactApiId;
@@ -37,6 +38,7 @@ namespace FortisAPI.Standard.Models
         private string contactC3;
         private string parentId;
         private string email;
+        private string createdUserId;
         private Dictionary<string, bool> shouldSerialize = new Dictionary<string, bool>
         {
             { "account_number", false },
@@ -56,6 +58,7 @@ namespace FortisAPI.Standard.Models
             { "contact_c3", false },
             { "parent_id", false },
             { "email", false },
+            { "created_user_id", false },
         };
 
         /// <summary>
@@ -94,6 +97,19 @@ namespace FortisAPI.Standard.Models
         /// <param name="contactC3">contact_c3.</param>
         /// <param name="parentId">parent_id.</param>
         /// <param name="email">email.</param>
+        /// <param name="createdUserId">created_user_id.</param>
+        /// <param name="receivedEmails">received_emails.</param>
+        /// <param name="isDeletable">is_deletable.</param>
+        /// <param name="location">location.</param>
+        /// <param name="user">user.</param>
+        /// <param name="recurrings">recurrings.</param>
+        /// <param name="emailBlacklist">email_blacklist.</param>
+        /// <param name="smsBlacklist">sms_blacklist.</param>
+        /// <param name="changelogs">changelogs.</param>
+        /// <param name="postbackLogs">postback_logs.</param>
+        /// <param name="createdUser">created_user.</param>
+        /// <param name="parent">parent.</param>
+        /// <param name="children">children.</param>
         public List1(
             string locationId,
             string lastName,
@@ -102,7 +118,7 @@ namespace FortisAPI.Standard.Models
             string id,
             int createdTs,
             int modifiedTs,
-            int active,
+            bool active,
             string accountNumber = null,
             string contactApiId = null,
             string firstName = null,
@@ -120,7 +136,20 @@ namespace FortisAPI.Standard.Models
             string contactC2 = null,
             string contactC3 = null,
             string parentId = null,
-            string email = null)
+            string email = null,
+            string createdUserId = null,
+            List<Models.ReceivedEmail> receivedEmails = null,
+            bool? isDeletable = null,
+            Models.Location location = null,
+            Models.User1 user = null,
+            List<Models.Recurring> recurrings = null,
+            Models.EmailBlacklist emailBlacklist = null,
+            Models.SmsBlacklist smsBlacklist = null,
+            List<Models.Changelog> changelogs = null,
+            List<Models.PostbackLog> postbackLogs = null,
+            Models.CreatedUser createdUser = null,
+            Models.Parent parent = null,
+            Models.Children children = null)
         {
             this.LocationId = locationId;
             if (accountNumber != null)
@@ -216,6 +245,23 @@ namespace FortisAPI.Standard.Models
             this.CreatedTs = createdTs;
             this.ModifiedTs = modifiedTs;
             this.Active = active;
+            if (createdUserId != null)
+            {
+                this.CreatedUserId = createdUserId;
+            }
+
+            this.ReceivedEmails = receivedEmails;
+            this.IsDeletable = isDeletable;
+            this.Location = location;
+            this.User = user;
+            this.Recurrings = recurrings;
+            this.EmailBlacklist = emailBlacklist;
+            this.SmsBlacklist = smsBlacklist;
+            this.Changelogs = changelogs;
+            this.PostbackLogs = postbackLogs;
+            this.CreatedUser = createdUser;
+            this.Parent = parent;
+            this.Children = children;
         }
 
         /// <summary>
@@ -576,7 +622,97 @@ namespace FortisAPI.Standard.Models
         /// Active
         /// </summary>
         [JsonProperty("active")]
-        public int Active { get; set; }
+        public bool Active { get; set; }
+
+        /// <summary>
+        /// User ID Created the register
+        /// </summary>
+        [JsonProperty("created_user_id")]
+        public string CreatedUserId
+        {
+            get
+            {
+                return this.createdUserId;
+            }
+
+            set
+            {
+                this.shouldSerialize["created_user_id"] = true;
+                this.createdUserId = value;
+            }
+        }
+
+        /// <summary>
+        /// Received Email Information on `expand`
+        /// </summary>
+        [JsonProperty("received_emails", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.ReceivedEmail> ReceivedEmails { get; set; }
+
+        /// <summary>
+        /// Is Deletable Information on `expand`
+        /// </summary>
+        [JsonProperty("is_deletable", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? IsDeletable { get; set; }
+
+        /// <summary>
+        /// Location Information on `expand`
+        /// </summary>
+        [JsonProperty("location", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Location Location { get; set; }
+
+        /// <summary>
+        /// User Information on `expand`
+        /// </summary>
+        [JsonProperty("user", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.User1 User { get; set; }
+
+        /// <summary>
+        /// Recurring Information on `expand`
+        /// </summary>
+        [JsonProperty("recurrings", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.Recurring> Recurrings { get; set; }
+
+        /// <summary>
+        /// Email Blacklist Information on `expand`
+        /// </summary>
+        [JsonProperty("email_blacklist", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.EmailBlacklist EmailBlacklist { get; set; }
+
+        /// <summary>
+        /// Sms Blacklist Information on `expand`
+        /// </summary>
+        [JsonProperty("sms_blacklist", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.SmsBlacklist SmsBlacklist { get; set; }
+
+        /// <summary>
+        /// Changelog Information on `expand`
+        /// </summary>
+        [JsonProperty("changelogs", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.Changelog> Changelogs { get; set; }
+
+        /// <summary>
+        /// Postback Log Information on `expand`
+        /// </summary>
+        [JsonProperty("postback_logs", NullValueHandling = NullValueHandling.Ignore)]
+        public List<Models.PostbackLog> PostbackLogs { get; set; }
+
+        /// <summary>
+        /// User Information on `expand`
+        /// </summary>
+        [JsonProperty("created_user", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.CreatedUser CreatedUser { get; set; }
+
+        /// <summary>
+        /// Parent Information on `expand`
+        /// </summary>
+        [JsonProperty("parent", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Parent Parent { get; set; }
+
+        /// <summary>
+        /// Children Information on `expand`
+        /// </summary>
+        [JsonProperty("children", NullValueHandling = NullValueHandling.Ignore)]
+        public Models.Children Children { get; set; }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -722,6 +858,14 @@ namespace FortisAPI.Standard.Models
         public void UnsetEmail()
         {
             this.shouldSerialize["email"] = false;
+        }
+
+        /// <summary>
+        /// Marks the field to not be serailized.
+        /// </summary>
+        public void UnsetCreatedUserId()
+        {
+            this.shouldSerialize["created_user_id"] = false;
         }
 
         /// <summary>
@@ -877,6 +1021,15 @@ namespace FortisAPI.Standard.Models
             return this.shouldSerialize["email"];
         }
 
+        /// <summary>
+        /// Checks if the field should be serialized or not.
+        /// </summary>
+        /// <returns>A boolean weather the field should be serialized or not.</returns>
+        public bool ShouldSerializeCreatedUserId()
+        {
+            return this.shouldSerialize["created_user_id"];
+        }
+
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
@@ -889,9 +1042,7 @@ namespace FortisAPI.Standard.Models
             {
                 return true;
             }
-
-            return obj is List1 other &&
-                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
+            return obj is List1 other &&                ((this.LocationId == null && other.LocationId == null) || (this.LocationId?.Equals(other.LocationId) == true)) &&
                 ((this.AccountNumber == null && other.AccountNumber == null) || (this.AccountNumber?.Equals(other.AccountNumber) == true)) &&
                 ((this.ContactApiId == null && other.ContactApiId == null) || (this.ContactApiId?.Equals(other.ContactApiId) == true)) &&
                 ((this.FirstName == null && other.FirstName == null) || (this.FirstName?.Equals(other.FirstName) == true)) &&
@@ -916,42 +1067,69 @@ namespace FortisAPI.Standard.Models
                 ((this.Id == null && other.Id == null) || (this.Id?.Equals(other.Id) == true)) &&
                 this.CreatedTs.Equals(other.CreatedTs) &&
                 this.ModifiedTs.Equals(other.ModifiedTs) &&
-                this.Active.Equals(other.Active);
+                this.Active.Equals(other.Active) &&
+                ((this.CreatedUserId == null && other.CreatedUserId == null) || (this.CreatedUserId?.Equals(other.CreatedUserId) == true)) &&
+                ((this.ReceivedEmails == null && other.ReceivedEmails == null) || (this.ReceivedEmails?.Equals(other.ReceivedEmails) == true)) &&
+                ((this.IsDeletable == null && other.IsDeletable == null) || (this.IsDeletable?.Equals(other.IsDeletable) == true)) &&
+                ((this.Location == null && other.Location == null) || (this.Location?.Equals(other.Location) == true)) &&
+                ((this.User == null && other.User == null) || (this.User?.Equals(other.User) == true)) &&
+                ((this.Recurrings == null && other.Recurrings == null) || (this.Recurrings?.Equals(other.Recurrings) == true)) &&
+                ((this.EmailBlacklist == null && other.EmailBlacklist == null) || (this.EmailBlacklist?.Equals(other.EmailBlacklist) == true)) &&
+                ((this.SmsBlacklist == null && other.SmsBlacklist == null) || (this.SmsBlacklist?.Equals(other.SmsBlacklist) == true)) &&
+                ((this.Changelogs == null && other.Changelogs == null) || (this.Changelogs?.Equals(other.Changelogs) == true)) &&
+                ((this.PostbackLogs == null && other.PostbackLogs == null) || (this.PostbackLogs?.Equals(other.PostbackLogs) == true)) &&
+                ((this.CreatedUser == null && other.CreatedUser == null) || (this.CreatedUser?.Equals(other.CreatedUser) == true)) &&
+                ((this.Parent == null && other.Parent == null) || (this.Parent?.Equals(other.Parent) == true)) &&
+                ((this.Children == null && other.Children == null) || (this.Children?.Equals(other.Children) == true));
         }
         
-
         /// <summary>
         /// ToString overload.
         /// </summary>
         /// <param name="toStringOutput">List of strings.</param>
-        protected void ToString(List<string> toStringOutput)
+        protected new void ToString(List<string> toStringOutput)
         {
-            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId == string.Empty ? "" : this.LocationId)}");
-            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber == string.Empty ? "" : this.AccountNumber)}");
-            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId == string.Empty ? "" : this.ContactApiId)}");
-            toStringOutput.Add($"this.FirstName = {(this.FirstName == null ? "null" : this.FirstName == string.Empty ? "" : this.FirstName)}");
-            toStringOutput.Add($"this.LastName = {(this.LastName == null ? "null" : this.LastName == string.Empty ? "" : this.LastName)}");
-            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone == string.Empty ? "" : this.CellPhone)}");
+            toStringOutput.Add($"this.LocationId = {(this.LocationId == null ? "null" : this.LocationId)}");
+            toStringOutput.Add($"this.AccountNumber = {(this.AccountNumber == null ? "null" : this.AccountNumber)}");
+            toStringOutput.Add($"this.ContactApiId = {(this.ContactApiId == null ? "null" : this.ContactApiId)}");
+            toStringOutput.Add($"this.FirstName = {(this.FirstName == null ? "null" : this.FirstName)}");
+            toStringOutput.Add($"this.LastName = {(this.LastName == null ? "null" : this.LastName)}");
+            toStringOutput.Add($"this.CellPhone = {(this.CellPhone == null ? "null" : this.CellPhone)}");
             toStringOutput.Add($"this.Balance = {(this.Balance == null ? "null" : this.Balance.ToString())}");
             toStringOutput.Add($"this.Address = {(this.Address == null ? "null" : this.Address.ToString())}");
-            toStringOutput.Add($"this.CompanyName = {(this.CompanyName == null ? "null" : this.CompanyName == string.Empty ? "" : this.CompanyName)}");
-            toStringOutput.Add($"this.HeaderMessage = {(this.HeaderMessage == null ? "null" : this.HeaderMessage == string.Empty ? "" : this.HeaderMessage)}");
-            toStringOutput.Add($"this.DateOfBirth = {(this.DateOfBirth == null ? "null" : this.DateOfBirth == string.Empty ? "" : this.DateOfBirth)}");
+            toStringOutput.Add($"this.CompanyName = {(this.CompanyName == null ? "null" : this.CompanyName)}");
+            toStringOutput.Add($"this.HeaderMessage = {(this.HeaderMessage == null ? "null" : this.HeaderMessage)}");
+            toStringOutput.Add($"this.DateOfBirth = {(this.DateOfBirth == null ? "null" : this.DateOfBirth)}");
             toStringOutput.Add($"this.EmailTrxReceipt = {this.EmailTrxReceipt}");
-            toStringOutput.Add($"this.HomePhone = {(this.HomePhone == null ? "null" : this.HomePhone == string.Empty ? "" : this.HomePhone)}");
-            toStringOutput.Add($"this.OfficePhone = {(this.OfficePhone == null ? "null" : this.OfficePhone == string.Empty ? "" : this.OfficePhone)}");
-            toStringOutput.Add($"this.OfficePhoneExt = {(this.OfficePhoneExt == null ? "null" : this.OfficePhoneExt == string.Empty ? "" : this.OfficePhoneExt)}");
+            toStringOutput.Add($"this.HomePhone = {(this.HomePhone == null ? "null" : this.HomePhone)}");
+            toStringOutput.Add($"this.OfficePhone = {(this.OfficePhone == null ? "null" : this.OfficePhone)}");
+            toStringOutput.Add($"this.OfficePhoneExt = {(this.OfficePhoneExt == null ? "null" : this.OfficePhoneExt)}");
             toStringOutput.Add($"this.HeaderMessageType = {this.HeaderMessageType}");
             toStringOutput.Add($"this.UpdateIfExists = {(this.UpdateIfExists == null ? "null" : this.UpdateIfExists.ToString())}");
-            toStringOutput.Add($"this.ContactC1 = {(this.ContactC1 == null ? "null" : this.ContactC1 == string.Empty ? "" : this.ContactC1)}");
-            toStringOutput.Add($"this.ContactC2 = {(this.ContactC2 == null ? "null" : this.ContactC2 == string.Empty ? "" : this.ContactC2)}");
-            toStringOutput.Add($"this.ContactC3 = {(this.ContactC3 == null ? "null" : this.ContactC3 == string.Empty ? "" : this.ContactC3)}");
-            toStringOutput.Add($"this.ParentId = {(this.ParentId == null ? "null" : this.ParentId == string.Empty ? "" : this.ParentId)}");
-            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email == string.Empty ? "" : this.Email)}");
-            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id == string.Empty ? "" : this.Id)}");
+            toStringOutput.Add($"this.ContactC1 = {(this.ContactC1 == null ? "null" : this.ContactC1)}");
+            toStringOutput.Add($"this.ContactC2 = {(this.ContactC2 == null ? "null" : this.ContactC2)}");
+            toStringOutput.Add($"this.ContactC3 = {(this.ContactC3 == null ? "null" : this.ContactC3)}");
+            toStringOutput.Add($"this.ParentId = {(this.ParentId == null ? "null" : this.ParentId)}");
+            toStringOutput.Add($"this.Email = {(this.Email == null ? "null" : this.Email)}");
+            toStringOutput.Add($"this.Id = {(this.Id == null ? "null" : this.Id)}");
             toStringOutput.Add($"this.CreatedTs = {this.CreatedTs}");
             toStringOutput.Add($"this.ModifiedTs = {this.ModifiedTs}");
             toStringOutput.Add($"this.Active = {this.Active}");
+            toStringOutput.Add($"this.CreatedUserId = {(this.CreatedUserId == null ? "null" : this.CreatedUserId)}");
+            toStringOutput.Add($"this.ReceivedEmails = {(this.ReceivedEmails == null ? "null" : $"[{string.Join(", ", this.ReceivedEmails)} ]")}");
+            toStringOutput.Add($"this.IsDeletable = {(this.IsDeletable == null ? "null" : this.IsDeletable.ToString())}");
+            toStringOutput.Add($"this.Location = {(this.Location == null ? "null" : this.Location.ToString())}");
+            toStringOutput.Add($"this.User = {(this.User == null ? "null" : this.User.ToString())}");
+            toStringOutput.Add($"this.Recurrings = {(this.Recurrings == null ? "null" : $"[{string.Join(", ", this.Recurrings)} ]")}");
+            toStringOutput.Add($"this.EmailBlacklist = {(this.EmailBlacklist == null ? "null" : this.EmailBlacklist.ToString())}");
+            toStringOutput.Add($"this.SmsBlacklist = {(this.SmsBlacklist == null ? "null" : this.SmsBlacklist.ToString())}");
+            toStringOutput.Add($"this.Changelogs = {(this.Changelogs == null ? "null" : $"[{string.Join(", ", this.Changelogs)} ]")}");
+            toStringOutput.Add($"this.PostbackLogs = {(this.PostbackLogs == null ? "null" : $"[{string.Join(", ", this.PostbackLogs)} ]")}");
+            toStringOutput.Add($"this.CreatedUser = {(this.CreatedUser == null ? "null" : this.CreatedUser.ToString())}");
+            toStringOutput.Add($"this.Parent = {(this.Parent == null ? "null" : this.Parent.ToString())}");
+            toStringOutput.Add($"this.Children = {(this.Children == null ? "null" : this.Children.ToString())}");
+
+            base.ToString(toStringOutput);
         }
     }
 }

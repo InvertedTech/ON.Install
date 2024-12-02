@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Stripe;
+
+message StripeNewDetails {
+  string PaymentLink = 1;
+}
+
+message StripeNewOneTimeDetails {
+  string PaymentLink = 1;
+}
+

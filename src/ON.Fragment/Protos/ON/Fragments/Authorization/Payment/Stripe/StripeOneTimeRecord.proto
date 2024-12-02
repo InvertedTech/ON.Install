@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ON.Fragments.Authorization.Payment.Stripe;
+
+import "google/protobuf/timestamp.proto";
+
+import "Protos/ON/Fragments/Authorization/Payment/SharedTypes.proto";
+
+message StripeOneTimePaymentRecord {
+  string UserID = 1; // Guid for the user
+  string InternalID = 2; // Guid for the Internal object that was purchased, ex: Guid of video
+  string PaymentID = 3; // Guid for the Payment
+  string StripePaymentID = 4;
+  uint32 AmountCents = 5;
+  PaymentStatus Status = 6;
+  google.protobuf.Timestamp CreatedOnUTC = 11;
+  google.protobuf.Timestamp PaidOnUTC = 12;
+  google.protobuf.Timestamp ChangedOnUTC = 13;
+}
