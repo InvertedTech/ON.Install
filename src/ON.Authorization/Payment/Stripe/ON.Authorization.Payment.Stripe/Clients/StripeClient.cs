@@ -226,7 +226,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
                     {
                         Enabled = true,
                         Minimum = request.MinimumPrice,
-                        Preset = request.MinimumPrice,
+                        //Preset = request.MinimumPrice,
                         Maximum = request.MaximumPrice,
                     }
                 };
@@ -241,6 +241,34 @@ namespace ON.Authorization.Payment.Stripe.Clients
             {
                 return new() { Error = ex.Message, };
             }
+        }
+
+        private async Task<Price?> CreateOneTimePriceInternal(string internalId, string name, uint minimum, uint preset, uint maximum)
+        {
+            var newPriceOpts = new PriceCreateOptions()
+            {
+                Currency = "usd",
+                Active = true,
+                Metadata = new()
+                    {
+                        { "internal_id", internalId },
+                    },
+                Nickname = name,
+                Product = PRODUCT_ONETIME_PREFIX + internalId,
+                CustomUnitAmount = new PriceCustomUnitAmountOptions()
+                {
+                    Enabled = true,
+                    Minimum = minimum,
+                    Preset = preset,
+                    Maximum = maximum,
+                }
+            };
+
+            var createdPrice = await priceService.CreateAsync(newPriceOpts);
+            if (createdPrice == null)
+                throw new Exception("Failed To Create Price");
+
+            return createdPrice;
         }
 
         private async Task<StripeEnsureOneTimeProductResponse> ModifyOneTimePrice(Price price, StripeEnsureOneTimeProductRequest request)
@@ -279,7 +307,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
             return details;
         }
 
-        public async Task<StripeNewOneTimeDetails?> GetNewOneTimeDetails(string internalId, ONUser userToken, string domainName)
+        public async Task<StripeNewOneTimeDetails?> GetNewOneTimeDetails(string internalId, ONUser userToken, string domainName, uint differentPresetPriceCents)
         {
             try
             {
@@ -287,7 +315,26 @@ namespace ON.Authorization.Payment.Stripe.Clients
                 if (product == null)
                     return null;
 
-                var url = await CreateOneTimeCheckoutSession(product.DefaultPriceId, userToken, domainName);
+                var priceId = product.DefaultPriceId;
+
+                if (differentPresetPriceCents > 0)
+                {
+                    try
+                    {
+                        var price = await priceService.GetAsync(priceId);
+                        uint minimum = (uint)price.CustomUnitAmount.Minimum;
+                        uint maximum = (uint)price.CustomUnitAmount.Maximum;
+                        if (differentPresetPriceCents > minimum && differentPresetPriceCents <= maximum)
+                        {
+                            var newPrice = await CreateOneTimePriceInternal(internalId, "custom", minimum, differentPresetPriceCents, maximum);
+                            if (newPrice != null)
+                                priceId = newPrice.Id;
+                        }
+                    }
+                    catch { }
+                }
+
+                var url = await CreateOneTimeCheckoutSession(priceId, internalId, userToken, domainName);
                 if (string.IsNullOrEmpty(url))
                     return null;
 
@@ -302,7 +349,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
             }
         }
 
-        public async Task<string?> CreateOneTimeCheckoutSession(string priceId, ONUser userToken, string domainName)
+        public async Task<string?> CreateOneTimeCheckoutSession(string priceId, string contentId, ONUser userToken, string domainName)
         {
             try
             {
@@ -313,7 +360,7 @@ namespace ON.Authorization.Payment.Stripe.Clients
                 {
                     ClientReferenceId = userToken.Id.ToString(),
                     SuccessUrl = domainName + "/payment/stripe/check",
-                    CancelUrl = domainName + "/payment/",
+                    CancelUrl = domainName,
                     Mode = "payment",
                     LineItems = new()
                     {

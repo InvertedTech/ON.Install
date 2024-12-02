@@ -135,7 +135,7 @@ namespace ON.Authorization.Payment.Service
                 return new();
             }
 
-            var details = await stripeClient.GetNewOneTimeDetails(request.InternalId, userToken, request.DomainName);
+            var details = await stripeClient.GetNewOneTimeDetails(request.InternalId, userToken, request.DomainName, request.DifferentPresetPriceCents);
 
             return new() { Stripe = details };
         }
