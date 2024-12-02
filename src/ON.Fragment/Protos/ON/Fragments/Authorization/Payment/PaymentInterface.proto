@@ -60,6 +60,7 @@ message GetNewDetailsResponse {
 message GetNewOneTimeDetailsRequest {
   string InternalId = 1;
   string DomainName = 2;
+  uint32 DifferentPresetPriceCents = 3;
 }
 
 message GetNewOneTimeDetailsResponse {
